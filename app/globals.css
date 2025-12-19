@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #02000F;
+    /* Deep Navy Black */
+    --foreground: #ffffff;
+    --muted: #4E4D4D;
+    /* Separator Gray */
+    --muted-foreground: #9ca3af;
+    --brand: #FF6D00;
+    /* Vibrant Orange */
+    --accent: #FF9800;
+    /* Lighter Orange */
+    --chord: #FFC107;
+    /* Bright Amber for Chords */
+    --nav-gradient: linear-gradient(45deg, #FF6D00, #FF3D00);
+  }
+
+  body {
+    @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  ::selection {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Custom Animations */
+  @keyframes slide-up {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.8s ease-out forwards;
+  }
+}
