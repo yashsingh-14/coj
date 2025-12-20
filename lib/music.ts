@@ -2,17 +2,24 @@ const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 const NOTES_FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 
 export function transposeChord(chord: string, semitones: number, useFlats: boolean = false): string {
-    // Simple regex to split root from bass/extension
-    // e.g. "G/B" -> "G" and "/B", "Cm7" -> "C" and "m7"
+    // Check for slash chord (e.g. G/B)
+    const [root, bass] = chord.split('/');
+    if (bass) {
+        return transposeChord(root, semitones, useFlats) + '/' + transposeChord(bass, semitones, useFlats);
+    }
+
+    // Normal chord logic
+    // Simple regex to split root from extension
+    // e.g. "Cm7" -> "C" and "m7"
     const match = chord.match(/^([A-G][#b]?)(.*)$/);
     if (!match) return chord;
 
-    const root = match[1];
+    const rootNote = match[1];
     const extension = match[2];
 
     // Find index
-    let index = NOTES.indexOf(root);
-    if (index === -1) index = NOTES_FLAT.indexOf(root);
+    let index = NOTES.indexOf(rootNote);
+    if (index === -1) index = NOTES_FLAT.indexOf(rootNote);
     if (index === -1) return chord; // Unknown chord
 
     // Shift
@@ -21,8 +28,8 @@ export function transposeChord(chord: string, semitones: number, useFlats: boole
 
     // Return new root + extension
     // Use Flat/Sharp array based on preference
-    const rootNote = useFlats ? NOTES_FLAT[newIndex] : NOTES[newIndex];
-    return rootNote + extension;
+    const newRoot = useFlats ? NOTES_FLAT[newIndex] : NOTES[newIndex];
+    return newRoot + extension;
 }
 
 export function parseSong(content: string) {

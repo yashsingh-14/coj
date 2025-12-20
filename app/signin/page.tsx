@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
-import Logo from '@/components/ui/Logo';
+import MinistryLogo from '@/components/ui/MinistryLogo';
 
 export default function SignInPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -31,13 +31,12 @@ export default function SignInPage() {
             {/* --- GLASS CARD CONTAINER --- */}
             <div className="relative z-10 w-full max-w-md">
 
-                {/* Header Logo */}
-                <div className="flex flex-col items-center mb-8 animate-fade-in-down">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-[var(--brand)] blur-3xl opacity-20 rounded-full"></div>
-                        <Logo className="w-24 h-24 text-[var(--brand)] drop-shadow-[0_0_25px_rgba(255,109,0,0.6)] relative z-10" />
+                <div className="flex flex-col items-center mb-6 animate-fade-in-down">
+                    <div className="relative mb-2">
+                        <div className="absolute inset-0 bg-[var(--brand)] blur-3xl opacity-20 rounded-full scale-100"></div>
+                        <MinistryLogo className="relative z-10 scale-75" />
                     </div>
-                    <h2 className="mt-6 text-3xl font-bold text-white tracking-tight">Welcome Back</h2>
+                    <h2 className="mt-2 text-3xl font-bold text-white tracking-tight">Welcome Back</h2>
                     <p className="text-white/40 text-sm mt-2">Enter the Sanctuary of Worship</p>
                 </div>
 
@@ -130,7 +129,7 @@ export default function SignInPage() {
 
                 {/* Footer Link */}
                 <p className="text-center mt-8 text-white/30 text-sm">
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                     <Link href="/signup" className="text-[var(--brand)] font-bold hover:text-[var(--accent)] hover:underline transition-all">
                         Join the Family
                     </Link>
