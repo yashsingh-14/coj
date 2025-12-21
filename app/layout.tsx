@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "COJ | Call of Jesus Ministries",
   description: "Worship • Word • Praise",
+    verification: {
+    google: "LaBYax9Fpd8uHkpERTFziIsQANIBxAMaXWQw5r1Dz3I",
+  },
 };
 
 import AppShell from "@/components/AppShell";
