@@ -244,6 +244,21 @@ export const ALL_SONGS: Song[] = [
         chords: `[G]         [D]\nSang Tere main chalun\n[Em]        [C]\nYeshu mere`
     },
 
+    {
+        id: 'hazir',
+        title: 'Hazir',
+        artist: 'Yeshua Band',
+        category: 'hindi',
+        duration: '6:45',
+        plays: '1.8M',
+        img: 'https://images.unsplash.com/photo-1621360841012-3f62afa2e9c2?auto=format&fit=crop&q=80&w=400',
+        lyrics: `Tera naam, jab hum pukare\nSamarth mein, hazir hai Tu\nHar haalaton mein, har baaton mein\nMere liye, hazir hai Tu\n\n(Chorus)\nHazir hai Tu, hazir hai Tu\nIs mehfil mein, har ek dil mein\nYeshu hazir hai Tu\n\n(Verse 1)\nDikhta nahin par, Tu har jagah hai\nZameen se falak tak, hazir hai Tu\nTu kal bhi tha, Tu aaj bhi hai\nSada se sada tak, hazir hai Tu`,
+        chords: `[Verse 1]\n[G]         [Am]\nTera Naam, Jab Hum Pukare\n[D]             [C]       [G]\nSamarth Mein, Hazir Hai Tu\n[G]                   [Am]\nHar Halaaton Mein, Har Baaton Mein\n[D]           [G]\nMere Liye, Hazir Hai Tu\n\n[Chorus]\n[C]            [G/B]\nHazir Hai Tu, Hazir Hai Tu\n[D]             [D7]\nIss Mehefil Mein, Har Ek Dil Mein\n[C]    [G/B]   [Am] [D] [G]\nYeshu Hazir Hai Tu\n\n[Verse 2]\n[G]                [Am]\nDikhta Nahin Par, Tu Har Jagah Hai\n[D]                   [C]       [G]\nZameen Se Falak Tak, Hazir Hai Tu\n[G]             [Am]\nTu Kal Bhi Tha, Tu Aaj Bhi Hai\n[D]                  [G]\nSada Se Sada Tak, Hazir Hai Tu`,
+        key: 'G',
+        tempo: 'Worship Ballad',
+        youtubeId: 'M7j7C4XvK8U'
+    },
+
     // --- MORE ENGLISH ---
     { id: 'build-my-life', title: 'Build My Life', artist: 'Housefires', category: 'contemporary', duration: '6:12', plays: '500k', img: 'https://images.unsplash.com/photo-1459749411177-33481156047b?auto=format&fit=crop&q=80&w=400', lyrics: "Worthy of every song we could ever sing...", chords: "[G] [C] [D] [Em]" },
     { id: 'reckless-love', title: 'Reckless Love', artist: 'Cory Asbury', category: 'worship', duration: '5:33', plays: '4.2M', img: 'https://images.unsplash.com/photo-1516280440614-6697288d5d38?auto=format&fit=crop&q=80&w=400', lyrics: "Before I spoke a word...", chords: "[F#m] [E] [D] [A]" },

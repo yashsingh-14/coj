@@ -20,9 +20,13 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
         };
     }
 
+    const isHindi = song.category === 'hindi';
+
     return {
         title: `${song.title} Lyrics & Chords | COJ Worship`,
-        description: `Read ${song.title} worship song lyrics with chords, key, and structure for church worship. Original Key: ${song.key || 'N/A'}.`,
+        description: isHindi
+            ? `Read ${song.title} Christian worship song lyrics with chords in Hindi. Perfect for church worship, prayer, and guitar practice.`
+            : `Read ${song.title} worship song lyrics with chords, key, and structure for church worship. Original Key: ${song.key || 'N/A'}.`,
     };
 }
 
@@ -52,7 +56,7 @@ export default function SongPage({ params }: { params: { slug: string } }) {
             '@type': 'Person',
             name: song.artist,
         },
-        inLanguage: 'en',
+        inLanguage: song.category === 'hindi' ? 'hi' : 'en',
         musicalKey: song.key,
         genre: 'Worship',
     };
