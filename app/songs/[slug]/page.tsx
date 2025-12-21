@@ -10,8 +10,9 @@ export function generateStaticParams() {
 }
 
 // FIX: explicitly using synchronous params as requested
-export function generateMetadata({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+// FIX: explicitly using synchronous params as requested
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     const song = ALL_SONGS.find((s) => s.id === slug);
 
     if (!song) {
@@ -31,8 +32,8 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
 }
 
 // FIX: explicitly using synchronous params as requested
-export default function SongPage({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+export default async function SongPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     const song = ALL_SONGS.find((s) => s.id === slug);
 
     if (!song) {
