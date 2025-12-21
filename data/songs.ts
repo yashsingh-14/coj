@@ -10,6 +10,7 @@ export interface Song {
     lyrics: string;
     chords?: string;
     key?: string;
+    tempo?: string;
     youtubeId?: string;
 }
 
@@ -26,6 +27,7 @@ export const ALL_SONGS: Song[] = [
         lyrics: `You are here, moving in our midst\nI worship You, I worship You\nYou are here, working in this place\nI worship You, I worship You\n\n(Chorus)\nWay Maker, Miracle Worker, Promise Keeper\nLight in the darkness\nMy God, that is who You are`,
         chords: `[Intro]\n[F] [C] [G] [Am]\n\n[Verse 1]\n[F]          [C]\nYou are here, moving in our midst\n[G]              [Am]\nI worship You, I worship You\n[F]          [C]\nYou are here, working in this place\n[G]              [Am]\nI worship You, I worship You\n\n[Chorus]\n[F]\nWay Maker, Miracle Worker\n[C]\nPromise Keeper, Light in the darkness\n[G]                   [Am]\nMy God, that is who You are`,
         key: 'F',
+        tempo: 'Slow Ballad (68 BPM)',
         youtubeId: 'iJCV_2H9xD0'
     },
     {
