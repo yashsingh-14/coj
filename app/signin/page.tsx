@@ -4,15 +4,59 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 import MinistryLogo from '@/components/ui/MinistryLogo';
+import SocialAuthModal from '@/components/auth/SocialAuthModal';
+import { toast } from 'sonner';
+
+import { useRouter } from 'next/navigation';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function SignInPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    // Social Modal State
+    const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+    const [selectedProvider, setSelectedProvider] = useState('');
+
+    const router = useRouter();
+    const login = useAppStore((state) => state.login);
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate login
-        setTimeout(() => setIsLoading(false), 2000);
+
+        // Instant validation validation/simulation
+        // Generate a name from email if not provided (simple logic)
+        const generatedName = email.split('@')[0];
+        const displayName = generatedName.charAt(0).toUpperCase() + generatedName.slice(1);
+
+        login({
+            id: Math.random().toString(36).substr(2, 9),
+            name: displayName,
+            email: email,
+            avatar: undefined
+        });
+        setIsLoading(false);
+        toast.success(`Welcome back, ${displayName}!`);
+        router.push('/');
+    };
+
+    const handleSocialLoginClick = (provider: string) => {
+        setSelectedProvider(provider);
+        setIsSocialModalOpen(true);
+    }
+
+    const handleSocialSuccess = (userData: { name: string; email: string; avatar?: string }) => {
+        login({
+            id: Math.random().toString(36).substr(2, 9),
+            name: userData.name,
+            email: userData.email,
+            avatar: userData.avatar
+        });
+        // Toast is handled in the modal for social flow, or we can do it here. 
+        // Modal handles it for specificity "Signed in with Google".
+        router.push('/');
     };
 
     return (
@@ -56,6 +100,8 @@ export default function SignInPage() {
                                 <input
                                     type="email"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-white/20 focus:outline-none focus:bg-white/10 focus:border-[var(--brand)]/50 focus:ring-1 focus:ring-[var(--brand)]/50 transition-all duration-300"
                                     placeholder="worshipper@coj.com"
                                 />
@@ -72,6 +118,8 @@ export default function SignInPage() {
                                 <input
                                     type="password"
                                     required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-white/20 focus:outline-none focus:bg-white/10 focus:border-[var(--brand)]/50 focus:ring-1 focus:ring-[var(--brand)]/50 transition-all duration-300"
                                     placeholder="••••••••"
                                 />
@@ -118,10 +166,20 @@ export default function SignInPage() {
 
                     {/* Social Login (Mock) */}
                     <div className="grid grid-cols-2 gap-4">
-                        <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all">
+                        <button
+                            type="button"
+                            onClick={() => handleSocialLoginClick('Google')}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all disabled:opacity-50"
+                        >
                             <span className="text-white text-sm font-medium">Google</span>
                         </button>
-                        <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all">
+                        <button
+                            type="button"
+                            onClick={() => handleSocialLoginClick('Apple')}
+                            disabled={isLoading}
+                            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all disabled:opacity-50"
+                        >
                             <span className="text-white text-sm font-medium">Apple</span>
                         </button>
                     </div>
@@ -135,6 +193,14 @@ export default function SignInPage() {
                     </Link>
                 </p>
             </div>
+
+            {/* Social Auth Modal */}
+            <SocialAuthModal
+                isOpen={isSocialModalOpen}
+                onClose={() => setIsSocialModalOpen(false)}
+                provider={selectedProvider}
+                onSuccess={handleSocialSuccess}
+            />
         </div>
     );
 }

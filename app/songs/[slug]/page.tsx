@@ -76,11 +76,10 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
                 originalKey={song.key || "C"}
                 tempo={song.tempo}
                 lyrics={song.lyrics}
+                hindiLyrics={song.hindiLyrics}
                 chords={song.chords}
                 youtubeId={song.youtubeId}
                 category={song.category}
-                duration={song.duration}
-                plays={song.plays}
                 relatedSongs={relatedSongs}
             />
         </>

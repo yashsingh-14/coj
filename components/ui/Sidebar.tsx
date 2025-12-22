@@ -3,6 +3,7 @@
 import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAppStore } from '@/store/useAppStore';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -11,6 +12,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
+    const logout = useAppStore((state) => state.logout);
 
     const menuItems = [
         { icon: Home, label: 'Home', href: '/' },
@@ -86,7 +88,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                 {/* Bottom Actions */}
                 <div className="p-6 bg-gradient-to-t from-black/40 to-transparent">
-                    <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-white/40 transition-all font-medium text-sm">
+                    <button
+                        onClick={() => {
+                            logout();
+                            onClose();
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-white/40 transition-all font-medium text-sm"
+                    >
                         <LogOut className="w-4 h-4" /> Sign Out
                     </button>
                 </div>

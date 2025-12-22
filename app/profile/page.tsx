@@ -4,15 +4,31 @@ import Link from 'next/link';
 import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 
+import { useAppStore } from '@/store/useAppStore';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
 export default function ProfilePage() {
-    // Mock User Data
+    const { currentUser, isAuthenticated } = useAppStore();
+    const router = useRouter();
+
+    // Redirect if not logged in
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.push('/signin');
+        }
+    }, [isAuthenticated, router]);
+
+    if (!currentUser) return null; // or a loading spinner
+
+    // Use real user data with fallbacks
     const user = {
-        name: 'Worship Leader',
-        email: 'leader@worship.com',
-        image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2000&auto=format&fit=crop', // Placeholder avatar
+        name: currentUser.name,
+        email: currentUser.email,
+        image: currentUser.avatar || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2000&auto=format&fit=crop',
         joined: 'Member since 2024',
         stats: {
-            savedSongs: 142,
+            savedSongs: 142, // Still mock for now as we don't have real stats backend
             playlists: 8,
             reviews: 24
         }

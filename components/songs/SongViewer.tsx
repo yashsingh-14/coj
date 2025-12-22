@@ -10,11 +10,10 @@ interface SongViewerProps {
     author: string;
     originalKey: string;
     lyrics: string;
+    hindiLyrics?: string;
     chords?: string;
     youtubeId?: string;
     category?: string;
-    duration?: string;
-    plays?: string;
     tempo?: string;
     relatedSongs?: {
         title: string;
@@ -23,7 +22,7 @@ interface SongViewerProps {
     }[];
 }
 
-export default function SongViewer({ title, author, originalKey, lyrics, chords, youtubeId, category, duration, plays, tempo, relatedSongs }: SongViewerProps) {
+export default function SongViewer({ title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs }: SongViewerProps) {
     const [transpose, setTranspose] = useState(0);
     const [fontSize, setFontSize] = useState(18);
     const [useFlats, setUseFlats] = useState(false);
@@ -37,6 +36,16 @@ export default function SongViewer({ title, author, originalKey, lyrics, chords,
     const renderLyrics = () => {
         return lyrics.split('\n').map((line, index) => (
             <p key={index} className="mb-4 leading-relaxed text-white/90 whitespace-pre-wrap" style={{ fontSize: `${fontSize}px` }}>
+                {line}
+            </p>
+        ));
+    };
+
+    // Render Logic for Hindi Lyrics
+    const renderHindiLyrics = () => {
+        if (!hindiLyrics) return null;
+        return hindiLyrics.split('\n').map((line, index) => (
+            <p key={index} className="mb-4 leading-relaxed text-white/90 whitespace-pre-wrap font-serif" style={{ fontSize: `${fontSize + 2}px` }}>
                 {line}
             </p>
         ));
@@ -73,7 +82,14 @@ export default function SongViewer({ title, author, originalKey, lyrics, chords,
             {/* 1. HERO HEADER */}
             <div className="relative w-full h-96 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#9C27B0] to-[var(--brand)] opacity-80 mix-blend-multiply"></div>
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 grayscale"></div>
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-40 grayscale"
+                    style={{
+                        backgroundImage: youtubeId
+                            ? `url('https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg')`
+                            : "url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')"
+                    }}
+                ></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
 
                 <div className="absolute bottom-0 left-0 w-full p-6 pt-20">
@@ -92,18 +108,6 @@ export default function SongViewer({ title, author, originalKey, lyrics, chords,
                         <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-white/60">
                             {category && (
                                 <span className="px-3 py-1 rounded-full bg-white/10 uppercase tracking-wider text-xs">{category}</span>
-                            )}
-                            {duration && (
-                                <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4" />
-                                    <span>{duration}</span>
-                                </div>
-                            )}
-                            {plays && (
-                                <div className="flex items-center gap-2">
-                                    <PlayCircle className="w-4 h-4" />
-                                    <span>{plays} Plays</span>
-                                </div>
                             )}
                         </div>
                     </div>
@@ -183,6 +187,16 @@ export default function SongViewer({ title, author, originalKey, lyrics, chords,
                         </div>
                     </section>
 
+                    {/* Hindi Lyrics Section (Updated) */}
+                    {hindiLyrics && (
+                        <section>
+                            <h2 className="text-2xl font-bold text-amber-500 mb-6 border-b border-white/10 pb-2">Hindi Lyrics (Devanagari)</h2>
+                            <div className="bg-white/5 rounded-[2rem] p-8 md:p-10 border border-white/5">
+                                {renderHindiLyrics()}
+                            </div>
+                        </section>
+                    )}
+
                     {/* Chords Section */}
                     {chords && (
                         <section>
@@ -197,31 +211,45 @@ export default function SongViewer({ title, author, originalKey, lyrics, chords,
                 {/* RIGHT COLUMN: VIDEO & TOOLS */}
                 <div className="block lg:col-span-5 relative">
                     <div className="sticky top-28 space-y-6">
-                        {/* Video Player Box */}
-                        <div className="rounded-3xl overflow-hidden bg-black aspect-video shadow-2xl shadow-black/50 border border-white/10 relative group">
-                            {showVideo && youtubeId ? (
-                                <iframe
-                                    className="w-full h-full"
-                                    src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`}
-                                    title="YouTube Video"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                ></iframe>
-                            ) : (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#111] bg-[url('https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center">
-                                    <div className="absolute inset-0 bg-black/60"></div>
-                                    <div className="relative z-10 flex flex-col items-center">
-                                        <button
-                                            onClick={() => setShowVideo(true)}
-                                            className="w-20 h-20 rounded-full bg-[var(--brand)] flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-[var(--brand)]/40 animate-pulse-slow group-hover:animate-none"
-                                            title="Watch Video"
-                                        >
-                                            <Play className="w-8 h-8 text-white fill-current ml-1" />
-                                        </button>
-                                        <p className="mt-4 text-sm font-bold text-white uppercase tracking-widest">Watch Video</p>
+                        {/* Premium Video Player Box */}
+                        <div className="group relative rounded-3xl overflow-hidden aspect-video shadow-2xl shadow-black/80 ring-1 ring-white/10 transition-all duration-500 hover:shadow-[var(--brand)]/20 hover:ring-[var(--brand)]/50">
+
+                            {/* Animated Border Glow */}
+                            <div className="absolute -inset-1 bg-gradient-to-r from-[var(--brand)] to-purple-600 opacity-20 blur transition-opacity duration-500 group-hover:opacity-40"></div>
+
+                            <div className="relative h-full w-full bg-[#050505] rounded-[22px] overflow-hidden">
+                                {showVideo && youtubeId ? (
+                                    <iframe
+                                        className="w-full h-full"
+                                        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                                        title="YouTube Video"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    ></iframe>
+                                ) : (
+                                    <div
+                                        className="absolute inset-0 flex flex-col items-center justify-center bg-[#111] bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                                        style={{
+                                            backgroundImage: youtubeId
+                                                ? `url('https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg')`
+                                                : "url('https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=1000&auto=format&fit=crop')"
+                                        }}
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
+
+                                        <div className="relative z-10 flex flex-col items-center group-hover:-translate-y-2 transition-transform duration-500">
+                                            <button
+                                                onClick={() => setShowVideo(true)}
+                                                className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--brand)] group-hover:border-[var(--brand)] group-hover:shadow-[0_0_40px_-10px_var(--brand)]"
+                                                title="Watch Video"
+                                            >
+                                                <Play className="w-8 h-8 text-white fill-white ml-1" />
+                                            </button>
+                                            <p className="text-xs font-bold text-white/80 uppercase tracking-[0.2em] group-hover:text-white transition-colors">Watch Official Video</p>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
 
                         {/* Pro Tools Panel - Only if chords exist */}

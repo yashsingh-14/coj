@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from 'sonner';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "COJ | Call of Jesus Ministries",
   description: "Worship • Word • Praise",
-    verification: {
+  verification: {
     google: "LaBYax9Fpd8uHkpERTFziIsQANIBxAMaXWQw5r1Dz3I",
   },
 };
@@ -35,6 +36,7 @@ export default function RootLayout({
         <AppShell>
           {children}
         </AppShell>
+        <Toaster position="bottom-right" theme="dark" richColors />
       </body>
     </html>
   );

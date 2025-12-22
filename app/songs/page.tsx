@@ -77,9 +77,6 @@ export default function SongsListPage() {
                                             <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/10 backdrop-blur text-white border border-white/10">
                                                 {song.category.toUpperCase()}
                                             </span>
-                                            <span className="text-[10px] font-bold text-white/50 flex items-center gap-1">
-                                                <Clock className="w-3 h-3" /> {song.duration}
-                                            </span>
                                         </div>
                                         <h3 className="font-black text-2xl text-white leading-none mb-1 drop-shadow-lg">{song.title}</h3>
                                         <p className="text-sm text-white/70 font-bold uppercase tracking-widest">{song.artist}</p>

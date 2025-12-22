@@ -125,9 +125,7 @@ export default function ArtistDetailPage({ params }: { params: Promise<{ id: str
                                 <div className="flex-1 min-w-0">
                                     <h3 className="text-xl font-bold text-white group-hover:text-amber-500 transition-colors truncate">{song.title}</h3>
                                     <div className="flex items-center gap-2 text-xs text-white/40 uppercase tracking-widest mt-1">
-                                        <span>{song.plays} Plays</span>
-                                        <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                                        <span>{song.duration}</span>
+                                        {/* Removed plays and duration */}
                                     </div>
                                 </div>
 

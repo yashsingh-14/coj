@@ -1,8 +1,8 @@
 'use client';
 
-import { Search, Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle } from 'lucide-react';
+import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../ui/Sidebar';
 import TiltCard from '../ui/TiltCard';
 import gsap from 'gsap';
@@ -11,8 +11,11 @@ import { ALL_SONGS } from '@/data/songs';
 
 gsap.registerPlugin(ScrollTrigger);
 
+import { useAppStore } from '@/store/useAppStore';
+
 export default function HomeUtilityContent() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { currentUser, isAuthenticated, logout } = useAppStore();
 
     useEffect(() => {
         // Simple entry animation using standard timeouts/CSS to ensure visibility
@@ -44,9 +47,19 @@ export default function HomeUtilityContent() {
                 </div>
 
                 <div className="animate-fade-in-down" style={{ animationDelay: '0.1s' }}>
-                    <Link href="/signin" className="w-9 h-9 rounded-full bg-white/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-white/5">
-                        <User className="w-5 h-5 text-white/70" />
-                    </Link>
+                    {isAuthenticated && currentUser ? (
+                        <div className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20">
+                            {currentUser.avatar ? (
+                                <img src={currentUser.avatar} alt={currentUser.name} className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="font-bold text-white text-xs">{currentUser.name.charAt(0)}</span>
+                            )}
+                        </div>
+                    ) : (
+                        <Link href="/signin" className="w-9 h-9 rounded-full bg-white/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-white/5">
+                            <User className="w-5 h-5 text-white/70" />
+                        </Link>
+                    )}
                 </div>
             </header>
 
@@ -63,7 +76,7 @@ export default function HomeUtilityContent() {
                         { name: 'Praise', icon: Sparkles, from: 'from-orange-400', to: 'to-red-600', shadow: 'shadow-orange-500/30' },
                         { name: 'Worship', icon: Heart, from: 'from-purple-500', to: 'to-indigo-600', shadow: 'shadow-purple-500/30' },
                         { name: 'Kids', icon: Star, from: 'from-pink-400', to: 'to-rose-600', shadow: 'shadow-pink-500/30' },
-                        { name: 'Sermons', icon: Mic2, from: 'from-blue-400', to: 'to-cyan-600', shadow: 'shadow-blue-500/30' },
+                        { name: 'Sermons', icon: Mic2, from: 'from-blue-400', to: 'to-cyan-600', shadow: 'shadow-blue-500/30', href: '/sermons' },
                         { name: 'Hymns', icon: Music2, from: 'from-emerald-400', to: 'to-teal-600', shadow: 'shadow-emerald-500/30' },
                         { name: 'Hindi', icon: Star, from: 'from-orange-500', to: 'to-yellow-500', shadow: 'shadow-orange-500/30' },
                     ].map((cat, i) => {
@@ -85,7 +98,7 @@ export default function HomeUtilityContent() {
                                     `}></div>
 
                                     <Link
-                                        href={`/categories/${cat.name.toLowerCase()}`}
+                                        href={cat.href || `/categories/${cat.name.toLowerCase()}`}
                                         className={`
                                             relative w-full h-full rounded-3xl 
                                             bg-gradient-to-br ${cat.from} ${cat.to}
@@ -321,7 +334,7 @@ export default function HomeUtilityContent() {
 
                                         <div className="flex items-center gap-2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
                                             <TrendingUp className="w-4 h-4 text-red-500" />
-                                            <span className="text-xs font-bold text-red-500 uppercase tracking-wider">{song.plays || '1M+'} Listening</span>
+                                            <span className="text-xs font-bold text-red-500 uppercase tracking-wider">1M+ Listening</span>
                                         </div>
 
                                         <h3 className="text-3xl font-black text-white leading-none mb-1 drop-shadow-md truncate">{song.title}</h3>
@@ -607,7 +620,7 @@ export default function HomeUtilityContent() {
                 <div className="absolute bottom-[1px] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-900 to-transparent opacity-50"></div>
             </footer>
 
-        </div>
+        </div >
     );
 }
 

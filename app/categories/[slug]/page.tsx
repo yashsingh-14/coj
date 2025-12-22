@@ -111,7 +111,7 @@ export default function CategoryDetailPage() {
                                             </span>
                                             <div className="w-1 h-1 rounded-full bg-white/50"></div>
                                             <span className="text-[10px] font-bold text-white/70 tracking-widest flex items-center gap-1">
-                                                <Clock className="w-3 h-3" /> {song.duration}
+                                                {/* Removed duration */}
                                             </span>
                                         </div>
                                         <h3 className="font-black text-4xl text-white leading-[0.9] mb-2 drop-shadow-lg tracking-tight">{song.title}</h3>
