@@ -88,7 +88,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 {/* Bottom Actions */}
                 <div className="p-6 bg-gradient-to-t from-black/40 to-transparent">
                     <button
-                        onClick={() => {
+                        onClick={async () => {
+                            const { supabase } = await import('@/lib/supabaseClient');
+                            await supabase.auth.signOut();
                             logout();
                             onClose();
                         }}

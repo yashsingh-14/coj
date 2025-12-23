@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function SignInPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -22,24 +23,25 @@ export default function SignInPage() {
     const router = useRouter();
     const login = useAppStore((state) => state.login);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Instant validation validation/simulation
-        // Generate a name from email if not provided (simple logic)
-        const generatedName = email.split('@')[0];
-        const displayName = generatedName.charAt(0).toUpperCase() + generatedName.slice(1);
-
-        login({
-            id: Math.random().toString(36).substr(2, 9),
-            name: displayName,
-            email: email,
-            avatar: undefined
+        // Real Supabase Login
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
         });
-        setIsLoading(false);
-        toast.success(`Welcome back, ${displayName}!`);
+
+        if (error) {
+            toast.error(error.message);
+            setIsLoading(false);
+            return;
+        }
+
+        toast.success(`Welcome back!`);
         router.push('/');
+        setIsLoading(false);
     };
 
     const handleSocialLoginClick = (provider: string) => {

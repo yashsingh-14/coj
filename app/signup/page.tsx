@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function SignUpPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,22 +24,35 @@ export default function SignUpPage() {
     const router = useRouter();
     const login = useAppStore((state) => state.login);
 
-    const handleSignUp = (e: React.FormEvent) => {
+    const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulation
-        setTimeout(() => {
-            login({
-                id: Math.random().toString(36).substr(2, 9),
-                name: name,
-                email: email,
-                avatar: undefined
-            });
+        // Real Supabase Signup
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    name: name,
+                },
+            },
+        });
+
+        if (error) {
+            toast.error(error.message);
             setIsLoading(false);
-            toast.success(`Welcome to the family, ${name}!`);
-            router.push('/');
-        }, 1500);
+            return;
+        }
+
+        // Success
+        toast.success(`Account created! Checking verification...`);
+        // If email confirmation text is needed, it depends on project settings.
+        // Usually, user is signed in automatically if "Enable Email Confirmation" is OFF.
+
+        // We push to home. If session exists, AppShell updates state.
+        router.push('/');
+        setIsLoading(false);
     };
 
     const handleSocialLoginClick = (provider: string) => {

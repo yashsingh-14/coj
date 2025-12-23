@@ -34,8 +34,14 @@ export const useAppStore = create<AppState>()(
             // Auth Initial State
             currentUser: null,
             isAuthenticated: false,
+
+            // Actions are just state updaters now, actual API calls happen in components
+            // OR we can put thunks here if we use a middleware, but keeping it simple:
+            // We will expose a setUser method for the Auth Listener to call.
             login: (user) => set({ currentUser: user, isAuthenticated: true }),
-            logout: () => set({ currentUser: null, isAuthenticated: false }),
+            logout: () => {
+                set({ currentUser: null, isAuthenticated: false });
+            },
         }),
         {
             name: 'coj-storage',

@@ -12,6 +12,8 @@ import TiltCard from '../ui/TiltCard';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ALL_SONGS } from '@/data/songs';
+import { supabase } from '@/lib/supabaseClient';
+import { Song } from '@/data/types';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,8 +22,32 @@ import { useAppStore } from '@/store/useAppStore';
 export default function HomeUtilityContent() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { currentUser, isAuthenticated, logout } = useAppStore();
+    const [trendingSongs, setTrendingSongs] = useState<Song[]>([]);
+    const [madeForYouSongs, setMadeForYouSongs] = useState<Song[]>([]);
 
     useEffect(() => {
+        // Fetch Songs
+        const fetchHomeSongs = async () => {
+            // Mock Trending (fetch first 10)
+            const { data: trending } = await supabase
+                .from('songs')
+                .select('*')
+                .limit(10);
+
+            if (trending) setTrendingSongs(trending);
+
+            // Mock Made For You (fetch next 20, or random)
+            // For now, simple fetch
+            const { data: madeForYou } = await supabase
+                .from('songs')
+                .select('*')
+                .order('title', { ascending: false }) // Just to vary
+                .limit(20);
+
+            if (madeForYou) setMadeForYouSongs(madeForYou);
+        };
+        fetchHomeSongs();
+
         // Simple entry animation using standard timeouts/CSS to ensure visibility
         const sections = document.querySelectorAll('.section-anim');
         sections.forEach((section, index) => {
@@ -221,7 +247,7 @@ export default function HomeUtilityContent() {
                 </div>
 
                 <div className="flex gap-8 overflow-x-auto pb-12 no-scrollbar pr-6 snap-x snap-mandatory pt-4">
-                    {ALL_SONGS.slice(0, 10).map((song, i) => (
+                    {trendingSongs.map((song, i) => (
                         <div key={i} className="min-w-[260px] md:min-w-[300px] snap-start group relative">
                             {/* Giant Number Background */}
                             <span className="absolute -left-4 -top-12 text-[120px] font-black text-white/5 z-0 group-hover:text-white/10 transition-colors duration-500 select-none font-serif italic">
@@ -347,7 +373,7 @@ export default function HomeUtilityContent() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {ALL_SONGS.slice(0, 20).map((song, i) => (
+                    {madeForYouSongs.map((song, i) => (
                         <TiltCard key={i} className="h-full min-h-[250px]" max={15} scale={1.05}>
                             <div className="relative h-full group">
                                 <Link

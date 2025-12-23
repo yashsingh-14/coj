@@ -1,19 +1,19 @@
-import { ALL_SONGS } from '@/data/songs';
 import SongViewer from '@/components/songs/SongViewer';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
+import { supabase } from '@/lib/supabaseClient';
 
-export function generateStaticParams() {
-    return ALL_SONGS.map((song) => ({
-        slug: song.id,
-    }));
-}
+// Ensure dynamic rendering for instant updates
+export const dynamic = 'force-dynamic';
 
-// FIX: explicitly using synchronous params as requested
-// FIX: explicitly using synchronous params as requested
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const song = ALL_SONGS.find((s) => s.id === slug);
+
+    const { data: song } = await supabase
+        .from('songs')
+        .select('*')
+        .eq('id', slug)
+        .single();
 
     if (!song) {
         return {
@@ -31,23 +31,39 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
 }
 
-// FIX: explicitly using synchronous params as requested
 export default async function SongPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const song = ALL_SONGS.find((s) => s.id === slug);
+    console.log('🔴 Debugging SongPage Slug:', slug);
+
+    // Parallel fetching for performance
+    const songPromise = supabase
+        .from('songs')
+        .select('*')
+        .eq('id', slug)
+        .single();
+
+    // We can't fetch related easily without the song category first unless we do two queries or one fancy one.
+    // Let's do sequential for simplicity and robustness.
+    const { data: song, error } = await songPromise;
+    console.log('🔴 Supabase Result:', song ? 'Found' : 'Not Found', error);
 
     if (!song) {
+        console.error('🔴 Song Not Found Error:', error);
         notFound();
     }
 
-    const relatedSongs = ALL_SONGS
-        .filter((s) => s.category === song.category && s.id !== song.id)
-        .slice(0, 3)
-        .map((s) => ({
-            title: s.title,
-            slug: s.id,
-            artist: s.artist,
-        }));
+    const { data: relatedSongsData } = await supabase
+        .from('songs')
+        .select('id, title, artist, category')
+        .eq('category', song.category)
+        .neq('id', song.id)
+        .limit(3);
+
+    const relatedSongs = (relatedSongsData || []).map((s: any) => ({
+        title: s.title,
+        slug: s.id,
+        artist: s.artist,
+    }));
 
     const jsonLd = {
         '@context': 'https://schema.org',
@@ -76,9 +92,9 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
                 originalKey={song.key || "C"}
                 tempo={song.tempo}
                 lyrics={song.lyrics}
-                hindiLyrics={song.hindiLyrics}
+                hindiLyrics={song.hindi_lyrics} // Note snake_case from DB
                 chords={song.chords}
-                youtubeId={song.youtubeId}
+                youtubeId={song.youtube_id} // Note snake_case from DB
                 category={song.category}
                 relatedSongs={relatedSongs}
             />
