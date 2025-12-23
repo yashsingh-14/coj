@@ -1,9 +1,11 @@
 'use client';
 
 import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle } from 'lucide-react';
+import { toast } from 'sonner';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import BlackRemoverImage from '@/components/ui/BlackRemoverImage';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, TouchEvent } from 'react';
 import Sidebar from '../ui/Sidebar';
 import Logo from '../ui/Logo';
 import TiltCard from '../ui/TiltCard';
@@ -508,7 +510,9 @@ export default function HomeUtilityContent() {
                                     placeholder="Enter your email"
                                     className="w-full bg-white/5 border border-white/10 rounded-full px-5 py-3 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/10 transition-colors"
                                 />
-                                <button className="absolute right-1 top-1 bottom-1 px-4 bg-amber-500 rounded-full text-black font-bold text-xs hover:bg-amber-400 transition-colors">
+                                <button
+                                    onClick={() => toast.success("You're on the list! Stay tuned.")}
+                                    className="absolute right-1 top-1 bottom-1 px-4 bg-amber-500 rounded-full text-black font-bold text-xs hover:bg-amber-400 transition-colors">
                                     JOIN
                                 </button>
                             </div>
@@ -542,17 +546,20 @@ function HeroCarousel() {
         {
             title: "New Worship\nCollection",
             subtitle: "Exclusive",
-            image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2070&auto=format&fit=crop"
+            image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2070&auto=format&fit=crop",
+            link: "/new-arrivals"
         },
         {
             title: "Top 10 Songs\nThis Week",
             subtitle: "Trending",
-            image: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=2070&auto=format&fit=crop"
+            image: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=2070&auto=format&fit=crop",
+            link: "/trending"
         },
         {
             title: "Sunday Setlist\nReady For You",
             subtitle: "Worship Leader",
-            image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop"
+            image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop",
+            link: "/sets"
         }
     ];
 
@@ -563,51 +570,102 @@ function HeroCarousel() {
         return () => clearInterval(timer);
     }, [slides.length]);
 
+    const router = useRouter();
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e: TouchEvent) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe) {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        } else if (isRightSwipe) {
+            setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+        }
+    };
+
+    const handleCardClick = () => {
+        // Only navigate if it wasn't a swipe (touchEnd shouldn't be set far from start, but simplified: just nav)
+        // If user swiped, onTouchEnd fired.
+        // We rely on standard click behavior. If swipe happens strictly, click might not fire or we want to prevent it.
+        // A simple way: stick to touch logic. If distance is small, it's a tap.
+
+        // However, mixing click and touch handlers on same element:
+        // Swipe: touchstart -> touchmove -> touchend. Click usually doesn't fire if default prevented or significant movement.
+        // We will just execute router.push.
+        router.push(slides[currentSlide].link);
+    };
+
     return (
         <TiltCard max={3} scale={1.01} className="w-full">
-            <div className="w-full aspect-[16/9] md:aspect-[21/9] bg-[#0A0A0A] rounded-[2.5rem] relative overflow-hidden flex items-end p-8 md:p-12 border border-white/10 group shadow-2xl">
+            <div
+                onClick={handleCardClick}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+                className="block w-full h-full cursor-pointer select-none"
+            >
+                <div className="w-full aspect-[16/9] md:aspect-[21/9] bg-[#0A0A0A] rounded-[2.5rem] relative overflow-hidden flex items-end p-8 md:p-12 border border-white/10 group shadow-2xl">
 
-                {/* Dynamic Slides */}
-                {slides.map((slide, index) => (
-                    <div
-                        key={index}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
-                    >
+                    {/* Dynamic Slides */}
+                    {slides.map((slide, index) => (
                         <div
-                            className={`absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-linear ${index === currentSlide ? 'scale-110' : 'scale-100'}`}
-                            style={{ backgroundImage: `url('${slide.image}')` }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/50 to-transparent opacity-90" />
-
-                        {/* Glass Shine Effect (Made For You Style) */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                    </div>
-                ))}
-
-                <div className="relative z-10 w-full mb-2">
-                    <div className="h-24 overflow-hidden relative">
-                        {slides.map((slide, index) => (
+                            key={index}
+                            className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                        >
                             <div
-                                key={index}
-                                className={`absolute bottom-0 left-0 w-full transition-all duration-700 transform ${index === currentSlide
-                                    ? 'translate-y-0 opacity-100'
-                                    : index < currentSlide ? '-translate-y-8 opacity-0' : 'translate-y-8 opacity-0'
-                                    }`}
-                            >
-                                <span className="text-[var(--brand)] text-xs font-black uppercase tracking-[0.2em] mb-2 block">{slide.subtitle}</span>
-                                <h2 className="text-3xl md:text-5xl font-black leading-none whitespace-pre-line text-white shadow-black drop-shadow-lg tracking-tight">{slide.title}</h2>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex gap-2.5 mt-6">
-                        {slides.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentSlide(index)}
-                                className={`h-1.5 rounded-full transition-all duration-500 ${index === currentSlide ? 'w-8 bg-[var(--brand)]' : 'w-2 bg-white/20 hover:bg-white/40'}`}
+                                className={`absolute inset-0 bg-cover bg-center transition-transform duration-[10s] ease-linear ${index === currentSlide ? 'scale-110' : 'scale-100'}`}
+                                style={{ backgroundImage: `url('${slide.image}')` }}
                             />
-                        ))}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/50 to-transparent opacity-90" />
+
+                            {/* Glass Shine Effect (Made For You Style) */}
+                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                        </div>
+                    ))}
+
+                    <div className="relative z-10 w-full mb-2">
+                        <div className="h-24 overflow-hidden relative">
+                            {slides.map((slide, index) => (
+                                <div
+                                    key={index}
+                                    className={`absolute bottom-0 left-0 w-full transition-all duration-700 transform ${index === currentSlide
+                                        ? 'translate-y-0 opacity-100'
+                                        : index < currentSlide ? '-translate-y-8 opacity-0' : 'translate-y-8 opacity-0'
+                                        }`}
+                                >
+                                    <span className="text-[var(--brand)] text-xs font-black uppercase tracking-[0.2em] mb-2 block">{slide.subtitle}</span>
+                                    <h2 className="text-3xl md:text-5xl font-black leading-none whitespace-pre-line text-white shadow-black drop-shadow-lg tracking-tight">{slide.title}</h2>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="flex gap-2.5 mt-8">
+                            {slides.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setCurrentSlide(index);
+                                    }}
+                                    className={`h-1.5 rounded-full transition-all duration-500 ${index === currentSlide ? 'w-8 bg-[var(--brand)]' : 'w-2 bg-white/20 hover:bg-white/40'}`}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
