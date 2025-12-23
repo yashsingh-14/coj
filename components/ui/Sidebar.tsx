@@ -39,7 +39,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             {/* Floating Glass Dock */}
             <div className={`fixed top-4 bottom-4 left-4 w-72 bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl z-50 transform transition-all duration-500 cubic-bezier(0.23, 1, 0.32, 1) flex flex-col overflow-hidden ${isOpen ? 'translate-x-0 opacity-100 scale-100' : '-translate-x-[120%] opacity-0 scale-95'}`}>
 
-                {/* Header */}
                 <div className="p-8 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white tracking-tight">
                         COJ<span className="text-[var(--brand)]">worship</span>

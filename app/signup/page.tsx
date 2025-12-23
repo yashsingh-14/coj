@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Sparkles, User } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 import SocialAuthModal from '@/components/auth/SocialAuthModal';
 import { toast } from 'sonner';
@@ -10,8 +10,9 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 
-export default function SignInPage() {
+export default function SignUpPage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -22,24 +23,22 @@ export default function SignInPage() {
     const router = useRouter();
     const login = useAppStore((state) => state.login);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleSignUp = (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Instant validation validation/simulation
-        // Generate a name from email if not provided (simple logic)
-        const generatedName = email.split('@')[0];
-        const displayName = generatedName.charAt(0).toUpperCase() + generatedName.slice(1);
-
-        login({
-            id: Math.random().toString(36).substr(2, 9),
-            name: displayName,
-            email: email,
-            avatar: undefined
-        });
-        setIsLoading(false);
-        toast.success(`Welcome back, ${displayName}!`);
-        router.push('/');
+        // Simulation
+        setTimeout(() => {
+            login({
+                id: Math.random().toString(36).substr(2, 9),
+                name: name,
+                email: email,
+                avatar: undefined
+            });
+            setIsLoading(false);
+            toast.success(`Welcome to the family, ${name}!`);
+            router.push('/');
+        }, 1500);
     };
 
     const handleSocialLoginClick = (provider: string) => {
@@ -54,8 +53,6 @@ export default function SignInPage() {
             email: userData.email,
             avatar: userData.avatar
         });
-        // Toast is handled in the modal for social flow, or we can do it here. 
-        // Modal handles it for specificity "Signed in with Google".
         router.push('/');
     };
 
@@ -80,8 +77,8 @@ export default function SignInPage() {
                         <div className="absolute inset-0 bg-[var(--brand)] blur-3xl opacity-20 rounded-full scale-100"></div>
                         <Logo className="relative z-10 w-53 h-auto" />
                     </div>
-                    <h2 className="-mt-20 text-3xl font-bold text-white tracking-tight">Welcome Back</h2>
-                    <p className="text-white/40 text-sm mt-2">Enter the Sanctuary of Worship</p>
+                    <h2 className="-mt-20 text-3xl font-bold text-white tracking-tight">Join the Family</h2>
+                    <p className="text-white/40 text-sm mt-2">Begin your journey of worship</p>
                 </div>
 
                 {/* Glass Form */}
@@ -89,7 +86,25 @@ export default function SignInPage() {
                     {/* Shimmer Effect on Card Border */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-                    <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+                    <form onSubmit={handleSignUp} className="space-y-6 relative z-10">
+                        {/* Name Field */}
+                        <div className="space-y-2">
+                            <label className="text-white/60 text-xs font-bold uppercase tracking-wider ml-1">Full Name</label>
+                            <div className="relative group/input">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <User className="h-5 w-5 text-white/30 group-focus-within/input:text-[var(--brand)] transition-colors" />
+                                </div>
+                                <input
+                                    type="text"
+                                    required
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3.5 pl-11 pr-4 text-white placeholder-white/20 focus:outline-none focus:bg-white/10 focus:border-[var(--brand)]/50 focus:ring-1 focus:ring-[var(--brand)]/50 transition-all duration-300"
+                                    placeholder="John Doe"
+                                />
+                            </div>
+                        </div>
+
                         {/* Email Field */}
                         <div className="space-y-2">
                             <label className="text-white/60 text-xs font-bold uppercase tracking-wider ml-1">Email Address</label>
@@ -126,17 +141,6 @@ export default function SignInPage() {
                             </div>
                         </div>
 
-                        {/* Forgot Password Link */}
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                onClick={() => toast.info('Reset link sent to your email!')}
-                                className="text-xs text-white/40 hover:text-[var(--brand)] transition-colors"
-                            >
-                                Forgot password?
-                            </button>
-                        </div>
-
                         {/* Submit Button */}
                         <button
                             type="submit"
@@ -147,11 +151,11 @@ export default function SignInPage() {
                                 {isLoading ? (
                                     <>
                                         <Sparkles className="w-5 h-5 animate-spin" />
-                                        Verifying...
+                                        Creating Account...
                                     </>
                                 ) : (
                                     <>
-                                        Sign In
+                                        Create Account
                                         <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                                     </>
                                 )}
@@ -191,9 +195,9 @@ export default function SignInPage() {
 
                 {/* Footer Link */}
                 <p className="text-center mt-8 text-white/30 text-sm">
-                    Don&apos;t have an account?{' '}
-                    <Link href="/signup" className="text-[var(--brand)] font-bold hover:text-[var(--accent)] hover:underline transition-all">
-                        Join the Family
+                    Already have an account?{' '}
+                    <Link href="/signin" className="text-[var(--brand)] font-bold hover:text-[var(--accent)] hover:underline transition-all">
+                        Sign In
                     </Link>
                 </p>
             </div>

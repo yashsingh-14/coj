@@ -2,8 +2,10 @@
 
 import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
+import BlackRemoverImage from '@/components/ui/BlackRemoverImage';
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../ui/Sidebar';
+import Logo from '../ui/Logo';
 import TiltCard from '../ui/TiltCard';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -139,7 +141,7 @@ export default function HomeUtilityContent() {
             {/* VERSE OF THE DAY - ULTIMATE PREMIUM (GOLD & GLASS) */}
             <section className="mb-24 section-anim relative px-4 md:px-6 py-8 opacity-0 translate-y-8 transition-all duration-700 ease-out">
                 <TiltCard className="w-full" max={8} scale={1.02}>
-                    <div className="relative rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl shadow-black/50 py-24 px-6">
+                    <div className="relative rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl shadow-black/50 pt-12 pb-24 px-6">
                         {/* Parallax Background - Cinematic Slow Pan */}
                         <div className="absolute inset-0 bg-cover bg-center scale-125 group-hover:scale-110 transition-transform duration-[30s] ease-linear" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507646870319-5bb8e411b742?q=80&w=2070&auto=format&fit=crop')" }}></div>
 
@@ -163,99 +165,11 @@ export default function HomeUtilityContent() {
                             </div>
 
                             {/* CALL OF JESUS LOGO (User Reference) */}
-                            <div className="mb-10 flex flex-col items-center justify-center transform-style-3d animate-float-slow">
-
-                                {/* Flame & Cross Icon */}
-                                <div className="relative w-14 h-16 mb-2 drop-shadow-[0_0_15px_rgba(255,87,34,0.4)]">
-                                    <style jsx>{`
-                                        @keyframes flame-sway {
-                                            0%, 100% { transform: skewX(-3deg) scaleY(1); }
-                                            50% { transform: skewX(3deg) scaleY(1.05); }
-                                        }
-                                        @keyframes flame-flutter {
-                                            0%, 100% { transform: scale(1) translateY(0); opacity: 0.8; }
-                                            50% { transform: scale(1.1) translateY(-2px); opacity: 1; }
-                                        }
-                                        @keyframes shine-move {
-                                            0% { background-position: 200% center; }
-                                            100% { background-position: -200% center; }
-                                        }
-                                        .flame-main { animation: flame-sway 4s ease-in-out infinite; transform-origin: bottom center; }
-                                        .flame-inner { animation: flame-flutter 2s ease-in-out infinite; transform-origin: center; }
-                                        
-                                        .logo-text-shine {
-                                            background: linear-gradient(to right, #FFF 20%, #FFD700 50%, #FFF 80%);
-                                            background-size: 200% auto;
-                                            background-clip: text;
-                                            -webkit-background-clip: text;
-                                            -webkit-text-fill-color: transparent;
-                                            color: transparent;
-                                            animation: shine-move 3s linear infinite;
-                                            display: inline-block;
-                                        }
-
-                                        .verse-text-shine {
-                                            background: linear-gradient(to right, #e5e5e5 20%, #FFF 50%, #e5e5e5 80%);
-                                            background-size: 200% auto;
-                                            background-clip: text;
-                                            -webkit-background-clip: text;
-                                            -webkit-text-fill-color: transparent;
-                                            color: transparent;
-                                            animation: shine-move 6s linear infinite;
-                                        }
-                                    `}</style>
-                                    <svg viewBox="0 0 100 120" className="w-full h-full overflow-visible">
-                                        <defs>
-                                            <linearGradient id="fire-gradient-main" x1="50%" y1="100%" x2="50%" y2="0%">
-                                                <stop offset="0%" stopColor="#D50000" /> {/* Deep Red */}
-                                                <stop offset="50%" stopColor="#FF6D00" /> {/* Orange */}
-                                                <stop offset="100%" stopColor="#FFD600" /> {/* Yellow */}
-                                            </linearGradient>
-                                            <linearGradient id="cross-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#FFECB3" />
-                                                <stop offset="50%" stopColor="#FFC107" />
-                                                <stop offset="100%" stopColor="#FF6F00" />
-                                            </linearGradient>
-                                            <filter id="glow-intense">
-                                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-                                                <feMerge>
-                                                    <feMergeNode in="coloredBlur" />
-                                                    <feMergeNode in="SourceGraphic" />
-                                                </feMerge>
-                                            </filter>
-                                        </defs>
-
-                                        {/* Outer Flames (Darker/Redder) - Slow Sway */}
-                                        <path d="M50 115 C20 115 5 80 5 60 C5 35 30 5 50 0 C70 5 95 35 95 60 C95 80 80 115 50 115 Z" fill="#B71C1C" opacity="0.6" className="flame-main" />
-
-                                        {/* Main Fire Body - Gentle Sway */}
-                                        <path d="M50 110 C25 105 10 75 15 55 C20 35 40 20 50 5 C60 20 80 35 85 55 C90 75 75 105 50 110 Z" fill="url(#fire-gradient-main)" filter="url(#glow-intense)" className="flame-main" style={{ animationDelay: '0.5s' }} />
-
-                                        {/* Inner Flame Details (Flickers) - Smooth Flutter */}
-                                        <path d="M50 15 Q40 40 35 55 Q30 70 50 85 Q70 70 65 55 Q60 40 50 15" fill="#FFAB00" opacity="0.8" className="flame-inner" />
-
-                                        {/* The Cross */}
-                                        <path d="M50 40 V 100 M30 60 H 70" stroke="url(#cross-gradient)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow-intense)" />
-                                    </svg>
-                                </div>
-
-                                {/* Text Lockup */}
-                                <div className="flex flex-col items-center">
-                                    <div className="flex items-baseline gap-1 leading-none">
-                                        <span className="text-2xl md:text-3xl font-serif tracking-wide drop-shadow-lg logo-text-shine" style={{ fontFamily: 'Georgia, serif' }}>CALL</span>
-                                        <span className="text-[8px] md:text-[10px] font-sans font-bold uppercase tracking-wider -translate-y-0.5 text-white/70">OF</span>
-                                        <span className="text-2xl md:text-3xl font-serif tracking-wide drop-shadow-lg logo-text-shine" style={{ fontFamily: 'Georgia, serif' }}>JESUS</span>
-                                    </div>
-                                    <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent my-1"></div>
-                                    <span className="text-[7px] md:text-[9px] font-sans font-bold tracking-[0.6em] uppercase drop-shadow-md text-amber-500 animate-pulse">
-                                        MINISTRIES
-                                    </span>
-                                </div>
+                            <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow">
+                                <Logo className="w-60 h-auto" />
                             </div>
 
-                            <span className="block mb-6"></span> {/* Spacer instead of text */}
-
-                            <h2 className="text-3xl md:text-5xl lg:text-7xl font-serif italic leading-tight mb-10 drop-shadow-2xl px-4 relative verse-text-shine">
+                            <h2 className="-mt-16 text-3xl md:text-5xl lg:text-7xl font-serif italic leading-tight mb-10 drop-shadow-2xl px-4 relative verse-text-shine">
                                 <span className="absolute -top-10 left-0 text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                                 For I know the plans I have for you, plans to prosper you and not to harm you.
                                 <span className="absolute -bottom-20 right-0 text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
@@ -483,46 +397,43 @@ export default function HomeUtilityContent() {
                         {/* Brand Column */}
                         <div className="md:col-span-5">
                             <div className="flex items-center gap-4 mb-6">
-                                {/* Flame Icon */}
-                                <div className="relative w-12 h-14 drop-shadow-[0_0_15px_rgba(255,87,34,0.4)] shrink-0">
-                                    <svg viewBox="0 0 100 120" className="w-full h-full overflow-visible">
-                                        <defs>
-                                            <linearGradient id="fire-gradient-footer" x1="50%" y1="100%" x2="50%" y2="0%">
-                                                <stop offset="0%" stopColor="#D50000" />
-                                                <stop offset="50%" stopColor="#FF6D00" />
-                                                <stop offset="100%" stopColor="#FFD600" />
-                                            </linearGradient>
-                                            <linearGradient id="cross-gradient-footer" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" stopColor="#FFECB3" />
-                                                <stop offset="50%" stopColor="#FFC107" />
-                                                <stop offset="100%" stopColor="#FF6F00" />
-                                            </linearGradient>
-                                            <filter id="glow-intense-footer">
-                                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-                                                <feMerge>
-                                                    <feMergeNode in="coloredBlur" />
-                                                    <feMergeNode in="SourceGraphic" />
-                                                </feMerge>
-                                            </filter>
-                                        </defs>
-                                        <path d="M50 115 C20 115 5 80 5 60 C5 35 30 5 50 0 C70 5 95 35 95 60 C95 80 80 115 50 115 Z" fill="#B71C1C" opacity="0.6" className="flame-main" />
-                                        <path d="M50 110 C25 105 10 75 15 55 C20 35 40 20 50 5 C60 20 80 35 85 55 C90 75 75 105 50 110 Z" fill="url(#fire-gradient-footer)" filter="url(#glow-intense-footer)" className="flame-main" style={{ animationDelay: '0.5s' }} />
-                                        <path d="M50 15 Q40 40 35 55 Q30 70 50 85 Q70 70 65 55 Q60 40 50 15" fill="#FFAB00" opacity="0.8" className="flame-inner" />
-                                        <path d="M50 40 V 100 M30 60 H 70" stroke="url(#cross-gradient-footer)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow-intense-footer)" />
-                                    </svg>
-                                </div>
-
-                                {/* Text Lockup */}
-                                <div className="flex flex-col items-start">
-                                    <div className="flex items-baseline gap-1 leading-none">
-                                        <span className="text-xl md:text-2xl font-serif tracking-wide drop-shadow-lg logo-text-shine" style={{ fontFamily: 'Georgia, serif' }}>CALL</span>
-                                        <span className="text-[6px] md:text-[8px] font-sans font-bold uppercase tracking-wider -translate-y-0.5 text-white/70">OF</span>
-                                        <span className="text-xl md:text-2xl font-serif tracking-wide drop-shadow-lg logo-text-shine" style={{ fontFamily: 'Georgia, serif' }}>JESUS</span>
+                                <div className="relative w-14 h-14 -ml-2">
+                                    <style jsx>{`
+                                        @keyframes fire-pulse-footer {
+                                            0% { filter: drop-shadow(0 0 5px rgba(255, 100, 0, 0.5)); transform: scale(1); }
+                                            50% { filter: drop-shadow(0 0 20px rgba(255, 60, 0, 0.8)); transform: scale(1.05); }
+                                            100% { filter: drop-shadow(0 0 5px rgba(255, 100, 0, 0.5)); transform: scale(1); }
+                                        }
+                                        @keyframes shine-line {
+                                            0% { left: -100%; opacity: 0; }
+                                            10% { opacity: 1; }
+                                            50% { left: 200%; opacity: 0; }
+                                            100% { left: 200%; opacity: 0; }
+                                        }
+                                    `}</style>
+                                    <div className="w-full h-full" style={{ animation: 'fire-pulse-footer 3s infinite ease-in-out' }}>
+                                        <BlackRemoverImage
+                                            src="/images/logo-footer-final.png"
+                                            alt="COJ Fire"
+                                            threshold={80}
+                                            className="w-full h-full object-contain scale-125"
+                                        />
                                     </div>
-                                    <div className="w-full h-[1px] bg-gradient-to-r from-amber-500/50 to-transparent my-1"></div>
-                                    <span className="text-[6px] md:text-[8px] font-sans font-bold tracking-[0.4em] uppercase drop-shadow-md text-amber-500">
-                                        MINISTRIES
-                                    </span>
+                                </div>
+                                <div className="flex flex-col justify-center w-full">
+                                    <span className="text-xl font-black text-white leading-none tracking-tight">CALL OF JESUS</span>
+
+                                    {/* Divider with Shine */}
+                                    <div className="relative h-[2px] w-50 my-0.5 rounded-full overflow-hidden">
+                                        {/* Base Gold Line */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-amber-600/50 to-transparent shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+
+                                        {/* Running Shine */}
+                                        <div className="absolute top-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white to-transparent opacity-80"
+                                            style={{ animation: 'shine-line 5s infinite ease-in-out' }}></div>
+                                    </div>
+
+                                    <span className="text-[0.65rem] font-bold text-amber-500 tracking-[0.35em] uppercase leading-tight ml-0.5 text-left">MINISTRIES</span>
                                 </div>
                             </div>
                             <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-8">
