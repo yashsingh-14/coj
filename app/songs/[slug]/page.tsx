@@ -9,11 +9,26 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    const { data: song } = await supabase
-        .from('songs')
-        .select('*')
-        .eq('id', slug)
-        .single();
+    // 1. Check if UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+    let song = null;
+
+    if (isUuid) {
+        const { data } = await supabase.from('songs').select('*').eq('id', slug).single();
+        song = data;
+    } else {
+        // 2. Fallback: Exact Title Match (e.g. way-maker -> Way Maker)
+        const titleQuery = slug.replace(/-/g, ' ');
+        const { data } = await supabase.from('songs').select('*').ilike('title', titleQuery).single();
+        song = data;
+
+        // 3. Fallback: Wildcard Search
+        if (!song) {
+            const { data: backup } = await supabase.from('songs').select('*').ilike('title', `%${titleQuery}%`).limit(1).single();
+            song = backup;
+        }
+    }
 
     if (!song) {
         return {
@@ -33,25 +48,35 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function SongPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    console.log('🔴 Debugging SongPage Slug:', slug);
 
-    // Parallel fetching for performance
-    const songPromise = supabase
-        .from('songs')
-        .select('*')
-        .eq('id', slug)
-        .single();
+    // 1. Check if UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
-    // We can't fetch related easily without the song category first unless we do two queries or one fancy one.
-    // Let's do sequential for simplicity and robustness.
-    const { data: song, error } = await songPromise;
-    console.log('🔴 Supabase Result:', song ? 'Found' : 'Not Found', error);
+    let song = null;
+
+    if (isUuid) {
+        const { data } = await supabase.from('songs').select('*').eq('id', slug).single();
+        song = data;
+    } else {
+        // 2. Fallback: Exact Title Match
+        const titleQuery = slug.replace(/-/g, ' ');
+        // ilike is case-insensitive
+        const { data } = await supabase.from('songs').select('*').ilike('title', titleQuery).single();
+        song = data;
+
+        // 3. Fallback: Wildcard Search
+        if (!song) {
+            console.log(`Trying wildcard search for: ${titleQuery}`);
+            const { data: backup } = await supabase.from('songs').select('*').ilike('title', `%${titleQuery}%`).limit(1).single();
+            song = backup;
+        }
+    }
 
     if (!song) {
-        console.error('🔴 Song Not Found Error:', error);
         notFound();
     }
 
+    // Fetch Related Songs
     const { data: relatedSongsData } = await supabase
         .from('songs')
         .select('id, title, artist, category')

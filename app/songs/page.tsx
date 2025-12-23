@@ -113,6 +113,8 @@ export default function SongsListPage() {
                                             <div className="w-full h-1 bg-white/20 rounded-full mt-4 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity delay-100">
                                                 <div className="h-full bg-[var(--brand)] w-1/2 animate-loader"></div>
                                             </div>
+                                            {/* Debug ID */}
+                                            <div className="text-[8px] text-white/20 mt-1 font-mono">{song.id}</div>
                                         </div>
                                     </Link>
                                 </div>
