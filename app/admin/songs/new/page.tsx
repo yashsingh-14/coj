@@ -4,14 +4,80 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
-import { Save, Eye, EyeOff, Music, Mic2, GripHorizontal, ArrowLeft, Loader2 } from 'lucide-react';
+import { Save, Eye, EyeOff, Music, Mic2, GripHorizontal, ArrowLeft, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
 import SongViewer from '@/components/songs/SongViewer';
+import { parseSongSheet } from '@/lib/songParser';
 
 export default function AddSongPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
+    const [magicText, setMagicText] = useState('');
+    const [showMagic, setShowMagic] = useState(false); // Kept for legacy if needed, but UI uses activeTab now
+
+    // AI & Tabs State
+    const [activeTab, setActiveTab] = useState<'manual' | 'ai'>('manual');
+    const [aiPrompt, setAiPrompt] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const handleAiGenerate = async () => {
+        if (!aiPrompt.trim()) return;
+
+        setIsGenerating(true);
+        try {
+            const res = await fetch('/api/generate-song', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ songName: aiPrompt })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Failed to generate');
+
+            setFormData(prev => ({
+                ...prev,
+                title: data.title || prev.title,
+                artist: data.artist || prev.artist,
+                key: data.key || prev.key,
+                tempo: data.tempo || prev.tempo,
+                lyrics: data.lyrics || "",
+                chords: data.chords || "",
+                youtube_id: data.youtube_id || prev.youtube_id,
+                img: data.img || prev.img
+            }));
+
+            toast.success("AI Generation Successful!");
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.message || "Something went wrong with AI generation.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    const handleMagicPaste = () => {
+        if (!magicText.trim()) return;
+
+        try {
+            const { chords, lyrics, title, artist, key, tempo } = parseSongSheet(magicText);
+            setFormData(prev => ({
+                ...prev,
+                chords: chords,
+                lyrics: lyrics,
+                title: title || prev.title,
+                artist: artist || prev.artist,
+                key: key || prev.key,
+                tempo: tempo || prev.tempo
+            }));
+
+            toast.success("Magic applied! Chords and Lyrics parsed.");
+            setShowMagic(false);
+        } catch (error) {
+            toast.error("Failed to parse. Is current format correct?");
+        }
+    };
 
     const [formData, setFormData] = useState({
         title: '',
@@ -106,6 +172,7 @@ export default function AddSongPage() {
                         Live Preview (Not Saved)
                     </div>
                     <SongViewer
+                        songId="preview-mode"
                         title={formData.title || "Song Title"}
                         author={formData.artist || "Artist Name"}
                         originalKey={formData.key || "C"}
@@ -119,122 +186,200 @@ export default function AddSongPage() {
                     />
                 </div>
             ) : (
-                // EDIT MODE
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* LEFT: Metadata */}
-                    <div className="lg:col-span-1 space-y-6">
-                        <section className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-4">
-                            <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                <Music className="w-4 h-4" />
-                                Basic Info
-                            </h2>
+                <>
+                    {/* MAGIC IMPORT */}
+                    {/* IMPORT TOOLS SECTION */}
+                    <div className="mb-8">
+                        <div className="flex gap-4 mb-4">
+                            <button
+                                onClick={() => setActiveTab('manual')}
+                                className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors ${activeTab === 'manual' ? 'text-amber-500' : 'text-white/40 hover:text-white'
+                                    }`}
+                            >
+                                <Sparkles className="w-4 h-4" />
+                                Magic Paste (Manual)
+                            </button>
+                            <span className="text-white/10">|</span>
+                            <button
+                                onClick={() => setActiveTab('ai')}
+                                className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors ${activeTab === 'ai' ? 'text-amber-500' : 'text-white/40 hover:text-white'
+                                    }`}
+                            >
+                                <BrainCircuit className="w-4 h-4" />
+                                AI Auto-Generate
+                            </button>
+                        </div>
 
-                            <Input label="Song Title" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Way Maker" />
-                            <Input label="Artist" name="artist" value={formData.artist} onChange={handleChange} placeholder="e.g. Sinach" />
-
-                            <div>
-                                <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Category</label>
-                                <select
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={handleChange}
-                                    className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
+                        {activeTab === 'manual' && (
+                            <div className="bg-gradient-to-r from-amber-500/10 to-transparent border border-amber-500/20 rounded-3xl p-6 animate-fade-in-down mb-8">
+                                <h3 className="text-lg font-bold text-white mb-2">Paste Sheet Music</h3>
+                                <p className="text-white/40 text-sm mb-4">
+                                    Paste mixed lyrics/chords here. We'll separate them and automatically extract metadata if you provide it (e.g. "Title: Way Maker").
+                                </p>
+                                <textarea
+                                    value={magicText}
+                                    onChange={(e) => setMagicText(e.target.value)}
+                                    rows={8}
+                                    className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl p-4 text-xs font-mono text-white/80 focus:outline-none focus:border-amber-500/50 mb-4"
+                                    placeholder={`Title: Amazing Grace\nArtist: John Newton\nKey: G\n\nG        D\nAmazing Grace\n      Em      C\nHow sweet the sound`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleMagicPaste}
+                                    className="px-6 py-3 bg-amber-500 text-black font-bold rounded-xl hover:bg-amber-400 transition-colors flex items-center gap-2 text-sm"
                                 >
-                                    <option value="worship">Worship</option>
-                                    <option value="praise">Praise</option>
-                                    <option value="hymns">Hymns</option>
-                                    <option value="kids">Kids</option>
-                                    <option value="hindi">Hindi</option>
-                                    <option value="contemporary">Contemporary</option>
-                                </select>
+                                    <Sparkles className="w-4 h-4" />
+                                    Auto-Process
+                                </button>
                             </div>
-                        </section>
+                        )}
 
-                        <section className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-4">
-                            <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                <GripHorizontal className="w-4 h-4" />
-                                Details
-                            </h2>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <Input label="Key" name="key" value={formData.key} onChange={handleChange} placeholder="e.g. G" />
-                                <Input label="Tempo" name="tempo" value={formData.tempo} onChange={handleChange} placeholder="e.g. 72 BPM" />
+                        {activeTab === 'ai' && (
+                            <div className="bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/20 rounded-3xl p-6 animate-fade-in-down mb-8">
+                                <h3 className="text-lg font-bold text-white mb-2">AI Auto-Generate</h3>
+                                <p className="text-white/40 text-sm mb-4">
+                                    Enter the song title, and our AI will fetch the lyrics, chords, key, and tempo for you.
+                                </p>
+                                <div className="flex gap-4">
+                                    <input
+                                        type="text"
+                                        value={aiPrompt}
+                                        onChange={(e) => setAiPrompt(e.target.value)}
+                                        placeholder="e.g. Way Maker by Sinach"
+                                        className="flex-1 bg-[#0A0A0A] border border-white/10 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-purple-500/50"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleAiGenerate}
+                                        disabled={isGenerating || !aiPrompt.trim()}
+                                        className="px-6 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-500 transition-colors flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <BrainCircuit className="w-4 h-4" />}
+                                        Generate
+                                    </button>
+                                </div>
+                                <p className="text-xs text-white/20 mt-2">* Requires OPENAI_API_KEY in server environment.</p>
                             </div>
-                            <Input label="YouTube ID" name="youtube_id" value={formData.youtube_id} onChange={handleChange} placeholder="e.g. iJCV_2H9xD0" />
-                            <Input label="Cover Image URL" name="img" value={formData.img} onChange={handleChange} placeholder="https://..." />
-                        </section>
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all shadow-lg ${isLoading ? 'bg-amber-500/50 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-400 hover:scale-[1.02]'
-                                }`}
-                        >
-                            {isLoading ? (
-                                <span className="flex items-center justify-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Saving...</span>
-                            ) : (
-                                <span className="flex items-center justify-center gap-2"><Save className="w-5 h-5" /> Upload Song</span>
-                            )}
-                        </button>
+                        )}
                     </div>
 
-                    {/* RIGHT: Editors */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <section className="bg-white/5 rounded-3xl p-6 border border-white/5 h-full">
-                            <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                <Mic2 className="w-4 h-4" />
-                                Content
-                            </h2>
+                    {/* EDIT MODE */}
+                    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        {/* LEFT: Metadata */}
+                        <div className="lg:col-span-1 space-y-6">
+                            <section className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-4">
+                                <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
+                                    <Music className="w-4 h-4" />
+                                    Basic Info
+                                </h2>
 
-                            <div className="space-y-6">
-                                <div>
-                                    <div className="flex justify-between mb-2">
-                                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Lyrics (English) *</label>
-                                        <span className="text-xs text-white/20">Paste plain text here</span>
-                                    </div>
-                                    <textarea
-                                        name="lyrics"
-                                        value={formData.lyrics}
-                                        onChange={handleChange}
-                                        required
-                                        rows={12}
-                                        className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
-                                        placeholder={`Way maker, miracle worker...\nPromise keeper, light in the darkness...`}
-                                    />
-                                </div>
+                                <Input label="Song Title" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Way Maker" />
+                                <Input label="Artist" name="artist" value={formData.artist} onChange={handleChange} placeholder="e.g. Sinach" />
 
                                 <div>
-                                    <div className="flex justify-between mb-2">
-                                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Chords (ChordPro / Bracket Format)</label>
-                                        <span className="text-xs text-white/20">Use [C] [G] [Am] format</span>
-                                    </div>
-                                    <textarea
-                                        name="chords"
-                                        value={formData.chords}
+                                    <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Category</label>
+                                    <select
+                                        name="category"
+                                        value={formData.category}
                                         onChange={handleChange}
-                                        rows={10}
-                                        className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-amber-200/80 font-mono text-sm leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
-                                        placeholder={`[Verse 1]\n[G]           [C]\nYou are here, moving in our midst`}
-                                    />
+                                        className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
+                                    >
+                                        <option value="worship">Worship</option>
+                                        <option value="praise">Praise</option>
+                                        <option value="hymns">Hymns</option>
+                                        <option value="kids">Kids</option>
+                                        <option value="hindi">Hindi</option>
+                                        <option value="contemporary">Contemporary</option>
+                                    </select>
                                 </div>
+                            </section>
 
-                                <div>
-                                    <div className="flex justify-between mb-2">
-                                        <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Hindi Lyrics (Optional)</label>
-                                    </div>
-                                    <textarea
-                                        name="hindi_lyrics"
-                                        value={formData.hindi_lyrics}
-                                        onChange={handleChange}
-                                        rows={6}
-                                        className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
-                                        placeholder={`तू यहाँ है...\nकार्य कर रहा है...`}
-                                    />
+                            <section className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-4">
+                                <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
+                                    <GripHorizontal className="w-4 h-4" />
+                                    Details
+                                </h2>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Input label="Key" name="key" value={formData.key} onChange={handleChange} placeholder="e.g. G" />
+                                    <Input label="Tempo" name="tempo" value={formData.tempo} onChange={handleChange} placeholder="e.g. 72 BPM" />
                                 </div>
-                            </div>
-                        </section>
-                    </div>
-                </form>
+                                <Input label="YouTube ID" name="youtube_id" value={formData.youtube_id} onChange={handleChange} placeholder="e.g. iJCV_2H9xD0" />
+                                <Input label="Cover Image URL" name="img" value={formData.img} onChange={handleChange} placeholder="https://..." />
+                            </section>
+
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all shadow-lg ${isLoading ? 'bg-amber-500/50 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-400 hover:scale-[1.02]'
+                                    }`}
+                            >
+                                {isLoading ? (
+                                    <span className="flex items-center justify-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Saving...</span>
+                                ) : (
+                                    <span className="flex items-center justify-center gap-2"><Save className="w-5 h-5" /> Upload Song</span>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* RIGHT: Editors */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <section className="bg-white/5 rounded-3xl p-6 border border-white/5 h-full">
+                                <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
+                                    <Mic2 className="w-4 h-4" />
+                                    Content
+                                </h2>
+
+                                <div className="space-y-6">
+                                    <div>
+                                        <div className="flex justify-between mb-2">
+                                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Lyrics (English) *</label>
+                                            <span className="text-xs text-white/20">Paste plain text here</span>
+                                        </div>
+                                        <textarea
+                                            name="lyrics"
+                                            value={formData.lyrics}
+                                            onChange={handleChange}
+                                            required
+                                            rows={12}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
+                                            placeholder={`Way maker, miracle worker...\nPromise keeper, light in the darkness...`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <div className="flex justify-between mb-2">
+                                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Chords (ChordPro / Bracket Format)</label>
+                                            <span className="text-xs text-white/20">Use [C] [G] [Am] format</span>
+                                        </div>
+                                        <textarea
+                                            name="chords"
+                                            value={formData.chords}
+                                            onChange={handleChange}
+                                            rows={10}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-amber-200/80 font-mono text-sm leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
+                                            placeholder={`[Verse 1]\n[G]           [C]\nYou are here, moving in our midst`}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <div className="flex justify-between mb-2">
+                                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Hindi Lyrics (Optional)</label>
+                                        </div>
+                                        <textarea
+                                            name="hindi_lyrics"
+                                            value={formData.hindi_lyrics}
+                                            onChange={handleChange}
+                                            rows={6}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
+                                            placeholder={`तू यहाँ है...\nकार्य कर रहा है...`}
+                                        />
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </form>
+                </>
             )}
         </div>
     );

@@ -112,6 +112,7 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <SongViewer
+                songId={song.id}
                 title={song.title}
                 author={song.artist}
                 originalKey={song.key || "C"}

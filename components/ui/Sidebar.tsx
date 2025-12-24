@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut } from 'lucide-react';
+import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut, ListMusic } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
@@ -17,6 +17,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const menuItems = [
         { icon: Home, label: 'Home', href: '/' },
         { icon: Search, label: 'Search', href: '/search' },
+        { icon: ListMusic, label: 'Setlists', href: '/sets' },
         { icon: Sparkles, label: 'New Arrivals', href: '/new-arrivals' },
         { icon: Music, label: 'Worship', href: '/categories/worship' },
         { icon: Star, label: 'Praise', href: '/categories/praise' },

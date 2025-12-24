@@ -76,7 +76,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <AdminNavLink href="/admin" icon={LayoutDashboard} label="Dashboard" />
                     <AdminNavLink href="/admin/songs" icon={Music} label="Manage Songs" active />
                     <AdminNavLink href="/admin/users" icon={Users} label="Users" />
-                    <AdminNavLink href="/admin/settings" icon={Settings} label="Settings" />
                 </nav>
 
                 <div className="p-4 border-t border-white/5">
@@ -105,8 +104,8 @@ function AdminNavLink({ href, icon: Icon, label, active }: { href: string; icon:
     // Determine active state roughly (can improve with usePathname)
     return (
         <Link href={href} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${active
-                ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/20'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
+            ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/20'
+            : 'text-white/60 hover:text-white hover:bg-white/5'
             }`}>
             <Icon className={`w-5 h-5 ${active ? 'text-black' : 'group-hover:text-amber-500 transition-colors'}`} />
             <span className="text-sm font-medium">{label}</span>

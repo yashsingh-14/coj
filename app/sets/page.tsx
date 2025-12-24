@@ -1,41 +1,49 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Calendar, Music2, Share2, Download, Clock, Mic2, PlayCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Music2, Share2, Download, Clock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+
+type Set = {
+    id: string;
+    title: string;
+    event_date: string;
+    description: string;
+    set_songs: { count: number }[];
+    profiles: { name: string } | null; // created_by linked to profiles
+};
 
 export default function SetsPage() {
-    const sets = [
-        {
-            id: 1,
-            date: "Dec 21, 2025",
-            title: "Sunday Service",
-            leader: "Yash Singh",
-            songs: [
-                { title: "Way Maker", key: "E", type: "Worship" },
-                { title: "10,000 Reasons", key: "G", type: "Praise" },
-                { title: "Goodness of God", key: "Ab", type: "Worship" },
-                { title: "King of Kings", key: "D", type: "Anthem" }
-            ],
-            status: "Upcoming"
-        },
-        {
-            id: 2,
-            date: "Dec 14, 2025",
-            title: "Youth Night",
-            leader: "Sarah Johnson",
-            songs: [
-                { title: "Lion and the Lamb", key: "B", type: "High Praise" },
-                { title: "Firm Foundation", key: "Bb", type: "Worship" },
-                { title: "Build My Life", key: "G", type: "Response" }
-            ],
-            status: "Completed"
-        }
-    ];
+    const [sets, setSets] = useState<Set[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleCreateSet = () => {
-        toast.info("Create Set Wizard starting...");
-    };
+    useEffect(() => {
+        const fetchSets = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('sets')
+                    .select(`
+                        *,
+                        set_songs(count),
+                        profiles:created_by (name)
+                    `)
+                    .order('event_date', { ascending: false });
+
+                if (error) throw error;
+                // @ts-ignore - Supabase type inference for foreign tables can be tricky
+                setSets(data || []);
+            } catch (error) {
+                console.error('Error fetching sets:', error);
+                toast.error("Failed to load sets");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchSets();
+    }, []);
 
     const handleDownload = (title: string) => {
         toast.promise(new Promise(resolve => setTimeout(resolve, 2000)), {
@@ -48,11 +56,6 @@ export default function SetsPage() {
     const handleShare = (title: string) => {
         navigator.clipboard.writeText(window.location.href);
         toast.success(`Link to ${title} copied to clipboard!`);
-    };
-
-    const handlePlaySong = (e: React.MouseEvent, title: string) => {
-        e.stopPropagation();
-        toast.success(`Now Playing: ${title}`);
     };
 
     return (
@@ -77,90 +80,93 @@ export default function SetsPage() {
                         <p className="text-lg text-white/40 font-medium">Plan, organize, and lead confident services.</p>
                     </div>
 
-                    <button
-                        onClick={handleCreateSet}
-                        className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transform hover:scale-105 active:scale-95">
+                    <Link
+                        href="/sets/new"
+                        className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transform hover:scale-105 active:scale-95 text-center">
                         Create New Set
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Sets Grid */}
-                <div className="grid gap-8">
-                    {sets.map((set, index) => (
-                        <div
-                            key={set.id}
-                            className="backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 group relative"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+                {isLoading ? (
+                    <div className="flex justify-center py-20">
+                        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+                    </div>
+                ) : sets.length === 0 ? (
+                    <div className="text-center py-20 border border-white/10 rounded-3xl bg-white/5">
+                        <Calendar className="w-16 h-16 text-white/20 mx-auto mb-4" />
+                        <h2 className="text-2xl font-bold mb-2">No Sets Yet</h2>
+                        <p className="text-white/40 mb-8">Get started by creating your first service plan.</p>
+                        <Link href="/sets/new" className="text-amber-500 hover:underline">Create a Set</Link>
+                    </div>
+                ) : (
+                    <div className="grid gap-8">
+                        {sets.map((set) => {
+                            const dateObj = new Date(set.event_date);
+                            const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
+                            const day = dateObj.getDate();
+                            const time = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                            const leaderName = set.profiles?.name || 'Unknown';
+                            // @ts-ignore - Supabase join returns array but we assume count
+                            const songCount = set.set_songs?.[0]?.count || 0;
+                            const isUpcoming = dateObj > new Date();
 
-                            {/* Card Header */}
-                            <div className="p-8 border-b border-white/5 flex flex-col md:flex-row justify-between gap-6">
-                                <div className="flex gap-6">
-                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex flex-col items-center justify-center text-center shadow-lg">
-                                        <span className="text-xs font-bold text-amber-500 uppercase tracking-wider">{set.date.split(' ')[0]}</span>
-                                        <span className="text-2xl font-black">{set.date.split(' ')[1].replace(',', '')}</span>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <h2 className="text-2xl font-bold group-hover:text-amber-500 transition-colors">{set.title}</h2>
-                                            {set.status === 'Upcoming' && (
-                                                <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold rounded-full uppercase tracking-wider">
-                                                    Upcoming
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-4 text-white/40 text-sm">
-                                            <span className="flex items-center gap-1.5"><UserIcon className="w-3.5 h-3.5" /> {set.leader}</span>
-                                            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> 10:30 AM</span>
-                                            <span className="flex items-center gap-1.5"><Music2 className="w-3.5 h-3.5" /> {set.songs.length} Songs</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            return (
+                                <Link
+                                    href={`/sets/${set.id}`}
+                                    key={set.id}
+                                    className="block backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 group relative"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => handleDownload(set.title)}
-                                        className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/60 hover:text-white" title="Download PDF">
-                                        <Download className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => handleShare(set.title)}
-                                        className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/60 hover:text-white" title="Share Set">
-                                        <Share2 className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Songs List */}
-                            <div className="p-4 md:p-8">
-                                <div className="space-y-2">
-                                    {set.songs.map((song, i) => (
-                                        <div key={i} className="flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors group/song cursor-pointer">
-                                            <span className="text-white/20 font-mono text-sm w-6">{(i + 1).toString().padStart(2, '0')}</span>
-
-                                            <div className="flex-1">
-                                                <div className="font-bold text-lg text-white/90 group-hover/song:text-white">{song.title}</div>
-                                                <div className="text-xs text-white/40 uppercase tracking-widest">{song.type}</div>
+                                    {/* Card Header */}
+                                    <div className="p-8 flex flex-col md:flex-row justify-between gap-6 items-center md:items-start">
+                                        <div className="flex gap-6 w-full">
+                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex flex-col items-center justify-center text-center shadow-lg shrink-0">
+                                                <span className="text-xs font-bold text-amber-500 uppercase tracking-wider">{month}</span>
+                                                <span className="text-2xl font-black">{day}</span>
                                             </div>
-
-                                            <div className="flex items-center gap-6">
-                                                <div className="hidden md:flex flex-col items-center">
-                                                    <span className="text-[10px] text-white/30 uppercase tracking-widest">Key</span>
-                                                    <span className="font-bold text-amber-500">{song.key}</span>
+                                            <div>
+                                                <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                                    <h2 className="text-2xl font-bold group-hover:text-amber-500 transition-colors">{set.title}</h2>
+                                                    {isUpcoming ? (
+                                                        <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                            Upcoming
+                                                        </span>
+                                                    ) : (
+                                                        <span className="px-3 py-1 bg-white/5 border border-white/10 text-white/40 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                            Completed
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <button
-                                                    onClick={(e) => handlePlaySong(e, song.title)}
-                                                    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 hover:border-white/30 transition-all opacity-0 group-hover/song:opacity-100">
-                                                    <PlayCircle className="w-5 h-5" />
-                                                </button>
+                                                <div className="flex items-center gap-4 text-white/40 text-sm flex-wrap">
+                                                    <span className="flex items-center gap-1.5"><UserIcon className="w-3.5 h-3.5" /> {leaderName}</span>
+                                                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {time}</span>
+                                                    <span className="flex items-center gap-1.5"><Music2 className="w-3.5 h-3.5" /> {songCount} Songs</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+
+                                        <div className="flex items-center gap-2 self-end md:self-start shrink-0">
+                                            {/* Download Button - Hidden until PDF generation is implemented 
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); handleDownload(set.title); }}
+                                                className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/60 hover:text-white" title="Download PDF">
+                                                <Download className="w-5 h-5" />
+                                            </button>
+                                            */}
+                                            <button
+                                                onClick={(e) => { e.preventDefault(); handleShare(set.title); }}
+                                                className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/60 hover:text-white" title="Share Set">
+                                                <Share2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );

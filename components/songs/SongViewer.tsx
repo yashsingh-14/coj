@@ -2,10 +2,14 @@
 
 import { useState } from 'react';
 import { transposeChord } from '@/lib/music';
-import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus } from 'lucide-react';
+import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus, Music2, Loader2, X } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabaseClient';
+import { toast } from 'sonner';
+import { useAppStore } from '@/store/useAppStore';
 
 interface SongViewerProps {
+    songId: string; // Added prop
     title: string;
     author: string;
     originalKey: string;
@@ -22,15 +26,79 @@ interface SongViewerProps {
     }[];
 }
 
-export default function SongViewer({ title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs }: SongViewerProps) {
+export default function SongViewer({ songId, title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs }: SongViewerProps) {
+    const { currentUser } = useAppStore();
     const [transpose, setTranspose] = useState(0);
     const [fontSize, setFontSize] = useState(18);
     const [useFlats, setUseFlats] = useState(false);
     const [isFavourite, setIsFavourite] = useState(false);
     const [showVideo, setShowVideo] = useState(false);
 
+    // Modal State
+    const [isAddToSetOpen, setIsAddToSetOpen] = useState(false);
+    const [mySets, setMySets] = useState<{ id: string, title: string, event_date: string }[]>([]);
+    const [isLoadingSets, setIsLoadingSets] = useState(false);
+
     // Derived State
     const currentKey = transposeChord(originalKey, transpose, useFlats);
+
+    // Fetch Sets when modal opens
+    const handleOpenAddToSet = async () => {
+        if (!currentUser) {
+            toast.error("Please login to create sets");
+            return;
+        }
+        setIsAddToSetOpen(true);
+        if (mySets.length > 0) return; // Already fetched
+
+        setIsLoadingSets(true);
+        try {
+            const { data, error } = await supabase
+                .from('sets')
+                .select('id, title, event_date')
+                .eq('created_by', currentUser.id)
+                .order('event_date', { ascending: false });
+
+            if (error) throw error;
+            setMySets(data || []);
+        } catch (error: any) {
+            toast.error("Failed to load your sets");
+        } finally {
+            setIsLoadingSets(false);
+        }
+    };
+
+    const handleAddToSet = async (setId: string, setTitle: string) => {
+        try {
+            // Check if already in set (optional, or rely on distinct? Schema doesn't enforce unique song per set but logic might)
+            // Let's just add it.
+
+            // Get current count to determine order
+            const { count } = await supabase
+                .from('set_songs')
+                .select('*', { count: 'exact', head: true })
+                .eq('set_id', setId);
+
+            const nextOrder = (count || 0) + 1;
+
+            const { error } = await supabase
+                .from('set_songs')
+                .insert({
+                    set_id: setId,
+                    song_id: songId,
+                    order_index: nextOrder,
+                    key_override: currentKey !== originalKey ? currentKey : null // Save transposed key if changed
+                });
+
+            if (error) throw error;
+
+            toast.success(`Added to ${setTitle}`);
+            setIsAddToSetOpen(false);
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to add song to set");
+        }
+    };
 
     // Render Logic for Lyrics (Pure Text)
     const renderLyrics = () => {
@@ -134,16 +202,26 @@ export default function SongViewer({ title, author, originalKey, lyrics, hindiLy
                         )}
                     </div>
 
-                    <button
-                        onClick={() => setIsFavourite(!isFavourite)}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${isFavourite
-                            ? 'bg-[var(--brand)] border-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/20'
-                            : 'bg-transparent border-white/20 text-white/60 hover:border-white/50 hover:text-white'
-                            }`}
-                    >
-                        <Heart className={`w-4 h-4 ${isFavourite ? 'fill-current' : ''}`} />
-                        {isFavourite ? 'Saved' : 'Save Song'}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleOpenAddToSet}
+                            className="flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border bg-white/5 border-white/10 text-white hover:bg-white/10"
+                        >
+                            <Plus className="w-4 h-4" />
+                            Add to Set
+                        </button>
+
+                        <button
+                            onClick={() => setIsFavourite(!isFavourite)}
+                            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${isFavourite
+                                ? 'bg-[var(--brand)] border-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/20'
+                                : 'bg-transparent border-white/20 text-white/60 hover:border-white/50 hover:text-white'
+                                }`}
+                        >
+                            <Heart className={`w-4 h-4 ${isFavourite ? 'fill-current' : ''}`} />
+                            {isFavourite ? 'Saved' : 'Save Song'}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -293,7 +371,60 @@ export default function SongViewer({ title, author, originalKey, lyrics, hindiLy
                     </div>
                 </div>
             )}
-            {/* 5. RELATED SONGS */}
+
+            {/* 5. ADD TO SET MODAL */}
+            {isAddToSetOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsAddToSetOpen(false)}></div>
+                    <div className="relative bg-[#111] border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl animate-fade-in-up">
+                        <button
+                            onClick={() => setIsAddToSetOpen(false)}
+                            className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <h2 className="text-2xl font-bold mb-2">Add to Set</h2>
+                        <p className="text-white/40 mb-6">Choose a set to add <span className="text-white font-bold">"{title}"</span> to.</p>
+
+                        {isLoadingSets ? (
+                            <div className="flex justify-center py-8">
+                                <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+                            </div>
+                        ) : mySets.length === 0 ? (
+                            <div className="text-center py-8 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                                <p className="text-white/50 mb-4">You haven't created any sets yet.</p>
+                                <Link
+                                    href="/sets/new"
+                                    className="px-4 py-2 bg-amber-500 text-black font-bold rounded-lg hover:bg-amber-400 inline-block"
+                                >
+                                    Create First Set
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                                {mySets.map(set => (
+                                    <button
+                                        key={set.id}
+                                        onClick={() => handleAddToSet(set.id, set.title)}
+                                        className="w-full text-left p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all flex items-center justify-between group"
+                                    >
+                                        <div>
+                                            <div className="font-bold">{set.title}</div>
+                                            <div className="text-xs text-white/40">
+                                                {new Date(set.event_date).toLocaleDateString()}
+                                            </div>
+                                        </div>
+                                        <Plus className="w-5 h-5 text-white/20 group-hover:text-amber-500 transition-colors" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            {/* RELATED SONGS */}
             {relatedSongs && relatedSongs.length > 0 && (
                 <div className="max-w-7xl mx-auto px-6 pb-24">
                     <h3 className="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4">You Might Also Like</h3>

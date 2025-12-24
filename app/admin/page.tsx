@@ -2,8 +2,27 @@
 
 import Link from 'next/link';
 import { Plus, Music, Users, ArrowRight, Activity } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function AdminDashboard() {
+    const [stats, setStats] = useState({ songs: 0, users: 0, sets: 0 });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            const { count: songsCount } = await supabase.from('songs').select('*', { count: 'exact', head: true });
+            const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+            const { count: setsCount } = await supabase.from('sets').select('*', { count: 'exact', head: true });
+
+            setStats({
+                songs: songsCount || 0,
+                users: usersCount || 0,
+                sets: setsCount || 0
+            });
+        };
+        fetchStats();
+    }, []);
+
     return (
         <div className="space-y-8">
             <header>
@@ -13,9 +32,9 @@ export default function AdminDashboard() {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard label="Total Songs" value="--" icon={Music} trend="+2 this week" />
-                <StatCard label="Active Users" value="--" icon={Users} trend="+12% growth" />
-                <StatCard label="Live Services" value="--" icon={Activity} trend="On Track" />
+                <StatCard label="Total Songs" value={stats.songs} icon={Music} trend="Live Library" />
+                <StatCard label="Total Users" value={stats.users} icon={Users} trend="Community" />
+                <StatCard label="Total Sets" value={stats.sets} icon={Activity} trend="Service Plans" />
             </div>
 
             {/* Quick Actions */}
