@@ -19,35 +19,31 @@ gsap.registerPlugin(ScrollTrigger);
 
 import { useAppStore } from '@/store/useAppStore';
 
-export default function HomeUtilityContent() {
+export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: { trendingSongs: Song[]; madeForYouSongs: Song[] }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { currentUser, isAuthenticated, logout } = useAppStore();
-    const [trendingSongs, setTrendingSongs] = useState<Song[]>([]);
-    const [madeForYouSongs, setMadeForYouSongs] = useState<Song[]>([]);
+
+    // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
+    // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
+    // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
+    const getSongImage = (song: Song) => {
+        // 1. PRIORITY: Check YouTube Thumbnail FIRST (User Request)
+        // We use 'hqdefault' because 'maxresdefault' often returns 404 for non-HD videos.
+        const yId = song.youtube_id || song.youtubeId;
+        if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
+            return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;
+        }
+
+        // 2. Check Custom Image (valid URL, not "null"/"undefined")
+        if (song.img && song.img.trim().length > 5 && song.img !== "null" && song.img !== "undefined") {
+            return song.img;
+        }
+
+        // 3. Last Resort Fallback
+        return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
+    };
 
     useEffect(() => {
-        // Fetch Songs
-        const fetchHomeSongs = async () => {
-            // Mock Trending (fetch first 10)
-            const { data: trending } = await supabase
-                .from('songs')
-                .select('*')
-                .limit(10);
-
-            if (trending) setTrendingSongs(trending);
-
-            // Mock Made For You (fetch next 20, or random)
-            // For now, simple fetch
-            const { data: madeForYou } = await supabase
-                .from('songs')
-                .select('*')
-                .order('title', { ascending: false }) // Just to vary
-                .limit(20);
-
-            if (madeForYou) setMadeForYouSongs(madeForYou);
-        };
-        fetchHomeSongs();
-
         // Simple entry animation using standard timeouts/CSS to ensure visibility
         const sections = document.querySelectorAll('.section-anim');
         sections.forEach((section, index) => {
@@ -259,8 +255,14 @@ export default function HomeUtilityContent() {
                                 <Link href={`/songs/${song.id}`} className="block relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl bg-[#111] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.4)] transition-shadow duration-500 border border-white/10">
 
                                     {/* Image */}
-                                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
-                                        style={{ backgroundImage: `url('${song.img}')` }}></div>
+                                    <img
+                                        src={getSongImage(song)}
+                                        alt={song.title}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale-[30%] group-hover:grayscale-0"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
+                                        }}
+                                    />
 
                                     {/* Dark Gradient Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80" />
@@ -381,7 +383,14 @@ export default function HomeUtilityContent() {
                                     className="relative flex flex-col justify-end p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors"
                                 >
                                     {/* Album Art Background */}
-                                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url('${song.img}')` }}></div>
+                                    <img
+                                        src={getSongImage(song)}
+                                        alt={song.title}
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        onError={(e) => {
+                                            e.currentTarget.src = "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
+                                        }}
+                                    />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
 
                                     {/* Glass Shine */}
@@ -396,8 +405,12 @@ export default function HomeUtilityContent() {
                                                 {song.category.toUpperCase()}
                                             </span>
                                         </div>
-                                        <h3 className="font-black text-xl text-white leading-none mb-1 drop-shadow-lg line-clamp-1">{song.title}</h3>
-                                        <p className="text-xs text-white/70 font-bold uppercase tracking-widest line-clamp-1">{song.artist}</p>
+                                        <div className="flex flex-col">
+                                            <h3 className="font-black text-xl text-white leading-none mb-1 drop-shadow-lg line-clamp-1">{song.title}</h3>
+                                            <p className="text-xs text-white/70 font-bold uppercase tracking-widest line-clamp-1">
+                                                {song.artist}
+                                            </p>
+                                        </div>
 
                                         <div className="w-full h-1 bg-white/20 rounded-full mt-3 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity delay-100">
                                             <div className="h-full bg-[var(--brand)] w-full animate-loader"></div>

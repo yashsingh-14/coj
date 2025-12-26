@@ -121,9 +121,19 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
     // Helper: Validate if a string is likely a musical chord
     const isValidChord = (str: string) => {
-        // Matches A-G, optionally #/b, then optional suffix (m, min, maj, dim, aug, sus, add, numbers, single slash bass)
-        // Also loosely allows standard chord formats. Rejects plain words.
-        return /^[A-G][#b]?(m|min|maj|dim|aug|sus|add|[0-9])?(\/[A-G][#b]?)?$/.test(str.replace(/[^A-Za-z0-9#\/]/g, ''));
+        const cleanStr = str.replace(/[^A-Za-z0-9#\/+\-()]/g, ''); // Allow +, -, () in checks
+
+        // Exact blocklist for common words that might match chord patterns (e.g. "Go" -> G + o(dim))
+        const invalidWords = new Set(['Go', 'Do', 'An', 'As', 'At', 'Be', 'By', 'In', 'Is', 'It', 'Of', 'On', 'Or', 'So', 'To', 'Up', 'Us', 'We', 'My', 'He', 'Hi', 'No']);
+        if (invalidWords.has(cleanStr)) return false;
+
+        // Expanded Regex:
+        // Root: [A-G][#b]?
+        // Suffix particles: 
+        //  - m, min, maj, dim, aug, sus, add, M, o
+        //  - numbers (0-9)
+        //  - symbols: +, -, #, b, (, )
+        return /^[A-G][#b]?([0-9]|m|min|maj|dim|aug|sus|add|M|o|\+|b|#|\-|\(|\))*(\/[A-G][#b]?)?$/.test(cleanStr);
     };
 
     // Render Logic for Chords (With Transposition) - Standard Vertical Alignment

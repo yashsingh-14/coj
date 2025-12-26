@@ -29,13 +29,18 @@ export default function ManageSongsPage() {
     const handleDelete = async (id: string, title: string) => {
         if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
+        // Perform DELETE operation
         const { error } = await supabase.from('songs').delete().eq('id', id);
 
         if (error) {
-            toast.error("Failed to delete song");
+            console.error(error);
+            toast.error("Failed to delete song: " + error.message);
         } else {
             toast.success("Song deleted");
-            setSongs(songs.filter(s => s.id !== id));
+            // Optimistic update
+            setSongs(prev => prev.filter(s => s.id !== id));
+            // Double check by re-fetching (optional but safe)
+            fetchSongs();
         }
     };
 
@@ -93,10 +98,12 @@ export default function ManageSongsPage() {
                                     </td>
                                     <td className="p-6 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {/* Edit not implemented yet, reusing add could be done but simplifying for now */}
-                                            <button className="p-2 rounded-lg hover:bg-white/10 text-white/40 hover:text-white" title="Edit (Coming Soon)">
+                                            <Link
+                                                href={`/admin/songs/${song.id}`}
+                                                className="p-2 rounded-lg hover:bg-white/10 text-white/40 hover:text-white"
+                                                title="Edit">
                                                 <Edit2 className="w-4 h-4" />
-                                            </button>
+                                            </Link>
                                             <button
                                                 onClick={() => handleDelete(song.id, song.title)}
                                                 className="p-2 rounded-lg hover:bg-red-500/10 text-white/40 hover:text-red-500" title="Delete">
