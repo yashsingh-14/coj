@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
 
-// Mock additional data for the "Mindblowing" feel if real data is limited
+// Production: Pre-defined popular searches to guide new users
 const TRENDING_SEARCHES = ['Way Maker', 'Elevation Worship', 'Holy Forever', 'Goodness of God'];
 
 export default function SearchPage() {
