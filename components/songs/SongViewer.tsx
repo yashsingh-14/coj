@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { transposeChord } from '@/lib/music';
 import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus, Music2, Loader2, X } from 'lucide-react';
 import Link from 'next/link';
@@ -103,7 +103,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
     // Render Logic for Lyrics (Pure Text)
     const renderLyrics = () => {
         return lyrics.split('\n').map((line, index) => (
-            <p key={index} className="mb-4 leading-relaxed text-white/90 whitespace-pre-wrap" style={{ fontSize: `${fontSize}px` }}>
+            <p key={index} className="mb-6 leading-relaxed text-white/90 whitespace-pre-wrap font-medium tracking-wide" style={{ fontSize: `${fontSize}px` }}>
                 {line}
             </p>
         ));
@@ -113,31 +113,119 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
     const renderHindiLyrics = () => {
         if (!hindiLyrics) return null;
         return hindiLyrics.split('\n').map((line, index) => (
-            <p key={index} className="mb-4 leading-relaxed text-white/90 whitespace-pre-wrap font-serif" style={{ fontSize: `${fontSize + 2}px` }}>
+            <p key={index} className="mb-6 leading-loose text-white/90 whitespace-pre-wrap font-serif tracking-wide" style={{ fontSize: `${fontSize + 4}px` }}>
                 {line}
             </p>
         ));
     };
 
-    // Render Logic for Chords (With Transposition)
+    // Helper: Validate if a string is likely a musical chord
+    const isValidChord = (str: string) => {
+        // Matches A-G, optionally #/b, then optional suffix (m, min, maj, dim, aug, sus, add, numbers, single slash bass)
+        // Also loosely allows standard chord formats. Rejects plain words.
+        return /^[A-G][#b]?(m|min|maj|dim|aug|sus|add|[0-9])?(\/[A-G][#b]?)?$/.test(str.replace(/[^A-Za-z0-9#\/]/g, ''));
+    };
+
+    // Render Logic for Chords (With Transposition) - Standard Vertical Alignment
     const renderChords = () => {
         if (!chords) return null;
         return chords.split('\n').map((line, lineIndex) => {
+            // DETECT SECTION HEADERS: [Chorus], [Verse 1], etc.
+            const headerMatch = line.trim().match(/^\[(Chorus|Verse|Bridge|Pre-Chorus|Intro|Outro|Instrumental).*\]$/i);
+            if (headerMatch) {
+                return (
+                    <h3 key={lineIndex} className="text-amber-500 font-bold uppercase tracking-widest text-xs mt-10 mb-6 bg-white/5 inline-block px-3 py-1 rounded">
+                        {headerMatch[0].replace('[', '').replace(']', '')}
+                    </h3>
+                );
+            }
+
             const parts = line.split(/(\[.*?\])/g);
+
+            const segments: { text: string, chord: string | null }[] = [];
+
+            if (!parts[0].startsWith('[')) {
+                segments.push({ text: parts[0], chord: null });
+            }
+
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                if (part.startsWith('[') && part.endsWith(']')) {
+                    const chordName = part.slice(1, -1);
+                    const textUnder = parts[i + 1] && !parts[i + 1].startsWith('[') ? parts[i + 1] : "";
+                    segments.push({ text: textUnder, chord: chordName });
+                }
+            }
+
             return (
-                <div key={lineIndex} className="min-h-[1.5em] leading-loose whitespace-pre-wrap mb-1 relative pl-1 font-mono text-amber-200/80" style={{ fontSize: `${fontSize - 2}px` }}>
-                    {parts.map((part, partIndex) => {
-                        if (part.startsWith('[') && part.endsWith(']')) {
-                            const chord = part.slice(1, -1);
-                            const transposed = transposeChord(chord, transpose, useFlats);
-                            return (
-                                <span key={partIndex} className="font-bold text-amber-500 mr-1">
-                                    {transposed}
-                                </span>
-                            );
-                        } else {
-                            return <span key={partIndex} className="text-white/60">{part}</span>;
+                <div key={lineIndex} className="flex flex-wrap items-end mb-8 w-full">
+                    {segments.map((seg, idx) => {
+                        const isChord = seg.chord ? isValidChord(seg.chord) : false;
+                        const transposedChord = (seg.chord && isChord) ? transposeChord(seg.chord, transpose, useFlats) : null;
+
+                        // 1. Merge Invalid Chords Logic
+                        let displayText = seg.text || "";
+                        if (!isChord && seg.chord) {
+                            displayText = `${seg.chord} ` + displayText;
                         }
+
+                        // 2. Leading Space Logic (for Alignment)
+                        const leadingSpaceMatch = displayText.match(/^(\s+)(.*)/);
+                        const leadingSpace = leadingSpaceMatch ? leadingSpaceMatch[1] : "";
+                        const mainText = leadingSpaceMatch ? leadingSpaceMatch[2] : displayText;
+
+                        // 3. Bare Chord Detection in "mainText"
+                        // If the user typed "G D" without brackets, we parse it here.
+                        // We split by space to find potential chords.
+                        const tokens = mainText.split(/(\s+)/); // Keep delimiters to preserve spacing
+
+                        return (
+                            <Fragment key={idx}>
+                                {leadingSpace && <span className="whitespace-pre text-lg font-medium">{leadingSpace}</span>}
+
+                                {isChord ? (
+                                    // Case A: Bracketed Chord (Stacked or Isolated)
+                                    <div className={`flex flex-col group ${mainText.trim().length > 0 ? 'mr-0' : 'mr-3'} min-w-[max-content]`}>
+                                        <div className="h-6 mb-1">
+                                            {transposedChord ? (
+                                                <span className="text-amber-500 font-bold font-mono text-base block whitespace-nowrap">
+                                                    {transposedChord}
+                                                </span>
+                                            ) : null}
+                                        </div>
+                                        <span className="text-white/90 whitespace-pre font-medium text-lg leading-none block min-h-[1em]">
+                                            {mainText || (mainText.trim().length > 0 ? "\u00A0" : "")}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    // Case B: No Bracketed Chord (Just Text OR Bare Chords)
+                                    // We iterate tokens. If a token IS a chord, render as box. Else render as text.
+                                    <div className="flex items-end">
+                                        {tokens.map((token, tIdx) => {
+                                            const isTokenChord = isValidChord(token.trim());
+                                            const tokenTransposed = isTokenChord ? transposeChord(token.trim(), transpose, useFlats) : null;
+
+                                            if (isTokenChord && tokenTransposed) {
+                                                return (
+                                                    <div key={tIdx} className="flex flex-col mr-3 relative top-[-0.25rem]">
+                                                        <span className="text-amber-500 font-bold font-mono text-base block whitespace-nowrap bg-[#050505]/80 px-1 rounded border border-neutral-800">
+                                                            {tokenTransposed}
+                                                        </span>
+                                                        {/* No text under bare chords usually, or it flows next to it */}
+                                                    </div>
+                                                );
+                                            } else {
+                                                return (
+                                                    <span key={tIdx} className="text-white/90 whitespace-pre font-medium text-lg leading-none block min-h-[1em]">
+                                                        {token}
+                                                    </span>
+                                                );
+                                            }
+                                        })}
+                                    </div>
+                                )}
+                            </Fragment>
+                        );
                     })}
                 </div>
             );

@@ -47,6 +47,9 @@ export async function POST(req: Request) {
     3. MEDIA:
        - Youtube ID: Official Video ID.
        - Image: Album Art URL.
+    4. HINDI SUPPORT:
+       - If the song is Hindi, providing the lyrics in Devanagari script is MANDATORY.
+       - If the song is English (or other), YOU MUST GENERATE a literal Hindi translation (Devanagari script) line-by-line. This is MANDATORY. Do not leave blank.
 
     OUTPUT FORMAT (PLAIN TEXT ONLY, NO JSON):
     Title: [Song Title]
@@ -57,10 +60,32 @@ export async function POST(req: Request) {
     Image: [URL]
     
     ===CHORDS===
-    [Full chords with lyrics content here. standard chord-over-lyric or bracketed style.]
+    [Include Section Headers in brackets like [Verse 1], [Chorus], [Bridge]]
+    [Use standard "Chord Over Lyric" format. Place chords on their own line ABOVE the lyrics. Align them with the specific word they change on.]
+    [Do NOT use bracketed chords inline like [G]. Use plain text chords spaced out with whitespace.]
+    
+    Example Format:
+    [Verse 1]
+    G             C             G
+    Amazing grace how sweet the sound
+    
+    [Chorus]
+    G             C     D
+    My chains are gone, I've been set free
+    
+    IMPORTANT: You MUST use the Chord-Over-Lyric format. Do NOT use brackets [] for chords. Only use brackets for [Sections].
     
     ===LYRICS===
-    [Full lyrics content here. plain text.]
+    [Plain lyrics only, no chords]
+    [Full lyrics content here. plain text with section headers]
+
+    ===HINDI_LYRICS===
+    [Translate the FULL song into Hindi (Devanagari Script). This is MANDATORY.]
+    [ STRICTLY NO LATIN CHARACTERS / NO HINGLISH. ]
+    [ Example: Do NOT write "Zinda". Write "ज़िंदा". ]
+    [ Ensure every single word is in Devanagari script. ]
+    [If original is English, PROVIDE A LITERAL HINDI TRANSLATION.]
+    [Do NOT leave this empty.]
     `;
 
         console.log("Sending request to AI with PLAIN TEXT prompt (v5)...");
@@ -70,7 +95,8 @@ export async function POST(req: Request) {
                 { role: 'system', content: 'You are a precise data extractor. Output formatted plain text as requested.' },
                 { role: 'user', content: prompt }
             ],
-            model: isOpenRouter ? 'openai/gpt-4o-mini' : 'gpt-4o-mini',
+            // Use Perplexity Online model for OpenRouter to access the web for lyrics
+            model: isOpenRouter ? 'perplexity/sonar' : 'gpt-4o-mini',
             // no response_format needed for text
             temperature: 0.1,
             max_tokens: 4000,
@@ -88,39 +114,34 @@ export async function POST(req: Request) {
 
         console.log("Raw Content (first 200 chars):", content.substring(0, 200) + "...");
 
-        // Manual Parsing of Custom Format with Flexible Regex
+        // --- CUSTOM TEXT PARSER ---
         const getField = (key: string) => {
-            // Match "Key: Value" case insensitive
-            const regex = new RegExp(`${key}\\s*:\\s*(.*)`, 'i');
+            // Matches "Key: Value" case-insensitive
+            const regex = new RegExp(`${key}:\\s*(.+)`, 'i');
             const match = content.match(regex);
-            if (match && match[1]) return match[1].trim();
-            console.log(`getField: Key "${key}" not found.`);
-            return "";
+            return match ? match[1].trim() : '';
         };
 
         const getSection = (name: string) => {
-            // Match === NAME === with flexible spaces
-            const startRegex = new RegExp(`===\\s*${name}\\s*===`, 'i');
-            const startMatch = content.match(startRegex);
+            // Permissive Regex: matches === *NAME* ===
+            // This allows "=== HINDI LYRICS ===" or "===HINDI_LYRICS===" or "=== HINDI ==="
+            const regex = new RegExp(`===\\s*.*${name}.*\\s*===\\s*([\\s\\S]*?)(?=\\n==|$)`, 'i');
+            const match = content.match(regex);
 
-            if (!startMatch) {
-                console.log(`getSection: Start tag for "${name}" not found.`);
-                return "";
+            if (match && match[1]) {
+                return match[1].trim();
+            }
+            console.log(`getSection: No match found for section "${name}"`);
+
+            // Fallback for HINDI specifically if strict text match fails
+            if (name === "HINDI_LYRICS") {
+                // Try looking for just "HINDI" or "TRANSLATION" block if exact match fails
+                const fallbackRegex = /===\s*(HINDI|TRANSLATION)\s*===\s*([\s\S]*?)(?=\n==|$)/i;
+                const fallbackMatch = content.match(fallbackRegex);
+                if (fallbackMatch && fallbackMatch[2]) return fallbackMatch[2].trim();
             }
 
-            const startIndex = startMatch.index! + startMatch[0].length;
-            let sectionContent = content.substring(startIndex);
-
-            // Find next section header (=== ANY ===)
-            const nextSectionRegex = /===\s*[A-Z]+\s*===/i;
-            const nextMatch = sectionContent.match(nextSectionRegex);
-
-            if (nextMatch && nextMatch.index !== undefined) {
-                sectionContent = sectionContent.substring(0, nextMatch.index);
-            }
-
-            console.log(`getSection: Found section "${name}", length: ${sectionContent.trim().length}`);
-            return sectionContent.trim();
+            return "";
         };
 
         const songData = {
@@ -128,13 +149,14 @@ export async function POST(req: Request) {
             artist: getField("Artist"),
             key: getField("Key"),
             tempo: getField("Tempo"),
-            youtube_id: getField("YoutubeID") || getField("Youtube ID"), // Handle variation
+            youtube_id: getField("YoutubeID") || getField("Youtube ID"),
             img: getField("Image") || getField("Img"),
             chords: getSection("CHORDS"),
-            lyrics: getSection("LYRICS")
+            lyrics: getSection("LYRICS"),
+            hindi_lyrics: getSection("HINDI_LYRICS") // Extracted from ===HINDI_LYRICS===
         };
 
-        console.log("Parsed Song Data:", JSON.stringify(songData, null, 2)); // Debug log
+        console.log("Parsed Song Data:", JSON.stringify(songData, null, 2));
 
         return NextResponse.json(songData);
 
