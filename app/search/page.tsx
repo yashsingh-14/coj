@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search as SearchIcon, X, ArrowRight, TrendingUp, Music, Mic2, Disc, Command } from 'lucide-react';
 import Link from 'next/link';
-import { ALL_SONGS, Song } from '@/data/songs';
+import { supabase } from '@/lib/supabaseClient';
+import { Song } from '@/data/types';
 
 // Mock additional data for the "Mindblowing" feel if real data is limited
 const TRENDING_SEARCHES = ['Way Maker', 'Elevation Worship', 'Holy Forever', 'Goodness of God'];
@@ -11,19 +12,40 @@ const TRENDING_SEARCHES = ['Way Maker', 'Elevation Worship', 'Holy Forever', 'Go
 export default function SearchPage() {
     const [query, setQuery] = useState('');
     const [isFocused, setIsFocused] = useState(false);
-    const [results, setResults] = useState<Song[]>(ALL_SONGS);
+    const [results, setResults] = useState<Song[]>([]); // Start empty, fetch on query
+    const [loading, setLoading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // Debounce Search Effect
     useEffect(() => {
-        if (query.trim() === '') {
-            setResults([]);
-        } else {
-            const lowerQ = query.toLowerCase();
-            setResults(ALL_SONGS.filter(s =>
-                s.title.toLowerCase().includes(lowerQ) ||
-                s.artist.toLowerCase().includes(lowerQ)
-            ));
-        }
+        const fetchResults = async () => {
+            if (query.trim() === '') {
+                setResults([]);
+                return;
+            }
+
+            setLoading(true);
+            try {
+                // Search both English and Hindi titles, and Artists
+                // Using 'or' logic with ILIKE
+                const { data, error } = await supabase
+                    .from('songs')
+                    .select('*')
+                    .or(`title.ilike.%${query}%,artist.ilike.%${query}%,category.ilike.%${query}%`)
+                    .limit(20);
+
+                if (data) {
+                    setResults(data);
+                }
+            } catch (err) {
+                console.error("Search error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const timeoutId = setTimeout(fetchResults, 300); // 300ms debounce
+        return () => clearTimeout(timeoutId);
     }, [query]);
 
     // Auto-focus on mount
@@ -137,7 +159,7 @@ export default function SearchPage() {
                     <div className="mt-8 space-y-4 animate-fade-in-up">
                         <div className="flex items-center justify-between text-xs font-bold text-white/30 uppercase tracking-widest px-2 mb-2">
                             <span>Top Results</span>
-                            <span>{results.length} found</span>
+                            <span>{loading ? 'Searching...' : `${results.length} found`}</span>
                         </div>
 
                         {results.length > 0 ? results.map((song, i) => (
@@ -148,12 +170,10 @@ export default function SearchPage() {
                                 style={{ animationDelay: `${i * 50}ms` }}
                             >
                                 {/* Album Art Placeholder */}
-                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-2xl font-black text-[var(--brand)] shadow-lg group-hover:shadow-[var(--brand)]/20 transition-shadow overflow-hidden">
-                                    {song.img ? (
-                                        <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url('${song.img}')` }} />
-                                    ) : (
-                                        <span>{song.title.charAt(0)}</span>
-                                    )}
+                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-2xl font-black text-[var(--brand)] shadow-lg group-hover:shadow-[var(--brand)]/20 transition-shadow overflow-hidden relative">
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${song.img}')` }} />
+                                    {/* Fallback overlay if img load fails is handled by img usually, but here bg image. */}
+                                    {/* For robustness, let's assume valid img from DB or fallback upstream */}
                                 </div>
 
                                 <div className="flex-1 min-w-0">
@@ -166,10 +186,12 @@ export default function SearchPage() {
                                 </div>
                             </Link>
                         )) : (
-                            <div className="py-20 text-center">
-                                <p className="text-2xl font-bold text-white/20">No matching songs found.</p>
-                                <p className="text-white/10 mt-2">Try searching for generic terms like "Worship" or "Praise"</p>
-                            </div>
+                            !loading && (
+                                <div className="py-20 text-center">
+                                    <p className="text-2xl font-bold text-white/20">No matching songs found.</p>
+                                    <p className="text-white/10 mt-2">Try searching for generic terms like "Worship" or "Praise"</p>
+                                </div>
+                            )
                         )}
                     </div>
                 )}

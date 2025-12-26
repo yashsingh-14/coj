@@ -1,35 +1,54 @@
-'use client';
-
 import Link from 'next/link';
-import { useState, use } from 'react';
-import { ArrowLeft, PlayCircle, Star, Shuffle, Play, CheckCircle, Mic2, Users, Music } from 'lucide-react';
-import { ALL_SONGS } from '@/data/songs';
+import { ArrowLeft, PlayCircle, Star, Play, CheckCircle, Mic2, Users, Music } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
+import { ALL_ARTISTS } from '@/data/artists';
+import { supabase } from '@/lib/supabaseClient';
+import { Song } from '@/data/types';
 
-// Use React.use to unwrap params in Next.js 15
-export default function ArtistDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
-    const artistId = id || 'unknown-artist';
+export const revalidate = 0; // Ensure dynamic data fetching
 
-    // 1. Find the artist data (Mocking based on ID for now, real app would fetch)
-    // We try to find songs by this artist ID first to get real data
-    const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const artistSongs = ALL_SONGS.filter(s =>
-        normalize(s.artist).includes(normalize(artistId)) ||
-        normalize(artistId).includes(normalize(s.artist))
-    );
+export default async function ArtistDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: artistId } = await params;
 
-    // Fallback data if no match found (for demo resilience)
-    const displaySongs = artistSongs.length > 0 ? artistSongs : ALL_SONGS.slice(0, 5);
+    // 1. Try to find Artist Metadata from our curated list
+    const knownArtist = ALL_ARTISTS.find(a => a.id === artistId);
 
-    // Construct artist info from the first matching song or defaults
-    const artistName = artistSongs.length > 0 ? artistSongs[0].artist : artistId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    const artistImage = artistSongs.length > 0 ? artistSongs[0].img : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop';
+    // 2. Determine Artist Name for DB Search
+    // If not in our list, un-slugify the ID (e.g., "unknown-artist" -> "Unknown Artist")
+    const searchName = knownArtist
+        ? knownArtist.name
+        : artistId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    const stats = {
-        monthlyListeners: '2.4M',
-        followers: '850K',
-        totalStreams: '120M+'
+    // 3. Fetch Real Songs from Supabase for this artist
+    // We use ilike for case-insensitive partial matching to be safe
+    const { data: songs, error } = await supabase
+        .from('songs')
+        .select('*')
+        .ilike('artist', `%${searchName}%`)
+        .order('created_at', { ascending: false });
+
+    const displaySongs: Song[] = songs || [];
+
+    // 4. Construct Profile Info (Fallbacks if not in known list)
+    const artistName = knownArtist ? knownArtist.name : searchName;
+
+    // Image Logic: 
+    // - Use curated image if available
+    // - OR use the image of the first song found
+    // - OR fallback to generic
+    let artistImage = knownArtist?.image;
+    if (!artistImage && displaySongs.length > 0) {
+        artistImage = displaySongs[0].img;
+        // If song img is also missing/invalid, it will be handled by img onError or we can set default here
+    }
+    if (!artistImage || artistImage === 'null') {
+        artistImage = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop';
+    }
+
+    const artistStats = {
+        songs: displaySongs.length,
+        followers: knownArtist?.followers || 'N/A',
+        genre: knownArtist?.genre || 'Worship'
     };
 
     return (
@@ -38,9 +57,10 @@ export default function ArtistDetailPage({ params }: { params: Promise<{ id: str
             {/* HERO SECTION */}
             <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden flex items-end">
                 {/* Background */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center parallax-bg"
-                    style={{ backgroundImage: `url('${artistImage}')`, transform: 'scale(1.1)' }}
+                <img
+                    src={artistImage}
+                    alt={artistName}
+                    className="absolute inset-0 w-full h-full object-cover opacity-60"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/80 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#02000F]/50 to-transparent" />
@@ -56,8 +76,12 @@ export default function ArtistDetailPage({ params }: { params: Promise<{ id: str
                 <div className="container mx-auto px-6 pb-12 relative z-10">
                     <div className="flex flex-col md:flex-row items-end gap-8">
                         {/* Profile Image (Circle) */}
-                        <div className="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-[#02000F] shadow-2xl overflow-hidden relative hidden md:block">
-                            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${artistImage}')` }}></div>
+                        <div className="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-[#02000F] shadow-2xl overflow-hidden relative hidden md:block bg-[#111]">
+                            <img
+                                src={artistImage}
+                                alt={artistName}
+                                className="w-full h-full object-cover"
+                            />
                         </div>
 
                         <div className="flex-1">
@@ -70,21 +94,27 @@ export default function ArtistDetailPage({ params }: { params: Promise<{ id: str
 
                             <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-white/60 mb-8">
                                 <span className="flex items-center gap-2">
-                                    <Users className="w-4 h-4 text-white/40" /> {stats.monthlyListeners} Monthly Listeners
+                                    <Users className="w-4 h-4 text-white/40" /> {artistStats.followers} Listeners
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-white/20"></span>
                                 <span className="flex items-center gap-2">
-                                    <Music className="w-4 h-4 text-white/40" /> {displaySongs.length} Tracks
+                                    <Music className="w-4 h-4 text-white/40" /> {artistStats.songs} Tracks
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-white/20"></span>
+                                <span className="uppercase tracking-widest text-[10px] border border-white/10 px-2 py-0.5 rounded-full">
+                                    {artistStats.genre}
                                 </span>
                             </div>
 
                             <div className="flex gap-4">
-                                <Link
-                                    href={`/songs/${displaySongs[0].id}`}
-                                    className="px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold tracking-widest uppercase flex items-center gap-3 hover:scale-105 transition-transform shadow-lg shadow-orange-500/20"
-                                >
-                                    <Play className="w-5 h-5 fill-current" /> Play Latest
-                                </Link>
+                                {displaySongs.length > 0 && (
+                                    <Link
+                                        href={`/songs/${displaySongs[0].id}`}
+                                        className="px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold tracking-widest uppercase flex items-center gap-3 hover:scale-105 transition-transform shadow-lg shadow-orange-500/20"
+                                    >
+                                        <Play className="w-5 h-5 fill-current" /> Play Latest
+                                    </Link>
+                                )}
                                 <button className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md text-white font-bold tracking-widest uppercase transition-all">
                                     Follow
                                 </button>
@@ -100,70 +130,104 @@ export default function ArtistDetailPage({ params }: { params: Promise<{ id: str
                     <h2 className="text-3xl font-bold flex items-center gap-3">
                         Popular <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Tracks</span>
                     </h2>
-                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Top 5</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">
+                        {displaySongs.length} Songs Found
+                    </span>
                 </div>
 
-                <div className="grid gap-4">
-                    {displaySongs.map((song, i) => (
-                        <TiltCard key={i} className="w-full" max={5} scale={1.02}>
-                            <Link
-                                href={`/songs/${song.id}`}
-                                className="group flex items-center gap-6 p-4 md:p-6 rounded-3xl bg-[#0A0A0A] border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all duration-300 relative overflow-hidden cursor-pointer"
-                            >
-                                {/* Background Shine */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-                                <span className="text-2xl font-black text-white/10 w-8 text-center group-hover:text-amber-500 transition-colors">{i + 1}</span>
-
-                                <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
-                                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${song.img}')` }} />
-                                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <PlayCircle className="w-8 h-8 text-white" />
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 min-w-0">
-                                    <h3 className="text-xl font-bold text-white group-hover:text-amber-500 transition-colors truncate">{song.title}</h3>
-                                    <div className="flex items-center gap-2 text-xs text-white/40 uppercase tracking-widest mt-1">
-                                        {/* Removed plays and duration */}
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); /* Add to favorites logic */ }}
-                                    className="p-3 rounded-full hover:bg-white/10 text-white/30 hover:text-red-500 transition-colors"
+                {displaySongs.length === 0 ? (
+                    <div className="p-12 text-center border border-white/10 rounded-2xl bg-white/5">
+                        <h3 className="text-xl font-bold text-white/60">No songs found for this artist</h3>
+                        <p className="text-white/40 mt-2">Check back later or try checking another artist.</p>
+                    </div>
+                ) : (
+                    <div className="grid gap-4">
+                        {displaySongs.map((song, i) => (
+                            <TiltCard key={song.id} className="w-full" max={5} scale={1.02}>
+                                <Link
+                                    href={`/songs/${song.id}`}
+                                    className="group flex items-center gap-6 p-4 md:p-6 rounded-3xl bg-[#0A0A0A] border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all duration-300 relative overflow-hidden cursor-pointer"
                                 >
-                                    <Star className="w-5 h-5" />
-                                </button>
-                            </Link>
-                        </TiltCard>
-                    ))}
-                </div>
+                                    {/* Background Shine */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                                    <span className="text-2xl font-black text-white/10 w-8 text-center group-hover:text-amber-500 transition-colors">{i + 1}</span>
+
+                                    <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform bg-[#111]">
+                                        {/* Artist/Song thumb - prioritize YouTube, then Custom */}
+                                        <img
+                                            src={
+                                                (song.youtube_id && `https://img.youtube.com/vi/${song.youtube_id}/hqdefault.jpg`) ||
+                                                (song.youtubeId && `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`) ||
+                                                (song.img !== 'null' && song.img) ||
+                                                artistImage
+                                            }
+                                            alt={song.title}
+                                            className="w-full h-full object-cover"
+                                        // Fallback handled nicely if we used the helper method but here we inline for simplicity
+                                        />
+                                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <PlayCircle className="w-8 h-8 text-white" />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="text-xl font-bold text-white group-hover:text-amber-500 transition-colors truncate">{song.title}</h3>
+                                        <div className="flex items-center gap-2 text-xs text-white/40 uppercase tracking-widest mt-1">
+                                            <span>{song.category}</span>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        // onClick stops propagation handled by native Link, but for button here we might need client component wrapper for fav
+                                        // keeping it visual for now
+                                        className="p-3 rounded-full hover:bg-white/10 text-white/30 hover:text-red-500 transition-colors"
+                                    >
+                                        <Star className="w-5 h-5" />
+                                    </button>
+                                </Link>
+                            </TiltCard>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* DISCOGRAPHY / ALBUMS (Placeholder) */}
-            <div className="container mx-auto px-6 mt-20">
-                <h2 className="text-3xl font-bold mb-8">Latest Release</h2>
-                <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-[#111] to-[#050505] border border-white/5 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-[50%] h-full bg-gradient-to-l from-amber-500/10 to-transparent opacity-50 pointer-events-none" />
+            {displaySongs.length > 0 && (
+                <div className="container mx-auto px-6 mt-20">
+                    <h2 className="text-3xl font-bold mb-8">Latest Release</h2>
+                    <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-[#111] to-[#050505] border border-white/5 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-[50%] h-full bg-gradient-to-l from-amber-500/10 to-transparent opacity-50 pointer-events-none" />
 
-                    <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl shadow-2xl bg-cover bg-center shrink-0 group-hover:scale-105 transition-transform duration-500" style={{ backgroundImage: `url('${displaySongs[0]?.img}')` }} />
+                        <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl shadow-2xl bg-cover bg-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+                            <img
+                                src={
+                                    (displaySongs[0].youtube_id && `https://img.youtube.com/vi/${displaySongs[0].youtube_id}/hqdefault.jpg`) ||
+                                    (displaySongs[0].youtubeId && `https://img.youtube.com/vi/${displaySongs[0].youtubeId}/hqdefault.jpg`) ||
+                                    (displaySongs[0].img !== 'null' && displaySongs[0].img) ||
+                                    artistImage
+                                }
+                                className="w-full h-full object-cover"
+                                alt="Latest"
+                            />
+                        </div>
 
-                    <div className="flex-1 text-center md:text-left z-10">
-                        <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest mb-4 text-amber-500">New Album</span>
-                        <h3 className="text-3xl md:text-5xl font-black italic tracking-tighter mb-4">Live From Eden</h3>
-                        <p className="text-white/60 max-w-xl mb-8 leading-relaxed">Experience a night of raw, unfiltered worship captured live. Featuring "{displaySongs[0]?.title}" and more anointing-filled tracks.</p>
-                        <div className="flex gap-4 justify-center md:justify-start">
-                            <button className="px-6 py-3 rounded-full bg-white text-black font-bold text-sm tracking-widest uppercase hover:bg-amber-500 transition-colors">
-                                Listen Now
-                            </button>
-                            <button className="px-6 py-3 rounded-full border border-white/20 hover:bg-white/5 text-sm font-bold tracking-widest uppercase transition-colors">
-                                Save
-                            </button>
+                        <div className="flex-1 text-center md:text-left z-10">
+                            <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest mb-4 text-amber-500">Featured Track</span>
+                            <h3 className="text-3xl md:text-6xl font-black italic tracking-tighter mb-4">{displaySongs[0].title}</h3>
+                            <p className="text-white/60 max-w-xl mb-8 leading-relaxed">Experience the powerful sound of {artistName}. Listen to their latest featured track "{displaySongs[0].title}" now.</p>
+                            <div className="flex gap-4 justify-center md:justify-start">
+                                <Link
+                                    href={`/songs/${displaySongs[0].id}`}
+                                    className="px-6 py-3 rounded-full bg-white text-black font-bold text-sm tracking-widest uppercase hover:bg-amber-500 transition-colors"
+                                >
+                                    Listen Now
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
 
         </div>
     );

@@ -100,36 +100,60 @@ export const ALL_ARTISTS: Artist[] = [
 
     // --- INDIAN & HINDI ARTISTS ---
     {
-        id: 'shelly-reddy',
-        name: 'Shelly Reddy',
-        image: 'https://images.unsplash.com/photo-1507838153414-b4b713384ebd?q=80&w=2070&auto=format&fit=crop',
-        songs: 15,
-        followers: '450K',
-        genre: 'Hindi Worship'
+        id: 'sheldon-bangera',
+        name: 'Sheldon Bangera',
+        image: 'https://img.youtube.com/vi/X0o3-q3aX7w/hqdefault.jpg',
+        songs: 28,
+        followers: '400K',
+        genre: 'Indian Fusion / Worship'
     },
     {
-        id: 'amit-kamble',
-        name: 'Amit Kamble',
-        image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop',
-        songs: 22,
-        followers: '600K',
-        genre: 'Hindi Gospel'
+        id: 'yeshua-band',
+        name: 'Yeshua Band',
+        image: 'https://img.youtube.com/vi/2n-pT3M0N90/hqdefault.jpg',
+        songs: 45,
+        followers: '750K',
+        genre: 'Hindi Rock / Worship'
     },
     {
         id: 'bridge-music',
         name: 'Bridge Music',
-        image: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=2070&auto=format&fit=crop',
+        image: 'https://img.youtube.com/vi/nPV9Fvo59L0/hqdefault.jpg',
         songs: 30,
         followers: '350K',
         genre: 'Hindi / Contemporary'
     },
     {
-        id: 'yeshua-band',
-        name: 'Yeshua Band',
-        image: 'https://images.unsplash.com/photo-1525926477800-7a3be58ab299?q=80&w=2070&auto=format&fit=crop',
-        songs: 45,
-        followers: '750K',
-        genre: 'Hindi Rock / Worship'
+        id: 'amit-kamble',
+        name: 'Amit Kamble',
+        image: 'https://img.youtube.com/vi/5rYFjX1-KzE/hqdefault.jpg',
+        songs: 22,
+        followers: '600K',
+        genre: 'Hindi Gospel'
+    },
+    {
+        id: 'shelley-reddy',
+        name: 'Shelley Reddy',
+        image: 'https://img.youtube.com/vi/6K_p24s0z3w/hqdefault.jpg',
+        songs: 15,
+        followers: '450K',
+        genre: 'Hindi Worship'
+    },
+    {
+        id: 'anil-kant',
+        name: 'Anil Kant',
+        image: 'https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=800&auto=format&fit=crop',
+        songs: 40,
+        followers: '500K',
+        genre: 'Gospel / Classical'
+    },
+    {
+        id: 'one-tribe',
+        name: 'One Tribe',
+        image: 'https://img.youtube.com/vi/h4u7q2d40rM/hqdefault.jpg',
+        songs: 12,
+        followers: '150K',
+        genre: 'Hindi Worship / Group'
     },
     {
         id: 'zion-music',
@@ -138,14 +162,6 @@ export const ALL_ARTISTS: Artist[] = [
         songs: 18,
         followers: '200K',
         genre: 'Hindi Acapella / Pop'
-    },
-    {
-        id: 'sheldon-bangera',
-        name: 'Sheldon Bangera',
-        image: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=2070&auto=format&fit=crop',
-        songs: 28,
-        followers: '400K',
-        genre: 'Indian Fusion / Worship'
     },
     {
         id: 'joseph-raj-alladi',

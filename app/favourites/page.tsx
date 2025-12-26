@@ -1,13 +1,18 @@
-'use client';
-
 import { Heart, PlayCircle, ArrowLeft, MoreVertical, Clock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import TiltCard from '@/components/ui/TiltCard';
-import { ALL_SONGS } from '@/data/songs';
+import { supabase } from '@/lib/supabaseClient';
 
-export default function FavouritesPage() {
-    // Mock Favourites: Select first 5 songs from ALL_SONGS to simulate a liked list
-    const favourites = ALL_SONGS.slice(0, 5);
+export const dynamic = 'force-dynamic';
+
+export default async function FavouritesPage() {
+    // Mock Favourites: Select first 5 songs from database to simulate a liked list
+    const { data: favouritesData } = await supabase
+        .from('songs')
+        .select('*')
+        .limit(5);
+
+    const favourites = favouritesData || [];
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32 overflow-hidden relative">

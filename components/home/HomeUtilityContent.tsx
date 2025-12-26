@@ -11,7 +11,6 @@ import Logo from '../ui/Logo';
 import TiltCard from '../ui/TiltCard';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ALL_SONGS } from '@/data/songs';
 import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
 
@@ -304,16 +303,17 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
 
                 <div className="flex gap-8 overflow-x-auto pb-12 no-scrollbar pr-6 snap-x snap-mandatory">
                     {[
+                        { name: 'Sheldon Bangera', img: 'https://img.youtube.com/vi/X0o3-q3aX7w/maxresdefault.jpg' },
+                        { name: 'Yeshua Band', img: 'https://img.youtube.com/vi/2n-pT3M0N90/maxresdefault.jpg' },
+                        { name: 'Bridge Music', img: 'https://img.youtube.com/vi/nPV9Fvo59L0/hqdefault.jpg' },
+                        { name: 'Amit Kamble', img: 'https://img.youtube.com/vi/5rYFjX1-KzE/hqdefault.jpg' },
+                        { name: 'One Tribe', img: 'https://img.youtube.com/vi/h4u7q2d40rM/hqdefault.jpg' },
+                        { name: 'Shelley Reddy', img: 'https://img.youtube.com/vi/6K_p24s0z3w/hqdefault.jpg' },
+                        { name: 'Anil Kant', img: 'https://images.unsplash.com/photo-1542596594-649edbc13630?q=80&w=800&auto=format&fit=crop' },
                         { name: 'Hillsong', img: 'https://images.unsplash.com/photo-1459749411177-33481156047b?q=80&w=800&auto=format&fit=crop' },
                         { name: 'Bethel', img: 'https://images.unsplash.com/photo-1516280440614-6697288d5d38?q=80&w=800&auto=format&fit=crop' },
                         { name: 'Elevation', img: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'Maverick', img: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'Sinach', img: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'Kari Jobe', img: 'https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'Casting Crowns', img: 'https://images.unsplash.com/photo-1496293455970-f8581aae0e3c?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'MercyMe', img: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'Chris Tomlin', img: 'https://images.unsplash.com/photo-1621360841012-3f62afa2e9c2?q=80&w=800&auto=format&fit=crop' },
-                        { name: 'Phil Wickham', img: 'https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?q=80&w=800&auto=format&fit=crop' }
+                        { name: 'Maverick', img: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=800&auto=format&fit=crop' }
                     ].map((artist, i) => (
                         <div key={i} className="min-w-[280px] snap-center group relative cursor-pointer">
                             <TiltCard className="w-full h-[400px]" max={12} scale={1.05}>

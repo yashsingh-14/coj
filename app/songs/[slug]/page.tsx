@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { supabase } from '@/lib/supabaseClient';
 
+
 // Ensure dynamic rendering for instant updates
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,30 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         if (!song) {
             const { data: backup } = await supabase.from('songs').select('*').ilike('title', `%${titleQuery}%`).limit(1).single();
             song = backup;
+        }
+
+        // 4. FINAL FALLBACK: Static Data (ALL_SONGS)
+        if (!song) {
+            const staticSong = ALL_SONGS.find(s =>
+                s.id === slug ||
+                s.title.toLowerCase() === titleQuery.toLowerCase() ||
+                s.title.toLowerCase().includes(titleQuery.toLowerCase())
+            );
+            if (staticSong) {
+                song = {
+                    id: staticSong.id,
+                    title: staticSong.title,
+                    artist: staticSong.artist,
+                    category: staticSong.category,
+                    key: staticSong.key,
+                    tempo: staticSong.tempo,
+                    lyrics: staticSong.lyrics,
+                    hindi_lyrics: staticSong.hindiLyrics,
+                    chords: staticSong.chords,
+                    youtube_id: staticSong.youtubeId,
+                    img: staticSong.img
+                };
+            }
         }
     }
 
@@ -69,6 +94,30 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
             console.log(`Trying wildcard search for: ${titleQuery}`);
             const { data: backup } = await supabase.from('songs').select('*').ilike('title', `%${titleQuery}%`).limit(1).single();
             song = backup;
+        }
+
+        // 4. FINAL FALLBACK: Static Data (ALL_SONGS)
+        if (!song) {
+            const staticSong = ALL_SONGS.find(s =>
+                s.id === slug ||
+                s.title.toLowerCase() === titleQuery.toLowerCase() ||
+                s.title.toLowerCase().includes(titleQuery.toLowerCase())
+            );
+            if (staticSong) {
+                song = {
+                    id: staticSong.id,
+                    title: staticSong.title,
+                    artist: staticSong.artist,
+                    category: staticSong.category,
+                    key: staticSong.key,
+                    tempo: staticSong.tempo,
+                    lyrics: staticSong.lyrics,
+                    hindi_lyrics: staticSong.hindiLyrics,
+                    chords: staticSong.chords,
+                    youtube_id: staticSong.youtubeId,
+                    img: staticSong.img
+                };
+            }
         }
     }
 

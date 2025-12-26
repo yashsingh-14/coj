@@ -1,14 +1,19 @@
-'use client';
-
 import Link from 'next/link';
 import { ArrowLeft, Clock, ChevronRight } from 'lucide-react';
-import { ALL_SONGS } from '@/data/songs';
 import TiltCard from '@/components/ui/TiltCard';
+import { supabase } from '@/lib/supabaseClient';
 
-export default function NewArrivalsPage() {
-    // For "New Arrivals", we'll just take the last 12 songs from the list for demo purposes
-    // In a real app, you'd sort by date
-    const newSongs = [...ALL_SONGS].reverse().slice(0, 12);
+export const dynamic = 'force-dynamic';
+
+export default async function NewArrivalsPage() {
+    // Fetch newest songs from database
+    const { data: newSongs } = await supabase
+        .from('songs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(12);
+
+    const songs = newSongs || [];
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32">
@@ -27,7 +32,7 @@ export default function NewArrivalsPage() {
 
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {newSongs.map((song, i) => (
+                {songs.map((song, i) => (
                     <TiltCard key={song.id} className="h-full min-h-[300px]" max={15} scale={1.05}>
                         <div className="relative h-full group">
                             <Link

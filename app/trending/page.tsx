@@ -1,14 +1,19 @@
-'use client';
-
 import Link from 'next/link';
 import { ArrowLeft, TrendingUp, Music2 } from 'lucide-react';
-import { ALL_SONGS } from '@/data/songs';
 import TiltCard from '@/components/ui/TiltCard';
+import { supabase } from '@/lib/supabaseClient';
 
-export default function TrendingPage() {
-    // Sort by plays (parsing '2.4M', '800k' etc is complex, so we'll just take a slice for now to simulate a curated list)
-    // In a real app, you would parse and sort `song.plays`.
-    const trendingSongs = ALL_SONGS.slice(0, 20); // First 20 as trending
+export const dynamic = 'force-dynamic';
+
+export default async function TrendingPage() {
+    // Fetch trending songs from database (ordered by created_at for now)
+    const { data: trendingSongs } = await supabase
+        .from('songs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+    const songs = trendingSongs || [];
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32">
@@ -27,7 +32,7 @@ export default function TrendingPage() {
 
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {trendingSongs.map((song, i) => (
+                {songs.map((song, i) => (
                     <TiltCard key={song.id} className="h-full min-h-[300px]" max={15} scale={1.05}>
                         <div className="relative h-full group">
                             <Link
