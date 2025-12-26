@@ -3,15 +3,20 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Share2, Heart, Calendar, Check } from 'lucide-react';
+import { getVerseOfTheDay } from '@/lib/getVerseOfTheDay';
 
 export default function DevotionalPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [showCopied, setShowCopied] = useState(false);
 
+    // Get today's verse
+    const todaysVerse = getVerseOfTheDay();
+    const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
     const handleShare = async () => {
         const shareData = {
-            title: "God's Plan for Your Future",
-            text: "Read this daily devotional from Call of Jesus Ministries: God's Plan for Your Future - Jeremiah 29:11",
+            title: `Verse of the Day - ${todaysVerse.reference}`,
+            text: `Read this daily devotional from Call of Jesus Ministries: ${todaysVerse.text} - ${todaysVerse.reference}`,
             url: window.location.href,
         };
 
@@ -81,13 +86,13 @@ export default function DevotionalPage() {
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-6">
                         <Calendar className="w-4 h-4 text-amber-500" />
-                        <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">December 20, 2025</span>
+                        <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">{today}</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-serif italic text-white mb-6 leading-tight">
-                        God&apos;s Plan for <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-500 to-amber-200">Your Future</span>
+                        Daily <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-500 to-amber-200">Devotional</span>
                     </h1>
                     <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                        Embracing the promise that your future is held securely in the hands of the Almighty.
+                        Today's verse brings encouragement and hope for your journey.
                     </p>
                 </div>
 
@@ -97,10 +102,10 @@ export default function DevotionalPage() {
 
                     <div className="relative z-10 text-center">
                         <h2 className="text-3xl md:text-5xl font-serif leading-tight text-white mb-8">
-                            &quot;For I know the plans I have for you,&quot; declares the Lord, &quot;plans to prosper you and not to harm you, plans to give you hope and a future.&quot;
+                            &quot;{todaysVerse.text}&quot;
                         </h2>
                         <div className="inline-block border-t border-b border-white/10 py-3 px-8">
-                            <span className="text-amber-500 font-bold tracking-[0.3em] uppercase">Jeremiah 29:11</span>
+                            <span className="text-amber-500 font-bold tracking-[0.3em] uppercase">{todaysVerse.reference}</span>
                         </div>
                     </div>
 
@@ -112,15 +117,12 @@ export default function DevotionalPage() {
                 {/* Reflection */}
                 <div className="prose prose-lg prose-invert mx-auto">
                     <p className="text-xl text-white/90 leading-relaxed mb-8 first-letter:text-5xl first-letter:font-serif first-letter:mr-3 first-letter:float-left first-letter:text-amber-500">
-                        Life often takes turns we don't expect. In moments of uncertainty, it's easy to feel lost or forgotten. But this verse serves as a powerful anchor for our souls. It reminds us that our lives are not a series of random events, but a carefully crafted narrative written by the Creator himself.
-                    </p>
-                    <p className="text-white/70 leading-relaxed mb-8">
-                        When God says He knows the plans He has for you, it implies intimacy and attention into detail. He isn't just watching from a distance; He is actively involved in the architecture of your life. His plans are not for your destruction but for your construction—to build you up, to prosper you spiritually, and to lead you to an expected end.
+                        {todaysVerse.reflection}
                     </p>
                     <div className="p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-2xl my-10">
                         <h3 className="text-amber-500 font-bold mb-2 uppercase tracking-wide text-sm">Prayer for Today</h3>
                         <p className="text-white/90 italic">
-                            &quot;Lord, I trust in Your plans for me. Even when I cannot see the path ahead, I know You are guiding my steps. Replace my worry with hope and my fear with faith. Thank you for holding my future in Your hands. Amen.&quot;
+                            &quot;{todaysVerse.prayer}&quot;
                         </p>
                     </div>
                 </div>

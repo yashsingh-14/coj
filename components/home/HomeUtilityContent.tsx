@@ -13,6 +13,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
+import { getVerseOfTheDay } from '@/lib/getVerseOfTheDay';
+import ShareButton from '@/components/ui/ShareButton';
+import NotificationPrompt from '@/components/ui/NotificationPrompt';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,6 +24,10 @@ import { useAppStore } from '@/store/useAppStore';
 export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: { trendingSongs: Song[]; madeForYouSongs: Song[] }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { currentUser, isAuthenticated, logout } = useAppStore();
+
+
+    // Get today's verse
+    const todaysVerse = getVerseOfTheDay();
 
     // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
     // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
@@ -194,23 +201,24 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
 
                             <h2 className="-mt-12 md:-mt-16 text-lg md:text-4xl lg:text-6xl font-serif italic leading-tight mb-6 md:mb-10 drop-shadow-2xl px-2 md:px-4 relative verse-text-shine">
                                 <span className="absolute -top-6 md:-top-10 left-0 text-[60px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
-                                For I know the plans I have for you, plans to prosper you and not to harm you.
+                                {todaysVerse.text}
                                 <span className="absolute -bottom-12 md:-bottom-20 right-0 text-[60px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                             </h2>
 
                             <div className="flex flex-col items-center gap-4 md:gap-8 translate-z-10">
                                 <div className="flex items-center gap-4">
                                     <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
-                                    <span className="text-[var(--chord)] font-bold tracking-[0.4em] uppercase text-sm">Jeremiah 29:11</span>
+                                    <span className="text-[var(--chord)] font-bold tracking-[0.4em] uppercase text-sm">{todaysVerse.reference}</span>
                                     <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
                                 </div>
 
-                                <Link href="/devotional" className="group relative px-6 md:px-10 py-3 md:py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block">
+                                <Link href="/devotional" className="group relative px-6 md:px-10 py-3 md:py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block translate-z-10">
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out"></div>
                                     <span className="relative text-white font-bold tracking-widest text-sm flex items-center gap-3">
                                         READ DEVOTIONAL <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                     </span>
                                 </Link>
+                                <NotificationPrompt />
                             </div>
                         </div>
 
