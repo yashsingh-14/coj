@@ -14,8 +14,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "COJ | Call of Jesus Ministries",
-  description: "Worship • Word • Praise",
+  title: {
+    default: "COJ | Call of Jesus Ministries - Christian Worship Songs & Lyrics",
+    template: "%s | COJ Worship"
+  },
+  description: "Discover a vast collection of Christian worship songs, lyrics, and chords in English and Hindi. Join Call of Jesus Ministries in praise and worship.",
+  keywords: ["Christian songs", "Worship lyrics", "Hindi worship songs", "Christian chords", "Gospel lyrics", "COJ Ministries", "Call of Jesus", "Jesus songs", "Christian music"],
+  authors: [{ name: "Call of Jesus Ministries" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://coj.org.in",
+    siteName: "COJ Worship",
+    title: "COJ | Call of Jesus Ministries - Worship & Word",
+    description: "Premium destination for Christian worship lyrics and chords.",
+  },
   verification: {
     google: "LaBYax9Fpd8uHkpERTFziIsQANIBxAMaXWQw5r1Dz3I",
   },

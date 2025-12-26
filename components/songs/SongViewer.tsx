@@ -198,12 +198,12 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                                     <div className={`flex flex-col group ${mainText.trim().length > 0 ? 'mr-0' : 'mr-3'}`}>
                                         <div className="h-6 mb-1">
                                             {transposedChord ? (
-                                                <span className="text-amber-500 font-bold font-mono text-base block whitespace-nowrap">
+                                                <span className="text-amber-500 font-bold font-mono text-xs md:text-base block whitespace-nowrap">
                                                     {transposedChord}
                                                 </span>
                                             ) : null}
                                         </div>
-                                        <span className="text-white/90 whitespace-pre font-medium text-lg leading-none block min-h-[1em]">
+                                        <span className="text-white/90 whitespace-pre font-medium text-sm md:text-lg leading-none block min-h-[1em]">
                                             {mainText || (mainText.trim().length > 0 ? "\u00A0" : "")}
                                         </span>
                                     </div>
@@ -218,7 +218,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                                             if (isTokenChord && tokenTransposed) {
                                                 return (
                                                     <div key={tIdx} className="flex flex-col mr-3 relative top-[-0.25rem]">
-                                                        <span className="text-amber-500 font-bold font-mono text-base block whitespace-nowrap bg-[#050505]/80 px-1 rounded border border-neutral-800">
+                                                        <span className="text-amber-500 font-bold font-mono text-xs md:text-base block whitespace-nowrap bg-[#050505]/80 px-1 rounded border border-neutral-800">
                                                             {tokenTransposed}
                                                         </span>
                                                         {/* No text under bare chords usually, or it flows next to it */}
@@ -226,7 +226,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                                                 );
                                             } else {
                                                 return (
-                                                    <span key={tIdx} className="text-white/90 whitespace-pre font-medium text-lg leading-none block min-h-[1em]">
+                                                    <span key={tIdx} className="text-white/90 whitespace-pre font-medium text-sm md:text-lg leading-none block min-h-[1em]">
                                                         {token}
                                                     </span>
                                                 );
@@ -379,7 +379,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                     {chords && (
                         <section>
                             <h2 className="text-2xl font-bold text-amber-500 mb-6 border-b border-white/10 pb-2">Chords</h2>
-                            <div className="bg-white/5 rounded-[2rem] p-5 md:p-10 border border-white/5 overflow-x-hidden">
+                            <div className="bg-white/5 rounded-[2rem] p-4 md:p-10 border border-white/5 overflow-x-auto pb-8">
                                 {renderChords()}
                             </div>
                         </section>

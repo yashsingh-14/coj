@@ -68,6 +68,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         description: isHindi
             ? `Read ${song.title} Christian worship song lyrics with chords in Hindi. Perfect for church worship, prayer, and guitar practice.`
             : `Read ${song.title} worship song lyrics with chords, key, and structure for church worship. Original Key: ${song.key || 'N/A'}.`,
+        keywords: [
+            song.title,
+            `${song.title} lyrics`,
+            `${song.title} chords`,
+            song.artist,
+            "Christian worship",
+            isHindi ? "Hindi Christian Song" : "English Christian Song",
+            "Lyrics and Chords"
+        ]
     };
 }
 
