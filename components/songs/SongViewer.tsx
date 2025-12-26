@@ -103,7 +103,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
     // Render Logic for Lyrics (Pure Text)
     const renderLyrics = () => {
         return lyrics.split('\n').map((line, index) => (
-            <p key={index} className="mb-6 leading-relaxed text-white/90 whitespace-pre-wrap font-medium tracking-wide" style={{ fontSize: `${fontSize}px` }}>
+            <p key={index} className="mb-6 leading-relaxed text-white/90 whitespace-pre-wrap font-medium tracking-wide break-words" style={{ fontSize: `${fontSize}px` }}>
                 {line}
             </p>
         ));
@@ -113,7 +113,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
     const renderHindiLyrics = () => {
         if (!hindiLyrics) return null;
         return hindiLyrics.split('\n').map((line, index) => (
-            <p key={index} className="mb-6 leading-loose text-white/90 whitespace-pre-wrap font-serif tracking-wide" style={{ fontSize: `${fontSize + 4}px` }}>
+            <p key={index} className="mb-6 leading-loose text-white/90 whitespace-pre-wrap font-serif tracking-wide break-words" style={{ fontSize: `${fontSize + 4}px` }}>
                 {line}
             </p>
         ));
@@ -195,7 +195,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
                                 {isChord ? (
                                     // Case A: Bracketed Chord (Stacked or Isolated)
-                                    <div className={`flex flex-col group ${mainText.trim().length > 0 ? 'mr-0' : 'mr-3'} min-w-[max-content]`}>
+                                    <div className={`flex flex-col group ${mainText.trim().length > 0 ? 'mr-0' : 'mr-3'}`}>
                                         <div className="h-6 mb-1">
                                             {transposedChord ? (
                                                 <span className="text-amber-500 font-bold font-mono text-base block whitespace-nowrap">
@@ -360,7 +360,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                     {/* Lyrics Section */}
                     <section>
                         <h2 className="text-2xl font-bold text-amber-500 mb-6 border-b border-white/10 pb-2">Lyrics</h2>
-                        <div className="bg-white/5 rounded-[2rem] p-8 md:p-10 border border-white/5">
+                        <div className="bg-white/5 rounded-[2rem] p-5 md:p-10 border border-white/5">
                             {renderLyrics()}
                         </div>
                     </section>
@@ -369,7 +369,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                     {hindiLyrics && (
                         <section>
                             <h2 className="text-2xl font-bold text-amber-500 mb-6 border-b border-white/10 pb-2">Hindi Lyrics (Devanagari)</h2>
-                            <div className="bg-white/5 rounded-[2rem] p-8 md:p-10 border border-white/5">
+                            <div className="bg-white/5 rounded-[2rem] p-5 md:p-10 border border-white/5">
                                 {renderHindiLyrics()}
                             </div>
                         </section>
@@ -379,7 +379,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                     {chords && (
                         <section>
                             <h2 className="text-2xl font-bold text-amber-500 mb-6 border-b border-white/10 pb-2">Chords</h2>
-                            <div className="bg-white/5 rounded-[2rem] p-8 md:p-10 border border-white/5 overflow-x-auto">
+                            <div className="bg-white/5 rounded-[2rem] p-5 md:p-10 border border-white/5 overflow-x-hidden">
                                 {renderChords()}
                             </div>
                         </section>
