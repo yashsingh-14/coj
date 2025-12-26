@@ -55,7 +55,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
         <div className="min-h-screen bg-[#02000F] text-white pb-32">
 
             {/* HERO SECTION */}
-            <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden flex items-end">
+            <div className="relative h-[50vh] md:h-[60vh] min-h-[400px] md:min-h-[500px] w-full overflow-hidden flex items-end">
                 {/* Background */}
                 <img
                     src={artistImage}
@@ -73,8 +73,8 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 </div>
 
                 {/* Content */}
-                <div className="container mx-auto px-6 pb-12 relative z-10">
-                    <div className="flex flex-col md:flex-row items-end gap-8">
+                <div className="container mx-auto px-4 md:px-6 pb-8 md:pb-12 relative z-10">
+                    <div className="flex flex-col md:flex-row items-end gap-6 md:gap-8">
                         {/* Profile Image (Circle) */}
                         <div className="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-[#02000F] shadow-2xl overflow-hidden relative hidden md:block bg-[#111]">
                             <img
@@ -90,9 +90,9 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                                     <CheckCircle className="w-3 h-3" /> Verified Artist
                                 </span>
                             </div>
-                            <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white drop-shadow-2xl mb-4 leading-none">{artistName}</h1>
+                            <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter text-white drop-shadow-2xl mb-4 leading-none">{artistName}</h1>
 
-                            <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-white/60 mb-8">
+                            <div className="flex flex-wrap items-center gap-3 md:gap-6 text-xs md:text-sm font-medium text-white/60 mb-6 md:mb-8">
                                 <span className="flex items-center gap-2">
                                     <Users className="w-4 h-4 text-white/40" /> {artistStats.followers} Listeners
                                 </span>

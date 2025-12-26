@@ -16,28 +16,28 @@ export default async function NewArrivalsPage() {
     const songs = newSongs || [];
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32">
+        <div className="min-h-screen bg-[#02000F] text-white p-4 md:p-6 pb-24 md:pb-32">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-10 pt-4">
+            <div className="flex items-center gap-3 md:gap-4 mb-8 md:mb-10 pt-2 md:pt-4">
                 <Link href="/" className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors group border border-white/5">
                     <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
                 </Link>
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-500 drop-shadow-lg">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-500 drop-shadow-lg">
                         New Arrivals
                     </h1>
-                    <p className="text-white/60 font-medium tracking-wide">Fresh sounds of worship added this week</p>
+                    <p className="text-sm md:text-base text-white/60 font-medium tracking-wide">Fresh sounds of worship added this week</p>
                 </div>
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 {songs.map((song, i) => (
-                    <TiltCard key={song.id} className="h-full min-h-[300px]" max={15} scale={1.05}>
+                    <TiltCard key={song.id} className="h-full min-h-[280px] md:min-h-[300px]" max={15} scale={1.05}>
                         <div className="relative h-full group">
                             <Link
                                 href={`/songs/${song.id}`}
-                                className="relative flex flex-col justify-end p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors shadow-2xl"
+                                className="relative flex flex-col justify-end p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors shadow-2xl"
                             >
                                 {/* Album Art Background */}
                                 <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.3] group-hover:grayscale-0" style={{ backgroundImage: `url('${song.img}')` }}></div>

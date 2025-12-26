@@ -57,14 +57,14 @@ export default function SearchPage() {
         <div className="min-h-screen bg-[#02000F] text-white selection:bg-[var(--brand)] selection:text-white pb-32 overflow-hidden relative">
 
             {/* Ambient Background Glow */}
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-purple-900/40 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[var(--brand)]/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+            <div className="absolute top-[-20%] left-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-purple-900/40 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
+            <div className="absolute bottom-[-10%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[var(--brand)]/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
 
             {/* Main Container */}
-            <div className="max-w-4xl mx-auto px-6 py-12 relative z-10 flex flex-col min-h-screen">
+            <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 relative z-10 flex flex-col min-h-screen">
 
                 {/* Header / Close */}
-                <div className="flex justify-end mb-8">
+                <div className="flex justify-end mb-6 md:mb-8">
                     <Link href="/" className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-colors">
                         <X className="w-6 h-6" />
                     </Link>
@@ -76,8 +76,8 @@ export default function SearchPage() {
                         {/* Glow effect behind input */}
                         <div className={`absolute -inset-1 bg-gradient-to-r from-[var(--brand)] to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 ${isFocused ? 'opacity-50' : ''}`}></div>
 
-                        <div className="relative bg-[#0A0A0A] rounded-2xl flex items-center p-6 border border-white/10 shadow-2xl">
-                            <SearchIcon className={`w-8 h-8 mr-4 transition-colors ${isFocused ? 'text-[var(--brand)]' : 'text-white/30'}`} />
+                        <div className="relative bg-[#0A0A0A] rounded-xl md:rounded-2xl flex items-center p-4 md:p-6 border border-white/10 shadow-2xl">
+                            <SearchIcon className={`w-6 md:w-8 h-6 md:h-8 mr-3 md:mr-4 transition-colors ${isFocused ? 'text-[var(--brand)]' : 'text-white/30'}`} />
                             <input
                                 ref={inputRef}
                                 type="text"
@@ -86,7 +86,7 @@ export default function SearchPage() {
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => setIsFocused(false)}
                                 placeholder="Search for worship songs..."
-                                className="w-full bg-transparent text-2xl md:text-4xl font-bold text-white placeholder:text-white/20 focus:outline-none placeholder:font-bold"
+                                className="w-full bg-transparent text-xl md:text-3xl lg:text-4xl font-bold text-white placeholder:text-white/20 focus:outline-none placeholder:font-bold"
                             />
                             {query && (
                                 <button onClick={() => setQuery('')} className="p-2 text-white/30 hover:text-white transition-colors">

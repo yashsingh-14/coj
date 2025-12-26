@@ -95,8 +95,8 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
 
             {/* CATEGORIES - HOLOGRAPHIC TILES (UPDATED: GAP-16) */}
             <section className="px-5 mb-14 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                {/* Increased to gap-16 for maximum breathing room */}
-                <div className="flex gap-16 overflow-x-auto no-scrollbar pb-16 justify-start md:justify-center px-4 pt-8">
+                {/* Responsive gap: smaller on mobile, larger on desktop */}
+                <div className="flex gap-6 md:gap-12 lg:gap-16 overflow-x-auto no-scrollbar pb-12 md:pb-16 justify-start md:justify-center px-2 md:px-4 pt-6 md:pt-8">
                     {[
                         { name: 'Praise', icon: Sparkles, from: 'from-orange-400', to: 'to-red-600', shadow: 'shadow-orange-500/30' },
                         { name: 'Worship', icon: Heart, from: 'from-purple-500', to: 'to-indigo-600', shadow: 'shadow-purple-500/30' },
@@ -107,7 +107,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                     ].map((cat, i) => {
                         const Icon = cat.icon;
                         return (
-                            <TiltCard key={i} className="min-w-[150px] h-[150px]" max={20} scale={1.15}>
+                            <TiltCard key={i} className="min-w-[110px] md:min-w-[140px] h-[110px] md:h-[150px]" max={20} scale={1.15}>
                                 <div className="relative w-full h-full group">
 
                                     {/* SUPER GLOW (The "Blow" Effect) 
@@ -164,7 +164,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
             {/* VERSE OF THE DAY - ULTIMATE PREMIUM (GOLD & GLASS) */}
             <section className="mb-24 section-anim relative px-4 md:px-6 py-8 opacity-0 translate-y-8 transition-all duration-700 ease-out">
                 <TiltCard className="w-full" max={8} scale={1.02}>
-                    <div className="relative rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl shadow-black/50 pt-12 pb-24 px-6">
+                    <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl shadow-black/50 pt-8 md:pt-12 pb-16 md:pb-24 px-4 md:px-6">
                         {/* Parallax Background - Cinematic Slow Pan */}
                         <div className="absolute inset-0 bg-cover bg-center scale-125 group-hover:scale-110 transition-transform duration-[30s] ease-linear" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507646870319-5bb8e411b742?q=80&w=2070&auto=format&fit=crop')" }}></div>
 
@@ -189,23 +189,23 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
 
                             {/* CALL OF JESUS LOGO (User Reference) */}
                             <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow">
-                                <Logo className="w-60 h-auto" />
+                                <Logo className="w-40 md:w-60 h-auto" />
                             </div>
 
-                            <h2 className="-mt-16 text-3xl md:text-5xl lg:text-7xl font-serif italic leading-tight mb-10 drop-shadow-2xl px-4 relative verse-text-shine">
-                                <span className="absolute -top-10 left-0 text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
+                            <h2 className="-mt-12 md:-mt-16 text-lg md:text-4xl lg:text-6xl font-serif italic leading-tight mb-6 md:mb-10 drop-shadow-2xl px-2 md:px-4 relative verse-text-shine">
+                                <span className="absolute -top-6 md:-top-10 left-0 text-[60px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                                 For I know the plans I have for you, plans to prosper you and not to harm you.
-                                <span className="absolute -bottom-20 right-0 text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
+                                <span className="absolute -bottom-12 md:-bottom-20 right-0 text-[60px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                             </h2>
 
-                            <div className="flex flex-col items-center gap-8 translate-z-10">
+                            <div className="flex flex-col items-center gap-4 md:gap-8 translate-z-10">
                                 <div className="flex items-center gap-4">
                                     <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
                                     <span className="text-[var(--chord)] font-bold tracking-[0.4em] uppercase text-sm">Jeremiah 29:11</span>
                                     <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
                                 </div>
 
-                                <Link href="/devotional" className="group relative px-10 py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block">
+                                <Link href="/devotional" className="group relative px-6 md:px-10 py-3 md:py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block">
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out"></div>
                                     <span className="relative text-white font-bold tracking-widest text-sm flex items-center gap-3">
                                         READ DEVOTIONAL <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -225,8 +225,8 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
             </section>
 
             {/* TRENDING WORSHIP - CINEMATIC CHARTS */}
-            <section className="mb-20 pl-6 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                <div className="flex justify-between items-end pr-6 mb-8">
+            <section className="mb-16 md:mb-20 pl-4 md:pl-6 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                <div className="flex justify-between items-end pr-4 md:pr-6 mb-6 md:mb-8">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <span className="relative flex h-3 w-3">
@@ -235,17 +235,17 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                             </span>
                             <span className="text-[10px] font-black tracking-[0.3em] uppercase text-red-500">Global Charts</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter shadow-white drop-shadow-lg">
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter shadow-white drop-shadow-lg">
                             TRENDING <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">NOW</span>
                         </h2>
                     </div>
                 </div>
 
-                <div className="flex gap-8 overflow-x-auto pb-12 no-scrollbar pr-6 snap-x snap-mandatory pt-4">
+                <div className="flex gap-4 md:gap-8 overflow-x-auto pb-8 md:pb-12 no-scrollbar pr-4 md:pr-6 snap-x snap-mandatory pt-4">
                     {trendingSongs.map((song, i) => (
-                        <div key={i} className="min-w-[260px] md:min-w-[300px] snap-start group relative">
+                        <div key={i} className="min-w-[220px] md:min-w-[260px] lg:min-w-[300px] snap-start group relative">
                             {/* Giant Number Background */}
-                            <span className="absolute -left-4 -top-12 text-[120px] font-black text-white/5 z-0 group-hover:text-white/10 transition-colors duration-500 select-none font-serif italic">
+                            <span className="absolute -left-2 md:-left-4 -top-8 md:-top-12 text-[80px] md:text-[120px] font-black text-white/5 z-0 group-hover:text-white/10 transition-colors duration-500 select-none font-serif italic">
                                 {i + 1}
                             </span>
 
@@ -270,7 +270,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                                     <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                                     {/* Content Info */}
-                                    <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
 
                                         {/* Play Button */}
                                         {/* Play Button Removed */}
@@ -280,7 +280,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                                             <span className="text-xs font-bold text-red-500 uppercase tracking-wider">1M+ Listening</span>
                                         </div>
 
-                                        <h3 className="text-3xl font-black text-white leading-none mb-1 drop-shadow-md truncate">{song.title}</h3>
+                                        <h3 className="text-2xl md:text-3xl font-black text-white leading-none mb-1 drop-shadow-md truncate">{song.title}</h3>
                                         <p className="text-white/60 font-medium tracking-wide truncate">{song.artist}</p>
 
                                         {/* Progress Bar Decoration */}
@@ -296,12 +296,12 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
             </section>
 
             {/* FEATURED ARTISTS - MINDBLOWING REDESIGN */}
-            <section className="mb-24 pl-6 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                <h2 className="text-4xl font-black text-white mb-10 tracking-tighter">
+            <section className="mb-20 md:mb-24 pl-4 md:pl-6 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                <h2 className="text-3xl md:text-4xl font-black text-white mb-8 md:mb-10 tracking-tighter">
                     ICONS OF <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand)] to-[var(--accent)]">WORSHIP</span>
                 </h2>
 
-                <div className="flex gap-8 overflow-x-auto pb-12 no-scrollbar pr-6 snap-x snap-mandatory">
+                <div className="flex gap-4 md:gap-8 overflow-x-auto pb-8 md:pb-12 no-scrollbar pr-4 md:pr-6 snap-x snap-mandatory">
                     {[
                         { name: 'Sheldon Bangera', img: 'https://img.youtube.com/vi/X0o3-q3aX7w/maxresdefault.jpg' },
                         { name: 'Yeshua Band', img: 'https://img.youtube.com/vi/2n-pT3M0N90/maxresdefault.jpg' },
@@ -315,11 +315,11 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                         { name: 'Elevation', img: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=800&auto=format&fit=crop' },
                         { name: 'Maverick', img: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=800&auto=format&fit=crop' }
                     ].map((artist, i) => (
-                        <div key={i} className="min-w-[280px] snap-center group relative cursor-pointer">
-                            <TiltCard className="w-full h-[400px]" max={12} scale={1.05}>
+                        <div key={i} className="min-w-[240px] md:min-w-[280px] snap-center group relative cursor-pointer">
+                            <TiltCard className="w-full h-[340px] md:h-[400px]" max={12} scale={1.05}>
                                 <Link
                                     href={`/artists/${artist.name.toLowerCase().replace(/\s+/g, '-')}`}
-                                    className="relative block w-full h-full rounded-[2.5rem] overflow-hidden bg-[#111] shadow-2xl group-hover:shadow-[0_0_50px_rgba(233,30,99,0.3)] transition-shadow duration-500 border border-white/10"
+                                    className="relative block w-full h-full rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-[#111] shadow-2xl group-hover:shadow-[0_0_50px_rgba(233,30,99,0.3)] transition-shadow duration-500 border border-white/10"
                                 >
                                     {/* Background Image with Zoom */}
                                     <div
@@ -337,10 +337,10 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                                     <div className="absolute inset-0 border-[1.5px] border-white/10 rounded-[2.5rem] group-hover:border-[var(--brand)]/50 transition-colors duration-500" />
 
                                     {/* Content */}
-                                    <div className="absolute bottom-0 left-0 w-full p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                    <div className="absolute bottom-0 left-0 w-full p-5 md:p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         <div className="w-12 h-1.5 bg-[var(--brand)] mb-4 w-0 group-hover:w-12 transition-all duration-500 ease-out" />
 
-                                        <h3 className="text-4xl font-black text-white uppercase leading-[0.9] tracking-tighter mb-3 drop-shadow-lg">
+                                        <h3 className="text-3xl md:text-4xl font-black text-white uppercase leading-[0.9] tracking-tighter mb-3 drop-shadow-lg">
                                             {artist.name}
                                         </h3>
 
@@ -364,9 +364,9 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
             </section>
 
             {/* MADE FOR YOU - OBSIDIAN GLASS CARDS (Expanded to 20) */}
-            <section className="px-5 mb-32 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                <div className="flex items-center justify-between mb-8 px-2">
-                    <h2 className="text-3xl font-black italic tracking-tighter text-white drop-shadow-lg">
+            <section className="px-4 md:px-5 mb-24 md:mb-32 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                <div className="flex items-center justify-between mb-6 md:mb-8 px-1 md:px-2">
+                    <h2 className="text-2xl md:text-3xl font-black italic tracking-tighter text-white drop-shadow-lg">
                         Made For <span className="text-[var(--brand)]">You</span>
                     </h2>
                     <Link href="/songs" className="text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors flex items-center gap-1 group">
@@ -374,7 +374,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     {madeForYouSongs.map((song, i) => (
                         <TiltCard key={i} className="h-full min-h-[250px]" max={15} scale={1.05}>
                             <div className="relative h-full group">

@@ -15,7 +15,7 @@ export default async function FavouritesPage() {
     const favourites = favouritesData || [];
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32 overflow-hidden relative">
+        <div className="min-h-screen bg-[#02000F] text-white p-4 md:p-6 pb-24 md:pb-32 overflow-hidden relative">
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-pink-900/10 rounded-full blur-[120px] animate-pulse-slow"></div>
@@ -25,14 +25,14 @@ export default async function FavouritesPage() {
 
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
-                <header className="flex items-center justify-between mb-12 animate-fade-in-down">
+                <header className="flex items-center justify-between mb-8 md:mb-12 animate-fade-in-down">
                     <Link href="/" className="inline-flex items-center gap-2 p-3 px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md transition-all group">
                         <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
                         <span className="text-sm font-bold tracking-widest uppercase">Back</span>
                     </Link>
                 </header>
 
-                <div className="mb-16 text-center md:text-left">
+                <div className="mb-12 md:mb-16 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
                         <div className="relative">
                             <Heart className="w-8 h-8 text-red-500 fill-current animate-pulse-slow" />
@@ -40,16 +40,16 @@ export default async function FavouritesPage() {
                         </div>
                         <span className="text-amber-500 font-bold tracking-[0.3em] uppercase text-sm">Your Collection</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40 mb-4 drop-shadow-2xl">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40 mb-4 drop-shadow-2xl">
                         FAVOURITES
                     </h1>
-                    <p className="text-white/40 font-medium max-w-xl text-lg">
+                    <p className="text-white/40 font-medium max-w-xl text-base md:text-lg">
                         Your personal sanctuary of worship. These are the songs that move your spirit.
                     </p>
                 </div>
 
                 {favourites.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
                         {favourites.map((song, i) => (
                             <TiltCard key={i} className="w-full" max={8} scale={1.03}>
                                 <div className="relative w-full h-full group">
