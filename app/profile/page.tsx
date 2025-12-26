@@ -6,11 +6,14 @@ import TiltCard from '@/components/ui/TiltCard';
 
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function ProfilePage() {
     const { currentUser, isAuthenticated } = useAppStore();
     const router = useRouter();
+
+    const [savedCount, setSavedCount] = useState(0);
 
     // Redirect if not logged in
     useEffect(() => {
@@ -19,6 +22,21 @@ export default function ProfilePage() {
         }
     }, [isAuthenticated, router]);
 
+    // Fetch real stats
+    useEffect(() => {
+        if (currentUser?.id) {
+            const fetchStats = async () => {
+                const { count, error } = await supabase
+                    .from('favourites')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', currentUser.id);
+
+                if (count !== null) setSavedCount(count);
+            };
+            fetchStats();
+        }
+    }, [currentUser]);
+
     if (!currentUser) return null; // or a loading spinner
 
     // Use real user data with fallbacks
@@ -26,11 +44,11 @@ export default function ProfilePage() {
         name: currentUser.name,
         email: currentUser.email,
         image: currentUser.avatar || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=2000&auto=format&fit=crop',
-        joined: 'Member since 2024',
+        joined: 'Member',
         stats: {
-            savedSongs: 142, // Still mock for now as we don't have real stats backend
-            playlists: 8,
-            reviews: 24
+            savedSongs: savedCount,
+            playlists: 0, // Pending playlist feature
+            reviews: 0
         }
     };
 
@@ -130,41 +148,17 @@ export default function ProfilePage() {
                         </TiltCard>
                     </div>
 
-                    {/* Premium Recent Activity */}
-                    <div className="mt-8">
+                    {/* Premium Recent Activity - Coming Soon
+                    <div className="mt-8 opacity-50 grayscale">
                         <h2 className="text-2xl font-bold flex items-center gap-2 mb-6">
                             <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
                             Recent Activity
                         </h2>
-                        <div className="space-y-3">
-                            {[
-                                { title: "Way Maker", artist: "Sinach", time: "2 hours ago", img: "https://images.unsplash.com/photo-1514525253440-b393452e8d26?auto=format&fit=crop&q=80&w=400" },
-                                { title: "Oceans", artist: "Hillsong United", time: "5 hours ago", img: "https://images.unsplash.com/photo-1506157786151-b8491531e1ec?auto=format&fit=crop&q=80&w=400" },
-                                { title: "Jireh", artist: "Maverick City", time: "Yesterday", img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=400" }
-                            ].map((track, i) => (
-                                <div key={i} className="group flex items-center gap-5 p-4 rounded-3xl bg-[#0A0A0A] border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all duration-300 relative overflow-hidden cursor-pointer">
-                                    {/* Shine Effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-                                    <div className="relative w-14 h-14 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform shrink-0">
-                                        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${track.img}')` }} />
-                                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <ListMusic className="w-6 h-6 text-white" />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="font-bold text-white text-lg truncate group-hover:text-blue-400 transition-colors">{track.title}</h4>
-                                        <p className="text-sm text-white/50 truncate">{track.artist}</p>
-                                    </div>
-
-                                    <div className="text-xs font-bold uppercase tracking-widest text-white/30 whitespace-nowrap">
-                                        {track.time}
-                                    </div>
-                                </div>
-                            ))}
+                        <div className="p-8 border border-white/5 rounded-3xl text-center">
+                            <p className="text-white/40">History tracking coming soon...</p>
                         </div>
                     </div>
+                    */}
 
                 </div>
             </div>

@@ -5,7 +5,7 @@ import { ArrowLeft, User, Bell, Smartphone, Lock, HelpCircle, LogOut, ChevronRig
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Define the shape of a settings item
 interface SettingsItem {
@@ -27,10 +27,21 @@ export default function SettingsPage() {
     const { logout } = useAppStore();
     const router = useRouter();
 
-    // Local State for Toggles
+    // Local State for Toggles matched with LocalStorage
     const [notifications, setNotifications] = useState(true);
-    const [audioQuality, setAudioQuality] = useState(false); // Default standard
+    const [audioQuality, setAudioQuality] = useState(false);
     const [darkMode, setDarkMode] = useState(true);
+
+    // Initialize from LocalStorage
+    useEffect(() => {
+        const savedNotif = localStorage.getItem('coj_notifications');
+        const savedAudio = localStorage.getItem('coj_audio_quality');
+        const savedDark = localStorage.getItem('coj_dark_mode');
+
+        if (savedNotif !== null) setNotifications(JSON.parse(savedNotif));
+        if (savedAudio !== null) setAudioQuality(JSON.parse(savedAudio));
+        if (savedDark !== null) setDarkMode(JSON.parse(savedDark));
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -38,9 +49,10 @@ export default function SettingsPage() {
         router.push('/signin');
     };
 
-    const toggleSetting = (setting: string, current: boolean, setter: (val: boolean) => void) => {
+    const toggleSetting = (setting: string, current: boolean, setter: (val: boolean) => void, key: string) => {
         const newValue = !current;
         setter(newValue);
+        localStorage.setItem(key, JSON.stringify(newValue));
         toast.info(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
     }
 
@@ -62,7 +74,7 @@ export default function SettingsPage() {
                     sub: 'Push, Email, updates',
                     type: 'toggle',
                     value: notifications,
-                    action: () => toggleSetting('Notifications', notifications, setNotifications)
+                    action: () => toggleSetting('Notifications', notifications, setNotifications, 'coj_notifications')
                 },
                 {
                     icon: Volume2,
@@ -70,7 +82,7 @@ export default function SettingsPage() {
                     sub: 'High Fidelity (Lossless)',
                     type: 'toggle',
                     value: audioQuality,
-                    action: () => toggleSetting('Lossless Audio', audioQuality, setAudioQuality)
+                    action: () => toggleSetting('Lossless Audio', audioQuality, setAudioQuality, 'coj_audio_quality')
                 },
                 {
                     icon: Moon,
@@ -78,7 +90,7 @@ export default function SettingsPage() {
                     sub: 'Dark Mode (System)',
                     type: 'toggle',
                     value: darkMode,
-                    action: () => toggleSetting('Dark Mode', darkMode, setDarkMode)
+                    action: () => toggleSetting('Dark Mode', darkMode, setDarkMode, 'coj_dark_mode')
                 }
             ]
         },

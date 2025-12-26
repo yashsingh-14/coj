@@ -21,7 +21,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: Sparkles, label: 'New Arrivals', href: '/new-arrivals' },
         { icon: Music, label: 'Worship', href: '/categories/worship' },
         { icon: Star, label: 'Praise', href: '/categories/praise' },
-        { icon: Heart, label: 'Favorites', href: '/favorites' },
+        { icon: Heart, label: 'Favorites', href: '/favourites' },
     ];
 
     const bottomItems = [

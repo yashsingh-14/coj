@@ -1,17 +1,86 @@
-import { Heart, PlayCircle, ArrowLeft, MoreVertical, Clock, Sparkles } from 'lucide-react';
+'use client';
+
+import { Heart, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
+import { useEffect, useState } from 'react';
+import { useAppStore } from '@/store/useAppStore';
+import { Song } from '@/data/types';
+import { useRouter } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
+export default function FavouritesPage() {
+    const { currentUser, isAuthenticated } = useAppStore();
+    const router = useRouter();
+    const [favourites, setFavourites] = useState<Song[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export default async function FavouritesPage() {
-    // Fetch user's favourites from Supabase (Mocked for now or use actual)
-    const { data: favouritesData } = await supabase
-        .from('songs')
-        .select('*')
-        .limit(20); // Changed limit to 20 as per new code
+    useEffect(() => {
+        // Redirect if not logged in
+        if (!isAuthenticated && !loading) {
+            router.push('/signin');
+        }
+    }, [isAuthenticated, loading, router]);
 
-    const favourites = favouritesData || [];
+    useEffect(() => {
+        async function fetchFavourites() {
+            if (!currentUser?.id) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                // 1. Fetch song_ids from favourites table
+                const { data: favData, error: favError } = await supabase
+                    .from('favourites')
+                    .select('song_id')
+                    .eq('user_id', currentUser.id);
+
+                if (favError) {
+                    console.error('Error fetching favourites:', favError);
+                    setLoading(false);
+                    return;
+                }
+
+                if (!favData || favData.length === 0) {
+                    setFavourites([]);
+                    setLoading(false);
+                    return;
+                }
+
+                // 2. Extract IDs
+                const songIds = favData.map(f => f.song_id);
+
+                // 3. Fetch actual song details
+                const { data: songsData, error: songsError } = await supabase
+                    .from('songs')
+                    .select('*')
+                    .in('id', songIds);
+
+                if (songsError) {
+                    console.error('Error fetching songs:', songsError);
+                }
+
+                if (songsData) {
+                    setFavourites(songsData);
+                }
+
+            } catch (err) {
+                console.error('Unexpected error:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchFavourites();
+    }, [currentUser]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#02000F] flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-[var(--brand)] animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-4 md:p-6 pb-24 md:pb-32 overflow-hidden relative">
@@ -36,7 +105,7 @@ export default async function FavouritesPage() {
                         <div className="flex items-center gap-4 text-white/40 font-bold uppercase tracking-widest text-[10px] md:text-sm">
                             <span className="flex items-center gap-2">
                                 <Heart className="w-4 h-4 text-pink-500 fill-pink-500/20" />
-                                {favourites?.length || 0} Saved Songs
+                                {favourites.length} Saved Songs
                             </span>
                             <div className="w-1 h-1 rounded-full bg-white/20"></div>
                             <span>Updated just now</span>
@@ -45,7 +114,7 @@ export default async function FavouritesPage() {
                 </div>
 
                 {/* Grid Section */}
-                {favourites && favourites.length > 0 ? (
+                {favourites.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
                         {favourites.map((song, i) => (
                             <div key={i} className="w-full relative rounded-3xl overflow-hidden bg-[#111] border border-white/10 p-4">

@@ -9,6 +9,7 @@ import {
     PlayCircle, Trash2, Plus, GripVertical, Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAppStore } from '@/store/useAppStore';
 
 // Ensure dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -37,6 +38,7 @@ type SetSong = {
 };
 
 export default function SetDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { currentUser } = useAppStore();
     const router = useRouter();
     const [set, setSet] = useState<SetDetail | null>(null);
     const [setSongs, setSetSongs] = useState<SetSong[]>([]);
@@ -227,14 +229,18 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                         </div>
                     </div>
 
+
+
                     <div className="flex gap-2">
-                        <button
-                            onClick={handleDeleteSet}
-                            className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
-                            title="Delete Set"
-                        >
-                            <Trash2 className="w-5 h-5" />
-                        </button>
+                        {currentUser?.id === set.created_by && (
+                            <button
+                                onClick={handleDeleteSet}
+                                className="p-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
+                                title="Delete Set"
+                            >
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        )}
                     </div>
                 </div>
 

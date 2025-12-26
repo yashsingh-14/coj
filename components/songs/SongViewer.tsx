@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Fragment } from 'react';
+import { useState, Fragment, useEffect } from 'react';
 import { transposeChord } from '@/lib/music';
 import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus, Music2, Loader2, X } from 'lucide-react';
 import Link from 'next/link';
@@ -38,6 +38,70 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
     const [isAddToSetOpen, setIsAddToSetOpen] = useState(false);
     const [mySets, setMySets] = useState<{ id: string, title: string, event_date: string }[]>([]);
     const [isLoadingSets, setIsLoadingSets] = useState(false);
+
+    // Auth Check State
+    const [isCheckingFav, setIsCheckingFav] = useState(true);
+
+    // Check Status on Mount
+    useEffect(() => {
+        async function checkStatus() {
+            if (!currentUser) {
+                setIsCheckingFav(false);
+                return;
+            };
+
+            const { data } = await supabase
+                .from('favourites')
+                .select('id')
+                .eq('user_id', currentUser.id)
+                .eq('song_id', songId)
+                .maybeSingle();
+
+            if (data) setIsFavourite(true);
+            setIsCheckingFav(false);
+        }
+        checkStatus();
+    }, [currentUser, songId]);
+
+    const handleToggleFavourite = async () => {
+        if (!currentUser) {
+            toast.error("Please login to save songs");
+            return;
+        }
+
+        // Optimistic Update
+        const previousState = isFavourite;
+        setIsFavourite(!previousState);
+
+        try {
+            if (previousState) {
+                // Remove
+                const { error } = await supabase
+                    .from('favourites')
+                    .delete()
+                    .eq('user_id', currentUser.id)
+                    .eq('song_id', songId);
+
+                if (error) throw error;
+                toast.success("Removed from favourites");
+            } else {
+                // Add
+                const { error } = await supabase
+                    .from('favourites')
+                    .insert({
+                        user_id: currentUser.id,
+                        song_id: songId
+                    });
+
+                if (error) throw error;
+                toast.success("Added to favourites");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Action failed");
+            setIsFavourite(previousState); // Revert
+        }
+    };
 
     // Derived State
     const currentKey = transposeChord(originalKey, transpose, useFlats);
@@ -311,13 +375,18 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                         </button>
 
                         <button
-                            onClick={() => setIsFavourite(!isFavourite)}
+                            onClick={handleToggleFavourite}
+                            disabled={isCheckingFav}
                             className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all border flex-1 md:flex-initial justify-center ${isFavourite
                                 ? 'bg-[var(--brand)] border-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/20'
                                 : 'bg-transparent border-white/20 text-white/60 hover:border-white/50 hover:text-white'
                                 }`}
                         >
-                            <Heart className={`w-3.5 md:w-4 h-3.5 md:h-4 ${isFavourite ? 'fill-current' : ''}`} />
+                            {isCheckingFav ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                                <Heart className={`w-3.5 md:w-4 h-3.5 md:h-4 ${isFavourite ? 'fill-current' : ''}`} />
+                            )}
                             <span className="hidden sm:inline">{isFavourite ? 'Saved' : 'Save Song'}</span>
                             <span className="sm:hidden">{isFavourite ? 'Saved' : 'Save'}</span>
                         </button>
