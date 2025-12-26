@@ -164,14 +164,6 @@ export default function SermonsPage() {
                     </div>
                 )}
             </div>
-
-            <style jsx global>{`
-                .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-                @keyframes pulse {
-                    0%, 100% { opacity: 0.1; transform: scale(1) translate(-50%, 0); }
-                    50% { opacity: 0.2; transform: scale(1.1) translate(-50%, 0); }
-                }
-            `}</style>
         </div>
     );
 }

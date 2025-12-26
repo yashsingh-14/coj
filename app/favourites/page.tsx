@@ -90,18 +90,11 @@ export default async function FavouritesPage() {
                                         </div>
                                     </Link>
 
-                                    {/* Top Controls - Kept outside Link or carefully positioned to prevent navigation if clicked (but Link wraps everything so... we might need to use object/embed or just let it propagate if it's a link, but for a button we need stopPropagation) */}
-                                    <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none">
-                                        <button
-                                            className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-500 hover:border-red-500 hover:text-white text-red-500 transition-all shadow-lg pointer-events-auto"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                // Handle unlike
-                                            }}
-                                        >
+                                    {/* Top Controls - Simplified for Server Component */}
+                                    <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
+                                        <div className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-red-500 shadow-lg">
                                             <Heart className="w-5 h-5 fill-current" />
-                                        </button>
+                                        </div>
                                     </div>
                                 </div>
                             </TiltCard>
@@ -120,10 +113,6 @@ export default async function FavouritesPage() {
                     </div>
                 )}
             </div>
-
-            <style jsx global>{`
-                .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-            `}</style>
         </div>
     );
 }

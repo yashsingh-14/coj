@@ -133,10 +133,6 @@ export default function EventsPage() {
                     </a>
                 </div>
             </div>
-
-            <style jsx global>{`
-                .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-            `}</style>
         </div>
     );
 }
