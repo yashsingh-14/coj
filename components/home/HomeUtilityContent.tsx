@@ -447,20 +447,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                         <div className="md:col-span-5">
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="relative w-14 h-14 -ml-2">
-                                    <style jsx>{`
-                                        @keyframes fire-pulse-footer {
-                                            0% { filter: drop-shadow(0 0 5px rgba(255, 100, 0, 0.5)); transform: scale(1); }
-                                            50% { filter: drop-shadow(0 0 20px rgba(255, 60, 0, 0.8)); transform: scale(1.05); }
-                                            100% { filter: drop-shadow(0 0 5px rgba(255, 100, 0, 0.5)); transform: scale(1); }
-                                        }
-                                        @keyframes shine-line {
-                                            0% { left: -100%; opacity: 0; }
-                                            10% { opacity: 1; }
-                                            50% { left: 200%; opacity: 0; }
-                                            100% { left: 200%; opacity: 0; }
-                                        }
-                                    `}</style>
-                                    <div className="w-full h-full" style={{ animation: 'fire-pulse-footer 3s infinite ease-in-out' }}>
+                                    <div className="w-full h-full animate-fire-pulse-footer">
                                         <BlackRemoverImage
                                             src="/images/logo-footer-final.png"
                                             alt="COJ Fire"
@@ -478,8 +465,7 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                                         <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-amber-600/50 to-transparent shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
 
                                         {/* Running Shine */}
-                                        <div className="absolute top-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white to-transparent opacity-80"
-                                            style={{ animation: 'shine-line 5s infinite ease-in-out' }}></div>
+                                        <div className="absolute top-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white to-transparent opacity-80 animate-shine-line"></div>
                                     </div>
 
                                     <span className="text-[0.65rem] font-bold text-amber-500 tracking-[0.35em] uppercase leading-tight ml-0.5 text-left">MINISTRIES</span>
