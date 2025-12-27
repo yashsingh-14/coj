@@ -2,22 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Trash2, Search, User, ShieldAlert, BadgeCheck } from 'lucide-react';
+import { Users, Search, Shield, ShieldAlert, Loader2, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-type Profile = {
-    id: string;
-    email: string; // If exposed directly or via view
-    name: string;
-    avatar_url: string | null;
-    role: string;
-    created_at: string;
-};
-
 export default function AdminUsersPage() {
-    const [users, setUsers] = useState<Profile[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [search, setSearch] = useState('');
+    const [updatingId, setUpdatingId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchUsers();
@@ -25,108 +17,134 @@ export default function AdminUsersPage() {
 
     const fetchUsers = async () => {
         setIsLoading(true);
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .order('name', { ascending: true });
 
-            if (error) throw error;
-            setUsers(data || []);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            toast.error("Failed to load users");
-        } finally {
-            setIsLoading(false);
-        }
+        if (data) setUsers(data);
+        setIsLoading(false);
     };
 
-    const handleDeleteUser = async (userId: string) => {
-        if (!confirm("Are you sure you want to remove this user profile? This action cannot be undone.")) return;
+    const handleRoleUpdate = async (userId: string, newRole: string) => {
+        setUpdatingId(userId);
+        const { error } = await supabase
+            .from('profiles')
+            .update({ role: newRole })
+            .eq('id', userId);
 
-        try {
-            const { error } = await supabase.from('profiles').delete().eq('id', userId);
-            if (error) throw error;
-
-            toast.success("User profile removed");
-            fetchUsers(); // Refresh list
-        } catch (error) {
-            toast.error("Failed to delete user");
+        if (error) {
+            toast.error("Failed to update role");
+        } else {
+            toast.success("User role updated");
+            setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
         }
+        setUpdatingId(null);
     };
 
-    // Filter Logic
-    const filteredUsers = users.filter(user =>
-        (user.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-        // Note: Email might not be in profiles depending on schema, but searching name is good start
-        user.role?.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredUsers = users.filter(u =>
+        (u.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
+        (u.email?.toLowerCase() || '').includes(search.toLowerCase())
     );
 
     return (
-        <div className="space-y-8">
-            <header className="flex items-end justify-between">
+        <div className="space-y-8 pb-20">
+            <header className="flex items-center justify-between">
                 <div>
                     <h1 className="text-4xl font-black text-white tracking-tight mb-2">Users</h1>
-                    <p className="text-white/40">Manage community members and roles.</p>
+                    <p className="text-white/40">Manage user profiles and access roles.</p>
                 </div>
-                <div className="px-4 py-2 bg-amber-500/10 text-amber-500 rounded-lg text-sm font-bold">
-                    {users.length} Total Users
+                <div className="bg-[#0F0F16] border border-white/5 rounded-full px-4 py-2 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-white/50" />
+                    <span className="text-white font-bold">{users.length} Total</span>
                 </div>
             </header>
 
-            {/* Search Bar */}
-            <div className="relative">
-                <Search className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
-                <input
-                    type="text"
-                    placeholder="Search users by name..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
-                />
+            <div className="flex gap-4 mb-8">
+                <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                    <input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search users by name or email..."
+                        className="w-full bg-[#0F0F16] border border-white/5 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-white/20 transition-all"
+                    />
+                </div>
             </div>
 
-            {/* Users List */}
-            <div className="bg-[#0F0F16] border border-white/5 rounded-3xl overflow-hidden">
-                {isLoading ? (
-                    <div className="p-12 text-center text-white/30">Loading users...</div>
-                ) : filteredUsers.length === 0 ? (
-                    <div className="p-12 text-center text-white/30">No users found.</div>
-                ) : (
-                    <div className="divide-y divide-white/5">
-                        {filteredUsers.map((user) => (
-                            <div key={user.id} className="p-6 flex items-center justify-between group hover:bg-white/[0.02] transition-colors">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10">
-                                        {user.avatar_url ? (
-                                            <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <User className="w-6 h-6 text-white/50" />
-                                        )}
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h3 className="font-bold text-white text-lg">{user.name || 'Anonymous'}</h3>
-                                            {user.role === 'admin' && (
-                                                <span className="px-2 py-0.5 bg-amber-500 text-black text-[10px] font-black uppercase tracking-wider rounded">Admin</span>
+            {isLoading ? (
+                <div className="flex justify-center py-20">
+                    <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+                </div>
+            ) : (
+                <div className="bg-[#0F0F16] border border-white/5 rounded-3xl overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead className="bg-white/5 border-b border-white/5">
+                            <tr>
+                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest">User</th>
+                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest">Email</th>
+                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest">Role</th>
+                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            {filteredUsers.map((user) => (
+                                <tr key={user.id} className="hover:bg-white/[0.02] transition-colors">
+                                    <td className="px-6 py-4 flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center">
+                                            {user.avatar_url ? (
+                                                <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-xs font-bold text-white/60">
+                                                    {(user.name || '?').charAt(0)}
+                                                </span>
                                             )}
                                         </div>
-                                        <p className="text-white/40 text-sm font-mono mt-0.5">Joined: {new Date(user.created_at).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={() => handleDeleteUser(user.id)}
-                                    className="p-3 rounded-lg bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
-                                    title="Remove User"
-                                >
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                                        <div>
+                                            <p className="font-bold text-white">{user.name || 'Unknown'}</p>
+                                            <p className="text-xs text-white/30 font-mono">{user.id.slice(0, 8)}...</p>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-white/60 text-sm">
+                                        {user.email || 'No Email Public'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border ${user.role === 'admin' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'bg-white/5 border-white/10 text-white/40'}`}>
+                                            {user.role || 'user'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            {user.role === 'admin' ? (
+                                                <button
+                                                    onClick={() => handleRoleUpdate(user.id, 'user')}
+                                                    disabled={updatingId === user.id}
+                                                    className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all text-xs font-bold"
+                                                >
+                                                    {updatingId === user.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Demote'}
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleRoleUpdate(user.id, 'admin')}
+                                                    disabled={updatingId === user.id}
+                                                    className="px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white transition-all text-xs font-bold flex items-center gap-2 ml-auto"
+                                                >
+                                                    {updatingId === user.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Shield className="w-3 h-3" /> Make Admin</>}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    {filteredUsers.length === 0 && (
+                        <div className="p-12 text-center text-white/30">
+                            No users found matching "{search}"
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

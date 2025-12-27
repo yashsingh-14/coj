@@ -1,37 +1,44 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
-import { LayoutDashboard, Music, Users, Settings, LogOut, ShieldAlert } from 'lucide-react';
+import {
+    LayoutDashboard,
+    Music,
+    Users,
+    Settings,
+    LogOut,
+    ShieldAlert,
+    Calendar,
+    Mic2,
+    Home,
+    Youtube,
+    BookOpen
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const { currentUser, isAuthenticated } = useAppStore();
+    const { isAuthenticated } = useAppStore();
     const router = useRouter();
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const checkAdmin = async () => {
-            if (!isAuthenticated) {
-                // Allow time for hydration, but if definitely not auth, redirect
-                // Actually, wait a bit or check if store is hydrated. 
-                // Assuming verifyAuth() ran in AppShell.
-                // Let's rely on Supabase directly for double check
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    router.push('/signin');
-                    return;
-                }
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                // If definitely not auth, redirect
+                // We rely on middleware or client checks usually, but strict check here:
+                // If no session, wait for store hydration or redirect? 
+                // Let's assume if session is null from helper, we are out.
             }
 
-            // Check Profile Role
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                const { data: profile, error } = await supabase
+                const { data: profile } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id', user.id)
@@ -40,9 +47,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 if (profile && profile.role === 'admin') {
                     setIsAdmin(true);
                 } else {
-                    toast.error("Access Denied: Admins Only");
-                    router.push('/');
+                    // Start a timer to redirect if not admin, to avoid flicker if just laggy
+                    // But for security, better to show loading until sure
+                    if (!isLoading) { // prevent loop
+                        toast.error("Access Denied: Admins Only");
+                        router.push('/');
+                    }
                 }
+            } else {
+                router.push('/signin');
             }
             setIsLoading(false);
         };
@@ -72,10 +85,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <h1 className="text-2xl font-black text-white tracking-tight">COJ<span className="text-white/40">Studio</span></h1>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-1">
+                <nav className="flex-1 p-4 space-y-1 overflow-y-auto no-scrollbar">
+                    <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-2">Core</p>
                     <AdminNavLink href="/admin" icon={LayoutDashboard} label="Dashboard" />
-                    <AdminNavLink href="/admin/songs" icon={Music} label="Manage Songs" active />
-                    <AdminNavLink href="/admin/users" icon={Users} label="Users" />
+                    <AdminNavLink href="/admin/users" icon={Users} label="User Management" />
+                    <AdminNavLink href="/admin/settings" icon={Settings} label="Global Settings" />
+
+                    <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-6">Content</p>
+                    <AdminNavLink href="/admin/songs" icon={Music} label="Songs Library" />
+                    <AdminNavLink href="/admin/artists" icon={Mic2} label="Artists" />
+                    <AdminNavLink href="/admin/events" icon={Calendar} label="Events" />
+
+                    <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-6">Presentation</p>
+                    <AdminNavLink href="/admin/home" icon={Home} label="Home Page" />
+                    <AdminNavLink href="/admin/sermons" icon={Youtube} label="Sermons" />
+                    <AdminNavLink href="/admin/utils" icon={BookOpen} label="Daily Content" />
                 </nav>
 
                 <div className="p-4 border-t border-white/5">
@@ -100,8 +124,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
 }
 
-function AdminNavLink({ href, icon: Icon, label, active }: { href: string; icon: any; label: string; active?: boolean }) {
-    // Determine active state roughly (can improve with usePathname)
+function AdminNavLink({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
+    const pathname = usePathname();
+    // Improved active state checking that handles sub-routes
+    // e.g. /admin/songs/new should keep /admin/songs active? 
+    // Ideally exact match for dashboard, partial for others if nested.
+    // Simplifying: if pathname starts with href (and href is not just /admin unless it is exactly /admin)
+
+    let active = false;
+    if (href === '/admin') {
+        active = pathname === '/admin';
+    } else {
+        active = pathname.startsWith(href);
+    }
+
     return (
         <Link href={href} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${active
             ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/20'

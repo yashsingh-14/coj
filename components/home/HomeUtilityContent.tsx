@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle } from 'lucide-react';
+import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle, Megaphone, PlayCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -21,13 +21,64 @@ gsap.registerPlugin(ScrollTrigger);
 
 import { useAppStore } from '@/store/useAppStore';
 
-export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: { trendingSongs: Song[]; madeForYouSongs: Song[] }) {
+export default function HomeUtilityContent({
+    trendingSongs,
+    madeForYouSongs,
+    featuredSongs,
+    heroSlides,
+    dbVerse,
+    announcements
+}: {
+    trendingSongs: Song[];
+    madeForYouSongs: Song[];
+    featuredSongs: Song[];
+    heroSlides: any[];
+    dbVerse: any;
+    announcements: any[];
+}) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { currentUser, isAuthenticated, logout } = useAppStore();
 
+    // Newsletter State
+    const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    // Get today's verse
-    const todaysVerse = getVerseOfTheDay();
+    const handleSubscribe = async () => {
+        if (!email) {
+            toast.error("Please enter an email address.");
+            return;
+        }
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+            toast.error("Please enter a valid email.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('subscribers').insert([{ email }]);
+
+            if (error) {
+                if (error.code === '23505') { // Unique violation
+                    toast.success("You're already on the list!");
+                    setEmail('');
+                } else {
+                    console.error("Subscription Error:", error);
+                    toast.error("Something went wrong. Please try again.");
+                }
+            } else {
+                toast.success("You're on the list! Stay tuned.");
+                setEmail('');
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Failed to subscribe.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Get today's verse (DB > Local Fallback)
+    const todaysVerse = dbVerse || getVerseOfTheDay();
 
     // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
     // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
@@ -95,10 +146,79 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                 </div>
             </header>
 
+            {/* ANNOUNCEMENTS BANNER - PREMIUM REDESIGN */}
+            {announcements && announcements.length > 0 && (
+                <div className="relative mx-4 md:mx-6 mt-6 mb-2 animate-fade-in-down" style={{ animationDelay: '0.2s' }}>
+                    {/* Glass Container */}
+                    <div className="relative overflow-hidden rounded-full bg-gradient-to-r from-amber-900/20 via-[#0A0A0A] to-amber-900/20 border border-amber-500/20 backdrop-blur-xl shadow-[0_0_20px_rgba(245,158,11,0.05)] group">
+
+                        {/* Subtle Gold Glow Background */}
+                        <div className="absolute inset-0 bg-amber-500/5 mix-blend-overlay"></div>
+
+                        <div className="py-2 flex items-center relative z-10">
+                            {/* Floating Badge */}
+                            <div className="absolute left-1.5 top-1.5 bottom-1.5 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full px-3 flex items-center justify-center z-20 shadow-lg shadow-amber-500/20 border border-white/20">
+                                <Megaphone className="w-3 h-3 text-black fill-white/20" />
+                                <span className="text-[9px] font-black text-black ml-2 uppercase tracking-wide hidden md:block">Update</span>
+                            </div>
+
+                            {/* Marquee Text */}
+                            <div className="flex gap-12 animate-marquee whitespace-nowrap pl-14 md:pl-28 pr-4 w-full" style={{ maskImage: 'linear-gradient(to right, transparent, black 40px, black 95%, transparent)' }}>
+                                {announcements.map((a, i) => (
+                                    <span key={i} className="text-amber-100/90 font-medium text-xs uppercase tracking-[0.15em] flex items-center gap-4 text-shadow-sm">
+                                        {a.message}
+                                        <div className="w-1 h-1 rounded-full bg-amber-500 shadow-[0_0_5px_currentColor]"></div>
+                                    </span>
+                                ))}
+                                {/* Duplicates for continuity */}
+                                {announcements.map((a, i) => (
+                                    <span key={`dup-${i}`} className="text-amber-100/90 font-medium text-xs uppercase tracking-[0.15em] flex items-center gap-4 text-shadow-sm">
+                                        {a.message}
+                                        <div className="w-1 h-1 rounded-full bg-amber-500 shadow-[0_0_5px_currentColor]"></div>
+                                    </span>
+                                ))}
+                                {announcements.map((a, i) => (
+                                    <span key={`dup2-${i}`} className="text-amber-100/90 font-medium text-xs uppercase tracking-[0.15em] flex items-center gap-4 text-shadow-sm">
+                                        {a.message}
+                                        <div className="w-1 h-1 rounded-full bg-amber-500 shadow-[0_0_5px_currentColor]"></div>
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* HERO CAROUSEL */}
             <section className="px-5 mb-10 mt-4 animate-slide-up">
-                <HeroCarousel />
+                <HeroCarousel slides={heroSlides.length > 0 ? heroSlides : undefined} />
             </section>
+
+            {/* FEATURED SONGS - NEW SECTION */}
+            {featuredSongs && featuredSongs.length > 0 && (
+                <section className="px-5 mb-14 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                    <div className="flex items-center gap-2 mb-4">
+                        <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                        <h2 className="text-xl font-black text-white uppercase tracking-wider">Featured This Week</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {featuredSongs.map((song, i) => (
+                            <Link key={i} href={`/songs/${song.id}`} className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-all group">
+                                <div className="w-16 h-16 rounded-lg overflow-hidden relative flex-shrink-0">
+                                    <img src={getSongImage(song)} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                </div>
+                                <div className="min-w-0">
+                                    <h3 className="font-bold text-white truncate">{song.title}</h3>
+                                    <p className="text-xs text-white/50 uppercase tracking-wider">{song.artist}</p>
+                                </div>
+                                <div className="ml-auto w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                                    <PlayCircle className="w-5 h-5" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* CATEGORIES - HOLOGRAPHIC TILES (UPDATED: GAP-16) */}
             <section className="px-5 mb-14 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
@@ -540,13 +660,16 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
                             <div className="relative">
                                 <input
                                     type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Enter your email"
                                     className="w-full bg-white/5 border border-white/10 rounded-full px-5 py-3 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/10 transition-colors"
                                 />
                                 <button
-                                    onClick={() => toast.success("You're on the list! Stay tuned.")}
-                                    className="absolute right-1 top-1 bottom-1 px-4 bg-amber-500 rounded-full text-black font-bold text-xs hover:bg-amber-400 transition-colors">
-                                    JOIN
+                                    onClick={handleSubscribe}
+                                    disabled={loading}
+                                    className="absolute right-1 top-1 bottom-1 px-4 bg-amber-500 rounded-full text-black font-bold text-xs hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    {loading ? '...' : 'JOIN'}
                                 </button>
                             </div>
                         </div>
@@ -554,9 +677,20 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
 
                     {/* Bottom Bar */}
                     <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p className="text-white/20 text-xs text-center md:text-left">
-                            © 2025 Call of Jesus Ministries. All rights reserved.
-                        </p>
+                        <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4 text-xs text-white/30">
+                            <p>© 2025 Call of Jesus Ministries.</p>
+                            <span className="hidden md:block w-px h-3 bg-white/20"></span>
+                            <div className="flex items-center gap-1">
+                                <span>Developed by</span>
+                                <a href="https://www.instagram.com/yash.singh_1401/" target="_blank" rel="noopener noreferrer" className="relative group cursor-pointer">
+                                    <span className="group-hover:text-amber-500 transition-colors">Yash Singh</span>
+                                    {/* Golden Shiny Line - Sunlight Reflection Effect */}
+                                    <div className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-[#FFD700]/10 overflow-hidden rounded-full">
+                                        <div className="absolute top-0 bottom-0 w-[60%] bg-gradient-to-r from-transparent via-[#FFD700] via-white via-[#FFD700] to-transparent blur-[0.5px] animate-shine-line shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                         <div className="flex gap-6">
                             <Link href="/privacy" className="text-xs text-white/20 hover:text-white/60 transition-colors">Privacy Policy</Link>
                             <Link href="/terms" className="text-xs text-white/20 hover:text-white/60 transition-colors">Terms of Service</Link>
@@ -572,10 +706,10 @@ export default function HomeUtilityContent({ trendingSongs, madeForYouSongs }: {
     );
 }
 
-function HeroCarousel() {
+function HeroCarousel({ slides: propSlides }: { slides?: any[] }) {
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    const slides = [
+    const defaultSlides = [
         {
             title: "New Worship\nCollection",
             subtitle: "Exclusive",
@@ -595,6 +729,8 @@ function HeroCarousel() {
             link: "/sets"
         }
     ];
+
+    const slides = propSlides || defaultSlides;
 
     useEffect(() => {
         const timer = setInterval(() => {

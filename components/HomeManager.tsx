@@ -9,7 +9,16 @@ import HomeUtilityContent from '@/components/home/HomeUtilityContent';
 const HeroCanvas = dynamic(() => import('@/components/3d/HeroCanvas'), { ssr: false });
 import ExperienceOverlay from '@/components/hero/ExperienceOverlay';
 
-export default function HomeManager({ initialData }: { initialData: { trending: any[]; madeForYou: any[] } }) {
+export default function HomeManager({ initialData }: {
+    initialData: {
+        trending: any[];
+        madeForYou: any[];
+        featured: any[];
+        heroSlides: any[];
+        todaysVerse: any;
+        announcements: any[];
+    }
+}) {
     const { mode, setMode } = useAppStore();
     const [showExperience, setShowExperience] = useState(mode === 'EXPERIENCE');
 
@@ -44,7 +53,14 @@ export default function HomeManager({ initialData }: { initialData: { trending: 
                 className={`absolute inset-0 w-full min-h-screen bg-[#050505] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 overflow-y-auto pointer-events-auto' : 'opacity-0 overflow-hidden pointer-events-none'
                     }`}
             >
-                <HomeUtilityContent trendingSongs={initialData.trending} madeForYouSongs={initialData.madeForYou} />
+                <HomeUtilityContent
+                    trendingSongs={initialData.trending}
+                    madeForYouSongs={initialData.madeForYou}
+                    featuredSongs={initialData.featured}
+                    heroSlides={initialData.heroSlides}
+                    dbVerse={initialData.todaysVerse}
+                    announcements={initialData.announcements}
+                />
             </div>
         </div>
     );

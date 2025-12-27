@@ -1,27 +1,31 @@
 import Link from 'next/link';
 import { ArrowLeft, PlayCircle, Star, Play, CheckCircle, Mic2, Users, Music } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
-import { ALL_ARTISTS } from '@/data/artists';
 import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
+import { notFound } from 'next/navigation';
 
-export const revalidate = 0; // Ensure dynamic data fetching
+export const revalidate = 0; // Ensure fresh data on navigation
 
 export default async function ArtistDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: artistId } = await params;
 
-    // 1. Try to find Artist Metadata from our curated list
-    const knownArtist = ALL_ARTISTS.find(a => a.id === artistId);
+    // 1. Fetch Artist Metadata from DB
+    const { data: artist } = await supabase
+        .from('artists')
+        .select('*')
+        .eq('id', artistId)
+        .single();
 
-    // 2. Determine Artist Name for DB Search
-    // If not in our list, un-slugify the ID (e.g., "unknown-artist" -> "Unknown Artist")
-    const searchName = knownArtist
-        ? knownArtist.name
-        : artistId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    // 2. Fetch Songs for this artist (Partial Match on Name or ID?)
+    // Our DB 'songs' table stores 'artist' as a string name usually.
+    // If we have an artist record, use its name. IF not found in DB, maybe it's a legacy ID?
+    // If artist is null, we might 404, OR try to find songs by the ID/slug just in case.
 
-    // 3. Fetch Real Songs from Supabase for this artist
-    // We use ilike for case-insensitive partial matching to be safe
-    const { data: songs, error } = await supabase
+    // Fallback search name if artist not in DB (legacy support or just robust)
+    const searchName = artist ? artist.name : artistId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    const { data: songs } = await supabase
         .from('songs')
         .select('*')
         .ilike('artist', `%${searchName}%`)
@@ -29,26 +33,19 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
 
     const displaySongs: Song[] = songs || [];
 
-    // 4. Construct Profile Info (Fallbacks if not in known list)
-    const artistName = knownArtist ? knownArtist.name : searchName;
+    // If no artist and no songs, 404
+    if (!artist && displaySongs.length === 0) {
+        notFound();
+    }
 
-    // Image Logic: 
-    // - Use curated image if available
-    // - OR use the image of the first song found
-    // - OR fallback to generic
-    let artistImage = knownArtist?.image;
-    if (!artistImage && displaySongs.length > 0) {
-        artistImage = displaySongs[0].img;
-        // If song img is also missing/invalid, it will be handled by img onError or we can set default here
-    }
-    if (!artistImage || artistImage === 'null') {
-        artistImage = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop';
-    }
+    // Artist Details with Fallbacks
+    const artistName = artist?.name || searchName;
+    const artistImage = artist?.image || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop';
 
     const artistStats = {
-        songs: displaySongs.length,
-        followers: knownArtist?.followers || 'N/A',
-        genre: knownArtist?.genre || 'Worship'
+        songs: displaySongs.length, // Or use artist.songs_count if preferred
+        followers: artist?.followers || 'N/A',
+        genre: artist?.genre || 'Worship'
     };
 
     return (
@@ -164,7 +161,6 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                                             }
                                             alt={song.title}
                                             className="w-full h-full object-cover"
-                                        // Fallback handled nicely if we used the helper method but here we inline for simplicity
                                         />
                                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <PlayCircle className="w-8 h-8 text-white" />
@@ -179,9 +175,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                                     </div>
 
                                     <button
-                                        // onClick stops propagation handled by native Link, but for button here we might need client component wrapper for fav
-                                        // keeping it visual for now
-                                        className="p-3 rounded-full hover:bg-white/10 text-white/30 hover:text-red-500 transition-colors"
+                                        className="p-3 rounded-full hover:bg-white/10 text-white/30 hover:text-red-500 transition-colors z-20"
                                     >
                                         <Star className="w-5 h-5" />
                                     </button>
@@ -192,7 +186,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 )}
             </div>
 
-            {/* DISCOGRAPHY / ALBUMS (Placeholder) */}
+            {/* DISCOGRAPHY / ALBUMS (Latest) */}
             {displaySongs.length > 0 && (
                 <div className="container mx-auto px-6 mt-20">
                     <h2 className="text-3xl font-bold mb-8">Latest Release</h2>

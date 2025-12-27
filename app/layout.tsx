@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   description: "Discover a vast collection of Christian worship songs, lyrics, and chords in English and Hindi. Join Call of Jesus Ministries in praise and worship.",
   keywords: ["Christian songs", "Worship lyrics", "Hindi worship songs", "Christian chords", "Gospel lyrics", "COJ Ministries", "Call of Jesus", "Jesus songs", "Christian music"],
-  authors: [{ name: "Call of Jesus Ministries" }],
+  authors: [{ name: "Yash Singh" }, { name: "Call of Jesus Ministries" }],
   openGraph: {
     type: "website",
     locale: "en_US",

@@ -1,3 +1,5 @@
+import { supabase } from '@/lib/supabaseClient';
+
 export interface YouTubeVideo {
     id: string;
     title: string;
@@ -7,7 +9,7 @@ export interface YouTubeVideo {
     isLive: boolean;
 }
 
-const CHANNEL_ID = 'UCU65-FwxF6QkrOmZVsxTrWQ';
+const DEFAULT_CHANNEL_ID = 'UCU65-FwxF6QkrOmZVsxTrWQ';
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
 export async function fetchSermons(): Promise<YouTubeVideo[]> {
@@ -16,9 +18,20 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
         return [];
     }
 
+    // Fetch Config from DB
+    let channelId = DEFAULT_CHANNEL_ID;
+    try {
+        const { data } = await supabase.from('site_settings').select('value').eq('key', 'youtube_config').single();
+        if (data && data.value && data.value.channelId) {
+            channelId = data.value.channelId;
+        }
+    } catch (err) {
+        console.error("Error fetching YouTube config", err);
+    }
+
     try {
         const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=12&type=video`
+            `https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=12&type=video`
         );
 
         const data = await response.json();

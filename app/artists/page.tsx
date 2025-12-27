@@ -1,11 +1,19 @@
-'use client';
-
 import Link from 'next/link';
-import { ArrowLeft, Mic2, Music, TrendingUp, Users } from 'lucide-react';
+import { ArrowLeft, Mic2, Music, Users } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
-import { ALL_ARTISTS } from '@/data/artists';
+import { supabase } from '@/lib/supabaseClient';
 
-export default function ArtistsPage() {
+export const revalidate = 0; // Ensure fresh data on navigation
+
+export default async function ArtistsPage() {
+    // Fetch artists from DB
+    const { data: artists } = await supabase
+        .from('artists')
+        .select('*')
+        .order('name', { ascending: true });
+
+    const displayArtists = artists || [];
+
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32">
             {/* Header */}
@@ -22,7 +30,7 @@ export default function ArtistsPage() {
             </div>
 
             <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {ALL_ARTISTS.map((artist) => (
+                {displayArtists.map((artist) => (
                     <TiltCard key={artist.id} className="h-full min-h-[350px]" max={10} scale={1.03}>
                         <div className="relative h-full group">
                             <Link
@@ -30,7 +38,7 @@ export default function ArtistsPage() {
                                 className="relative flex flex-col justify-end p-8 rounded-[2.5rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors shadow-2xl"
                             >
                                 {/* Artist Background */}
-                                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0" style={{ backgroundImage: `url('${artist.image}')` }} />
+                                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0" style={{ backgroundImage: `url('${artist.image || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070'}' )` }} />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
 
                                 {/* Glass Shine */}
@@ -50,7 +58,7 @@ export default function ArtistsPage() {
                                     <h2 className="text-3xl font-black text-white mb-2 leading-none">{artist.name}</h2>
 
                                     <div className="flex gap-4 text-xs font-bold text-white/60 mt-2">
-                                        <span className="flex items-center gap-1.5"><Music className="w-3.5 h-3.5 text-amber-500" /> {artist.songs} Songs</span>
+                                        <span className="flex items-center gap-1.5"><Music className="w-3.5 h-3.5 text-amber-500" /> {artist.songs_count} Songs</span>
                                         <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-blue-500" /> {artist.followers}</span>
                                     </div>
 
