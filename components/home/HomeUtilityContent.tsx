@@ -678,7 +678,7 @@ export default function HomeUtilityContent({
                     {/* Bottom Bar */}
                     <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4 text-xs text-white/30">
-                            <p>© 2025 Call of Jesus Ministries.</p>
+                            <p>© 2026 Call of Jesus Ministries.</p>
                             <span className="hidden md:block w-px h-3 bg-white/20"></span>
                             <div className="flex items-center gap-1">
                                 <span>Developed by</span>

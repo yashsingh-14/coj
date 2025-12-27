@@ -16,7 +16,8 @@ import {
     Mic2,
     Home,
     Youtube,
-    BookOpen
+    BookOpen,
+    Bell
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -89,7 +90,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-2">Core</p>
                     <AdminNavLink href="/admin" icon={LayoutDashboard} label="Dashboard" />
                     <AdminNavLink href="/admin/users" icon={Users} label="User Management" />
-                    <AdminNavLink href="/admin/settings" icon={Settings} label="Global Settings" />
 
                     <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-6">Content</p>
                     <AdminNavLink href="/admin/songs" icon={Music} label="Songs Library" />
@@ -100,6 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <AdminNavLink href="/admin/home" icon={Home} label="Home Page" />
                     <AdminNavLink href="/admin/sermons" icon={Youtube} label="Sermons" />
                     <AdminNavLink href="/admin/utils" icon={BookOpen} label="Daily Content" />
+                    <AdminNavLink href="/admin/notifications" icon={Bell} label="Broadcast" />
                 </nav>
 
                 <div className="p-4 border-t border-white/5">

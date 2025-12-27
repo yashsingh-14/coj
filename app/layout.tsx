@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     title: "COJ | Call of Jesus Ministries - Worship & Word",
     description: "Premium destination for Christian worship lyrics and chords.",
   },
+  manifest: '/manifest.json',
   verification: {
     google: "LaBYax9Fpd8uHkpERTFziIsQANIBxAMaXWQw5r1Dz3I",
   },

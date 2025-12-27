@@ -32,15 +32,46 @@ export default function NotificationPrompt() {
             setShowPrompt(false);
 
             if (permission === 'granted') {
-                new Notification('Success!', {
-                    body: 'You will now receive daily Bible verses and devotionals.',
-                    icon: '/favicon.ico'
+                // 1. Register Service Worker
+                const registration = await navigator.serviceWorker.register('/sw.js');
+
+                // 2. Subscribe to Push Manager
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
+                });
+
+                // 3. Send to Server
+                await fetch('/api/notifications/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(subscription)
+                });
+
+                new Notification('Notifications Enabled! 🎉', {
+                    body: 'You will now receive updates from COJ.',
+                    icon: '/icon-192x192.png'
                 });
             }
         } catch (err) {
             console.error('Permission request failed', err);
         }
     };
+
+    function urlBase64ToUint8Array(base64String: string) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
 
     if (!showPrompt) return null;
 
