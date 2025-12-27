@@ -19,13 +19,15 @@ export default function HomeManager({ initialData }: {
         announcements: any[];
     }
 }) {
-    const { mode, setMode } = useAppStore();
+    const { mode, setMode, isAuthenticated } = useAppStore();
     const [showExperience, setShowExperience] = useState(mode === 'EXPERIENCE');
 
-    // useEffect(() => {
-    //     // Removed forced reset to EXPERIENCE to allow persistent navigation
-    //     // setMode('EXPERIENCE');
-    // }, [setMode]);
+    useEffect(() => {
+        // If user is authenticated or previously visited, skip intro
+        if (isAuthenticated) {
+            setMode('UTILITY');
+        }
+    }, [isAuthenticated, setMode]);
 
     useEffect(() => {
         if (mode === 'UTILITY') {
