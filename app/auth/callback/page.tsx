@@ -11,7 +11,21 @@ export default function AuthCallback() {
 
     useEffect(() => {
         const handleAuthCallback = async () => {
-            // Check for hash first (Implicit Flow)
+            // 1. Check for URL Errors (Database/Supabase errors redirect here)
+            const params = new URLSearchParams(window.location.search);
+            const errorMsg = params.get('error_description') || params.get('error');
+
+            if (errorMsg) {
+                console.error('Auth Error from URL:', errorMsg);
+                // Show error state instead of redirecting
+                const statusElem = document.getElementById('status-text');
+                if (statusElem) {
+                    statusElem.innerHTML = `<span class="text-red-500 font-bold">Login Failed: ${errorMsg}</span><br/><span class="text-xs text-white/50">Please Contact Support</span>`;
+                }
+                return; // STOP EXECUTION
+            }
+
+            // 2. Check for hash first (Implicit Flow)
             const { error } = await supabase.auth.getSession();
 
             if (error) {
@@ -21,6 +35,7 @@ export default function AuthCallback() {
             }
 
             // Also handle hash manually if getSession misses it
+            const hash = window.location.hash;
             if (hash && hash.includes('access_token')) {
                 const { data, error: hashError } = await supabase.auth.getSession();
                 if (!hashError && data.session?.user) {
@@ -56,7 +71,7 @@ export default function AuthCallback() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
             <Loader2 className="w-10 h-10 animate-spin text-[var(--brand)] mb-4" />
-            <p className="text-white/60">Finalizing secure login...</p>
+            <p id="status-text" className="text-white/60 text-center px-4">Finalizing secure login...</p>
         </div>
     );
 }
