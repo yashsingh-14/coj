@@ -43,6 +43,14 @@ export default function AuthCallback() {
         };
 
         handleAuthCallback();
+
+        // Failsafe: If stuck for 4 seconds, force redirect
+        const timer = setTimeout(() => {
+            console.log('Auth timeout, forcing redirect...');
+            router.push('/');
+        }, 4000);
+
+        return () => clearTimeout(timer);
     }, [router]);
 
     return (
