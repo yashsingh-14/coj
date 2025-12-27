@@ -12,8 +12,8 @@ export default function ExperienceOverlay() {
             {/* Content Overlay */}
             <div className="text-center pointer-events-auto flex flex-col items-center -mt-20">
                 {/* Logo Section */}
-                <div className="-mb-30 flex flex-col items-center justify-center transform-style-3d animate-float-slow relative">
-                    <Logo className="w-32 md:w-56 h-auto" />
+                <div className="mb-4 md:mb-8 flex flex-col items-center justify-center transform-style-3d animate-float-slow relative">
+                    <Logo className="w-24 md:w-48 h-auto" />
                 </div>
 
                 {/* Verse Section */}
