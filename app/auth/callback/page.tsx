@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Loader2 } from 'lucide-react';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function AuthCallback() {
     const router = useRouter();
@@ -20,10 +21,18 @@ export default function AuthCallback() {
             }
 
             // Also handle hash manually if getSession misses it
-            const hash = window.location.hash;
             if (hash && hash.includes('access_token')) {
                 const { data, error: hashError } = await supabase.auth.getSession();
-                if (!hashError && data.session) {
+                if (!hashError && data.session?.user) {
+                    const { user } = data.session;
+                    // Manually update store to prevent race conditions
+                    useAppStore.getState().login({
+                        id: user.id,
+                        name: user.user_metadata.name || user.user_metadata.full_name || user.email?.split('@')[0] || 'User',
+                        email: user.email || '',
+                        avatar: user.user_metadata.avatar_url || user.user_metadata.picture
+                    });
+
                     router.push('/');
                     return;
                 }
