@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut, ListMusic } from 'lucide-react';
+import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut, ListMusic, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
@@ -12,7 +12,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
-    const logout = useAppStore((state) => state.logout);
+    const { logout, currentUser } = useAppStore();
 
     const menuItems = [
         { icon: Home, label: 'Home', href: '/' },
@@ -25,6 +25,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     ];
 
     const bottomItems = [
+        ...(currentUser?.role === 'admin' ? [{ icon: ShieldCheck, label: 'Admin Panel', href: '/admin' }] : []),
         { icon: User, label: 'Profile', href: '/profile' },
         { icon: Settings, label: 'Settings', href: '/settings' },
     ];
