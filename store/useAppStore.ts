@@ -27,7 +27,7 @@ interface AppState {
 export const useAppStore = create<AppState>()(
     persist(
         (set) => ({
-            mode: 'UTILITY',
+            mode: 'EXPERIENCE',
             setMode: (mode) => set({ mode }),
             isTransitioning: false,
             setIsTransitioning: (isTransitioning) => set({ isTransitioning }),

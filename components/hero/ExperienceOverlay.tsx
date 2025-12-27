@@ -13,21 +13,21 @@ export default function ExperienceOverlay() {
             <div className="text-center pointer-events-auto flex flex-col items-center -mt-20">
                 {/* Logo Section */}
                 <div className="-mb-30 flex flex-col items-center justify-center transform-style-3d animate-float-slow relative">
-                    <Logo className="w-56 h-auto" />
+                    <Logo className="w-32 md:w-56 h-auto" />
                 </div>
 
                 {/* Verse Section */}
-                <div className="mb-12 relative group cursor-default max-w-5xl mx-auto px-4">
+                <div className="mb-8 md:mb-12 relative group cursor-default max-w-[90vw] md:max-w-5xl mx-auto px-4">
                     {/* Glow effect */}
                     <span className="absolute -inset-8 bg-[#FF6D00]/10 rounded-full blur-2xl opacity-50 group-hover:opacity-80 transition duration-1000"></span>
 
                     {/* The Verse Text (Vachan) - Main Focus */}
-                    <h2 className="relative text-3xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-2xl text-balance italic">
+                    <h2 className="relative text-2xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-2xl text-balance italic">
                         "Come to me, all you who are weary and burdened, <br className="hidden md:block" /> and I will give you rest."
                     </h2>
 
                     {/* The Reference (Small) */}
-                    <p className="mt-4 text-xs md:text-sm font-bold tracking-[0.3em] uppercase text-[var(--brand)] opacity-90">
+                    <p className="mt-4 text-[10px] md:text-sm font-bold tracking-[0.3em] uppercase text-[var(--brand)] opacity-90">
                         — Matthew 11:28
                     </p>
                 </div>

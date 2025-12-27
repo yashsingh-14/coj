@@ -319,10 +319,10 @@ export default function HomeUtilityContent({
                                 <Logo className="w-40 md:w-60 h-auto" />
                             </div>
 
-                            <h2 className="-mt-12 md:-mt-16 text-lg md:text-4xl lg:text-6xl font-serif italic leading-tight mb-6 md:mb-10 drop-shadow-2xl px-2 md:px-4 relative verse-text-shine">
-                                <span className="absolute -top-6 md:-top-10 left-0 text-[60px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
+                            <h2 className="-mt-8 md:-mt-16 text-2xl md:text-4xl lg:text-6xl font-serif italic leading-tight mb-6 md:mb-10 drop-shadow-2xl px-2 md:px-4 relative verse-text-shine">
+                                <span className="absolute -top-4 md:-top-10 left-0 text-[40px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                                 {todaysVerse.text}
-                                <span className="absolute -bottom-12 md:-bottom-20 right-0 text-[60px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
+                                <span className="absolute -bottom-8 md:-bottom-20 right-0 text-[40px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                             </h2>
 
                             <div className="flex flex-col items-center gap-4 md:gap-8 translate-z-10">
@@ -363,7 +363,7 @@ export default function HomeUtilityContent({
                             </span>
                             <span className="text-[10px] font-black tracking-[0.3em] uppercase text-red-500">Global Charts</span>
                         </div>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter shadow-white drop-shadow-lg">
+                        <h2 className="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter shadow-white drop-shadow-lg">
                             TRENDING <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">NOW</span>
                         </h2>
                     </div>
@@ -425,7 +425,7 @@ export default function HomeUtilityContent({
 
             {/* FEATURED ARTISTS - MINDBLOWING REDESIGN */}
             <section className="mb-20 md:mb-24 pl-4 md:pl-6 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                <h2 className="text-3xl md:text-4xl font-black text-white mb-8 md:mb-10 tracking-tighter">
+                <h2 className="text-2xl md:text-4xl font-black text-white mb-8 md:mb-10 tracking-tighter">
                     ICONS OF <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand)] to-[var(--accent)]">WORSHIP</span>
                 </h2>
 
@@ -443,8 +443,8 @@ export default function HomeUtilityContent({
                         { name: 'Elevation', img: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=800&auto=format&fit=crop' },
                         { name: 'Maverick', img: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=800&auto=format&fit=crop' }
                     ].map((artist, i) => (
-                        <div key={i} className="min-w-[240px] md:min-w-[280px] snap-center group relative cursor-pointer">
-                            <TiltCard className="w-full h-[340px] md:h-[400px]" max={12} scale={1.05}>
+                        <div key={i} className="min-w-[180px] md:min-w-[280px] snap-center group relative cursor-pointer">
+                            <TiltCard className="w-full h-[260px] md:h-[400px]" max={12} scale={1.05}>
                                 <Link
                                     href={`/artists/${artist.name.toLowerCase().replace(/\s+/g, '-')}`}
                                     className="relative block w-full h-full rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-[#111] shadow-2xl group-hover:shadow-[0_0_50px_rgba(233,30,99,0.3)] transition-shadow duration-500 border border-white/10"
@@ -468,7 +468,7 @@ export default function HomeUtilityContent({
                                     <div className="absolute bottom-0 left-0 w-full p-5 md:p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         <div className="w-12 h-1.5 bg-[var(--brand)] mb-4 w-0 group-hover:w-12 transition-all duration-500 ease-out" />
 
-                                        <h3 className="text-3xl md:text-4xl font-black text-white uppercase leading-[0.9] tracking-tighter mb-3 drop-shadow-lg">
+                                        <h3 className="text-xl md:text-4xl font-black text-white uppercase leading-[0.9] tracking-tighter mb-3 drop-shadow-lg">
                                             {artist.name}
                                         </h3>
 
