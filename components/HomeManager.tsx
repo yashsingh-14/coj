@@ -22,12 +22,7 @@ export default function HomeManager({ initialData }: {
     const { mode, setMode, isAuthenticated } = useAppStore();
     const [showExperience, setShowExperience] = useState(mode === 'EXPERIENCE');
 
-    useEffect(() => {
-        // If user is authenticated or previously visited, skip intro
-        if (isAuthenticated) {
-            setMode('UTILITY');
-        }
-    }, [isAuthenticated, setMode]);
+
 
     useEffect(() => {
         if (mode === 'UTILITY') {
