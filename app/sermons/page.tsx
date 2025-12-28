@@ -81,89 +81,91 @@ export default function SermonsPage() {
                     </div>
                 ) : sermons.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <TiltCard key={video.id} className="w-full" max={5} scale={1.02}>
-                            <div className="group relative h-full flex flex-col bg-black/40 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_40px_-10px_rgba(220,38,38,0.3)] transition-all duration-500">
-                                {/* Video Thumbnail with Cinematic Overlay */}
-                                <div className="relative aspect-video w-full overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
-                                    <img
-                                        src={video.thumbnail}
-                                        alt={video.title}
-                                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
-                                    />
+                        {sermons.map((video) => (
+                            <TiltCard key={video.id} className="w-full" max={5} scale={1.02}>
+                                <div className="group relative h-full flex flex-col bg-black/40 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_40px_-10px_rgba(220,38,38,0.3)] transition-all duration-500">
+                                    {/* Video Thumbnail with Cinematic Overlay */}
+                                    <div className="relative aspect-video w-full overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
+                                        <img
+                                            src={video.thumbnail}
+                                            alt={video.title}
+                                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
+                                        />
 
-                                    {/* Play Button - Centered & Premium */}
-                                    <div className="absolute inset-0 z-20 flex items-center justify-center">
-                                        <div className="w-16 h-16 rounded-full bg-red-600/20 border border-red-500/50 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-[0_0_30px_rgba(220,38,38,0.5)]">
-                                            <Play className="w-6 h-6 text-white fill-white ml-1" />
-                                        </div>
-                                    </div>
-
-                                    {/* Live Badge */}
-                                    {video.isLive && (
-                                        <div className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 bg-red-600/90 backdrop-blur-md border border-red-400/50 rounded-full animate-pulse shadow-lg">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_10px_white]"></div>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-white">LIVE NOW</span>
-                                        </div>
-                                    )}
-
-                                    {/* Direct Link */}
-                                    <a
-                                        href={`https://www.youtube.com/watch?v=${video.id}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="absolute inset-0 z-30"
-                                    ></a>
-                                </div>
-
-                                {/* Content Section */}
-                                <div className="p-6 relative flex-grow flex flex-col justify-between z-20">
-                                    {/* Gradient Background for Text Area */}
-                                    <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/80 pointer-events-none"></div>
-
-                                    <div className="relative">
-                                        {/* Date Badge */}
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <div className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-bold text-white/60 flex items-center gap-1.5 uppercase tracking-wider">
-                                                <Calendar className="w-3 h-3 text-red-500" />
-                                                {video.publishedAt}
+                                        {/* Play Button - Centered & Premium */}
+                                        <div className="absolute inset-0 z-20 flex items-center justify-center">
+                                            <div className="w-16 h-16 rounded-full bg-red-600/20 border border-red-500/50 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-[0_0_30px_rgba(220,38,38,0.5)]">
+                                                <Play className="w-6 h-6 text-white fill-white ml-1" />
                                             </div>
                                         </div>
 
-                                        {/* Title */}
-                                        <div className="flex items-start justify-between gap-4 mb-2">
-                                            <h3 className="text-xl font-black text-white leading-tight line-clamp-2 group-hover:text-red-500 transition-colors drop-shadow-lg">
-                                                {video.title}
-                                            </h3>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleShare(video);
-                                                }}
-                                                className="p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all text-white/50 hover:text-white z-40 relative group/btn"
-                                            >
-                                                {copiedId === video.id ? <Check className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4" />}
-                                            </button>
-                                        </div>
+                                        {/* Live Badge */}
+                                        {video.isLive && (
+                                            <div className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 bg-red-600/90 backdrop-blur-md border border-red-400/50 rounded-full animate-pulse shadow-lg">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_10px_white]"></div>
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-white">LIVE NOW</span>
+                                            </div>
+                                        )}
+
+                                        {/* Direct Link */}
+                                        <a
+                                            href={`https://www.youtube.com/watch?v=${video.id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="absolute inset-0 z-30"
+                                        ></a>
                                     </div>
 
-                                    {/* Footer With Official Logo */}
-                                    <div className="relative mt-6 pt-4 border-t border-white/5 flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-black border border-white/10 p-1.5 shadow-lg group-hover:border-red-500/30 transition-colors">
-                                            <img src="/logo.png" alt="COJ" className="w-full h-full object-contain" />
+                                    {/* Content Section */}
+                                    <div className="p-6 relative flex-grow flex flex-col justify-between z-20">
+                                        {/* Gradient Background for Text Area */}
+                                        <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/80 pointer-events-none"></div>
+
+                                        <div className="relative">
+                                            {/* Date Badge */}
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <div className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-bold text-white/60 flex items-center gap-1.5 uppercase tracking-wider">
+                                                    <Calendar className="w-3 h-3 text-red-500" />
+                                                    {video.publishedAt}
+                                                </div>
+                                            </div>
+
+                                            {/* Title */}
+                                            <div className="flex items-start justify-between gap-4 mb-2">
+                                                <h3 className="text-xl font-black text-white leading-tight line-clamp-2 group-hover:text-red-500 transition-colors drop-shadow-lg">
+                                                    {video.title}
+                                                </h3>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        handleShare(video);
+                                                    }}
+                                                    className="p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 transition-all text-white/50 hover:text-white z-40 relative group/btn"
+                                                >
+                                                    {copiedId === video.id ? <Check className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4" />}
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-bold text-white tracking-widest uppercase group-hover:text-red-400 transition-colors">
-                                                Call of Jesus
-                                            </span>
-                                            <span className="text-[10px] text-white/40 font-medium">
-                                                Official Ministry Channel
-                                            </span>
+
+                                        {/* Footer With Official Logo */}
+                                        <div className="relative mt-6 pt-4 border-t border-white/5 flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-black border border-white/10 p-1.5 shadow-lg group-hover:border-red-500/30 transition-colors">
+                                                <img src="/logo.png" alt="COJ" className="w-full h-full object-contain" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-bold text-white tracking-widest uppercase group-hover:text-red-400 transition-colors">
+                                                    Call of Jesus
+                                                </span>
+                                                <span className="text-[10px] text-white/40 font-medium">
+                                                    Official Ministry Channel
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </TiltCard>
+                            </TiltCard>
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-20 bg-white/5 rounded-[3rem] border border-white/10">
