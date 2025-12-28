@@ -80,31 +80,35 @@ export default function SettingsPage() {
                 const registration = await navigator.serviceWorker.register('/sw.js');
                 await navigator.serviceWorker.ready;
 
+                const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+                if (!vapidKey) {
+                    throw new Error("Missing VAPID Public Key");
+                }
+
                 // 3. Subscribe to Push Manager
                 const subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
-                    applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
+                    applicationServerKey: urlBase64ToUint8Array(vapidKey)
                 });
 
                 // 4. Send subscription to our Backend
-                // Ideally this should use currentUser.id, but if not logged in, we can't save to DB linked to user
-                // For now, we try to send. Assume currentUser is available in store if needed.
                 const { currentUser } = useAppStore.getState();
 
                 if (currentUser) {
-                    await fetch('/api/notifications/subscribe?userId=' + currentUser.id, {
+                    const response = await fetch('/api/notifications/subscribe?userId=' + currentUser.id, {
                         method: 'POST',
                         body: JSON.stringify(subscription),
                         headers: { 'Content-Type': 'application/json' }
                     });
+                    if (!response.ok) throw new Error("Backend save failed");
                     toast.success("Successfully subscribed to Push Notifications!");
                 } else {
                     toast("Notifications enabled locally (Sign in to sync across devices)");
                 }
 
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Push subscription error:", error);
-                toast.error("Failed to enable push notifications");
+                toast.error("Failed: " + (error.message || "Unknown error"));
                 return; // Don't flip the toggle if failed
             }
         }

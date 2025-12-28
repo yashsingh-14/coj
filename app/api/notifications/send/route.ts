@@ -1,76 +1,64 @@
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
 import webpush from 'web-push';
 
-// NOTE: In production, better to move this config to a dedicated lib initialization file
-const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-const privateVapidKey = process.env.VAPID_PRIVATE_KEY;
-const subject = process.env.VAPID_SUBJECT || 'mailto:admin@coj.com';
+// Initialize Supabase
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-if (publicVapidKey && privateVapidKey) {
-    webpush.setVapidDetails(subject, publicVapidKey, privateVapidKey);
-} else {
-    console.warn("VAPID Keys are missing in env.");
-}
+// Initialize Web Push
+webpush.setVapidDetails(
+    process.env.VAPID_SUBJECT || 'mailto:admin@coj.com',
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.VAPID_PRIVATE_KEY!
+);
 
-export async function POST(req: Request) {
-    // 1. Auth Check (Admin Only)
-    // For now, simpler check or assume middleware handles admin routes protection
-    // But this API route is public, so we should ideally check session/headers.
-    // Let's assume the caller passes a secret or we rely on session.
-    // To keep it simple for now, we'll verify if the user sending is admin via Supabase.
-
-    // Actually, getting user from request in App Router can be tricky without proper middleware context sometimes.
-    // Let's rely on client checking for now, but in prod add strict check.
-
+export async function GET(request: Request) {
     try {
-        const body = await req.json();
-        const { title, message, url } = body;
+        const { searchParams } = new URL(request.url);
+        const title = searchParams.get('title') || 'Test Notification';
+        const body = searchParams.get('body') || 'This is a test message from COJ Backend';
+        const url = searchParams.get('url') || '/';
 
-        console.log("Sending Push:", title, message);
-
-        // 2. Fetch all subscriptions
+        // Fetch all subscriptions (In production, filter by user or topic)
         const { data: subscriptions, error } = await supabase
             .from('push_subscriptions')
             .select('*');
 
         if (error) throw error;
-        if (!subscriptions || subscriptions.length === 0) {
-            return NextResponse.json({ message: 'No subscribers found' });
-        }
 
-        console.log(`Found ${subscriptions.length} subscribers.`);
+        let successCount = 0;
+        let failureCount = 0;
 
-        // 3. Send Notification to all
-        const notificationPayload = JSON.stringify({
-            title: title || 'New Update',
-            body: message || 'Click to check it out!',
-            icon: '/icon-192x192.png',
-            url: url || '/'
+        const payload = JSON.stringify({ title, body, url });
+
+        const promises = subscriptions.map(async (sub) => {
+            try {
+                await webpush.sendNotification(sub.keys ? { endpoint: sub.endpoint, keys: sub.keys } : { endpoint: sub.endpoint, keys: sub.keys }, payload);
+                successCount++;
+            } catch (err) {
+                console.error('Failed to send to', sub.id, err);
+                failureCount++;
+                // Optional: Delete invalid subscriptions
+                if (err.statusCode === 410) {
+                    await supabase.from('push_subscriptions').delete().eq('id', sub.id);
+                }
+            }
         });
-
-        const promises = subscriptions.map(sub =>
-            webpush.sendNotification({
-                endpoint: sub.endpoint,
-                keys: sub.keys
-            }, notificationPayload)
-                .catch(err => {
-                    if (err.statusCode === 410 || err.statusCode === 404) {
-                        // Subscription expired, remove from DB
-                        console.log('Subscription expired, deleting:', sub.id);
-                        return supabase.from('push_subscriptions').delete().match({ id: sub.id });
-                    }
-                    console.error('Error sending to sub:', err);
-                    return null;
-                })
-        );
 
         await Promise.all(promises);
 
-        return NextResponse.json({ success: true, count: subscriptions.length });
+        return NextResponse.json({
+            success: true,
+            sent: successCount,
+            failed: failureCount,
+            message: `Sent to ${successCount} devices`
+        });
 
-    } catch (error: any) {
-        console.error('Send Notification Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        console.error('Send error:', error);
+        return NextResponse.json({ error: 'Failed to send notifications' }, { status: 500 });
     }
 }
