@@ -111,12 +111,17 @@ export default function SettingsPage() {
                 const { currentUser } = useAppStore.getState();
 
                 if (currentUser) {
-                    const response = await fetch('/api/notifications/subscribe?userId=' + currentUser.id, {
+                    const response = await fetch(`/api/notifications/save-subscription?userId=${currentUser.id}`, {
                         method: 'POST',
                         body: JSON.stringify(subscription),
                         headers: { 'Content-Type': 'application/json' }
                     });
-                    if (!response.ok) throw new Error("Backend save failed");
+                    if (!response.ok) {
+                        const text = await response.text();
+                        // Cut off long HTML responses
+                        const preview = text.length > 100 ? text.substring(0, 100) + "..." : text;
+                        throw new Error(`Err: ${response.status} - ${preview}`);
+                    }
                     toast.success("Successfully subscribed to Push Notifications!");
                 } else {
                     toast("Notifications enabled locally (Sign in to sync across devices)");

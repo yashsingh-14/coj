@@ -193,7 +193,7 @@ export default function SignInPage() {
 
                 {/* Footer Link */}
                 <p className="text-center mt-8 text-white/30 text-sm">
-                    Don&apos;t have an account?{' '}
+                    Don't have an account?{' '}
                     <Link href="/signup" className="text-[var(--brand)] font-bold hover:text-[var(--accent)] hover:underline transition-all">
                         Join the Family
                     </Link>
