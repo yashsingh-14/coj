@@ -317,16 +317,34 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                     <input name="artist" value={formData.artist} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Key</label>
-                                    <input name="key" value={formData.key} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>                <button
+                                    {/* Basic Info */}
+                                    <div className="space-y-4 md:space-y-6">
+                                        <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500"></span> Basic Info
+                                        </h3>
+
+                                        <div className="space-y-3 md:space-y-4">
+                                            <div>
+                                                <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Title</label>
+                                                <input name="title" value={formData.title} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-3 md:gap-4">
+                                                <div>
+                                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Artist</label>
+                                                    <input name="artist" value={formData.artist} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Key</label>
+                                                    <input name="key" value={formData.key} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
                                         type="button"
                                         onClick={handleAiGenerate}
                                         disabled={isGenerating || !aiPrompt}
-                                        className="px-6 py-4 bg-purple-500 text-white font-bold rounded-xl hover:bg-purple-400 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-6 py-4 bg-purple-500 text-white font-bold rounded-xl hover:bg-purple-400 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed h-fit self-end"
                                     >
                                         {isGenerating ? (
                                             <>
