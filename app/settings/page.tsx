@@ -50,6 +50,12 @@ export default function SettingsPage() {
         }
     };
 
+    const handleLogout = () => {
+        logout();
+        toast.success("Signed out successfully");
+        router.push('/signin');
+    };
+
     const handleShareApp = async () => {
         const shareData = {
             title: 'Call of Jesus App',
