@@ -14,7 +14,6 @@ const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
 export async function fetchSermons(): Promise<YouTubeVideo[]> {
     if (!API_KEY) {
-        console.warn('YouTube API Key is missing. Please add NEXT_PUBLIC_YOUTUBE_API_KEY to your .env.local file.');
         return [];
     }
 
@@ -29,68 +28,51 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
         console.error("Error fetching YouTube config", err);
     }
 
-    export async function fetchSermons(): Promise<YouTubeVideo[]> {
-        if (!API_KEY) {
+    try {
+        // Step 1: Get Uploads Playlist ID (Cost: 1 unit)
+        // If we hardcode this, it's 0 units. But dynamic is safer.
+        const channelRes = await fetch(
+            `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&id=${channelId}&part=contentDetails`
+        );
+        const channelData = await channelRes.json();
+
+        if (!channelData.items || channelData.items.length === 0) {
+            console.error('Channel not found');
             return [];
         }
 
-        // Fetch Config from DB
-        let channelId = DEFAULT_CHANNEL_ID;
-        try {
-            const { data } = await supabase.from('site_settings').select('value').eq('key', 'youtube_config').single();
-            if (data && data.value && data.value.channelId) {
-                channelId = data.value.channelId;
-            }
-        } catch (err) {
-            console.error("Error fetching YouTube config", err);
-        }
+        const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
-        try {
-            // Step 1: Get Uploads Playlist ID (Cost: 1 unit)
-            // If we hardcode this, it's 0 units. But dynamic is safer.
-            const channelRes = await fetch(
-                `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&id=${channelId}&part=contentDetails`
-            );
-            const channelData = await channelRes.json();
+        // Step 2: Fetch Videos from Uploads Playlist (Cost: 1 unit)
+        const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=12`
+        );
 
-            if (!channelData.items || channelData.items.length === 0) {
-                console.error('Channel not found');
-                return [];
-            }
+        const data = await response.json();
 
-            const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
-
-            // Step 2: Fetch Videos from Uploads Playlist (Cost: 1 unit)
-            const response = await fetch(
-                `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=12`
-            );
-
-            const data = await response.json();
-
-            if (data.error) {
-                console.error('YouTube API Error:', data.error);
-                return [];
-            }
-
-            if (!data.items || data.items.length === 0) {
-                return [];
-            }
-
-            return data.items.map((item: any) => ({
-                id: item.snippet.resourceId.videoId,
-                title: item.snippet.title,
-                description: item.snippet.description,
-                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
-                publishedAt: new Date(item.snippet.publishedAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                }),
-                isLive: false // Playlist items don't explicitly show live status usually, but this is fine for cost saving
-            }));
-        } catch (error) {
-            console.error('Failed to fetch sermons:', error);
+        if (data.error) {
+            console.error('YouTube API Error:', data.error);
             return [];
         }
+
+        if (!data.items || data.items.length === 0) {
+            return [];
+        }
+
+        return data.items.map((item: any) => ({
+            id: item.snippet.resourceId.videoId,
+            title: item.snippet.title,
+            description: item.snippet.description,
+            thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+            publishedAt: new Date(item.snippet.publishedAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            }),
+            isLive: false // Playlist items don't explicitly show live status usually, but this is fine for cost saving
+        }));
+    } catch (error) {
+        console.error('Failed to fetch sermons:', error);
+        return [];
     }
 }
