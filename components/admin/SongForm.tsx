@@ -369,36 +369,38 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                             <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Chords (ChordPro Format)</label>
                                             <textarea name="chords" value={formData.chords} onChange={handleChange} className="w-full h-40 md:h-64 bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white font-mono text-sm focus:outline-none focus:border-emerald-500 resize-none" placeholder="[C] Amazing Grace..." />
                                         </div>
-                                    </div>
-                                </div>textarea
-                                name="chords"
-                                value={formData.chords}
-                                onChange={handleChange}
-                                rows={10}
-                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-amber-200/80 font-mono text-sm leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
+                                        <div className="flex justify-between mb-2">
+                                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Chords (Optional)</label>
+                                        </div>
+                                        <textarea
+                                            name="chords"
+                                            value={formData.chords}
+                                            onChange={handleChange}
+                                            rows={10}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-amber-200/80 font-mono text-sm leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
                                         />
-                        </div>
+                                    </div>
 
-                        <div>
-                            <div className="flex justify-between mb-2">
-                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Hindi Lyrics (Optional)</label>
-                            </div>
-                            <textarea
-                                name="hindi_lyrics"
-                                value={formData.hindi_lyrics}
-                                onChange={handleChange}
-                                rows={6}
-                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
-                                placeholder={`तू यहाँ है...\nकार्य कर रहा है...`}
-                            />
+                                    <div>
+                                        <div className="flex justify-between mb-2">
+                                            <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Hindi Lyrics (Optional)</label>
+                                        </div>
+                                        <textarea
+                                            name="hindi_lyrics"
+                                            value={formData.hindi_lyrics}
+                                            onChange={handleChange}
+                                            rows={6}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
+                                            placeholder={`तू यहाँ है...\nकार्य कर रहा है...`}
+                                        />
+                                    </div>
+                                </div>
+                            </section>
                         </div>
-                    </div>
-                </section>
-        </div>
                     </form >
                 </>
             )
-}
+            }
         </div >
     );
 }
