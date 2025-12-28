@@ -39,13 +39,13 @@ export default function NotificationsPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto py-10">
-            <h1 className="text-3xl font-black text-white mb-8 flex items-center gap-3">
-                <Bell className="w-8 h-8 text-amber-500" />
+        <div className="max-w-4xl mx-auto py-6 md:py-10">
+            <h1 className="text-2xl md:text-3xl font-black text-white mb-6 md:mb-8 flex items-center gap-3">
+                <Bell className="w-6 h-6 md:w-8 md:h-8 text-amber-500" />
                 Push Notifications
             </h1>
 
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-4 md:p-8">
                 <form onSubmit={handleSend} className="space-y-6">
                     <div>
                         <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Title</label>

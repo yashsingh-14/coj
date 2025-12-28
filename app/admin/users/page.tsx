@@ -49,14 +49,14 @@ export default function AdminUsersPage() {
 
     return (
         <div className="space-y-8 pb-20">
-            <header className="flex items-center justify-between">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl font-black text-white tracking-tight mb-2">Users</h1>
-                    <p className="text-white/40">Manage user profiles and access roles.</p>
+                    <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">Users</h1>
+                    <p className="text-white/40 text-sm">Manage user profiles and access roles.</p>
                 </div>
-                <div className="bg-[#0F0F16] border border-white/5 rounded-full px-4 py-2 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-white/50" />
-                    <span className="text-white font-bold">{users.length} Total</span>
+                <div className="bg-[#0F0F16] border border-white/5 rounded-full px-4 py-2 flex items-center gap-2 w-fit">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-white/50" />
+                    <span className="text-white font-bold text-sm">{users.length} Total</span>
                 </div>
             </header>
 
@@ -66,8 +66,8 @@ export default function AdminUsersPage() {
                     <input
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search users by name or email..."
-                        className="w-full bg-[#0F0F16] border border-white/5 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-white/20 transition-all"
+                        placeholder="Search users..."
+                        className="w-full bg-[#0F0F16] border border-white/5 rounded-2xl pl-12 pr-4 py-3 md:py-4 text-white focus:outline-none focus:border-white/20 transition-all"
                     />
                 </div>
             </div>
@@ -81,17 +81,17 @@ export default function AdminUsersPage() {
                     <table className="w-full text-left">
                         <thead className="bg-white/5 border-b border-white/5">
                             <tr>
-                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest">User</th>
-                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest">Email</th>
-                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest">Role</th>
-                                <th className="px-6 py-4 text-xs font-bold text-white/50 uppercase tracking-widest text-right">Actions</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4 text-xs font-bold text-white/50 uppercase tracking-widest">User</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4 text-xs font-bold text-white/50 uppercase tracking-widest hidden md:table-cell">Email</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4 text-xs font-bold text-white/50 uppercase tracking-widest">Role</th>
+                                <th className="px-4 py-3 md:px-6 md:py-4 text-xs font-bold text-white/50 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {filteredUsers.map((user) => (
                                 <tr key={user.id} className="hover:bg-white/[0.02] transition-colors">
-                                    <td className="px-6 py-4 flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center">
+                                    <td className="px-4 py-3 md:px-6 md:py-4 flex items-center gap-3">
+                                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center shrink-0">
                                             {user.avatar_url ? (
                                                 <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
                                             ) : (
@@ -100,20 +100,20 @@ export default function AdminUsersPage() {
                                                 </span>
                                             )}
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-white">{user.name || 'Unknown'}</p>
-                                            <p className="text-xs text-white/30 font-mono">{user.id.slice(0, 8)}...</p>
+                                        <div className="min-w-0">
+                                            <p className="font-bold text-white truncate text-sm md:text-base">{user.name || 'Unknown'}</p>
+                                            <p className="text-xs text-white/30 font-mono truncate md:hidden max-w-[100px]">{user.email}</p>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-white/60 text-sm">
+                                    <td className="px-4 py-3 md:px-6 md:py-4 text-white/60 text-sm hidden md:table-cell">
                                         {user.email || 'No Email Public'}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border ${user.role === 'admin' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'bg-white/5 border-white/10 text-white/40'}`}>
+                                    <td className="px-4 py-3 md:px-6 md:py-4">
+                                        <span className={`px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border ${user.role === 'admin' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : 'bg-white/5 border-white/10 text-white/40'}`}>
                                             {user.role || 'user'}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="px-4 py-3 md:px-6 md:py-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             {user.role === 'admin' ? (
                                                 <button

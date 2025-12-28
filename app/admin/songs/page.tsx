@@ -50,11 +50,11 @@ export default function ManageSongsPage() {
         <div>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight mb-2">Manage Songs</h1>
-                    <p className="text-white/40">{songs.length} songs in library</p>
+                    <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">Manage Songs</h1>
+                    <p className="text-white/40 text-sm">{songs.length} songs in library</p>
                 </div>
-                <Link href="/admin/songs/new" className="px-6 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center gap-2 transition-all">
-                    <Plus className="w-5 h-5" /> Add New Song
+                <Link href="/admin/songs/new" className="px-4 py-2 md:px-6 md:py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold flex items-center gap-2 transition-all text-sm md:text-base">
+                    <Plus className="w-4 h-4 md:w-5 md:h-5" /> <span className="hidden md:inline">Add New Song</span><span className="md:hidden">Add</span>
                 </Link>
             </div>
 
@@ -66,7 +66,7 @@ export default function ManageSongsPage() {
                     placeholder="Search library..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full bg-white/5 border border-white/5 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-white/10 transition-colors"
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl pl-12 pr-4 py-3 md:py-4 text-white focus:outline-none focus:border-white/10 transition-colors"
                 />
             </div>
 
@@ -75,10 +75,10 @@ export default function ManageSongsPage() {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-white/5 bg-white/[0.02]">
-                            <th className="p-6 text-xs font-bold text-white/30 uppercase tracking-widest">Title</th>
-                            <th className="p-6 text-xs font-bold text-white/30 uppercase tracking-widest">Artist</th>
-                            <th className="p-6 text-xs font-bold text-white/30 uppercase tracking-widest">Category</th>
-                            <th className="p-6 text-xs font-bold text-white/30 uppercase tracking-widest text-right">Actions</th>
+                            <th className="p-4 md:p-6 text-xs font-bold text-white/30 uppercase tracking-widest">Title</th>
+                            <th className="p-4 md:p-6 text-xs font-bold text-white/30 uppercase tracking-widest hidden md:table-cell">Artist</th>
+                            <th className="p-4 md:p-6 text-xs font-bold text-white/30 uppercase tracking-widest hidden md:table-cell">Category</th>
+                            <th className="p-4 md:p-6 text-xs font-bold text-white/30 uppercase tracking-widest text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,15 +89,18 @@ export default function ManageSongsPage() {
                         ) : (
                             filtered.map(song => (
                                 <tr key={song.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                                    <td className="p-6 font-bold text-white">{song.title}</td>
-                                    <td className="p-6 text-white/60">{song.artist}</td>
-                                    <td className="p-6">
+                                    <td className="p-4 md:p-6 font-bold text-white">
+                                        {song.title}
+                                        <div className="md:hidden text-xs text-white/40 font-normal mt-1">{song.artist}</div>
+                                    </td>
+                                    <td className="p-4 md:p-6 text-white/60 hidden md:table-cell">{song.artist}</td>
+                                    <td className="p-4 md:p-6 hidden md:table-cell">
                                         <span className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-xs font-bold uppercase tracking-wider text-white/40">
                                             {song.category}
                                         </span>
                                     </td>
-                                    <td className="p-6 text-right">
-                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <td className="p-4 md:p-6 text-right">
+                                        <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                             <Link
                                                 href={`/admin/songs/${song.id}`}
                                                 className="p-2 rounded-lg hover:bg-white/10 text-white/40 hover:text-white"
