@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, User, Bell, Smartphone, Lock, HelpCircle, LogOut, ChevronRight, Moon, Volume2, Shield } from 'lucide-react';
+import { ArrowLeft, User, Bell, Smartphone, Lock, HelpCircle, LogOut, ChevronRight, Moon, Volume2, Shield, Share2 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
