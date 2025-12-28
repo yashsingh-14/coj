@@ -46,15 +46,15 @@ export default function SermonsPage() {
                     <span className="text-sm font-bold tracking-widest uppercase">Back</span>
                 </Link>
 
-                <div className="text-center mb-16 animate-fade-in-down">
+                <div className="text-center mb-8 md:mb-16 animate-fade-in-down">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
                         <Youtube className="w-4 h-4 text-red-500" />
-                        <span className="text-red-500 text-xs font-bold tracking-[0.2em] uppercase">Channel: Call of Jesus Ministries</span>
+                        <span className="text-red-500 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Channel: Call of Jesus Ministries</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
+                    <h1 className="text-3xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
                         WATCH <span className="text-red-500">SERMONS</span>
                     </h1>
-                    <p className="text-white/40 text-lg max-w-2xl mx-auto">
+                    <p className="text-white/40 text-sm md:text-lg max-w-2xl mx-auto px-4">
                         Missed a service? Catch up on all the latest teachings and live worship sessions from our YouTube channel.
                     </p>
                 </div>
@@ -66,7 +66,7 @@ export default function SermonsPage() {
                         ))}
                     </div>
                 ) : sermons.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                         {sermons.map((video) => (
                             <TiltCard key={video.id} className="w-full" max={5} scale={1.02}>
                                 <div className="group relative h-full flex flex-col bg-black/40 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_40px_-10px_rgba(220,38,38,0.3)] transition-all duration-500">
@@ -104,7 +104,7 @@ export default function SermonsPage() {
                                     </div>
 
                                     {/* Content Section */}
-                                    <div className="p-6 relative flex-grow flex flex-col justify-between z-20">
+                                    <div className="p-4 md:p-6 relative flex-grow flex flex-col justify-between z-20">
                                         {/* Gradient Background for Text Area */}
                                         <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/80 pointer-events-none"></div>
 
@@ -119,7 +119,7 @@ export default function SermonsPage() {
 
                                             {/* Title */}
                                             <div className="flex items-start justify-between gap-4 mb-2">
-                                                <h3 className="text-xl font-black text-white leading-tight line-clamp-2 group-hover:text-red-500 transition-colors drop-shadow-lg">
+                                                <h3 className="text-lg md:text-xl font-black text-white leading-tight line-clamp-2 group-hover:text-red-500 transition-colors drop-shadow-lg text-left">
                                                     {video.title}
                                                 </h3>
                                                 <button

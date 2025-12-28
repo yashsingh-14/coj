@@ -189,11 +189,11 @@ export default function SettingsPage() {
     return (
         <div className="min-h-screen bg-[#02000F] text-white pb-32">
             {/* Header */}
-            <div className="sticky top-0 z-40 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5 p-6 flex items-center gap-4">
-                <Link href="/profile" className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group">
-                    <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
+            <div className="sticky top-0 z-40 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5 p-4 md:p-6 flex items-center gap-4">
+                <Link href="/profile" className="p-2 md:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group">
+                    <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:-translate-x-1 transition-transform" />
                 </Link>
-                <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight">Settings</h1>
             </div>
 
             <div className="container mx-auto px-6 max-w-2xl py-8">
@@ -212,7 +212,7 @@ export default function SettingsPage() {
                                                 toast("Feature coming soon!");
                                             }
                                         }}
-                                        className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors group"
+                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-white/5 transition-colors group"
                                     >
                                         <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors">
                                             <item.icon className="w-5 h-5" />
@@ -227,7 +227,7 @@ export default function SettingsPage() {
                                     <div
                                         key={i}
                                         onClick={item.action}
-                                        className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors cursor-pointer group select-none"
+                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-white/5 transition-colors cursor-pointer group select-none"
                                     >
                                         <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors">
                                             <item.icon className="w-5 h-5" />
@@ -245,7 +245,7 @@ export default function SettingsPage() {
                                     <div
                                         key={i}
                                         onClick={item.action}
-                                        className={`flex items-center gap-4 p-5 ${item.action ? 'cursor-pointer hover:bg-white/5' : 'opacity-60'} transition-colors`}
+                                        className={`flex items-center gap-4 p-4 md:p-5 ${item.action ? 'cursor-pointer hover:bg-white/5' : 'opacity-60'} transition-colors`}
                                     >
                                         <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                             <item.icon className="w-5 h-5" />
@@ -266,7 +266,7 @@ export default function SettingsPage() {
 
                 <button
                     onClick={handleLogout}
-                    className="w-full p-5 rounded-3xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold flex items-center justify-center gap-3 hover:bg-red-500/20 transition-all mb-12"
+                    className="w-full p-4 md:p-5 rounded-3xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold flex items-center justify-center gap-3 hover:bg-red-500/20 transition-all mb-12"
                 >
                     <LogOut className="w-5 h-5" />
                     Sign Out

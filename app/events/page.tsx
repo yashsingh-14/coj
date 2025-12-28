@@ -69,18 +69,18 @@ export default function EventsPage() {
                     <span className="text-sm font-bold tracking-widest uppercase">Back</span>
                 </Link>
 
-                <div className="text-center mb-16">
+                <div className="text-center mb-8 md:mb-16">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4 animate-fade-in-down">
                         <Calendar className="w-4 h-4 text-amber-500" />
-                        <span className="text-amber-500 text-xs font-bold tracking-[0.2em] uppercase">Weekly Gatherings</span>
+                        <span className="text-amber-500 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Weekly Gatherings</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
+                    <h1 className="text-3xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
                         JOIN US <span className="text-amber-500">OFFLINE</span>
                     </h1>
-                    <p className="text-white/40 text-lg max-w-2xl mx-auto">
+                    <p className="text-white/40 text-sm md:text-lg max-w-2xl mx-auto px-4">
                         Experience the presence of God together. Come as you are.
                         <br />
-                        <span className="text-sm opacity-70 font-serif italic">परमेश्वर की उपस्थिति का अनुभव करें।</span>
+                        <span className="text-xs md:text-sm opacity-70 font-serif italic">परमेश्वर की उपस्थिति का अनुभव करें।</span>
                     </p>
                 </div>
 
@@ -94,7 +94,7 @@ export default function EventsPage() {
                             <TiltCard key={i} className="w-full" max={5} scale={1.02}>
                                 <div className="h-full bg-[#0A0A0A] border border-white/10 rounded-[2rem] p-1 relative overflow-hidden group hover:border-amber-500/30 transition-all duration-500 shadow-2xl">
                                     {/* Inner Content Container */}
-                                    <div className="bg-[#0f0f0f] rounded-[1.8rem] p-6 h-full relative overflow-hidden">
+                                    <div className="bg-[#0f0f0f] rounded-[1.8rem] p-4 md:p-6 h-full relative overflow-hidden">
                                         {/* Gradient Background */}
                                         <div className={`absolute inset-0 bg-gradient-to-br ${event.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
 
@@ -108,8 +108,8 @@ export default function EventsPage() {
                                             </div>
 
                                             {/* English Section */}
-                                            <div className="mb-6 space-y-2">
-                                                <h3 className="text-2xl font-bold text-white leading-tight">{event.titleEn}</h3>
+                                            <div className="mb-4 md:mb-6 space-y-2">
+                                                <h3 className="text-xl md:text-2xl font-bold text-white leading-tight">{event.titleEn}</h3>
                                                 <div className="flex items-start gap-2 text-white/60 text-sm">
                                                     <Clock className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
                                                     <span>{event.timeEn}</span>
@@ -140,7 +140,7 @@ export default function EventsPage() {
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-8 py-4 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500 hover:text-black hover:scale-105 transition-all duration-300 group shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                        className="inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500 hover:text-black hover:scale-105 transition-all duration-300 group shadow-[0_0_30px_rgba(0,0,0,0.5)]"
                     >
                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-black/10">
                             <MapPin className="w-5 h-5" />
