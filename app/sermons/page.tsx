@@ -13,9 +13,14 @@ export default function SermonsPage() {
 
     useEffect(() => {
         const loadSermons = async () => {
-            const data = await fetchSermons();
-            setSermons(data);
-            setLoading(false);
+            try {
+                const data = await fetchSermons();
+                setSermons(data);
+            } catch (error) {
+                console.error("Failed to load sermons:", error);
+            } finally {
+                setLoading(false);
+            }
         };
         loadSermons();
     }, []);
