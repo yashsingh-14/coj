@@ -248,90 +248,40 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 </div>
             ) : (
                 <>
-                    {/* IMPORT TOOLS SECTION (Only show for create or if user wants to overwrite) */}
-                    <div className="mb-8">
-                        <div className="flex gap-4 mb-4">
-                            <button
-                                onClick={() => setActiveTab('manual')}
-                                className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors ${activeTab === 'manual' ? 'text-amber-500' : 'text-white/40 hover:text-white'
-                                    }`}
-                            >
-                                <Sparkles className="w-4 h-4" />
-                                Magic Paste (Manual)
-                            </button>
-                            <span className="text-white/10">|</span>
-                            <button
-                                onClick={() => setActiveTab('ai')}
-                                className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors ${activeTab === 'ai' ? 'text-amber-500' : 'text-white/40 hover:text-white'
-                                    }`}
-                            >
-                                <BrainCircuit className="w-4 h-4" />
-                                <div className="bg-[#1A1A24] border border-white/5 rounded-3xl p-4 md:p-8 space-y-4 md:space-y-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20">
-                                <Wand2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-base md:text-lg font-bold text-white">AI Generator</h3>
-                                <p className="text-xs md:text-sm text-white/40">Auto-fill song details</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <input
-                                value={aiPrompt}
-                                onChange={e => setAiPrompt(e.target.value)}
-                                placeholder="Enter song title & artist..."
-                                className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-sm text-white focus:outline-none focus:border-indigo-500 w-full md:w-80"
-                                onKeyDown={e => e.key === 'Enter' && handleAiGenerate()}
-                            />
-                            <button
-                                onClick={handleAiGenerate}
-                                disabled={isGenerating}
-                                className="bg-white text-black px-3 py-2 md:px-4 md:py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shrink-0 text-sm md:text-base"
-                            >
-                                {isGenerating ? <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> : <Sparkles className="w-4 h-4 md:w-5 md:h-5" />}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {activeTab === 'ai' && (
-                            <div className="bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/20 rounded-3xl p-6 animate-fade-in-down mb-8">
-                                <h3 className="text-lg font-bold text-white mb-2">AI Auto-Generate</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                    {/* Basic Info */}
-                    <div className="space-y-4 md:space-y-6">
-                        <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500"></span> Basic Info
-                        </h3>
-
-                        <div className="space-y-3 md:space-y-4">
-                            <div>
-                                <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Title</label>
-                                <input name="title" value={formData.title} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3 md:gap-4">
-                                <div>
-                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Artist</label>
-                                    <input name="artist" value={formData.artist} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
+                {/* IMPORT TOOLS SECTION */}
+                <div className="mb-8">
+                    {/* Compact AI Generator Bar */}
+                    <div className="bg-[#1A1A24] border border-white/5 rounded-3xl p-4 md:p-6 mb-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0">
+                                    <Wand2 className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                    {/* Basic Info */}
-                                    <div className="space-y-4 md:space-y-6">
-                                        <h3 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500"></span> Basic Info
-                                        </h3>
-
-                                        <div className="space-y-3 md:space-y-4">
-                                            <div>
-                                                <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Title</label>
-                                                <input name="title" value={formData.title} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-3 md:gap-4">
-                                                <div>
-                                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Artist</label>
-                                                    <input name="artist" value={formData.artist} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
+                                    <h3 className="text-base md:text-lg font-bold text-white">AI Generator</h3>
+                                    <p className="text-xs md:text-sm text-white/40">Auto-fill details from title</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 w-full md:w-auto">
+                                <input
+                                    value={aiPrompt}
+                                    onChange={e => setAiPrompt(e.target.value)}
+                                    placeholder="Enter song title & artist..."
+                                    className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-sm text-white focus:outline-none focus:border-indigo-500 w-full md:w-80"
+                                    onKeyDown={e => e.key === 'Enter' && handleAiGenerate()}
+                                />
+                                <button
+                                    onClick={handleAiGenerate}
+                                    disabled={isGenerating}
+                                    className="bg-white text-black px-3 py-2 md:px-4 md:py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shrink-0 flex items-center justify-center"
+                                >
+                                    {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div><input name="artist" value={formData.artist} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Key</label>
