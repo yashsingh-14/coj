@@ -2,11 +2,11 @@ import HomeManager from "@/components/HomeManager";
 import { supabase } from "@/lib/supabaseClient";
 import { unstable_noStore as noStore } from 'next/cache';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// export const dynamic = 'force-dynamic'; // Removed to allow caching
+export const revalidate = 60; // Cache for 1 minute
 
 export default async function Home() {
-  noStore();
+  // noStore(); // Removed to allow caching
 
   // 1. Fetch Featured Songs (Explicitly marked)
   const { data: featured } = await supabase
