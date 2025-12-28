@@ -150,8 +150,8 @@ export default function SermonsPage() {
 
                                         {/* Footer With Official Logo */}
                                         <div className="relative mt-6 pt-4 border-t border-white/5 flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-black border border-white/10 p-1.5 shadow-lg group-hover:border-red-500/30 transition-colors">
-                                                <img src="/images/logo-main.png" alt="COJ" className="w-full h-full object-contain" />
+                                            <div className="w-14 h-14 rounded-full bg-black border border-white/10 p-1 shadow-lg group-hover:border-red-500/30 transition-colors">
+                                                <img src="/images/icon-maskable.png" alt="COJ" className="w-full h-full object-contain" />
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-white tracking-widest uppercase group-hover:text-red-400 transition-colors">
