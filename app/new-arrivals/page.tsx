@@ -3,7 +3,7 @@ import { ArrowLeft, Clock, ChevronRight } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function NewArrivalsPage() {
     // Fetch newest songs from database

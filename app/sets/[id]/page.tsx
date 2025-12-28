@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
 
 // Ensure dynamic rendering
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 type SetDetail = {
     id: string;

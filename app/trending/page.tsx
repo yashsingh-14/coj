@@ -3,7 +3,7 @@ import { ArrowLeft, TrendingUp, Music2 } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function TrendingPage() {
     // Fetch trending songs from database (ordered by created_at for now)
