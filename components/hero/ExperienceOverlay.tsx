@@ -9,15 +9,15 @@ export default function ExperienceOverlay() {
     return (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
 
-            {/* Content Overlay */}
-            <div className="text-center pointer-events-auto flex flex-col items-center -mt-20">
+            {/* Content Overlay - Lifted Higher */}
+            <div className="text-center pointer-events-auto flex flex-col items-center -mt-32 md:-mt-40">
                 {/* Logo Section */}
                 <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow relative z-10">
-                    <Logo className="w-60 md:w-80 h-auto" />
+                    <Logo className="w-56 md:w-64 lg:w-80 h-auto" />
                 </div>
 
-                {/* Verse Section - Aggressive Pull Up & Tighter Bottom */}
-                <div className="-mt-8 md:-mt-12 mb-6 md:mb-8 relative group cursor-default max-w-[90vw] md:max-w-5xl mx-auto px-4 z-20">
+                {/* Verse Section - Maximum Overlap Pull */}
+                <div className="-mt-16 md:-mt-24 lg:-mt-32 mb-4 md:mb-6 relative group cursor-default max-w-[90vw] md:max-w-4xl lg:max-w-5xl mx-auto px-4 z-20">
                     {/* Glow effect */}
                     <span className="absolute -inset-8 bg-[#FFD700]/5 rounded-full blur-2xl opacity-30 group-hover:opacity-60 transition duration-1000"></span>
 
