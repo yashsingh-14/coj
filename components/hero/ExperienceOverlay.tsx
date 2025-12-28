@@ -12,14 +12,14 @@ export default function ExperienceOverlay() {
             {/* Content Overlay */}
             <div className="text-center pointer-events-auto flex flex-col items-center -mt-20">
                 {/* Logo Section */}
-                <div className="mb-2 md:mb-6 flex flex-col items-center justify-center transform-style-3d animate-float-slow relative">
+                <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow relative z-10">
                     <Logo className="w-60 md:w-80 h-auto" />
                 </div>
 
-                {/* Verse Section */}
-                <div className="mb-8 md:mb-12 relative group cursor-default max-w-[90vw] md:max-w-5xl mx-auto px-4">
+                {/* Verse Section - Aggressive Pull Up & Tighter Bottom */}
+                <div className="-mt-8 md:-mt-12 mb-6 md:mb-8 relative group cursor-default max-w-[90vw] md:max-w-5xl mx-auto px-4 z-20">
                     {/* Glow effect */}
-                    <span className="absolute -inset-8 bg-[#FF6D00]/10 rounded-full blur-2xl opacity-50 group-hover:opacity-80 transition duration-1000"></span>
+                    <span className="absolute -inset-8 bg-[#FFD700]/5 rounded-full blur-2xl opacity-30 group-hover:opacity-60 transition duration-1000"></span>
 
                     {/* The Verse Text (Vachan) - Main Focus */}
                     <h2 className="relative text-2xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-2xl text-balance italic">
