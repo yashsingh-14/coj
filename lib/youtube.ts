@@ -30,13 +30,13 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
 
     try {
         // Step 1: Get Uploads Playlist ID (Cost: 1 unit)
-        // Step 1: Get Uploads Playlist ID (Cost: 1 unit)
         // Check if input is a Handle or ID
         const isHandle = channelId.startsWith('@');
         const param = isHandle ? `forHandle=${channelId}` : `id=${channelId}`;
 
         const channelRes = await fetch(
-            `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&${param}&part=contentDetails`
+            `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&${param}&part=contentDetails`,
+            { signal: AbortSignal.timeout(8000) } // 8s timeout to prevent hanging
         );
         const channelData = await channelRes.json();
 
@@ -49,7 +49,8 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
 
         // Step 2: Fetch Videos from Uploads Playlist (Cost: 1 unit)
         const response = await fetch(
-            `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=12`
+            `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=12`,
+            { signal: AbortSignal.timeout(8000) } // 8s timeout
         );
 
         const data = await response.json();
