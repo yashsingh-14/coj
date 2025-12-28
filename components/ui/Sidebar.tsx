@@ -91,10 +91,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <div className="p-6 bg-gradient-to-t from-black/40 to-transparent">
                     <button
                         onClick={async () => {
-                            const { supabase } = await import('@/lib/supabaseClient');
-                            await supabase.auth.signOut();
-                            logout();
-                            onClose();
+                            try {
+                                const { supabase } = await import('@/lib/supabaseClient');
+                                await supabase.auth.signOut();
+                                logout();
+                                onClose();
+                                window.location.href = '/'; // Force reload/redirect to ensure clean state
+                            } catch (error) {
+                                console.error("Logout failed", error);
+                                // Force local logout anyway
+                                logout();
+                                window.location.href = '/';
+                            }
                         }}
                         className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-white/40 transition-all font-medium text-sm"
                     >
