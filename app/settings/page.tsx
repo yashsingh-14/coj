@@ -28,6 +28,8 @@ export default function SettingsPage() {
     const router = useRouter();
 
     // Local State for Toggles matched with LocalStorage
+    const [notifications, setNotifications] = useState(true);
+    const [audioQuality, setAudioQuality] = useState(false);
     const [dataSaver, setDataSaver] = useState(false);
 
     useEffect(() => {
