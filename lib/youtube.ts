@@ -12,6 +12,27 @@ export interface YouTubeVideo {
 const DEFAULT_CHANNEL_ID = 'UCU65-FwxF6QkrOmZVsxTrWQ';
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
+// Helper for robust timeout compatible with all browsers
+async function fetchWithTimeout(resource: string, options: RequestInit & { timeout?: number } = {}) {
+    const { timeout = 8000 } = options;
+
+    // Create a controller solely for this request
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
+    try {
+        const response = await fetch(resource, {
+            ...options,
+            signal: controller.signal
+        });
+        clearTimeout(id);
+        return response;
+    } catch (error) {
+        clearTimeout(id);
+        throw error;
+    }
+}
+
 export async function fetchSermons(): Promise<YouTubeVideo[]> {
     if (!API_KEY) {
         return [];
@@ -34,9 +55,10 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
         const isHandle = channelId.startsWith('@');
         const param = isHandle ? `forHandle=${channelId}` : `id=${channelId}`;
 
-        const channelRes = await fetch(
+        // Use custom timeout helper
+        const channelRes = await fetchWithTimeout(
             `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&${param}&part=contentDetails`,
-            { signal: AbortSignal.timeout(8000) } // 8s timeout to prevent hanging
+            { timeout: 8000 }
         );
         const channelData = await channelRes.json();
 
@@ -48,9 +70,9 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
         const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
         // Step 2: Fetch Videos from Uploads Playlist (Cost: 1 unit)
-        const response = await fetch(
+        const response = await fetchWithTimeout(
             `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${uploadsPlaylistId}&part=snippet&maxResults=12`,
-            { signal: AbortSignal.timeout(8000) } // 8s timeout
+            { timeout: 8000 }
         );
 
         const data = await response.json();
@@ -74,7 +96,7 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
                 day: 'numeric',
                 year: 'numeric'
             }),
-            isLive: false // Playlist items don't explicitly show live status usually, but this is fine for cost saving
+            isLive: false
         }));
     } catch (error) {
         console.error('Failed to fetch sermons:', error);
