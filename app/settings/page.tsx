@@ -49,11 +49,23 @@ export default function SettingsPage() {
         router.push('/signin');
     };
 
-    const toggleSetting = (setting: string, current: boolean, setter: (val: boolean) => void, key: string) => {
+    const toggleSetting = async (setting: string, current: boolean, setter: (val: boolean) => void, key: string) => {
+        // Special Logic for Notifications
+        if (key === 'coj_notifications' && !current) {
+            // Requesting Permission
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    toast.error("Permission denied for notifications");
+                    return;
+                }
+            }
+        }
+
         const newValue = !current;
         setter(newValue);
         localStorage.setItem(key, JSON.stringify(newValue));
-        toast.info(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
+        toast.success(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
     }
 
     const sections: SettingsSection[] = [
@@ -61,8 +73,8 @@ export default function SettingsPage() {
             title: 'Account',
             items: [
                 { icon: User, label: 'Edit Profile', sub: 'Change name, avatar, bio', href: '/profile/edit', type: 'link' },
-                { icon: Lock, label: 'Privacy & Security', sub: 'Password, 2FA, data', href: '/privacy', type: 'link' },
-                { icon: Shield, label: 'Subscription', sub: 'Manage Premium plan', href: '/premium', type: 'link' }
+                { icon: Lock, label: 'Privacy & Security', sub: 'Policy & Data', href: '/privacy', type: 'link' },
+                { icon: Shield, label: 'Subscription', sub: 'Manage Premium (Pro)', href: '/premium', type: 'link' }
             ]
         },
         {
@@ -71,7 +83,7 @@ export default function SettingsPage() {
                 {
                     icon: Bell,
                     label: 'Notifications',
-                    sub: 'Push, Email, updates',
+                    sub: 'Push updates & alerts',
                     type: 'toggle',
                     value: notifications,
                     action: () => toggleSetting('Notifications', notifications, setNotifications, 'coj_notifications')
@@ -82,23 +94,16 @@ export default function SettingsPage() {
                     sub: 'High Fidelity (Lossless)',
                     type: 'toggle',
                     value: audioQuality,
-                    action: () => toggleSetting('Lossless Audio', audioQuality, setAudioQuality, 'coj_audio_quality')
-                },
-                {
-                    icon: Moon,
-                    label: 'Appearance',
-                    sub: 'Dark Mode (System)',
-                    type: 'toggle',
-                    value: darkMode,
-                    action: () => toggleSetting('Dark Mode', darkMode, setDarkMode, 'coj_dark_mode')
+                    action: () => toggleSetting('High Quality Audio', audioQuality, setAudioQuality, 'coj_audio_quality')
                 }
+                // Removed Appearance Toggle as App is Single Theme (Dark)
             ]
         },
         {
             title: 'Support',
             items: [
-                { icon: HelpCircle, label: 'Help & Support', sub: 'FAQ, Contact Us', href: '/contact', type: 'link' },
-                { icon: Smartphone, label: 'About Version', sub: 'v2.4.0 (Beta)', href: '#', type: 'static' }
+                { icon: HelpCircle, label: 'Help & Support', sub: 'Contact Support', href: '/contact', type: 'link' },
+                { icon: Smartphone, label: 'App Version', sub: 'v2.5.0 (Production)', href: '#', type: 'static' }
             ]
         }
     ];
