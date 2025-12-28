@@ -294,9 +294,9 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                             </button>
                         </div>
                     </div>
-                </div>        )}
+                </div>
 
-                        {activeTab === 'ai' && (
+                {activeTab === 'ai' && (
                             <div className="bg-gradient-to-r from-purple-500/10 to-transparent border border-purple-500/20 rounded-3xl p-6 animate-fade-in-down mb-8">
                                 <h3 className="text-lg font-bold text-white mb-2">AI Auto-Generate</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
