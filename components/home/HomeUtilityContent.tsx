@@ -223,7 +223,7 @@ export default function HomeUtilityContent({
             {/* CATEGORIES - HOLOGRAPHIC TILES (UPDATED: GAP-16) */}
             <section className="px-5 mb-14 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
                 {/* Responsive gap: smaller on mobile, larger on desktop */}
-                <div className="flex gap-6 md:gap-12 lg:gap-16 overflow-x-auto no-scrollbar pb-12 md:pb-16 justify-start md:justify-center px-2 md:px-4 pt-6 md:pt-8">
+                <div className="flex gap-4 md:gap-12 lg:gap-16 overflow-x-auto no-scrollbar pb-8 md:pb-16 justify-start md:justify-center px-4 md:px-4 pt-6 md:pt-8">
                     {[
                         { name: 'Praise', icon: Sparkles, from: 'from-orange-400', to: 'to-red-600', shadow: 'shadow-orange-500/30' },
                         { name: 'Worship', icon: Heart, from: 'from-purple-500', to: 'to-indigo-600', shadow: 'shadow-purple-500/30' },
@@ -234,7 +234,7 @@ export default function HomeUtilityContent({
                     ].map((cat, i) => {
                         const Icon = cat.icon;
                         return (
-                            <TiltCard key={i} className="min-w-[110px] md:min-w-[140px] h-[110px] md:h-[150px]" max={20} scale={1.15}>
+                            <TiltCard key={i} className="min-w-[90px] md:min-w-[140px] h-[90px] md:h-[150px]" max={20} scale={1.15}>
                                 <div className="relative w-full h-full group">
 
                                     {/* SUPER GLOW (The "Blow" Effect) 
@@ -276,7 +276,7 @@ export default function HomeUtilityContent({
                                         </div>
 
                                         {/* 3D Text */}
-                                        <span className="text-xl font-black text-white tracking-widest uppercase transform-style-3d translate-z-8 group-hover:translate-z-12 transition-transform duration-500 drop-shadow-xl">
+                                        <span className="text-[10px] md:text-xl font-black text-white tracking-widest uppercase transform-style-3d translate-z-8 group-hover:translate-z-12 transition-transform duration-500 drop-shadow-xl text-center px-1 leading-tight">
                                             {cat.name}
                                         </span>
                                     </Link>
@@ -371,15 +371,15 @@ export default function HomeUtilityContent({
 
                 <div className="flex gap-4 md:gap-8 overflow-x-auto pb-8 md:pb-12 no-scrollbar pr-4 md:pr-6 snap-x snap-mandatory pt-4">
                     {trendingSongs.map((song, i) => (
-                        <div key={i} className="min-w-[220px] md:min-w-[260px] lg:min-w-[300px] snap-start group relative">
+                        <div key={i} className="min-w-[140px] md:min-w-[200px] lg:min-w-[240px] snap-start group relative">
                             {/* Giant Number Background */}
-                            <span className="absolute -left-2 md:-left-4 -top-8 md:-top-12 text-[80px] md:text-[120px] font-black text-white/5 z-0 group-hover:text-white/10 transition-colors duration-500 select-none font-serif italic">
+                            <span className="absolute -left-2 md:-left-4 -top-8 md:-top-12 text-[40px] md:text-[80px] font-black text-white/5 z-0 group-hover:text-white/10 transition-colors duration-500 select-none font-serif italic">
                                 {i + 1}
                             </span>
 
                             {/* Card Container */}
-                            <TiltCard className="w-full aspect-[2/3]" max={10} scale={1.05}>
-                                <Link href={`/songs/${song.id}`} className="block relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl bg-[#111] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.4)] transition-shadow duration-500 border border-white/10">
+                            <TiltCard className="w-full h-[180px] md:h-[280px]" max={10} scale={1.05}>
+                                <Link href={`/songs/${song.id}`} className="block relative w-full h-full rounded-[1.5rem] overflow-hidden shadow-2xl bg-[#111] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.4)] transition-shadow duration-500 border border-white/10">
 
                                     {/* Image */}
                                     <img
@@ -408,7 +408,7 @@ export default function HomeUtilityContent({
                                             <span className="text-xs font-bold text-red-500 uppercase tracking-wider">1M+ Listening</span>
                                         </div>
 
-                                        <h3 className="text-2xl md:text-3xl font-black text-white leading-none mb-1 drop-shadow-md truncate">{song.title}</h3>
+                                        <h3 className="text-lg md:text-3xl font-black text-white leading-none mb-1 drop-shadow-md truncate">{song.title}</h3>
                                         <p className="text-white/60 font-medium tracking-wide truncate">{song.artist}</p>
 
                                         {/* Progress Bar Decoration */}
@@ -443,8 +443,8 @@ export default function HomeUtilityContent({
                         { name: 'Elevation', img: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=800&auto=format&fit=crop' },
                         { name: 'Maverick', img: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?q=80&w=800&auto=format&fit=crop' }
                     ].map((artist, i) => (
-                        <div key={i} className="min-w-[180px] md:min-w-[280px] snap-center group relative cursor-pointer">
-                            <TiltCard className="w-full h-[260px] md:h-[400px]" max={12} scale={1.05}>
+                        <div key={i} className="min-w-[140px] md:min-w-[200px] snap-center group relative cursor-pointer">
+                            <TiltCard className="w-full h-[180px] md:h-[280px]" max={12} scale={1.05}>
                                 <Link
                                     href={`/artists/${artist.name.toLowerCase().replace(/\s+/g, '-')}`}
                                     className="relative block w-full h-full rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-[#111] shadow-2xl group-hover:shadow-[0_0_50px_rgba(233,30,99,0.3)] transition-shadow duration-500 border border-white/10"
@@ -468,7 +468,7 @@ export default function HomeUtilityContent({
                                     <div className="absolute bottom-0 left-0 w-full p-5 md:p-8 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                         <div className="w-12 h-1.5 bg-[var(--brand)] mb-4 w-0 group-hover:w-12 transition-all duration-500 ease-out" />
 
-                                        <h3 className="text-xl md:text-4xl font-black text-white uppercase leading-[0.9] tracking-tighter mb-3 drop-shadow-lg">
+                                        <h3 className="text-lg md:text-4xl font-black text-white uppercase leading-[0.9] tracking-tighter mb-3 drop-shadow-lg">
                                             {artist.name}
                                         </h3>
 
@@ -504,7 +504,7 @@ export default function HomeUtilityContent({
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                     {madeForYouSongs.map((song, i) => (
-                        <TiltCard key={i} className="h-full min-h-[250px]" max={15} scale={1.05}>
+                        <TiltCard key={i} className="h-full min-h-[180px] md:min-h-[250px]" max={15} scale={1.05}>
                             <div className="relative h-full group">
                                 <Link
                                     href={`/songs/${song.id}`}
@@ -534,7 +534,7 @@ export default function HomeUtilityContent({
                                             </span>
                                         </div>
                                         <div className="flex flex-col">
-                                            <h3 className="font-black text-xl text-white leading-none mb-1 drop-shadow-lg line-clamp-1">{song.title}</h3>
+                                            <h3 className="font-black text-sm md:text-xl text-white leading-none mb-1 drop-shadow-lg line-clamp-1">{song.title}</h3>
                                             <p className="text-xs text-white/70 font-bold uppercase tracking-widest line-clamp-1">
                                                 {song.artist}
                                             </p>

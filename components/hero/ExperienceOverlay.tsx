@@ -13,7 +13,7 @@ export default function ExperienceOverlay() {
             <div className="text-center pointer-events-auto flex flex-col items-center -mt-32 md:-mt-40">
                 {/* Logo Section */}
                 <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow relative z-10">
-                    <Logo className="w-56 md:w-64 lg:w-80 h-auto" />
+                    <Logo className="w-40 md:w-64 lg:w-80 h-auto" />
                 </div>
 
                 {/* Verse Section - Maximum Overlap Pull */}
@@ -22,7 +22,7 @@ export default function ExperienceOverlay() {
                     <span className="absolute -inset-8 bg-[#FFD700]/5 rounded-full blur-2xl opacity-30 group-hover:opacity-60 transition duration-1000"></span>
 
                     {/* The Verse Text (Vachan) - Main Focus */}
-                    <h2 className="relative text-2xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-2xl text-balance italic">
+                    <h2 className="relative text-xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-2xl text-balance italic">
                         "Come to me, all you who are weary and burdened, <br className="hidden md:block" /> and I will give you rest."
                     </h2>
 
