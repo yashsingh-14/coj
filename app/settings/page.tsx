@@ -73,6 +73,25 @@ export default function SettingsPage() {
         }
     };
 
+    const toggleSetting = async (setting: string, current: boolean, setter: (val: boolean) => void, key: string) => {
+        // Special Logic for Notifications
+        if (key === 'coj_notifications' && !current) {
+            // Requesting Permission
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    toast.error("Permission denied for notifications");
+                    return;
+                }
+            }
+        }
+
+        const newValue = !current;
+        setter(newValue);
+        localStorage.setItem(key, JSON.stringify(newValue));
+        toast.success(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
+    }
+
     const sections: SettingsSection[] = [
         {
             title: 'Account',
