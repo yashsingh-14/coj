@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
+import { urlBase64ToUint8Array } from '@/lib/push';
 
 // Define the shape of a settings item
 interface SettingsItem {

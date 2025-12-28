@@ -17,6 +17,12 @@ interface AppState {
     isTransitioning: boolean;
     setIsTransitioning: (state: boolean) => void;
 
+    // Auth State (Restored)
+    currentUser: User | null;
+    isAuthenticated: boolean;
+    login: (user: User) => void;
+    logout: () => void;
+
     // Preferences
     preferences: {
         dataSaver: boolean;
