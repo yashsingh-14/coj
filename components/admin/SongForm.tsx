@@ -188,7 +188,6 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
             }, 500);
 
         } catch (error: any) {
-            console.error('Error saving song object:', JSON.stringify(error, null, 2));
             console.error('Error saving song message:', error.message);
             if (error.code === '23505') {
                 toast.error("A song with this title already exists!");
@@ -248,69 +247,37 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 </div>
             ) : (
                 <>
-                {/* IMPORT TOOLS SECTION */}
-                <div className="mb-8">
-                    {/* Compact AI Generator Bar */}
-                    <div className="bg-[#1A1A24] border border-white/5 rounded-3xl p-4 md:p-6 mb-6">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0">
-                                    <Wand2 className="w-5 h-5 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-base md:text-lg font-bold text-white">AI Generator</h3>
-                                    <p className="text-xs md:text-sm text-white/40">Auto-fill details from title</p>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-2 w-full md:w-auto">
-                                <input
-                                    value={aiPrompt}
-                                    onChange={e => setAiPrompt(e.target.value)}
-                                    placeholder="Enter song title & artist..."
-                                    className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-sm text-white focus:outline-none focus:border-indigo-500 w-full md:w-80"
-                                    onKeyDown={e => e.key === 'Enter' && handleAiGenerate()}
-                                />
-                                <button
-                                    onClick={handleAiGenerate}
-                                    disabled={isGenerating}
-                                    className="bg-white text-black px-3 py-2 md:px-4 md:py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shrink-0 flex items-center justify-center"
-                                >
-                                    {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div><input name="artist" value={formData.artist} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Key</label>
-                                                    <input name="key" value={formData.key} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white focus:outline-none focus:border-blue-500" />
-                                                </div>
-                                            </div>
-                                        </div>
+                    {/* IMPORT TOOLS SECTION */}
+                    <div className="mb-8">
+                        <div className="bg-[#1A1A24] border border-white/5 rounded-3xl p-4 md:p-6 mb-6">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0">
+                                        <Sparkles className="w-5 h-5 text-white" />
                                     </div>
+                                    <div>
+                                        <h3 className="text-base md:text-lg font-bold text-white">AI Generator</h3>
+                                        <p className="text-xs md:text-sm text-white/40">Auto-fill details from title</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 w-full md:w-auto">
+                                    <input
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        placeholder="Enter song title & artist..."
+                                        className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-sm text-white focus:outline-none focus:border-indigo-500 w-full md:w-80"
+                                        onKeyDown={e => e.key === 'Enter' && handleAiGenerate()}
+                                    />
                                     <button
-                                        type="button"
                                         onClick={handleAiGenerate}
-                                        disabled={isGenerating || !aiPrompt}
-                                        className="px-6 py-4 bg-purple-500 text-white font-bold rounded-xl hover:bg-purple-400 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed h-fit self-end"
+                                        disabled={isGenerating}
+                                        className="bg-white text-black px-3 py-2 md:px-4 md:py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shrink-0 flex items-center justify-center"
                                     >
-                                        {isGenerating ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                Generating...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <BrainCircuit className="w-4 h-4" />
-                                                Generate Song Data
-                                            </>
-                                        )}
+                                        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <BrainCircuit className="w-5 h-5" />}
                                     </button>
                                 </div>
                             </div>
-                        )}
+                        </div>
                     </div>
 
                     {/* FORM */}
