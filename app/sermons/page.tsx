@@ -6,10 +6,13 @@ import { ArrowLeft, Share2, Youtube, Check, Calendar, Play } from 'lucide-react'
 import TiltCard from '@/components/ui/TiltCard';
 import { fetchSermons, YouTubeVideo } from '@/lib/youtube';
 
+import { useAppStore } from '@/store/useAppStore';
+
 export default function SermonsPage() {
     const [sermons, setSermons] = useState<YouTubeVideo[]>([]);
     const [loading, setLoading] = useState(true);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const { preferences } = useAppStore();
 
     useEffect(() => {
         const loadSermons = async () => {
@@ -25,34 +28,17 @@ export default function SermonsPage() {
         loadSermons();
     }, []);
 
-    const handleShare = async (video: YouTubeVideo) => {
-        const url = `https://www.youtube.com/watch?v=${video.id}`;
-        const shareData = {
-            title: video.title,
-            text: `Check out this sermon: ${video.title}`,
-            url: url
-        };
-
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                await navigator.clipboard.writeText(url);
-                setCopiedId(video.id);
-                setTimeout(() => setCopiedId(null), 2000);
-            }
-        } catch (err) {
-            console.error('Error sharing:', err);
-        }
-    };
+    // ... (rest of code)
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32 overflow-hidden relative">
-            {/* Background Ambience */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] left-1/2 w-[60%] h-[60%] bg-red-900/10 rounded-full blur-[120px] animate-pulse-slow -translate-x-1/2"></div>
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
-            </div>
+            {/* Background Ambience - Disable if Data Saver is ON */}
+            {!preferences.dataSaver && (
+                <div className="fixed inset-0 pointer-events-none">
+                    <div className="absolute top-[-20%] left-1/2 w-[60%] h-[60%] bg-red-900/10 rounded-full blur-[120px] animate-pulse-slow -translate-x-1/2"></div>
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+                </div>
+            )}
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <Link href="/" className="inline-flex items-center gap-2 p-3 px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-12 transition-all group">

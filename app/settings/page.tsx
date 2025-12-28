@@ -24,23 +24,8 @@ interface SettingsSection {
 }
 
 export default function SettingsPage() {
-    const { logout } = useAppStore();
+    const { logout, preferences, setPreferences } = useAppStore();
     const router = useRouter();
-
-    // Local State for Toggles matched with LocalStorage
-    const [notifications, setNotifications] = useState(true);
-    const [audioQuality, setAudioQuality] = useState(false);
-    const [dataSaver, setDataSaver] = useState(false);
-
-    useEffect(() => {
-        const savedNotif = localStorage.getItem('coj_notifications');
-        const savedAudio = localStorage.getItem('coj_audio_quality');
-        const savedData = localStorage.getItem('coj_data_saver');
-
-        if (savedNotif !== null) setNotifications(JSON.parse(savedNotif));
-        if (savedAudio !== null) setAudioQuality(JSON.parse(savedAudio));
-        if (savedData !== null) setDataSaver(JSON.parse(savedData));
-    }, []);
 
     const handleClearCache = () => {
         if (window.confirm("Are you sure you want to clear all app data and cache? This will sign you out.")) {
@@ -73,10 +58,11 @@ export default function SettingsPage() {
         }
     };
 
-    const toggleSetting = async (setting: string, current: boolean, setter: (val: boolean) => void, key: string) => {
+    const toggleSetting = async (setting: string, current: boolean, key: keyof typeof preferences) => {
+        const newValue = !current;
+
         // Special Logic for Notifications
-        if (key === 'coj_notifications' && !current) {
-            // Requesting Permission
+        if (key === 'notifications' && newValue) {
             if ('Notification' in window) {
                 const permission = await Notification.requestPermission();
                 if (permission !== 'granted') {
@@ -86,9 +72,7 @@ export default function SettingsPage() {
             }
         }
 
-        const newValue = !current;
-        setter(newValue);
-        localStorage.setItem(key, JSON.stringify(newValue));
+        setPreferences({ [key]: newValue });
         toast.success(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
     }
 
@@ -109,24 +93,24 @@ export default function SettingsPage() {
                     label: 'Notifications',
                     sub: 'Push updates & alerts',
                     type: 'toggle',
-                    value: notifications,
-                    action: () => toggleSetting('Notifications', notifications, setNotifications, 'coj_notifications')
+                    value: preferences.notifications,
+                    action: () => toggleSetting('Notifications', preferences.notifications, 'notifications')
                 },
                 {
                     icon: Volume2,
                     label: 'Audio Quality',
                     sub: 'High Fidelity (Lossless)',
                     type: 'toggle',
-                    value: audioQuality,
-                    action: () => toggleSetting('High Quality Audio', audioQuality, setAudioQuality, 'coj_audio_quality')
+                    value: preferences.audioQuality,
+                    action: () => toggleSetting('High Quality Audio', preferences.audioQuality, 'audioQuality')
                 },
                 {
                     icon: Smartphone,
                     label: 'Data Saver',
-                    sub: 'Reduce usage on mobile data',
+                    sub: 'Reduce effects & usage',
                     type: 'toggle',
-                    value: dataSaver,
-                    action: () => toggleSetting('Data Saver', dataSaver, setDataSaver, 'coj_data_saver')
+                    value: preferences.dataSaver,
+                    action: () => toggleSetting('Data Saver', preferences.dataSaver, 'dataSaver')
                 }
             ]
         },

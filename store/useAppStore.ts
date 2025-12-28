@@ -17,11 +17,13 @@ interface AppState {
     isTransitioning: boolean;
     setIsTransitioning: (state: boolean) => void;
 
-    // Auth State
-    currentUser: User | null;
-    isAuthenticated: boolean;
-    login: (user: User) => void;
-    logout: () => void;
+    // Preferences
+    preferences: {
+        dataSaver: boolean;
+        notifications: boolean;
+        audioQuality: boolean; // true = high
+    };
+    setPreferences: (prefs: Partial<AppState['preferences']>) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -36,9 +38,15 @@ export const useAppStore = create<AppState>()(
             currentUser: null,
             isAuthenticated: false,
 
-            // Actions are just state updaters now, actual API calls happen in components
-            // OR we can put thunks here if we use a middleware, but keeping it simple:
-            // We will expose a setUser method for the Auth Listener to call.
+            // Preferences Initial State
+            preferences: {
+                dataSaver: false,
+                notifications: true,
+                audioQuality: false
+            },
+            setPreferences: (prefs) => set((state) => ({ preferences: { ...state.preferences, ...prefs } })),
+
+            // Actions
             login: (user) => set({ currentUser: user, isAuthenticated: true }),
             logout: () => {
                 set({ currentUser: null, isAuthenticated: false });
@@ -48,7 +56,8 @@ export const useAppStore = create<AppState>()(
             name: 'coj-storage',
             partialize: (state) => ({
                 currentUser: state.currentUser,
-                isAuthenticated: state.isAuthenticated
+                isAuthenticated: state.isAuthenticated,
+                preferences: state.preferences
             }),
         }
     )
