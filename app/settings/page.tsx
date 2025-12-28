@@ -28,45 +28,42 @@ export default function SettingsPage() {
     const router = useRouter();
 
     // Local State for Toggles matched with LocalStorage
-    const [notifications, setNotifications] = useState(true);
-    const [audioQuality, setAudioQuality] = useState(false);
-    const [darkMode, setDarkMode] = useState(true);
+    const [dataSaver, setDataSaver] = useState(false);
 
-    // Initialize from LocalStorage
     useEffect(() => {
         const savedNotif = localStorage.getItem('coj_notifications');
         const savedAudio = localStorage.getItem('coj_audio_quality');
-        const savedDark = localStorage.getItem('coj_dark_mode');
+        const savedData = localStorage.getItem('coj_data_saver');
 
         if (savedNotif !== null) setNotifications(JSON.parse(savedNotif));
         if (savedAudio !== null) setAudioQuality(JSON.parse(savedAudio));
-        if (savedDark !== null) setDarkMode(JSON.parse(savedDark));
+        if (savedData !== null) setDataSaver(JSON.parse(savedData));
     }, []);
 
-    const handleLogout = () => {
-        logout();
-        toast.success("Signed out successfully");
-        router.push('/signin');
+    const handleClearCache = () => {
+        if (window.confirm("Are you sure you want to clear all app data and cache? This will sign you out.")) {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
     };
 
-    const toggleSetting = async (setting: string, current: boolean, setter: (val: boolean) => void, key: string) => {
-        // Special Logic for Notifications
-        if (key === 'coj_notifications' && !current) {
-            // Requesting Permission
-            if ('Notification' in window) {
-                const permission = await Notification.requestPermission();
-                if (permission !== 'granted') {
-                    toast.error("Permission denied for notifications");
-                    return;
-                }
+    const handleShareApp = async () => {
+        const shareData = {
+            title: 'Call of Jesus App',
+            text: 'Listen to the best worship songs and sermons on COJ App!',
+            url: window.location.origin
+        };
+        try {
+            if (navigator.share) await navigator.share(shareData);
+            else {
+                await navigator.clipboard.writeText(window.location.origin);
+                toast.success("App link copied to clipboard!");
             }
+        } catch (err) {
+            console.error(err);
         }
-
-        const newValue = !current;
-        setter(newValue);
-        localStorage.setItem(key, JSON.stringify(newValue));
-        toast.success(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
-    }
+    };
 
     const sections: SettingsSection[] = [
         {
@@ -78,7 +75,7 @@ export default function SettingsPage() {
             ]
         },
         {
-            title: 'App Settings',
+            title: 'Preferences',
             items: [
                 {
                     icon: Bell,
@@ -95,15 +92,23 @@ export default function SettingsPage() {
                     type: 'toggle',
                     value: audioQuality,
                     action: () => toggleSetting('High Quality Audio', audioQuality, setAudioQuality, 'coj_audio_quality')
+                },
+                {
+                    icon: Smartphone,
+                    label: 'Data Saver',
+                    sub: 'Reduce usage on mobile data',
+                    type: 'toggle',
+                    value: dataSaver,
+                    action: () => toggleSetting('Data Saver', dataSaver, setDataSaver, 'coj_data_saver')
                 }
-                // Removed Appearance Toggle as App is Single Theme (Dark)
             ]
         },
         {
-            title: 'Support',
+            title: 'System',
             items: [
+                { icon: Share2, label: 'Share App', sub: 'Invite friends & family', action: handleShareApp, type: 'static' }, // Using static type but with click action
                 { icon: HelpCircle, label: 'Help & Support', sub: 'Contact Support', href: '/contact', type: 'link' },
-                { icon: Smartphone, label: 'App Version', sub: 'v2.5.0 (Production)', href: '#', type: 'static' }
+                { icon: LogOut, label: 'Clear Cache', sub: 'Fix issues & Reset', action: handleClearCache, type: 'static' }
             ]
         }
     ];
@@ -164,7 +169,11 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div key={i} className="flex items-center gap-4 p-5 opacity-60">
+                                    <div
+                                        key={i}
+                                        onClick={item.action}
+                                        className={`flex items-center gap-4 p-5 ${item.action ? 'cursor-pointer hover:bg-white/5' : 'opacity-60'} transition-colors`}
+                                    >
                                         <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                                             <item.icon className="w-5 h-5" />
                                         </div>
@@ -172,6 +181,9 @@ export default function SettingsPage() {
                                             <h3 className="font-medium text-white">{item.label}</h3>
                                             <p className="text-sm text-white/40">{item.sub}</p>
                                         </div>
+                                        {item.action && (
+                                            <ChevronRight className="w-5 h-5 text-white/20" />
+                                        )}
                                     </div>
                                 )
                             ))}
