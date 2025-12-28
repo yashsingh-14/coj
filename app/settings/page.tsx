@@ -63,12 +63,49 @@ export default function SettingsPage() {
 
         // Special Logic for Notifications
         if (key === 'notifications' && newValue) {
-            if ('Notification' in window) {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                toast.error("Push notifications are not supported by this browser");
+                return;
+            }
+
+            try {
+                // 1. Request Permission
                 const permission = await Notification.requestPermission();
                 if (permission !== 'granted') {
                     toast.error("Permission denied for notifications");
                     return;
                 }
+
+                // 2. Register Service Worker (or get existing)
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                await navigator.serviceWorker.ready;
+
+                // 3. Subscribe to Push Manager
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
+                });
+
+                // 4. Send subscription to our Backend
+                // Ideally this should use currentUser.id, but if not logged in, we can't save to DB linked to user
+                // For now, we try to send. Assume currentUser is available in store if needed.
+                const { currentUser } = useAppStore.getState();
+
+                if (currentUser) {
+                    await fetch('/api/notifications/subscribe?userId=' + currentUser.id, {
+                        method: 'POST',
+                        body: JSON.stringify(subscription),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    toast.success("Successfully subscribed to Push Notifications!");
+                } else {
+                    toast("Notifications enabled locally (Sign in to sync across devices)");
+                }
+
+            } catch (error) {
+                console.error("Push subscription error:", error);
+                toast.error("Failed to enable push notifications");
+                return; // Don't flip the toggle if failed
             }
         }
 

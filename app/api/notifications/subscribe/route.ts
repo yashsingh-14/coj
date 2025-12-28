@@ -1,37 +1,34 @@
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
 
-export async function POST(req: Request) {
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export async function POST(request: Request) {
     try {
-        const subscription = await req.json();
+        const subscription = await request.json();
+        const { searchParams } = new URL(request.url);
+        const userId = searchParams.get('userId');
 
-        if (!subscription || !subscription.endpoint) {
-            return NextResponse.json({ error: 'Invalid subscription' }, { status: 400 });
+        if (!userId) {
+            return NextResponse.json({ error: 'User ID required' }, { status: 400 });
         }
-
-        // Check if already exists (optional, or rely on unique constraint on endpoint)
-        // We'll just insert/ignore or insert
-        // Supabase/Postgres specific: "ON CONFLICT DO NOTHING" logic if endpoint is unique
-
-        // Since we enabled RLS allowing insert, we can use the client. 
-        // Ideally we associate with user_id if logged in, but for now anonymous is fine too.
-
-        // We need auth header to associate user? Or passed in body?
-        // Let's assume anonymous for now or handle via session if available.
 
         const { error } = await supabase
             .from('push_subscriptions')
             .upsert({
+                user_id: userId,
                 endpoint: subscription.endpoint,
-                keys: subscription.keys,
-                // user_id: session?.user?.id 
+                keys: subscription.keys
             }, { onConflict: 'endpoint' });
 
         if (error) throw error;
 
         return NextResponse.json({ success: true });
-    } catch (error: any) {
-        console.error('Subscription Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        console.error('Subscription error:', error);
+        return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 });
     }
 }
