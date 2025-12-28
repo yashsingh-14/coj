@@ -30,9 +30,13 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
 
     try {
         // Step 1: Get Uploads Playlist ID (Cost: 1 unit)
-        // If we hardcode this, it's 0 units. But dynamic is safer.
+        // Step 1: Get Uploads Playlist ID (Cost: 1 unit)
+        // Check if input is a Handle or ID
+        const isHandle = channelId.startsWith('@');
+        const param = isHandle ? `forHandle=${channelId}` : `id=${channelId}`;
+
         const channelRes = await fetch(
-            `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&id=${channelId}&part=contentDetails`
+            `https://www.googleapis.com/youtube/v3/channels?key=${API_KEY}&${param}&part=contentDetails`
         );
         const channelData = await channelRes.json();
 
