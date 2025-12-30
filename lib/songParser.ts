@@ -24,16 +24,17 @@ function isChordLine(line: string): boolean {
         }
     }
 
-    // Threshold: If more than 50% of tokens are chords, it's a chord line.
-    return (chordCount / tokens.length) > 0.5;
+    // Threshold: If more than 50% of tokens are chords, or if it's purely chords
+    return (chordCount / tokens.length) > 0.49;
 }
 
-/**
- * Merges a chord line into the lyric line below it.
- * @param chordLine "G        C"
- * @param lyricLine "Amazing Grace"
- * @returns "[G]Amazing [C]Grace"
- */
+function hasBracketedChords(line: string): boolean {
+    // Looks for [C], [Gmaj7] etc.
+    const bracketChordRegex = /\[[A-G](?:[#b])?(?:m|min|maj|dim|aug|sus|add)?(?:[0-9]{1,2})?(?:[#b][0-9])?(?:\/[A-G](?:[#b])?)?\]/g;
+    return bracketChordRegex.test(line);
+}
+
+// ... mergeLines function (unchanged) ...
 function mergeLines(chordLine: string, lyricLine: string): string {
     let result = "";
     const chords: { chord: string, index: number }[] = [];
@@ -114,18 +115,15 @@ export function parseSongSheet(rawText: string) {
             continue; // Skip this line
         }
 
-        // Implicit Title: First line, no colon, not chord
-        // Only if we are at line 0 (or first non-empty line?)
-        // Let's assume absolute line 0 for simplicity or first detected line.
-        // We can check if output arrays are empty to verify "start of doc".
+        // Implicit Title: First line detection (if not chord, not bracketed)
         const isEmptySoFar = outputChords.every(l => l === "") && outputLyrics.every(l => l === "");
 
-        if (isEmptySoFar && !title && !isChordLine(line) && !line.includes(':')) {
+        if (isEmptySoFar && !title && !isChordLine(line) && !hasBracketedChords(line) && !line.includes(':')) {
             title = trimmed;
             continue;
         }
 
-        // Check if Chord Line
+        // Check if Chord Line (Chords-over-Lyrics)
         if (isChordLine(line)) {
             const nextLineIndex = i + 1;
             if (nextLineIndex < lines.length) {
@@ -155,9 +153,17 @@ export function parseSongSheet(rawText: string) {
                 const merged = line.replace(/(\S+)/g, "[$1]");
                 outputChords.push(merged);
             }
-        } else {
-            // It's a lyric line (or header)
+        }
+        // Check for Bracketed Chords (Embedded)
+        else if (hasBracketedChords(line)) {
             outputChords.push(line.trim());
+            // Strip chords for pure lyrics
+            const cleanLyrics = line.replace(/\[.*?\]/g, "").replace(/\s+/g, " ").trim();
+            outputLyrics.push(cleanLyrics);
+        }
+        else {
+            // It's a lyric line (or header)
+            outputChords.push(line.trim()); // Fallback: duplicate lyrics to chords pane so lines match
             outputLyrics.push(line.trim());
         }
     }

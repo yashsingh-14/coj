@@ -17,8 +17,8 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        const { songName, artist } = body;
-        console.log("Request for:", songName, artist || "(No Artist)");
+        const { songName, artist, useHighAccuracy } = body;
+        console.log("Request for:", songName, artist || "(No Artist)", "High Accuracy:", useHighAccuracy);
 
         if (!songName) {
             console.log("Error: No Song Name");
@@ -32,7 +32,21 @@ export async function POST(req: Request) {
 
         console.log("API Key present:", process.env.OPENAI_API_KEY.substring(0, 10) + "...");
         console.log("Provider:", isOpenRouter ? "OpenRouter" : "Standard OpenAI");
-        console.log("Model:", isOpenRouter ? 'openai/gpt-4o-mini' : 'gpt-4o-mini');
+
+        // Model Selection Logic
+        let model = 'gpt-4o-mini'; // Default fallback
+        if (isOpenRouter) {
+            if (useHighAccuracy) {
+                // Paid, Search-enabled model
+                model = 'perplexity/sonar';
+            } else {
+                // Free/Cheap model
+                // Reverting to Gemini Flash as Llama was too slow/inaccurate for Hindi
+                model = 'google/gemini-2.0-flash-exp:free';
+            }
+        }
+
+        console.log("Selected Model:", model);
 
         const prompt = `
     Role: You are an expert Music Database and Worship Leader Assistant.
@@ -95,8 +109,8 @@ export async function POST(req: Request) {
                 { role: 'system', content: 'You are a precise data extractor. Output formatted plain text as requested.' },
                 { role: 'user', content: prompt }
             ],
-            // Use Perplexity Online model for OpenRouter to access the web for lyrics
-            model: isOpenRouter ? 'perplexity/sonar' : 'gpt-4o-mini',
+            // Use selected model
+            model: model,
             // no response_format needed for text
             temperature: 0.1,
             max_tokens: 4000,

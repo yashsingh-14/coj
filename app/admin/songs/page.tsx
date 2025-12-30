@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { deleteSongAdmin } from '@/app/actions/admin';
 
 export default function ManageSongsPage() {
     const [songs, setSongs] = useState<Song[]>([]);
@@ -29,12 +30,12 @@ export default function ManageSongsPage() {
     const handleDelete = async (id: string, title: string) => {
         if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
 
-        // Perform DELETE operation
-        const { error } = await supabase.from('songs').delete().eq('id', id);
+        // Perform DELETE operation via Server Action
+        const result = await deleteSongAdmin(id);
 
-        if (error) {
-            console.error(error);
-            toast.error("Failed to delete song: " + error.message);
+        if (!result.success) {
+            console.error(result.error);
+            toast.error("Failed to delete song: " + result.error);
         } else {
             toast.success("Song deleted");
             // Optimistic update
@@ -89,27 +90,28 @@ export default function ManageSongsPage() {
                         ) : (
                             filtered.map(song => (
                                 <tr key={song.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-                                    <td className="p-4 md:p-6 font-bold text-white">
-                                        {song.title}
-                                        <div className="md:hidden text-xs text-white/40 font-normal mt-1">{song.artist}</div>
+                                    <td className="p-4 md:p-6 font-bold text-white max-w-[150px] md:max-w-[300px] truncate">
+                                        <span title={song.title}>{song.title}</span>
+                                        <div className="md:hidden text-xs text-white/40 font-normal mt-1 truncate">{song.artist}</div>
                                     </td>
-                                    <td className="p-4 md:p-6 text-white/60 hidden md:table-cell">{song.artist}</td>
+                                    <td className="p-4 md:p-6 text-white/60 hidden md:table-cell max-w-[150px] truncate">{song.artist}</td>
                                     <td className="p-4 md:p-6 hidden md:table-cell">
                                         <span className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-xs font-bold uppercase tracking-wider text-white/40">
                                             {song.category}
                                         </span>
                                     </td>
-                                    <td className="p-4 md:p-6 text-right">
-                                        <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                    <td className="p-4 md:p-6 text-right whitespace-nowrap min-w-[120px]">
+                                        <div className="flex items-center justify-end gap-2">
                                             <Link
                                                 href={`/admin/songs/${song.id}`}
-                                                className="p-2 rounded-lg hover:bg-white/10 text-white/40 hover:text-white"
+                                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all shrink-0"
                                                 title="Edit">
                                                 <Edit2 className="w-4 h-4" />
                                             </Link>
                                             <button
                                                 onClick={() => handleDelete(song.id, song.title)}
-                                                className="p-2 rounded-lg hover:bg-red-500/10 text-white/40 hover:text-red-500" title="Delete">
+                                                className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 hover:text-red-400 transition-all shrink-0"
+                                                title="Delete">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </div>

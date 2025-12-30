@@ -24,9 +24,10 @@ interface SongViewerProps {
         slug: string;
         artist: string;
     }[];
+    coverImage?: string;
 }
 
-export default function SongViewer({ songId, title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs }: SongViewerProps) {
+export default function SongViewer({ songId, title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs, coverImage }: SongViewerProps) {
     const { currentUser } = useAppStore();
     const [transpose, setTranspose] = useState(0);
     const [fontSize, setFontSize] = useState(18);
@@ -315,9 +316,11 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                 <div
                     className="absolute inset-0 bg-cover bg-center opacity-40 grayscale"
                     style={{
-                        backgroundImage: youtubeId
-                            ? `url('https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg')`
-                            : "url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')"
+                        backgroundImage: coverImage
+                            ? `url('${coverImage}')`
+                            : youtubeId
+                                ? `url('https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg')`
+                                : "url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')"
                     }}
                 ></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
