@@ -9,7 +9,9 @@ import { supabase } from '@/lib/supabaseClient';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const { mode, login, logout } = useAppStore();
+    const login = useAppStore(state => state.login);
+    const logout = useAppStore(state => state.logout);
+    const mode = useAppStore(state => state.mode);
 
     useEffect(() => {
         // Helper to get user data with role

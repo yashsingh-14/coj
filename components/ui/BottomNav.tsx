@@ -6,9 +6,11 @@ import { Home, Heart, Search, ListMusic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
-export default function BottomNav() {
+import { memo } from 'react';
+
+function BottomNavComponent() {
     const pathname = usePathname();
-    const { currentUser } = useAppStore();
+    const currentUser = useAppStore(state => state.currentUser);
 
     const navItems = [
         { name: 'Home', href: '/', icon: Home },
@@ -71,3 +73,5 @@ export default function BottomNav() {
         </div>
     );
 }
+
+export default memo(BottomNavComponent);

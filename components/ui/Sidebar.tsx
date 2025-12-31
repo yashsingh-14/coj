@@ -12,7 +12,8 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
-    const { logout, currentUser } = useAppStore();
+    const logout = useAppStore(state => state.logout);
+    const currentUser = useAppStore(state => state.currentUser);
 
     const menuItems = [
         { icon: Home, label: 'Home', href: '/' },

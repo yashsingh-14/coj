@@ -19,7 +19,8 @@ export default function HomeManager({ initialData }: {
         announcements: any[];
     }
 }) {
-    const { mode, setMode, isAuthenticated } = useAppStore();
+    const mode = useAppStore(state => state.mode);
+    const setMode = useAppStore(state => state.setMode);
     const [showExperience, setShowExperience] = useState(mode === 'EXPERIENCE');
 
 

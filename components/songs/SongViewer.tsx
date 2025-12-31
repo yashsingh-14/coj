@@ -28,7 +28,7 @@ interface SongViewerProps {
 }
 
 export default function SongViewer({ songId, title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs, coverImage }: SongViewerProps) {
-    const { currentUser } = useAppStore();
+    const currentUser = useAppStore(state => state.currentUser);
     const [transpose, setTranspose] = useState(0);
     const [fontSize, setFontSize] = useState(18);
     const [useFlats, setUseFlats] = useState(false);

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft, TrendingUp, Music2 } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
+import { getSongImage } from '@/lib/utils';
 
 export const revalidate = 60;
 
@@ -45,7 +46,7 @@ export default async function TrendingPage() {
                                 </div>
 
                                 {/* Album Art Background */}
-                                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.5] group-hover:grayscale-0" style={{ backgroundImage: `url('${song.img}')` }}></div>
+                                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.5] group-hover:grayscale-0" style={{ backgroundImage: `url('${getSongImage(song)}')` }}></div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
 
                                 {/* Glass Shine */}

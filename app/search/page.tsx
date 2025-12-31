@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search as SearchIcon, X, ArrowRight, TrendingUp, Music, Mic2, Disc, Command } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
+import { getSongImage } from '@/lib/utils';
 import { Song } from '@/data/types';
 
 // Production: Pre-defined popular searches to guide new users
@@ -171,7 +172,7 @@ export default function SearchPage() {
                             >
                                 {/* Album Art Placeholder */}
                                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-2xl font-black text-[var(--brand)] shadow-lg group-hover:shadow-[var(--brand)]/20 transition-shadow overflow-hidden relative">
-                                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${song.img}')` }} />
+                                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${getSongImage(song)}')` }} />
                                     {/* Fallback overlay if img load fails is handled by img usually, but here bg image. */}
                                     {/* For robustness, let's assume valid img from DB or fallback upstream */}
                                 </div>

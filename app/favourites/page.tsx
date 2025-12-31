@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { getSongImage } from '@/lib/utils';
 import { Song } from '@/data/types';
 import { useRouter } from 'next/navigation';
 
@@ -125,7 +126,7 @@ export default function FavouritesPage() {
                                     >
                                         {/* Artist Background */}
                                         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                            style={{ backgroundImage: `url('${song.img}')` }} />
+                                            style={{ backgroundImage: `url('${getSongImage(song)}')` }} />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
 
                                         {/* Glass Shine */}

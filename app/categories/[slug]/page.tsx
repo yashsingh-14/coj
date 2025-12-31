@@ -49,6 +49,23 @@ export default function CategoryDetailPage() {
         }
     };
 
+    // Helper to resolve song image with fallbacks
+    const getSongImage = (song: Song) => {
+        // 1. YouTube Thumbnail Priority
+        const yId = song.youtube_id || (song as any).youtubeId;
+        if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
+            return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;
+        }
+
+        // 2. Custom Image
+        if (song.img && song.img.trim().length > 5 && song.img !== "null" && song.img !== "undefined") {
+            return song.img;
+        }
+
+        // 3. Fallback
+        return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
+    };
+
     return (
         <div className="min-h-screen bg-[#02000F] text-white font-sans pb-32 overflow-x-hidden selection:bg-[var(--brand)] selection:text-white">
 
@@ -112,7 +129,7 @@ export default function CategoryDetailPage() {
                                         className="relative flex flex-col justify-end p-8 rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors aspect-[3/4]"
                                     >
                                         {/* Album Art Background (Full Coverage) */}
-                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url('${song.img}')` }}></div>
+                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url('${getSongImage(song)}')` }}></div>
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
 
                                         {/* Glass Shine */}

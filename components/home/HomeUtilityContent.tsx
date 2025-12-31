@@ -20,6 +20,7 @@ import NotificationPrompt from '@/components/ui/NotificationPrompt';
 gsap.registerPlugin(ScrollTrigger);
 
 import { useAppStore } from '@/store/useAppStore';
+import { getSongImage } from '@/lib/utils';
 
 export default function HomeUtilityContent({
     trendingSongs,
@@ -37,7 +38,8 @@ export default function HomeUtilityContent({
     announcements: any[];
 }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const { currentUser, isAuthenticated, logout } = useAppStore();
+    const currentUser = useAppStore(state => state.currentUser);
+    const isAuthenticated = useAppStore(state => state.isAuthenticated);
 
     // Newsletter State
     const [email, setEmail] = useState('');
@@ -80,25 +82,7 @@ export default function HomeUtilityContent({
     // Get today's verse (DB > Local Fallback)
     const todaysVerse = dbVerse || getVerseOfTheDay();
 
-    // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
-    // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
-    // Helper to resolve song image with fallbacks: Custom Img -> YouTube Thum -> Default Fallback
-    const getSongImage = (song: Song) => {
-        // 1. PRIORITY: Check YouTube Thumbnail FIRST (User Request)
-        // We use 'hqdefault' because 'maxresdefault' often returns 404 for non-HD videos.
-        const yId = song.youtube_id || song.youtubeId;
-        if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
-            return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;
-        }
 
-        // 2. Check Custom Image (valid URL, not "null"/"undefined")
-        if (song.img && song.img.trim().length > 5 && song.img !== "null" && song.img !== "undefined") {
-            return song.img;
-        }
-
-        // 3. Last Resort Fallback
-        return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
-    };
 
     useEffect(() => {
         // Simple entry animation using standard timeouts/CSS to ensure visibility

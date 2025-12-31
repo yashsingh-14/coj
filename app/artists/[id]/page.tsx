@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft, PlayCircle, Star, Play, CheckCircle, Mic2, Users, Music } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
+import { getSongImage } from '@/lib/utils';
 import { Song } from '@/data/types';
 import { notFound } from 'next/navigation';
 
@@ -10,19 +11,10 @@ export const revalidate = 0; // Ensure fresh data on navigation
 export default async function ArtistDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: artistId } = await params;
 
-    // 1. Fetch Artist Metadata from DB
-    const { data: artist } = await supabase
-        .from('artists')
-        .select('*')
-        .eq('id', artistId)
-        .single();
+    // ... (fetch logic remains same)
+    const { data: artist } = await supabase.from('artists').select('*').eq('id', artistId).single();
 
-    // 2. Fetch Songs for this artist (Partial Match on Name or ID?)
-    // Our DB 'songs' table stores 'artist' as a string name usually.
-    // If we have an artist record, use its name. IF not found in DB, maybe it's a legacy ID?
-    // If artist is null, we might 404, OR try to find songs by the ID/slug just in case.
-
-    // Fallback search name if artist not in DB (legacy support or just robust)
+    // ... (search name logic)
     const searchName = artist ? artist.name : artistId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
     const { data: songs } = await supabase
@@ -33,25 +25,22 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
 
     const displaySongs: Song[] = songs || [];
 
-    // If no artist and no songs, 404
     if (!artist && displaySongs.length === 0) {
         notFound();
     }
 
-    // Artist Details with Fallbacks
     const artistName = artist?.name || searchName;
     const artistImage = artist?.image || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop';
 
     const artistStats = {
-        songs: displaySongs.length, // Or use artist.songs_count if preferred
+        songs: displaySongs.length,
         followers: artist?.followers || 'N/A',
         genre: artist?.genre || 'Worship'
     };
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white pb-32">
-
-            {/* HERO SECTION */}
+            {/* HERO... */}
             <div className="relative h-[50vh] md:h-[60vh] min-h-[400px] md:min-h-[500px] w-full overflow-hidden flex items-end">
                 {/* Background */}
                 <img
@@ -62,23 +51,16 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/80 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#02000F]/50 to-transparent" />
 
-                {/* Back Button */}
                 <div className="absolute top-6 left-6 z-20">
                     <Link href="/artists" className="p-3 rounded-full bg-black/20 hover:bg-white/10 backdrop-blur-xl border border-white/5 transition-all group">
                         <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
-                {/* Content */}
                 <div className="container mx-auto px-4 md:px-6 pb-8 md:pb-12 relative z-10">
                     <div className="flex flex-col md:flex-row items-end gap-6 md:gap-8">
-                        {/* Profile Image (Circle) */}
                         <div className="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-[#02000F] shadow-2xl overflow-hidden relative hidden md:block bg-[#111]">
-                            <img
-                                src={artistImage}
-                                alt={artistName}
-                                className="w-full h-full object-cover"
-                            />
+                            <img src={artistImage} alt={artistName} className="w-full h-full object-cover" />
                         </div>
 
                         <div className="flex-1">
@@ -153,12 +135,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                                     <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform bg-[#111]">
                                         {/* Artist/Song thumb - prioritize YouTube, then Custom */}
                                         <img
-                                            src={
-                                                (song.youtube_id && `https://img.youtube.com/vi/${song.youtube_id}/hqdefault.jpg`) ||
-                                                (song.youtubeId && `https://img.youtube.com/vi/${song.youtubeId}/hqdefault.jpg`) ||
-                                                (song.img !== 'null' && song.img) ||
-                                                artistImage
-                                            }
+                                            src={getSongImage(song)}
                                             alt={song.title}
                                             className="w-full h-full object-cover"
                                         />
@@ -195,12 +172,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
 
                         <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl shadow-2xl bg-cover bg-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
                             <img
-                                src={
-                                    (displaySongs[0].youtube_id && `https://img.youtube.com/vi/${displaySongs[0].youtube_id}/hqdefault.jpg`) ||
-                                    (displaySongs[0].youtubeId && `https://img.youtube.com/vi/${displaySongs[0].youtubeId}/hqdefault.jpg`) ||
-                                    (displaySongs[0].img !== 'null' && displaySongs[0].img) ||
-                                    artistImage
-                                }
+                                src={getSongImage(displaySongs[0])}
                                 className="w-full h-full object-cover"
                                 alt="Latest"
                             />
