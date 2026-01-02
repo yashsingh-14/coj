@@ -35,7 +35,7 @@ export default function HomeManager({ initialData }: {
     }, [mode]);
 
     return (
-        <div className="relative w-full min-h-screen overflow-hidden bg-[#050505]">
+        <div className="relative w-full min-h-screen overflow-hidden bg-[var(--background)]">
             {showExperience && (
                 <div
                     className="absolute inset-0 z-10 transition-opacity duration-1000 ease-in-out"
@@ -48,7 +48,7 @@ export default function HomeManager({ initialData }: {
 
             {/* Utility Mode Content */}
             <div
-                className={`absolute inset-0 w-full min-h-screen bg-[#050505] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 overflow-y-auto pointer-events-auto' : 'opacity-0 overflow-hidden pointer-events-none'
+                className={`absolute inset-0 w-full min-h-screen bg-[var(--background)] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 overflow-y-auto pointer-events-auto' : 'opacity-0 overflow-hidden pointer-events-none'
                     }`}
             >
                 <HomeUtilityContent

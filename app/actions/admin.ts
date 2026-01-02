@@ -70,13 +70,13 @@ export async function checkConnection() {
     }
 }
 
-export async function syncUsersAdmin() {
+export async function syncUsersAdminV3() {
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     try {
-        console.log("SERVER: Starting User Sync...");
+        console.log("SERVER: Starting User Sync V3...");
 
-        // 1. Fetch all users from Auth (Service Role required)
+        // 1. Fetch all users from Auth
         const { data: { users }, error: authError } = await adminDb.auth.admin.listUsers({ page: 1, perPage: 1000 });
 
         if (authError) {
@@ -84,30 +84,35 @@ export async function syncUsersAdmin() {
             throw authError;
         }
 
-        if (!users || users.length === 0) {
-            console.log("SERVER: No users found in Auth.");
-            return { success: true, message: "No users found in Auth database." };
-        }
+        if (!users || users.length === 0) return { success: true, message: "No users in Auth" };
 
-        console.log(`SERVER: Found ${users.length} users in Auth. Syncing...`);
+        console.log(`SERVER: Found ${users.length} users in Auth. Syncing V3...`);
 
         let syncedCount = 0;
         let errors = 0;
+        let firstError = '';
 
         // 2. Upsert into Profiles
+        // EXTREMELY MINIMAL PAYLOAD to debug schema issue
         for (const user of users) {
+            // Try to construct payload WITHOUT ignoring anything, just specific fields
+            const payload = {
+                id: user.id,
+                email: user.email,
+                name: user.user_metadata?.name || 'Unknown'
+            };
+
+            console.log(`SERVER: Upserting payload for ${user.email}:`, JSON.stringify(payload));
+
+            // Explicitly selecting 'id' to avoid getting return data that might contain missing columns?
             const { error: upsertError } = await adminDb
                 .from('profiles')
-                .upsert({
-                    id: user.id,
-                    email: user.email,
-                    name: user.user_metadata?.name || user.email?.split('@')[0] || 'Unknown',
-                    avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
-                    updated_at: new Date().toISOString(),
-                }, { onConflict: 'id' });
+                .upsert(payload, { onConflict: 'id' })
+                .select('id');
 
             if (upsertError) {
                 console.error(`SERVER: Failed to sync user ${user.email}:`, upsertError);
+                if (errors === 0) firstError = upsertError.message;
                 errors++;
             } else {
                 syncedCount++;
@@ -115,10 +120,16 @@ export async function syncUsersAdmin() {
         }
 
         await revalidateApp();
-        return { success: true, message: `Found ${users.length} users. Synced ${syncedCount}. (Errors: ${errors})` };
+
+        let msg = `Found ${users.length} users. Synced ${syncedCount}. (Errors: ${errors})`;
+        if (errors > 0) {
+            msg += `. First Error: ${firstError}`;
+        }
+
+        return { success: true, message: msg };
 
     } catch (error: any) {
-        console.error("Sync Users Error:", error);
+        console.error("Sync Users Critical Error:", error);
         return { success: false, error: error.message };
     }
 }

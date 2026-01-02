@@ -85,43 +85,30 @@ export default function SettingsPage() {
             }
 
             try {
-                // 1. Request Permission
                 const permission = await Notification.requestPermission();
                 if (permission !== 'granted') {
                     toast.error("Permission denied for notifications");
                     return;
                 }
 
-                // 2. Register Service Worker (or get existing)
                 const registration = await navigator.serviceWorker.register('/sw.js');
                 await navigator.serviceWorker.ready;
 
                 const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-                if (!vapidKey) {
-                    throw new Error("Missing VAPID Public Key");
-                }
+                if (!vapidKey) throw new Error("Missing VAPID Public Key");
 
-                // 3. Subscribe to Push Manager
                 const subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: urlBase64ToUint8Array(vapidKey)
                 });
 
-                // 4. Send subscription to our Backend
                 const { currentUser } = useAppStore.getState();
-
                 if (currentUser) {
-                    const response = await fetch(`/api/notifications/save-subscription?userId=${currentUser.id}`, {
+                    await fetch(`/api/notifications/save-subscription?userId=${currentUser.id}`, {
                         method: 'POST',
                         body: JSON.stringify(subscription),
                         headers: { 'Content-Type': 'application/json' }
                     });
-                    if (!response.ok) {
-                        const text = await response.text();
-                        // Cut off long HTML responses
-                        const preview = text.length > 100 ? text.substring(0, 100) + "..." : text;
-                        throw new Error(`Err: ${response.status} - ${preview}`);
-                    }
                     toast.success("Successfully subscribed to Push Notifications!");
                 } else {
                     toast("Notifications enabled locally (Sign in to sync across devices)");
@@ -130,13 +117,19 @@ export default function SettingsPage() {
             } catch (error: any) {
                 console.error("Push subscription error:", error);
                 toast.error("Failed: " + (error.message || "Unknown error"));
-                return; // Don't flip the toggle if failed
+                return;
             }
         }
 
         setPreferences({ [key]: newValue });
         toast.success(`${setting} ${newValue ? 'Enabled' : 'Disabled'}`);
     }
+
+    const toggleTheme = () => {
+        const newTheme = preferences.theme === 'light' ? 'dark' : 'light';
+        setPreferences({ theme: newTheme });
+        toast.success(`Theme switched to ${newTheme === 'light' ? 'Day' : 'Night'} Mode`);
+    };
 
     const sections: SettingsSection[] = [
         {
@@ -150,6 +143,14 @@ export default function SettingsPage() {
         {
             title: 'Preferences',
             items: [
+                {
+                    icon: Moon,
+                    label: 'Dark Mode',
+                    sub: 'Toggle light/dark appearance',
+                    type: 'toggle',
+                    value: preferences.theme === 'dark', // Toggle logic: ON = Dark
+                    action: toggleTheme
+                },
                 {
                     icon: Bell,
                     label: 'Notifications',
@@ -179,7 +180,7 @@ export default function SettingsPage() {
         {
             title: 'System',
             items: [
-                { icon: Share2, label: 'Share App', sub: 'Invite friends & family', action: handleShareApp, type: 'static' }, // Using static type but with click action
+                { icon: Share2, label: 'Share App', sub: 'Invite friends & family', action: handleShareApp, type: 'static' },
                 { icon: HelpCircle, label: 'Help & Support', sub: 'Contact Support', href: '/contact', type: 'link' },
                 { icon: LogOut, label: 'Clear Cache', sub: 'Fix issues & Reset', action: handleClearCache, type: 'static' }
             ]
@@ -187,12 +188,15 @@ export default function SettingsPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white pb-32">
+        <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pb-32 transition-colors duration-300">
             {/* Header */}
-            <div className="sticky top-0 z-40 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5 p-4 md:p-6 flex items-center gap-4">
-                <Link href="/profile" className="p-2 md:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group">
-                    <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 text-white group-hover:-translate-x-1 transition-transform" />
-                </Link>
+            <div className="sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-xl border-b border-[var(--card-border)] p-4 md:p-6 flex items-center gap-4 transition-colors duration-300">
+                <button
+                    onClick={() => router.back()}
+                    className="p-2 md:p-3 rounded-full bg-[var(--card)] hover:opacity-80 transition-colors group border border-[var(--card-border)]"
+                >
+                    <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 text-[var(--foreground)] group-hover:-translate-x-1 transition-transform" />
+                </button>
                 <h1 className="text-xl md:text-2xl font-bold tracking-tight">Settings</h1>
             </div>
 
@@ -200,8 +204,8 @@ export default function SettingsPage() {
 
                 {sections.map((section, idx) => (
                     <div key={idx} className="mb-10">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4 px-2">{section.title}</h2>
-                        <div className="bg-[#0A0A0A] border border-white/5 rounded-3xl overflow-hidden divide-y divide-white/5">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-4 px-2">{section.title}</h2>
+                        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl overflow-hidden divide-y divide-[var(--card-border)] transition-colors duration-300">
                             {section.items.map((item, i) => (
                                 item.type === 'link' ? (
                                     <Link
@@ -212,32 +216,32 @@ export default function SettingsPage() {
                                                 toast("Feature coming soon!");
                                             }
                                         }}
-                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-white/5 transition-colors group"
+                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-[var(--muted)]/10 transition-colors group"
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors">
+                                        <div className="w-10 h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors text-[var(--foreground)]">
                                             <item.icon className="w-5 h-5" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-medium text-white group-hover:translate-x-1 transition-transform">{item.label}</h3>
-                                            <p className="text-sm text-white/40">{item.sub}</p>
+                                            <h3 className="font-medium text-[var(--foreground)] group-hover:translate-x-1 transition-transform">{item.label}</h3>
+                                            <p className="text-sm text-[var(--muted-foreground)]">{item.sub}</p>
                                         </div>
-                                        <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-white transition-colors" />
+                                        <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)]/50 group-hover:text-[var(--foreground)] transition-colors" />
                                     </Link>
                                 ) : item.type === 'toggle' ? (
                                     <div
                                         key={i}
                                         onClick={item.action}
-                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-white/5 transition-colors cursor-pointer group select-none"
+                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-[var(--muted)]/10 transition-colors cursor-pointer group select-none"
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors">
+                                        <div className="w-10 h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors text-[var(--foreground)]">
                                             <item.icon className="w-5 h-5" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-medium text-white">{item.label}</h3>
-                                            <p className="text-sm text-white/40">{item.sub}</p>
+                                            <h3 className="font-medium text-[var(--foreground)]">{item.label}</h3>
+                                            <p className="text-sm text-[var(--muted-foreground)]">{item.sub}</p>
                                         </div>
                                         {/* Toggle Switch UI */}
-                                        <div className={`w-12 h-7 rounded-full p-1 transition-colors duration-300 ${item.value ? 'bg-[var(--brand)]' : 'bg-white/10'}`}>
+                                        <div className={`w-12 h-7 rounded-full p-1 transition-colors duration-300 ${item.value ? 'bg-[var(--brand)]' : 'bg-[var(--muted)]'}`}>
                                             <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${item.value ? 'translate-x-5' : 'translate-x-0'}`} />
                                         </div>
                                     </div>
@@ -245,17 +249,17 @@ export default function SettingsPage() {
                                     <div
                                         key={i}
                                         onClick={item.action}
-                                        className={`flex items-center gap-4 p-4 md:p-5 ${item.action ? 'cursor-pointer hover:bg-white/5' : 'opacity-60'} transition-colors`}
+                                        className={`flex items-center gap-4 p-4 md:p-5 ${item.action ? 'cursor-pointer hover:bg-[var(--muted)]/10' : 'opacity-60'} transition-colors`}
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                                        <div className="w-10 h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center text-[var(--foreground)]">
                                             <item.icon className="w-5 h-5" />
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="font-medium text-white">{item.label}</h3>
-                                            <p className="text-sm text-white/40">{item.sub}</p>
+                                            <h3 className="font-medium text-[var(--foreground)]">{item.label}</h3>
+                                            <p className="text-sm text-[var(--muted-foreground)]">{item.sub}</p>
                                         </div>
                                         {item.action && (
-                                            <ChevronRight className="w-5 h-5 text-white/20" />
+                                            <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)]/50" />
                                         )}
                                     </div>
                                 )
@@ -272,7 +276,7 @@ export default function SettingsPage() {
                     Sign Out
                 </button>
 
-                <p className="text-center text-xs text-white/20 font-mono">
+                <p className="text-center text-xs text-[var(--muted-foreground)]/50 font-mono">
                     COJ Worship App<br />
                     Build 2024.12.20
                 </p>

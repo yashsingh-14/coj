@@ -95,20 +95,20 @@ export default function HomeUtilityContent({
     }, []);
 
     return (
-        <div className="w-full bg-[#02000F] min-h-screen text-white pb-32 overflow-x-hidden selection:bg-[var(--brand)] selection:text-white">
+        <div className="w-full bg-[var(--background)] min-h-screen text-[var(--foreground)] pb-32 overflow-x-hidden selection:bg-[var(--brand)] selection:text-white transition-colors duration-300">
 
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             {/* HEADER */}
-            <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-4 sticky top-0 z-40 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5">
+            <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-4 sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-xl border-b border-[var(--card-border)] transition-colors duration-300">
                 <div className="flex items-center gap-4 animate-fade-in-down">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors"
+                        className="p-2 -ml-2 rounded-full hover:bg-[var(--foreground)]/10 transition-colors"
                     >
-                        <Menu className="w-6 h-6 text-white" />
+                        <Menu className="w-6 h-6 text-[var(--foreground)]" />
                     </button>
-                    <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                    <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--muted-foreground)]">
                         COJ<span className="text-[var(--brand)]">worship</span>
                     </h1>
                 </div>
@@ -123,8 +123,8 @@ export default function HomeUtilityContent({
                             )}
                         </div>
                     ) : (
-                        <Link href="/signin" className="w-9 h-9 rounded-full bg-white/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-white/5">
-                            <User className="w-5 h-5 text-white/70" />
+                        <Link href="/signin" className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-[var(--card-border)]">
+                            <User className="w-5 h-5 text-[var(--foreground)]/70 hover:text-white" />
                         </Link>
                     )}
                 </div>
@@ -183,20 +183,20 @@ export default function HomeUtilityContent({
                 <section className="px-5 mb-14 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
                     <div className="flex items-center gap-2 mb-4">
                         <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-                        <h2 className="text-xl font-black text-white uppercase tracking-wider">Featured This Week</h2>
+                        <h2 className="text-xl font-black text-[var(--foreground)] uppercase tracking-wider">Featured This Week</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {featuredSongs.map((song, i) => (
-                            <Link key={i} href={`/songs/${song.id}`} className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-3 hover:bg-white/10 transition-all group">
+                            <Link key={i} href={`/songs/${song.id}`} className="flex items-center gap-4 bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-3 hover:bg-[var(--foreground)]/5 transition-all group">
                                 <div className="w-16 h-16 rounded-lg overflow-hidden relative flex-shrink-0">
                                     <img src={getSongImage(song)} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h3 className="font-bold text-white truncate">{song.title}</h3>
-                                    <p className="text-xs text-white/50 uppercase tracking-wider">{song.artist}</p>
+                                    <h3 className="font-bold text-[var(--foreground)] truncate">{song.title}</h3>
+                                    <p className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">{song.artist}</p>
                                 </div>
-                                <div className="ml-auto w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-black transition-colors">
-                                    <PlayCircle className="w-5 h-5" />
+                                <div className="ml-auto w-8 h-8 rounded-full bg-[var(--foreground)]/5 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-black transition-colors">
+                                    <PlayCircle className="w-5 h-5 text-[var(--foreground)] group-hover:text-black" />
                                 </div>
                             </Link>
                         ))}
@@ -354,7 +354,7 @@ export default function HomeUtilityContent({
                             </span>
                             <span className="text-[10px] font-black tracking-[0.3em] uppercase text-red-500">Global Charts</span>
                         </div>
-                        <h2 className="text-2xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter shadow-white drop-shadow-lg">
+                        <h2 className="text-2xl md:text-4xl lg:text-5xl font-black text-[var(--foreground)] tracking-tighter shadow-white drop-shadow-lg">
                             TRENDING <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">NOW</span>
                         </h2>
                     </div>
@@ -416,7 +416,7 @@ export default function HomeUtilityContent({
 
             {/* FEATURED ARTISTS - MINDBLOWING REDESIGN */}
             <section className="mb-20 md:mb-24 pl-4 md:pl-6 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                <h2 className="text-2xl md:text-4xl font-black text-white mb-8 md:mb-10 tracking-tighter">
+                <h2 className="text-2xl md:text-4xl font-black text-[var(--foreground)] mb-8 md:mb-10 tracking-tighter">
                     ICONS OF <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--brand)] to-[var(--accent)]">WORSHIP</span>
                 </h2>
 

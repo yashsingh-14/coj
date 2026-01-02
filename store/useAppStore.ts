@@ -28,6 +28,7 @@ interface AppState {
         dataSaver: boolean;
         notifications: boolean;
         audioQuality: boolean; // true = high
+        theme: 'dark' | 'light';
     };
     setPreferences: (prefs: Partial<AppState['preferences']>) => void;
 }
@@ -48,7 +49,8 @@ export const useAppStore = create<AppState>()(
             preferences: {
                 dataSaver: false,
                 notifications: true,
-                audioQuality: false
+                audioQuality: false,
+                theme: 'dark'
             },
             setPreferences: (prefs) => set((state) => ({ preferences: { ...state.preferences, ...prefs } })),
 

@@ -3,30 +3,38 @@
 @layer base {
   :root {
     --background: #02000F;
-    /* Deep Navy Black */
     --foreground: #ffffff;
-    --muted: #4E4D4D;
-    /* Separator Gray */
+    --muted: #4e4d4d;
     --muted-foreground: #9ca3af;
     --brand: #FF6D00;
-    /* Vibrant Orange */
     --accent: #FF9800;
-    /* Lighter Orange */
-    --chord: #FFC107;
-    /* Bright Amber for Chords */
-    --nav-gradient: linear-gradient(45deg, #FF6D00, #FF3D00);
-  }
-
-  body {
-    @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  ::selection {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
+    --card: #0A0A0A;
+    --card-border: rgba(255, 255, 255, 0.05);
   }
 }
+
+/* Light Theme Overrides - High Specificity */
+:root.light {
+  --background: #f3f4f6;
+  --foreground: #111827;
+  --muted: #e5e7eb;
+  --muted-foreground: #6b7280;
+  --brand: #ff6d00;
+  --accent: #ff9800;
+  --card: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+::selection {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
 
 @layer utilities {
   .text-balance {

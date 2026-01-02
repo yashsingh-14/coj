@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Users, Search, Shield, ShieldAlert, Loader2, Check, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { syncUsersAdmin } from '@/app/actions/admin';
+import { syncUsersAdminV3 } from '@/app/actions/admin';
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
@@ -30,9 +30,9 @@ export default function AdminUsersPage() {
 
     const handleSync = async () => {
         setIsSyncing(true);
-        toast.info("Syncing users from Auth...");
+        toast.info("Syncing users from Auth (V3)...");
         try {
-            const res = await syncUsersAdmin();
+            const res = await syncUsersAdminV3();
             if (res.success) {
                 toast.success(res.message);
                 fetchUsers(); // Refresh list

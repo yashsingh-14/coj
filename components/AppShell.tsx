@@ -56,8 +56,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         });
 
         return () => subscription.unsubscribe();
-        return () => subscription.unsubscribe();
     }, []); // Empty dependency array to run only once on mount
+
+    // 3. Sync Theme with Body
+    const theme = useAppStore(state => state.preferences.theme);
+    useEffect(() => {
+        if (theme === 'light') {
+            document.documentElement.classList.add('light');
+        } else {
+            document.documentElement.classList.remove('light');
+        }
+    }, [theme]);
 
     // Show BottomNav if:
     // 1. We are NOT on home page (utility pages always need nav)
