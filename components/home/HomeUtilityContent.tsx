@@ -207,7 +207,7 @@ export default function HomeUtilityContent({
             {/* CATEGORIES - HOLOGRAPHIC TILES (UPDATED: GAP-16) */}
             <section className="px-5 mb-14 section-anim opacity-0 translate-y-8 transition-all duration-700 ease-out">
                 {/* Responsive gap: smaller on mobile, larger on desktop */}
-                <div className="flex gap-4 md:gap-12 lg:gap-16 overflow-x-auto no-scrollbar pb-8 md:pb-16 justify-start md:justify-center px-4 md:px-4 pt-6 md:pt-8">
+                <div className="flex gap-4 md:gap-12 lg:gap-16 overflow-x-auto no-scrollbar pb-8 md:pb-16 justify-start px-4 md:px-6 pt-6 md:pt-8 snap-x snap-mandatory">
                     {[
                         { name: 'English Praise', icon: Sparkles, from: 'from-orange-400', to: 'to-red-600', shadow: 'shadow-orange-500/30' },
                         { name: 'Hindi Praise', icon: Star, from: 'from-yellow-400', to: 'to-orange-500', shadow: 'shadow-yellow-500/30' },
@@ -220,7 +220,7 @@ export default function HomeUtilityContent({
                         const Icon = cat.icon;
                         const href = cat.href || `/categories/${cat.name.toLowerCase().replace(/\s+/g, '-')}`;
                         return (
-                            <TiltCard key={i} className="min-w-[90px] md:min-w-[140px] h-[90px] md:h-[150px]" max={20} scale={1.15}>
+                            <TiltCard key={i} className="min-w-[90px] md:min-w-[140px] h-[90px] md:h-[150px] snap-center" max={20} scale={1.15}>
                                 <div className="relative w-full h-full group">
 
                                     {/* SUPER GLOW (The "Blow" Effect) 
