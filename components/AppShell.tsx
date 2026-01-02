@@ -56,7 +56,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         });
 
         return () => subscription.unsubscribe();
-    }, [login, logout]);
+        return () => subscription.unsubscribe();
+    }, []); // Empty dependency array to run only once on mount
 
     // Show BottomNav if:
     // 1. We are NOT on home page (utility pages always need nav)
