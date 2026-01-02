@@ -230,13 +230,13 @@
       opacity: 0;
     }
 
-    10% {
-      opacity: 1;
+    5% {
+      opacity: 0.5;
     }
 
-    50% {
+    40% {
       left: 200%;
-      opacity: 0;
+      opacity: 0.5;
     }
 
     100% {
@@ -246,7 +246,7 @@
   }
 
   .animate-shine-line {
-    animation: shine-line 5s infinite ease-in-out;
+    animation: shine-line 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
 
   @keyframes shine-move {
@@ -271,13 +271,36 @@
   }
 
   .verse-text-shine {
-    background: linear-gradient(to right, #e5e5e5 20%, #FFF 50%, #e5e5e5 80%);
+    background: linear-gradient(to right, #6b7280 20%, #FFFFFF 50%, #6b7280 80%);
     background-size: 200% auto;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    animation: shine-move 6s linear infinite;
+    animation: shine-move 8s linear infinite;
+    will-change: background-position;
+  }
+
+  @keyframes shine-slide {
+    0% {
+      transform: skewX(-20deg) translateX(-150%);
+    }
+
+    100% {
+      transform: skewX(-20deg) translateX(250%);
+    }
+  }
+
+  .button-shine-overlay {
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8), transparent);
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: shine-slide 8s infinite linear;
+    /* Synced with verse-text-shine (8s) */
+    will-change: transform;
   }
 
   @keyframes flame-sway {

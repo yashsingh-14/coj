@@ -209,14 +209,16 @@ export default function HomeUtilityContent({
                 {/* Responsive gap: smaller on mobile, larger on desktop */}
                 <div className="flex gap-4 md:gap-12 lg:gap-16 overflow-x-auto no-scrollbar pb-8 md:pb-16 justify-start md:justify-center px-4 md:px-4 pt-6 md:pt-8">
                     {[
-                        { name: 'Praise', icon: Sparkles, from: 'from-orange-400', to: 'to-red-600', shadow: 'shadow-orange-500/30' },
-                        { name: 'Worship', icon: Heart, from: 'from-purple-500', to: 'to-indigo-600', shadow: 'shadow-purple-500/30' },
+                        { name: 'English Praise', icon: Sparkles, from: 'from-orange-400', to: 'to-red-600', shadow: 'shadow-orange-500/30' },
+                        { name: 'Hindi Praise', icon: Star, from: 'from-yellow-400', to: 'to-orange-500', shadow: 'shadow-yellow-500/30' },
+                        { name: 'English Worship', icon: Heart, from: 'from-purple-500', to: 'to-indigo-600', shadow: 'shadow-purple-500/30' },
+                        { name: 'Hindi Worship', icon: Music2, from: 'from-blue-500', to: 'to-cyan-600', shadow: 'shadow-blue-500/30' },
                         { name: 'Kids', icon: Star, from: 'from-pink-400', to: 'to-rose-600', shadow: 'shadow-pink-500/30' },
-                        { name: 'Sermons', icon: Mic2, from: 'from-blue-400', to: 'to-cyan-600', shadow: 'shadow-blue-500/30', href: '/sermons' },
-                        { name: 'Hymns', icon: Music2, from: 'from-emerald-400', to: 'to-teal-600', shadow: 'shadow-emerald-500/30' },
-                        { name: 'Hindi', icon: Star, from: 'from-orange-500', to: 'to-yellow-500', shadow: 'shadow-orange-500/30' },
+                        { name: 'Sermons', icon: Mic2, from: 'from-emerald-400', to: 'to-teal-600', shadow: 'shadow-emerald-500/30', href: '/sermons' },
+                        { name: 'Hymns', icon: Music2, from: 'from-indigo-400', to: 'to-blue-600', shadow: 'shadow-indigo-500/30' },
                     ].map((cat, i) => {
                         const Icon = cat.icon;
+                        const href = cat.href || `/categories/${cat.name.toLowerCase().replace(/\s+/g, '-')}`;
                         return (
                             <TiltCard key={i} className="min-w-[90px] md:min-w-[140px] h-[90px] md:h-[150px]" max={20} scale={1.15}>
                                 <div className="relative w-full h-full group">
@@ -234,7 +236,7 @@ export default function HomeUtilityContent({
                                     `}></div>
 
                                     <Link
-                                        href={cat.href || `/categories/${cat.name.toLowerCase()}`}
+                                        href={href}
                                         className={`
                                             relative w-full h-full rounded-3xl 
                                             bg-gradient-to-br ${cat.from} ${cat.to}
@@ -246,8 +248,10 @@ export default function HomeUtilityContent({
                                             overflow-hidden
                                         `}
                                     >
-                                        {/* Dynamic Shine Layer */}
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out skew-x-12" />
+                                        {/* Continuous Shine Layer - Optimized */}
+                                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+                                            <div className="button-shine-overlay opacity-70"></div>
+                                        </div>
 
                                         {/* Glass Surface */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-white/10 opacity-50" />
@@ -317,7 +321,10 @@ export default function HomeUtilityContent({
                                 </div>
 
                                 <Link href="/devotional" className="group relative px-6 md:px-10 py-3 md:py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block translate-z-10">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700 ease-in-out"></div>
+                                    {/* Continuous Shine Layer */}
+                                    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+                                        <div className="button-shine-overlay opacity-50"></div>
+                                    </div>
                                     <span className="relative text-white font-bold tracking-widest text-sm flex items-center gap-3">
                                         READ DEVOTIONAL <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                     </span>
@@ -328,7 +335,7 @@ export default function HomeUtilityContent({
 
                         {/* Signature */}
                         <div className="absolute bottom-8 right-10 opacity-70">
-                            <p className="text-white/60 text-xs font-serif italic tracking-widest text-right">
+                            <p className="text-white/60 text-xs font-serif italic tracking-widest text-right verse-text-shine">
                                 Ps. Samson Wilson
                             </p>
                         </div>
@@ -569,7 +576,9 @@ export default function HomeUtilityContent({
                                         <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-amber-600/50 to-transparent shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
 
                                         {/* Running Shine */}
-                                        <div className="absolute top-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white to-transparent opacity-80 animate-shine-line"></div>
+                                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+                                            <div className="button-shine-overlay opacity-80"></div>
+                                        </div>
                                     </div>
 
                                     <span className="text-[0.65rem] font-bold text-amber-500 tracking-[0.35em] uppercase leading-tight ml-0.5 text-left">MINISTRIES</span>
@@ -670,7 +679,9 @@ export default function HomeUtilityContent({
                                     <span className="group-hover:text-amber-500 transition-colors">Yash Singh</span>
                                     {/* Golden Shiny Line - Sunlight Reflection Effect */}
                                     <div className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-[#FFD700]/10 overflow-hidden rounded-full">
-                                        <div className="absolute top-0 bottom-0 w-[60%] bg-gradient-to-r from-transparent via-[#FFD700] via-white via-[#FFD700] to-transparent blur-[0.5px] animate-shine-line shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+                                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+                                            <div className="button-shine-overlay opacity-90"></div>
+                                        </div>
                                     </div>
                                 </a>
                             </div>

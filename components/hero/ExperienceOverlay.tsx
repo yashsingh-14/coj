@@ -22,7 +22,7 @@ export default function ExperienceOverlay() {
                     <span className="absolute -inset-8 bg-[#FFD700]/5 rounded-full blur-2xl opacity-30 group-hover:opacity-60 transition duration-1000"></span>
 
                     {/* The Verse Text (Vachan) - Main Focus */}
-                    <h2 className="relative text-xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-2xl text-balance italic">
+                    <h2 className="relative text-xl md:text-5xl lg:text-6xl font-bold leading-tight drop-shadow-2xl text-balance italic verse-text-shine pb-2">
                         "Come to me, all you who are weary and burdened, <br className="hidden md:block" /> and I will give you rest."
                     </h2>
 
@@ -35,10 +35,17 @@ export default function ExperienceOverlay() {
                 {/* Button */}
                 <button
                     onClick={() => setMode('UTILITY')}
-                    className="group relative px-8 py-3 bg-white/5 hover:bg-[var(--brand)] backdrop-blur-md border border-white/20 hover:border-[var(--brand)] rounded-full text-sm tracking-widest uppercase transition-all duration-300 overflow-hidden"
+                    className="group relative px-8 py-3 bg-white/5 hover:bg-[var(--brand)]/20 backdrop-blur-md border border-white/20 hover:border-white/60 rounded-full text-sm tracking-widest uppercase transition-all duration-300 overflow-hidden"
                 >
                     <span className="relative z-10 group-hover:text-white font-bold">Enter Worship</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand)] to-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    {/* Hover Gradient Background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand)]/0 via-[var(--brand)]/10 to-[var(--brand)]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    {/* Continuous Shine Effect Line */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
+                        <div className="absolute inset-0 button-shine-overlay opacity-50"></div>
+                    </div>
                 </button>
             </div>
         </div>
