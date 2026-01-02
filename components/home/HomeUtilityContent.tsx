@@ -298,7 +298,7 @@ export default function HomeUtilityContent({
                                 </span>
                             </div>
 
-                            {/* CALL OF JESUS LOGO (User Reference) */}
+                            {/* CALL OF JESUS LOGO  */}
                             <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow">
                                 <Logo className="w-40 md:w-60 h-auto" />
                             </div>
