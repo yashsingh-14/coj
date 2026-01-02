@@ -19,16 +19,28 @@ export default function CategoryDetailPage() {
     // Helper to detect Hindi songs (Robust Client-Side Logic)
     // Helper to detect Hindi songs (Robust Client-Side Logic)
     const isHindiSong = (song: Song) => {
-        // 1. Check DB field (if available)
-        if (song.hindi_lyrics && song.hindi_lyrics.trim() !== '') return true;
+        // 1. Check DB field explicit override (if we had a language field, we'd use it here)
+        // If DB has explicit "Hindi" content, trust it.
+        if (song.hindi_lyrics && song.hindi_lyrics.length > 10) {
+            // Heuristic: If it has substantial content in hindi_lyrics, it's likely Hindi.
+            // But we need to ensure it's not just " [Translation] "
+        }
 
-        // 2. Check Title Regex (Strict Word Boundaries)
         const titleLower = song.title.toLowerCase();
 
-        // Strict list: Only words that are uniquely Hindi.
-        // We use \b (word boundary) to ensure we match whole words only. 
-        // Example: 'tera' must be 'tera', not 'eternal' or 'literal'.
-        const hindiRegex = /\b(dhanyawad|yeshu|masih|tera|khuda|aradhana|stuti|saath|pavitra|atma|gaye|krupa|prarthana|mahima|raja|prabhu)\b/i;
+        // 2. ABSOLUTE HINDI INDICATOR: Devanagari Script
+        const devanagariRegex = /[\u0900-\u097F]/;
+        if (devanagariRegex.test(song.title) || (song.hindi_lyrics && devanagariRegex.test(song.hindi_lyrics))) return true;
+
+        // 3. STRONG ENGLISH INDICATORS (Overrides ambiguous Hindi matches)
+        // If title contains these common English words, assume it's English unless Devanagari is present.
+        const englishRegex = /\b(the|lord|god|jesus|holy|spirit|love|grace|light|heart|soul|king|father|savior|worship|praise|glory|above|oceans|feet|fail|where|hills|song|your|my|our|you|me|i|am|who|what|when|how)\b/i;
+
+        if (titleLower.includes('oceans') || englishRegex.test(titleLower)) return false;
+
+        // 4. HINDI INDICATORS (Regex)
+        // Only match if NOT flagged as English above.
+        const hindiRegex = /\b(dhanyawad|yeshu|masih|tera|teri|khuda|aradhana|aaradhana|stuti|saath|pavitra|atma|gaye|krupa|prarthana|mahima|raja|prabhu|tu|mere|meri|hai|pyar|pyaar|zindagi|chahu|dil|mukti|data|sagar|vachan|naam|sarvashaktiman|el shaddai|yahowa|juda|masiha|khudawand|rehem|fazal|shanti|aanand|jivan|jeevan|marg|satya|vijay|lahu|krus|paap|maafi|uddhar|swarg|dharti|asman|rooh|pak|pavan|senaon|samarth|binti|sun|anugrah|bharosa)\b/i;
 
         if (hindiRegex.test(titleLower)) return true;
 
@@ -38,35 +50,52 @@ export default function CategoryDetailPage() {
     useEffect(() => {
         const fetchCategorySongs = async () => {
             setIsLoading(true);
-            let query = supabase.from('songs').select('*');
 
-            // Determine Target Category & Language Filter
-            let languageFilter: 'hindi' | 'english' | null = null;
-            let targetCategory = slug;
-
-            if (slug && typeof slug === 'string' && (slug.includes('hindi-') || slug.includes('english-'))) {
-                const [lang, ...catParts] = slug.toLowerCase().split('-');
-                languageFilter = lang as 'hindi' | 'english';
-                targetCategory = catParts.join('-');
-            }
-
-            // 1. Fetch ALL songs for the base category (Case Insensitive)
-            if (targetCategory !== 'all') {
-                query = query.ilike('category', targetCategory);
-            }
-
-            const { data, error } = await query;
+            // 1. Fetch ALL songs (Client-side filtering is safer for mixed data)
+            const { data, error } = await supabase.from('songs').select('*');
 
             if (data) {
                 let filteredSongs = data;
 
-                // 2. Apply Robust Client-Side Filtering
-                if (languageFilter === 'hindi') {
-                    filteredSongs = data.filter(song => isHindiSong(song));
-                } else if (languageFilter === 'english') {
-                    filteredSongs = data.filter(song => !isHindiSong(song));
+                // Determine Target Category & Language
+                let languageFilter: 'hindi' | 'english' | null = null;
+                let targetCategory = slug;
+
+                if (slug && typeof slug === 'string' && (slug.includes('hindi-') || slug.includes('english-'))) {
+                    const [lang, ...catParts] = slug.toLowerCase().split('-');
+                    languageFilter = lang as 'hindi' | 'english';
+                    targetCategory = catParts.join('-');
                 }
 
+                console.log('Filtering:', { slug, targetCategory, languageFilter, total: data.length });
+
+                // 2. Filter by Category (Soft Match - Bidirectional & Grouped)
+                if (targetCategory !== 'all') {
+                    filteredSongs = filteredSongs.filter(song => {
+                        const songCat = song.category.toLowerCase();
+
+                        // Check direct match first
+                        if (songCat.includes(targetCategory) || targetCategory.includes(songCat)) return true;
+
+                        // Check Groups (Worship/Praise overlap)
+                        const worshipKeywords = ['worship', 'praise', 'stuti', 'aradhana', 'adoration'];
+                        const isWorshipTarget = worshipKeywords.some(k => targetCategory.includes(k));
+                        const isWorshipSong = worshipKeywords.some(k => songCat.includes(k));
+
+                        if (isWorshipTarget && isWorshipSong) return true;
+
+                        return false;
+                    });
+                }
+
+                // 3. Filter by Language (Robust)
+                if (languageFilter === 'hindi') {
+                    filteredSongs = filteredSongs.filter(song => isHindiSong(song));
+                } else if (languageFilter === 'english') {
+                    filteredSongs = filteredSongs.filter(song => !isHindiSong(song));
+                }
+
+                console.log(`Filtered [${slug}]: ${filteredSongs.length} songs`);
                 setSongs(filteredSongs);
             }
             setIsLoading(false);

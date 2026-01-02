@@ -4,7 +4,7 @@ import Link from 'next/link';
 import BottomNav from '@/components/ui/BottomNav';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -12,6 +12,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const login = useAppStore(state => state.login);
     const logout = useAppStore(state => state.logout);
     const mode = useAppStore(state => state.mode);
+
+    const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
         // Helper to get user data with role
@@ -42,6 +44,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 const userData = await getUserData(session.user);
                 login(userData);
             }
+            setIsReady(true);
         };
         initSession();
 
@@ -71,7 +74,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     // Show BottomNav if:
     // 1. We are NOT on home page (utility pages always need nav)
     // 2. OR We are on home page AND mode is UTILITY
-    const showNav = pathname !== '/' || mode === 'UTILITY';
+    // 3. AND App is initialized (isReady)
+    const showNav = isReady && (pathname !== '/' || mode === 'UTILITY');
 
     return (
         <>

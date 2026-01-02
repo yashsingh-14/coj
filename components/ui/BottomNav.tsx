@@ -21,7 +21,7 @@ function BottomNavComponent() {
     ];
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 pb-safe shadow-2xl bg-[var(--card)] border-t border-[var(--card-border)]">
+        <div className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 pb-safe shadow-2xl bg-gradient-to-r from-[#FF6D00] to-[#FF3D00]">
             <div className="flex justify-between items-center h-16 px-6 max-w-md mx-auto">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
@@ -39,17 +39,17 @@ function BottomNavComponent() {
                             >
                                 <div className={cn(
                                     "w-6 h-6 rounded-full overflow-hidden border-2 transition-all",
-                                    isActive ? "border-[var(--brand)] scale-110" : "border-[var(--muted)]"
+                                    isActive ? "border-white scale-110" : "border-white/50"
                                 )}>
                                     {currentUser?.avatar ? (
                                         <img src={currentUser.avatar} alt="Me" className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full bg-[var(--muted)]/20 flex items-center justify-center text-[10px] font-bold text-[var(--foreground)]">
+                                        <div className="w-full h-full bg-white/20 flex items-center justify-center text-[10px] font-bold">
                                             {currentUser?.name?.[0] || 'U'}
                                         </div>
                                     )}
                                 </div>
-                                <span className="text-[10px] uppercase tracking-wide font-bold text-[var(--foreground)]">{item.name}</span>
+                                <span className="text-[10px] uppercase tracking-wide font-bold text-white">{item.name}</span>
                             </Link>
                         )
                     }
@@ -63,8 +63,8 @@ function BottomNavComponent() {
                                 isActive ? "opacity-100" : "opacity-60 hover:opacity-100"
                             )}
                         >
-                            {Icon && <Icon className="w-6 h-6 text-[var(--foreground)]" strokeWidth={2.5} />}
-                            <span className="text-[10px] uppercase tracking-wide font-bold text-[var(--foreground)]">{item.name}</span>
+                            {Icon && <Icon className="w-6 h-6 text-white" strokeWidth={2.5} />}
+                            <span className="text-[10px] uppercase tracking-wide font-bold text-white">{item.name}</span>
                         </Link>
                     );
                 })}
