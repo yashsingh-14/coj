@@ -16,19 +16,58 @@ export default function CategoryDetailPage() {
     const [songs, setSongs] = useState<Song[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Helper to detect Hindi songs (Robust Client-Side Logic)
+    // Helper to detect Hindi songs (Robust Client-Side Logic)
+    const isHindiSong = (song: Song) => {
+        // 1. Check DB field (if available)
+        if (song.hindi_lyrics && song.hindi_lyrics.trim() !== '') return true;
+
+        // 2. Check Title Regex (Strict Word Boundaries)
+        const titleLower = song.title.toLowerCase();
+
+        // Strict list: Only words that are uniquely Hindi.
+        // We use \b (word boundary) to ensure we match whole words only. 
+        // Example: 'tera' must be 'tera', not 'eternal' or 'literal'.
+        const hindiRegex = /\b(dhanyawad|yeshu|masih|tera|khuda|aradhana|stuti|saath|pavitra|atma|gaye|krupa|prarthana|mahima|raja|prabhu)\b/i;
+
+        if (hindiRegex.test(titleLower)) return true;
+
+        return false;
+    };
+
     useEffect(() => {
         const fetchCategorySongs = async () => {
             setIsLoading(true);
             let query = supabase.from('songs').select('*');
 
-            if (slug && slug !== 'all') {
-                query = query.eq('category', slug.toLowerCase());
+            // Determine Target Category & Language Filter
+            let languageFilter: 'hindi' | 'english' | null = null;
+            let targetCategory = slug;
+
+            if (slug && typeof slug === 'string' && (slug.includes('hindi-') || slug.includes('english-'))) {
+                const [lang, ...catParts] = slug.toLowerCase().split('-');
+                languageFilter = lang as 'hindi' | 'english';
+                targetCategory = catParts.join('-');
+            }
+
+            // 1. Fetch ALL songs for the base category (Case Insensitive)
+            if (targetCategory !== 'all') {
+                query = query.ilike('category', targetCategory);
             }
 
             const { data, error } = await query;
 
             if (data) {
-                setSongs(data);
+                let filteredSongs = data;
+
+                // 2. Apply Robust Client-Side Filtering
+                if (languageFilter === 'hindi') {
+                    filteredSongs = data.filter(song => isHindiSong(song));
+                } else if (languageFilter === 'english') {
+                    filteredSongs = data.filter(song => !isHindiSong(song));
+                }
+
+                setSongs(filteredSongs);
             }
             setIsLoading(false);
         };
@@ -40,11 +79,18 @@ export default function CategoryDetailPage() {
 
     // Dynamic background based on category (mock logic)
     const getGradient = () => {
+        // Handle specific slugs
+        if (slug.includes('english-praise')) return 'from-orange-400 via-red-500 to-red-600';
+        if (slug.includes('hindi-praise')) return 'from-yellow-400 via-orange-500 to-red-500';
+        if (slug.includes('english-worship')) return 'from-purple-600 via-indigo-600 to-blue-600';
+        if (slug.includes('hindi-worship')) return 'from-blue-500 via-cyan-500 to-teal-500';
+
         switch (slug) {
             case 'praise': return 'from-yellow-400 via-orange-500 to-red-500';
             case 'worship': return 'from-purple-600 via-indigo-600 to-blue-600';
             case 'kids': return 'from-green-400 via-teal-500 to-cyan-500';
             case 'hindi': return 'from-orange-500 via-red-600 to-yellow-500';
+            case 'hymns': return 'from-indigo-400 via-blue-500 to-cyan-500';
             default: return 'from-[var(--brand)] via-pink-600 to-purple-600';
         }
     };

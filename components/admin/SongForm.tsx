@@ -393,21 +393,40 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                     <Input label="Song Title" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Way Maker" />
                                     <Input label="Artist" name="artist" value={formData.artist} onChange={handleChange} placeholder="e.g. Sinach" />
 
-                                    <div>
-                                        <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Category</label>
-                                        <select
-                                            name="category"
-                                            value={formData.category}
-                                            onChange={handleChange}
-                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
-                                        >
-                                            <option value="worship">Worship</option>
-                                            <option value="praise">Praise</option>
-                                            <option value="hymns">Hymns</option>
-                                            <option value="kids">Kids</option>
-                                            <option value="hindi">Hindi</option>
-                                            <option value="contemporary">Contemporary</option>
-                                        </select>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Category</label>
+                                            <select
+                                                name="category"
+                                                value={formData.category}
+                                                onChange={handleChange}
+                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
+                                            >
+                                                <option value="worship">Worship</option>
+                                                <option value="praise">Praise</option>
+                                                <option value="hymns">Hymns</option>
+                                                <option value="kids">Kids</option>
+                                                <option value="contemporary">Contemporary</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Language</label>
+                                            <select
+                                                name="language"
+                                                value={formData.hindi_lyrics ? 'hindi' : 'english'}
+                                                onChange={(e) => {
+                                                    const isHindi = e.target.value === 'hindi';
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        hindi_lyrics: isHindi ? (prev.hindi_lyrics || ' ') : '' // Set placeholder if Hindi, else empty
+                                                    }));
+                                                }}
+                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
+                                            >
+                                                <option value="english">English</option>
+                                                <option value="hindi">Hindi</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </section>
 
