@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { Users, Search, Shield, ShieldAlert, Loader2, Check } from 'lucide-react';
+import { Users, Search, Shield, ShieldAlert, Loader2, Check, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { syncUsersAdmin } from '@/app/actions/admin';
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSyncing, setIsSyncing] = useState(false);
     const [search, setSearch] = useState('');
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -24,6 +26,24 @@ export default function AdminUsersPage() {
 
         if (data) setUsers(data);
         setIsLoading(false);
+    };
+
+    const handleSync = async () => {
+        setIsSyncing(true);
+        toast.info("Syncing users from Auth...");
+        try {
+            const res = await syncUsersAdmin();
+            if (res.success) {
+                toast.success(res.message);
+                fetchUsers(); // Refresh list
+            } else {
+                toast.error(res.error || "Sync failed");
+            }
+        } catch (e) {
+            toast.error("Sync failed");
+        } finally {
+            setIsSyncing(false);
+        }
     };
 
     const handleRoleUpdate = async (userId: string, newRole: string) => {
@@ -54,9 +74,19 @@ export default function AdminUsersPage() {
                     <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">Users</h1>
                     <p className="text-white/40 text-sm">Manage user profiles and access roles.</p>
                 </div>
-                <div className="bg-[#0F0F16] border border-white/5 rounded-full px-4 py-2 flex items-center gap-2 w-fit">
-                    <Users className="w-4 h-4 md:w-5 md:h-5 text-white/50" />
-                    <span className="text-white font-bold text-sm">{users.length} Total</span>
+                <div className="flex gap-2">
+                    <button
+                        onClick={handleSync}
+                        disabled={isSyncing}
+                        className="bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 flex items-center gap-2 transition-colors disabled:opacity-50"
+                    >
+                        <RefreshCw className={`w-4 h-4 text-white/50 ${isSyncing ? 'animate-spin' : ''}`} />
+                        <span className="text-white font-bold text-sm">Sync DB</span>
+                    </button>
+                    <div className="bg-[#0F0F16] border border-white/5 rounded-full px-4 py-2 flex items-center gap-2 w-fit">
+                        <Users className="w-4 h-4 md:w-5 md:h-5 text-white/50" />
+                        <span className="text-white font-bold text-sm">{users.length} Total</span>
+                    </div>
                 </div>
             </header>
 
