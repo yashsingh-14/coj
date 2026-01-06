@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/admin/', '/api/'], // Protect admin and api routes from crawling
         },
-        sitemap: 'https://coj.org.in/sitemap.xml',
+        sitemap: 'https://cojworship.vercel.app/sitemap.xml',
     };
 }

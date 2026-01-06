@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { supabase } from '@/lib/supabaseClient'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://coj.org.in'
+    const baseUrl = 'https://cojworship.vercel.app'
 
     // Fetch all songs
     const { data: songs } = await supabase

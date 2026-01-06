@@ -13,7 +13,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Define the primary domain - Update this if you switch to a custom domain like coj.org.in later
+const SITE_URL = 'https://cojworship.vercel.app';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: '/',
+  },
   title: {
     default: "COJ | Call of Jesus Ministries - Christian Worship Songs & Lyrics",
     template: "%s | COJ Worship"
@@ -24,7 +31,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://coj.org.in",
+    url: SITE_URL,
     siteName: "COJ Worship",
     title: "COJ | Call of Jesus Ministries - Worship & Word",
     description: "Premium destination for Christian worship lyrics and chords.",
