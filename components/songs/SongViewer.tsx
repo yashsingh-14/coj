@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, Fragment, useEffect } from 'react';
+import { useState, Fragment, useEffect, useRef } from 'react';
 import { transposeChord } from '@/lib/music';
-import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus, Music2, Loader2, X } from 'lucide-react';
+import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus, Music2, Loader2, X, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
@@ -35,6 +35,11 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
     const [isFavourite, setIsFavourite] = useState(false);
     const [showVideo, setShowVideo] = useState(false);
 
+    // Auto-scroll state
+    const [isAutoScrolling, setIsAutoScrolling] = useState(false);
+    const [scrollSpeed, setScrollSpeed] = useState(1); // 1 = slow, 2 = medium, 3 = fast
+    const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
     // Modal State
     const [isAddToSetOpen, setIsAddToSetOpen] = useState(false);
     const [mySets, setMySets] = useState<{ id: string, title: string, event_date: string }[]>([]);
@@ -42,6 +47,29 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
     // Auth Check State
     const [isCheckingFav, setIsCheckingFav] = useState(true);
+
+    // Auto-scroll effect
+    useEffect(() => {
+        if (isAutoScrolling) {
+            const speedMap = { 1: 1, 2: 2, 3: 3 }; // pixels per interval
+            const speed = speedMap[scrollSpeed as keyof typeof speedMap] || 1;
+
+            scrollIntervalRef.current = setInterval(() => {
+                window.scrollBy(0, speed);
+            }, 50); // Scroll every 50ms
+        } else {
+            if (scrollIntervalRef.current) {
+                clearInterval(scrollIntervalRef.current);
+                scrollIntervalRef.current = null;
+            }
+        }
+
+        return () => {
+            if (scrollIntervalRef.current) {
+                clearInterval(scrollIntervalRef.current);
+            }
+        };
+    }, [isAutoScrolling, scrollSpeed]);
 
     // Check Status on Mount
     useEffect(() => {
@@ -506,7 +534,9 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                         {chords && (
                             <div className="p-4 md:p-8 rounded-2xl md:rounded-3xl bg-[#111] border border-white/10">
                                 <h3 className="text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-4 md:mb-6">Quick Tools</h3>
-                                <div className="grid grid-cols-2 gap-3 md:gap-4">
+
+                                {/* Transpose Controls */}
+                                <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4">
                                     <button
                                         onClick={() => setTranspose(t => t - 1)}
                                         className="p-3 md:p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors flex flex-col items-center justify-center gap-1.5 md:gap-2 border border-white/5 group"
@@ -522,11 +552,69 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                                         <span className="text-[10px] md:text-xs font-bold text-white/60 group-hover:text-white">Transpose +1</span>
                                     </button>
                                 </div>
+
+                                {/* Auto-Scroll Controls */}
+                                <div className="border-t border-white/5 pt-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest">Auto-Scroll</span>
+                                        <button
+                                            onClick={() => setIsAutoScrolling(!isAutoScrolling)}
+                                            className={`p-2 rounded-lg transition-all ${isAutoScrolling
+                                                ? 'bg-[var(--brand)] text-white'
+                                                : 'bg-white/5 text-white/60 hover:bg-white/10'
+                                                }`}
+                                        >
+                                            {isAutoScrolling ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                                        </button>
+                                    </div>
+
+                                    {/* Speed Selector */}
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {[1, 2, 3].map((speed) => (
+                                            <button
+                                                key={speed}
+                                                onClick={() => setScrollSpeed(speed)}
+                                                className={`p-2 rounded-lg text-xs font-bold transition-all ${scrollSpeed === speed
+                                                    ? 'bg-[var(--brand)] text-white'
+                                                    : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60'
+                                                    }`}
+                                            >
+                                                {speed === 1 ? 'Slow' : speed === 2 ? 'Medium' : 'Fast'}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
             </div>
+
+            {/* FLOATING AUTO-SCROLL BUTTON (Always Accessible) */}
+            {chords && (
+                <div className="fixed bottom-32 right-4 z-50">
+                    <div className="flex flex-col gap-2">
+                        {/* Play/Pause Button */}
+                        <button
+                            onClick={() => setIsAutoScrolling(!isAutoScrolling)}
+                            className={`w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all ${isAutoScrolling
+                                    ? 'bg-[var(--brand)] text-white hover:bg-[var(--brand)]/90'
+                                    : 'bg-[#1F1F1F] text-white/60 hover:bg-[#2F2F2F] border border-white/10'
+                                }`}
+                            title={isAutoScrolling ? 'Pause Auto-Scroll' : 'Start Auto-Scroll'}
+                        >
+                            {isAutoScrolling ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+                        </button>
+
+                        {/* Speed Indicator (only when scrolling) */}
+                        {isAutoScrolling && (
+                            <div className="bg-[#1F1F1F] rounded-full px-3 py-1 text-xs font-bold text-white/60 text-center border border-white/10">
+                                {scrollSpeed === 1 ? 'Slow' : scrollSpeed === 2 ? 'Med' : 'Fast'}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* 4. MOBILE CONTROLS */}
             {chords && (
