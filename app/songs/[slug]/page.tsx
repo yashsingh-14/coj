@@ -1,8 +1,13 @@
-import SongViewer from '@/components/songs/SongViewer';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { supabase } from '@/lib/supabaseClient';
 import { ALL_SONGS } from '@/data/songs';
+import { SongViewerSkeleton } from '@/components/ui/SkeletonLoader';
+
+const SongViewer = dynamic(() => import('@/components/songs/SongViewer'), {
+    loading: () => <SongViewerSkeleton />,
+});
 
 
 // Ensure dynamic rendering for instant updates
