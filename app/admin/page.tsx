@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Plus, Music, Users, ArrowRight, Activity, Mic2, Calendar, BookOpen, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import RecentActivityList from '@/components/admin/RecentActivityList';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState({
@@ -111,6 +112,15 @@ export default function AdminDashboard() {
                         </div>
                     </Link>
                 </div>
+            </section>
+
+            {/* Recent Activity */}
+            <section>
+                <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    Recent Activity
+                </h2>
+                <RecentActivityList />
             </section>
         </div>
     );
