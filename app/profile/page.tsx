@@ -14,6 +14,7 @@ export default function ProfilePage() {
     const router = useRouter();
 
     const [savedCount, setSavedCount] = useState(0);
+    const [setsCount, setSetsCount] = useState(0);
 
     // Redirect if not logged in
     useEffect(() => {
@@ -26,12 +27,21 @@ export default function ProfilePage() {
     useEffect(() => {
         if (currentUser?.id) {
             const fetchStats = async () => {
-                const { count, error } = await supabase
+                // Fetch Favourites
+                const { count: favCount } = await supabase
                     .from('favourites')
                     .select('*', { count: 'exact', head: true })
                     .eq('user_id', currentUser.id);
 
-                if (count !== null) setSavedCount(count);
+                if (favCount !== null) setSavedCount(favCount);
+
+                // Fetch Sets
+                const { count: setCount } = await supabase
+                    .from('sets')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('created_by', currentUser.id);
+
+                if (setCount !== null) setSetsCount(setCount);
             };
             fetchStats();
         }
@@ -47,7 +57,7 @@ export default function ProfilePage() {
         joined: 'Member',
         stats: {
             savedSongs: savedCount,
-            playlists: 0, // Pending playlist feature
+            playlists: setsCount,
             reviews: 0
         }
     };
@@ -105,7 +115,7 @@ export default function ProfilePage() {
                                     <ListMusic className="w-5 h-5 text-amber-500" />
                                     <div className="text-left">
                                         <p className="text-lg font-bold leading-none">{user.stats.playlists}</p>
-                                        <p className="text-[10px] uppercase tracking-wider text-white/50">Playlists</p>
+                                        <p className="text-[10px] uppercase tracking-wider text-white/50">Sets</p>
                                     </div>
                                 </div>
                             </div>
@@ -136,15 +146,17 @@ export default function ProfilePage() {
                         </TiltCard>
 
                         <TiltCard className="h-full" max={5} scale={1.02}>
-                            <div className="p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors h-full flex items-center gap-4 cursor-pointer group">
-                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                    <ListMusic className="w-8 h-8 text-white" />
+                            <Link href="/sets" className="block h-full">
+                                <div className="p-6 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors h-full flex items-center gap-4 cursor-pointer group">
+                                    <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                        <ListMusic className="w-8 h-8 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white mb-1">Your Sets</h3>
+                                        <p className="text-sm text-white/50">{user.stats.playlists} sets</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-white mb-1">Your Playlists</h3>
-                                    <p className="text-sm text-white/50">{user.stats.playlists} playlists</p>
-                                </div>
-                            </div>
+                            </Link>
                         </TiltCard>
                     </div>
 

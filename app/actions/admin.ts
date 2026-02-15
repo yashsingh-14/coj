@@ -25,7 +25,7 @@ export async function updateSongAdmin(songId: string, payload: any) {
 export async function createSongAdmin(payload: any) {
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
-    console.log("SERVER: Received Song Payload:", JSON.stringify(payload, null, 2));
+
 
     const { data, error } = await adminDb
         .from('songs')

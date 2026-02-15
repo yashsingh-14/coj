@@ -5,7 +5,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://cojworship.vercel.app'
 
     // Fetch all songs
-    console.log("Generating sitemap...");
+
     const { data: songs, error } = await supabase
         .from('songs')
         .select('id, updated_at')

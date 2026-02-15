@@ -23,9 +23,6 @@ const ratelimit = new Ratelimit({
 // export const runtime = 'edge'; // Removed to ensure better compatibility with all env vars and libraries in Node
 
 export async function POST(req: Request) {
-    console.log("-----------------------------------------");
-    console.log("API: /api/generate-song Call Started");
-
     try {
         // Rate Limiting Check
         const identifier = req.headers.get('x-forwarded-for') ?? 'anonymous';
