@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
+import { ShareButton } from './ShareButton';
+import { PrintButton } from './PrintButton';
 
 interface SongViewerProps {
     songId: string; // Added prop
@@ -395,7 +397,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                         )}
                     </div>
 
-                    <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
+                    <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto flex-wrap">
                         <button
                             onClick={handleOpenAddToSet}
                             className="flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-2 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all border bg-white/5 border-white/10 text-white hover:bg-white/10 flex-1 md:flex-initial justify-center"
@@ -421,6 +423,12 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                             <span className="hidden sm:inline">{isFavourite ? 'Saved' : 'Save Song'}</span>
                             <span className="sm:hidden">{isFavourite ? 'Saved' : 'Save'}</span>
                         </button>
+
+                        {/* Share Button */}
+                        <ShareButton song={{ id: songId, title, artist: author }} />
+
+                        {/* Print Button */}
+                        <PrintButton song={{ title, artist: author, key: originalKey, tempo, chords, lyrics }} />
                     </div>
                 </div>
             </div>
@@ -598,8 +606,8 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                         <button
                             onClick={() => setIsAutoScrolling(!isAutoScrolling)}
                             className={`w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all ${isAutoScrolling
-                                    ? 'bg-[var(--brand)] text-white hover:bg-[var(--brand)]/90'
-                                    : 'bg-[#1F1F1F] text-white/60 hover:bg-[#2F2F2F] border border-white/10'
+                                ? 'bg-[var(--brand)] text-white hover:bg-[var(--brand)]/90'
+                                : 'bg-[#1F1F1F] text-white/60 hover:bg-[#2F2F2F] border border-white/10'
                                 }`}
                             title={isAutoScrolling ? 'Pause Auto-Scroll' : 'Start Auto-Scroll'}
                         >

@@ -41,6 +41,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
     const [aiPrompt, setAiPrompt] = useState('');
     const [aiArtist, setAiArtist] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [generationProgress, setGenerationProgress] = useState('');
     const [useHighAccuracy, setUseHighAccuracy] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -64,7 +65,10 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
         if (!aiPrompt.trim()) return;
 
         setIsGenerating(true);
+        setGenerationProgress('Connecting to AI...');
+
         try {
+            setGenerationProgress('Sending request...');
             const res = await fetch('/api/generate-song', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -75,10 +79,21 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 })
             });
 
+            setGenerationProgress('Processing response...');
             const data = await res.json();
+
+            // Handle rate limiting
+            if (res.status === 429) {
+                const resetTime = data.reset ? new Date(data.reset).toLocaleTimeString() : 'soon';
+                toast.error(`Too many requests! Please wait until ${resetTime} and try again.`);
+                setIsGenerating(false);
+                setGenerationProgress('');
+                return;
+            }
 
             if (!res.ok) throw new Error(data.error || 'Failed to generate');
 
+            setGenerationProgress('Applying data...');
             setFormData(prev => ({
                 ...prev,
                 title: data.title || prev.title,
@@ -92,12 +107,14 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 img: data.img || prev.img
             }));
 
+            setGenerationProgress('Complete!');
             toast.success("AI Generation Successful!");
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || "Something went wrong with AI generation.");
         } finally {
             setIsGenerating(false);
+            setTimeout(() => setGenerationProgress(''), 1000);
         }
     };
 
@@ -328,6 +345,15 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                                 {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <BrainCircuit className="w-5 h-5" />}
                                             </button>
                                         </div>
+
+                                        {/* Progress Indicator */}
+                                        {generationProgress && (
+                                            <div className="flex items-center gap-2 text-xs text-indigo-400 animate-pulse">
+                                                <Loader2 className="w-3 h-3 animate-spin" />
+                                                <span>{generationProgress}</span>
+                                            </div>
+                                        )}
+
                                         <label className="flex items-center gap-2 cursor-pointer group w-fit ml-auto">
                                             <input
                                                 type="checkbox"

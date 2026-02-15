@@ -1,9 +1,12 @@
-const CACHE_NAME = 'coj-v1';
-const OFFLINE_URL = '/';
+const CACHE_NAME = 'coj-v2'; // Incremented version
+const OFFLINE_URL = '/offline';
 
 // Files to cache for offline use
 const CACHE_URLS = [
     '/',
+    '/songs',
+    '/artists',
+    '/events',
     '/offline',
     '/images/logo-footer-final.png',
     '/manifest.json'

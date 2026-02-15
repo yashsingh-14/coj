@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 const apiKey = process.env.OPENAI_API_KEY;
 const isOpenRouter = apiKey?.startsWith('sk-or-');
@@ -9,6 +11,15 @@ const openai = new OpenAI({
     baseURL: isOpenRouter ? 'https://openrouter.ai/api/v1' : undefined,
 });
 
+// Rate Limiting Setup
+const redis = Redis.fromEnv();
+const ratelimit = new Ratelimit({
+    redis: redis,
+    limiter: Ratelimit.slidingWindow(5, '1 m'),
+    analytics: true,
+    prefix: 'coj:ratelimit',
+});
+
 // export const runtime = 'edge'; // Removed to ensure better compatibility with all env vars and libraries in Node
 
 export async function POST(req: Request) {
@@ -16,14 +27,45 @@ export async function POST(req: Request) {
     console.log("API: /api/generate-song Call Started");
 
     try {
-        const body = await req.json();
-        const { songName, artist, useHighAccuracy } = body;
-        console.log("Request for:", songName, artist || "(No Artist)", "High Accuracy:", useHighAccuracy);
+        // Rate Limiting Check
+        const identifier = req.headers.get('x-forwarded-for') ?? 'anonymous';
+        const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
 
-        if (!songName) {
-            console.log("Error: No Song Name");
-            return NextResponse.json({ error: 'Song Name is required' }, { status: 400 });
+        if (!success) {
+            console.log(`Rate limit exceeded for ${identifier}`);
+            return NextResponse.json(
+                {
+                    error: 'Too many requests. Please try again later.',
+                    limit,
+                    remaining,
+                    reset: new Date(reset).toISOString()
+                },
+                { status: 429 }
+            );
         }
+
+        console.log(`Rate limit OK: ${remaining}/${limit} remaining`);
+
+        // Input Validation
+        const body = await req.json();
+
+        // Import validation schema
+        const { aiGenerateSchema } = await import('@/lib/validations');
+
+        // Validate and sanitize input
+        const validationResult = aiGenerateSchema.safeParse(body);
+
+        if (!validationResult.success) {
+            const errors = validationResult.error.issues.map((e: any) => e.message).join(', ');
+            console.log('Validation Error:', errors);
+            return NextResponse.json(
+                { error: `Invalid input: ${errors}` },
+                { status: 400 }
+            );
+        }
+
+        const { songName, artist, useHighAccuracy } = validationResult.data;
+        console.log("Request for:", songName, artist || "(No Artist)", "High Accuracy:", useHighAccuracy);
 
         if (!process.env.OPENAI_API_KEY) {
             console.error("CRITICAL ERROR: OPENAI_API_KEY is missing in process.env");
@@ -176,11 +218,25 @@ export async function POST(req: Request) {
 
     } catch (error: any) {
         console.error('AI Generation API Error:', error);
-        console.error('Error Details:', JSON.stringify(error, null, 2));
 
+        // Import error handler
+        const { handleError, ExternalAPIError } = await import('@/lib/errors');
+
+        // Handle specific errors
+        if (error.message?.includes('API') || error.message?.includes('network')) {
+            const apiError = new ExternalAPIError('OpenRouter/OpenAI', error.message);
+            const errorInfo = handleError(apiError);
+            return NextResponse.json(
+                { error: errorInfo.userMessage, details: errorInfo.message },
+                { status: errorInfo.statusCode }
+            );
+        }
+
+        // Handle generic errors
+        const errorInfo = handleError(error);
         return NextResponse.json(
-            { error: error.message || 'Failed to generate song data', details: error.toString() },
-            { status: 500 }
+            { error: errorInfo.userMessage, details: errorInfo.message },
+            { status: errorInfo.statusCode }
         );
     }
 }

@@ -1,14 +1,14 @@
 import type { NextConfig } from "next";
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const nextConfig: any = {
   /* config options here */
-  /* config options here */
-  // eslint: {
-  //   ignoreDuringBuilds: true,
-  // },
   typescript: {
     ignoreBuildErrors: true,
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
