@@ -3,51 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search as SearchIcon, X, ArrowRight, TrendingUp, Music, Mic2, Disc, Command } from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
 import { getSongImage } from '@/lib/utils';
-import { Song } from '@/data/types';
+import { useFuzzySearch } from '@/lib/hooks/useFuzzySearch'; // New Hook
 
 // Production: Pre-defined popular searches to guide new users
 const TRENDING_SEARCHES = ['Way Maker', 'Elevation Worship', 'Holy Forever', 'Goodness of God'];
 
 export default function SearchPage() {
-    const [query, setQuery] = useState('');
+    const { query, setQuery, results, loading } = useFuzzySearch();
     const [isFocused, setIsFocused] = useState(false);
-    const [results, setResults] = useState<Song[]>([]); // Start empty, fetch on query
-    const [loading, setLoading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
-
-    // Debounce Search Effect
-    useEffect(() => {
-        const fetchResults = async () => {
-            if (query.trim() === '') {
-                setResults([]);
-                return;
-            }
-
-            setLoading(true);
-            try {
-                // Search both English and Hindi titles, and Artists
-                // Using 'or' logic with ILIKE
-                const { data, error } = await supabase
-                    .from('songs')
-                    .select('*')
-                    .or(`title.ilike.%${query}%,artist.ilike.%${query}%,category.ilike.%${query}%`)
-                    .limit(20);
-
-                if (data) {
-                    setResults(data);
-                }
-            } catch (err) {
-                console.error("Search error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        const timeoutId = setTimeout(fetchResults, 300); // 300ms debounce
-        return () => clearTimeout(timeoutId);
-    }, [query]);
 
     // Auto-focus on mount
     useEffect(() => {
@@ -178,7 +143,10 @@ export default function SearchPage() {
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-xl font-bold text-white truncate group-hover:text-[var(--brand)] transition-colors">{song.title}</h3>
+                                    <h3 className="text-xl font-bold text-white truncate group-hover:text-[var(--brand)] transition-colors">
+                                        {/* Highlight Logic could go here */}
+                                        {song.title}
+                                    </h3>
                                     <p className="text-white/50 font-medium group-hover:text-white/70 transition-colors">{song.artist}</p>
                                 </div>
 

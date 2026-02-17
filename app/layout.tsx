@@ -49,6 +49,7 @@ export const metadata: Metadata = {
 };
 
 import AppShell from "@/components/AppShell";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export default function RootLayout({
   children,
@@ -62,6 +63,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AppShell>
+            <ServiceWorkerRegister />
             {children}
           </AppShell>
           <Toaster position="bottom-right" theme="dark" richColors />
