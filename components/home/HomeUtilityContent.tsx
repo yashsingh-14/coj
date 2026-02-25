@@ -41,6 +41,10 @@ export default function HomeUtilityContent({
     const currentUser = useAppStore(state => state.currentUser);
     const isAuthenticated = useAppStore(state => state.isAuthenticated);
 
+    // Hydration guard: prevent SSR/client mismatch for auth-dependent UI
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
     // Newsletter State
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
@@ -114,7 +118,9 @@ export default function HomeUtilityContent({
                 </div>
 
                 <div className="animate-fade-in-down" style={{ animationDelay: '0.1s' }}>
-                    {isAuthenticated && currentUser ? (
+                    {!mounted ? (
+                        <div className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 animate-pulse" />
+                    ) : isAuthenticated && currentUser ? (
                         <div className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20">
                             {currentUser.avatar ? (
                                 <img src={currentUser.avatar} alt={currentUser.name} className="w-full h-full object-cover" />

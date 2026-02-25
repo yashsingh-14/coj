@@ -126,7 +126,7 @@ export default function SettingsPage() {
     }
 
     const toggleTheme = () => {
-        const newTheme = preferences.theme === 'light' ? 'dark' : 'light';
+        const newTheme = preferences?.theme === 'light' ? 'dark' : 'light';
         setPreferences({ theme: newTheme });
         toast.success(`Theme switched to ${newTheme === 'light' ? 'Day' : 'Night'} Mode`);
     };
@@ -148,7 +148,7 @@ export default function SettingsPage() {
                     label: 'Dark Mode',
                     sub: 'Toggle light/dark appearance',
                     type: 'toggle',
-                    value: preferences.theme === 'dark', // Toggle logic: ON = Dark
+                    value: preferences?.theme === 'dark',
                     action: toggleTheme
                 },
                 {
@@ -156,24 +156,24 @@ export default function SettingsPage() {
                     label: 'Notifications',
                     sub: 'Push updates & alerts',
                     type: 'toggle',
-                    value: preferences.notifications,
-                    action: () => toggleSetting('Notifications', preferences.notifications, 'notifications')
+                    value: preferences?.notifications ?? true,
+                    action: () => toggleSetting('Notifications', preferences?.notifications ?? true, 'notifications')
                 },
                 {
                     icon: Volume2,
                     label: 'Audio Quality',
                     sub: 'High Fidelity (Lossless)',
                     type: 'toggle',
-                    value: preferences.audioQuality,
-                    action: () => toggleSetting('High Quality Audio', preferences.audioQuality, 'audioQuality')
+                    value: preferences?.audioQuality ?? false,
+                    action: () => toggleSetting('High Quality Audio', preferences?.audioQuality ?? false, 'audioQuality')
                 },
                 {
                     icon: Smartphone,
                     label: 'Data Saver',
                     sub: 'Reduce effects & usage',
                     type: 'toggle',
-                    value: preferences.dataSaver,
-                    action: () => toggleSetting('Data Saver', preferences.dataSaver, 'dataSaver')
+                    value: preferences?.dataSaver ?? false,
+                    action: () => toggleSetting('Data Saver', preferences?.dataSaver ?? false, 'dataSaver')
                 }
             ]
         },
@@ -285,3 +285,5 @@ export default function SettingsPage() {
         </div>
     );
 }
+
+
