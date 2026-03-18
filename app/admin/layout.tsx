@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAppStore } from '@/store/useAppStore';
 import { supabase } from '@/lib/supabaseClient';
+import { checkIsAdmin } from '@/app/actions/admin';
 import Link from 'next/link';
 import {
     LayoutDashboard,
@@ -22,46 +22,43 @@ import {
 import { toast } from 'sonner';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated } = useAppStore();
     const router = useRouter();
     const [isAdmin, setIsAdmin] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         const checkAdmin = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            console.log('[Admin] Session:', session ? 'exists' : 'null');
-            if (!session) {
-                router.push('/signin');
-                return;
-            }
+            try {
+                // Get authenticated user (validates token with Supabase server)
+                const { data: { user }, error: userError } = await supabase.auth.getUser();
+                console.log('[Admin] getUser result:', user?.id || 'null', 'error:', userError?.message || 'none');
 
-            const { data: { user } } = await supabase.auth.getUser();
-            console.log('[Admin] User:', user?.id || 'null');
-            if (user) {
-                const { data: profile, error } = await supabase
-                    .from('profiles')
-                    .select('role')
-                    .eq('id', user.id)
-                    .single();
+                if (!user) {
+                    setIsLoading(false);
+                    router.push('/signin');
+                    return;
+                }
 
-                console.log('[Admin] Profile:', profile, 'Error:', error);
+                // Check admin role via server action (bypasses RLS)
+                const result = await checkIsAdmin(user.id);
+                console.log('[Admin] checkIsAdmin result:', result);
 
-                if (profile && profile.role === 'admin') {
+                if (result.isAdmin) {
                     setIsAdmin(true);
                 } else {
                     toast.error("Access Denied: Admins Only");
                     router.push('/');
                 }
-            } else {
+            } catch (err) {
+                console.error('[Admin] Error:', err);
                 router.push('/signin');
             }
             setIsLoading(false);
         };
 
         checkAdmin();
-    }, [isAuthenticated, router]);
+    }, [router]);
 
     if (isLoading) {
         return (

@@ -149,3 +149,20 @@ export async function updateUserRoleAdmin(userId: string, newRole: string) {
 
     return { success: true };
 }
+
+export async function checkIsAdmin(userId: string): Promise<{ isAdmin: boolean; error?: string }> {
+    if (!adminDb) return { isAdmin: false, error: "Admin Key Context Missing" };
+
+    const { data: profile, error } = await adminDb
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        console.error("Admin Check Error:", error);
+        return { isAdmin: false, error: error.message };
+    }
+
+    return { isAdmin: profile?.role === 'admin' };
+}
