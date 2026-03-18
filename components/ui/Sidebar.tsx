@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut, ListMusic, ShieldCheck } from 'lucide-react';
+import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut, ListMusic, ShieldCheck, Guitar } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
@@ -29,6 +29,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: Music, label: 'Worship', href: '/categories/worship' },
         { icon: Star, label: 'Praise', href: '/categories/praise' },
         { icon: Heart, label: 'Favorites', href: '/favourites' },
+        { icon: Guitar, label: 'Guitar Tuner', href: '/tools/tuner' },
     ];
 
     const bottomItems = mounted ? [
