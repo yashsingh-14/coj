@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { getSongImage } from '@/lib/utils';
+import { generateSlug } from '@/lib/seoUtils';
 import { Song } from '@/data/types';
 import { useRouter } from 'next/navigation';
 
@@ -121,7 +122,7 @@ export default function FavouritesPage() {
                             <div key={i} className="w-full relative rounded-3xl overflow-hidden bg-[#111] border border-white/10 p-4">
                                 <div className="relative w-full h-full group">
                                     <Link
-                                        href={`/songs/${song.id}`}
+                                        href={`/songs/${generateSlug(song.title)}`}
                                         className="relative flex flex-col justify-end p-6 rounded-[2rem] overflow-hidden h-full"
                                     >
                                         {/* Artist Background */}

@@ -1,12 +1,13 @@
 import { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/seoUtils';
 
 export default function robots(): MetadataRoute.Robots {
     return {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/admin/', '/api/'], // Protect admin and api routes from crawling
+            disallow: ['/admin/', '/api/'],
         },
-        sitemap: 'https://cojworship.vercel.app/sitemap.xml',
+        sitemap: `${SITE_URL}/sitemap.xml`,
     };
 }

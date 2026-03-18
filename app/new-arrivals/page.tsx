@@ -3,6 +3,7 @@ import { ArrowLeft, Clock, ChevronRight } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 import { getSongImage } from '@/lib/utils';
+import { generateSlug } from '@/lib/seoUtils';
 
 export const revalidate = 60;
 
@@ -37,7 +38,7 @@ export default async function NewArrivalsPage() {
                     <TiltCard key={song.id} className="h-full min-h-[280px] md:min-h-[300px]" max={15} scale={1.05}>
                         <div className="relative h-full group">
                             <Link
-                                href={`/songs/${song.id}`}
+                                href={`/songs/${generateSlug(song.title)}`}
                                 className="relative flex flex-col justify-end p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors shadow-2xl"
                             >
                                 {/* Album Art Background */}

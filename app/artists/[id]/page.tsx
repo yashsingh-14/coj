@@ -3,6 +3,7 @@ import { ArrowLeft, PlayCircle, Star, Play, CheckCircle, Mic2, Users, Music } fr
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 import { getSongImage } from '@/lib/utils';
+import { generateSlug } from '@/lib/seoUtils';
 import { Song } from '@/data/types';
 import { notFound } from 'next/navigation';
 
@@ -88,7 +89,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                             <div className="flex gap-4">
                                 {displaySongs.length > 0 && (
                                     <Link
-                                        href={`/songs/${displaySongs[0].id}`}
+                                        href={`/songs/${generateSlug(displaySongs[0].title)}`}
                                         className="px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold tracking-widest uppercase flex items-center gap-3 hover:scale-105 transition-transform shadow-lg shadow-orange-500/20"
                                     >
                                         <Play className="w-5 h-5 fill-current" /> Play Latest
@@ -124,7 +125,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                         {displaySongs.map((song, i) => (
                             <TiltCard key={song.id} className="w-full" max={5} scale={1.02}>
                                 <Link
-                                    href={`/songs/${song.id}`}
+                                    href={`/songs/${generateSlug(song.title)}`}
                                     className="group flex items-center gap-6 p-4 md:p-6 rounded-3xl bg-[#0A0A0A] border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all duration-300 relative overflow-hidden cursor-pointer"
                                 >
                                     {/* Background Shine */}
@@ -184,7 +185,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                             <p className="text-white/60 max-w-xl mb-8 leading-relaxed">Experience the powerful sound of {artistName}. Listen to their latest featured track "{displaySongs[0].title}" now.</p>
                             <div className="flex gap-4 justify-center md:justify-start">
                                 <Link
-                                    href={`/songs/${displaySongs[0].id}`}
+                                    href={`/songs/${generateSlug(displaySongs[0].title)}`}
                                     className="px-6 py-3 rounded-full bg-white text-black font-bold text-sm tracking-widest uppercase hover:bg-amber-500 transition-colors"
                                 >
                                     Listen Now

@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 import { getSongImage } from '@/lib/utils';
+import { generateSlug } from '@/lib/seoUtils';
 import { Song } from '@/data/types';
 import { toast } from 'sonner';
 
@@ -93,7 +94,7 @@ export default function SongsListPage() {
                                     <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[var(--brand)] to-purple-600 blur-[30px] opacity-0 group-hover:opacity-70 transition-all duration-500 group-hover:scale-105"></div>
 
                                     <Link
-                                        href={`/songs/${song.id}`}
+                                        href={`/songs/${generateSlug(song.title)}`}
                                         className="relative flex flex-col justify-end p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors aspect-[3/4]"
                                     >
                                         {/* Album Art Background */}

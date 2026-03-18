@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { supabase } from '@/lib/supabaseClient';
 import { ALL_SONGS } from '@/data/songs';
 import { SongViewerSkeleton } from '@/components/ui/SkeletonLoader';
+import { generateSlug, SITE_URL } from '@/lib/seoUtils';
 
 const SongViewer = dynamic(() => import('@/components/songs/SongViewer'), {
     loading: () => <SongViewerSkeleton />,
@@ -68,21 +69,45 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 
     const isHindi = song.category === 'hindi';
+    const songSlug = generateSlug(song.title);
+    const canonicalUrl = `${SITE_URL}/songs/${songSlug}`;
+
+    const title = `${song.title} Lyrics & Chords${song.artist ? ` - ${song.artist}` : ''} | COJ Worship`;
+    const description = isHindi
+        ? `${song.title} - Hindi Christian worship song lyrics with guitar chords. Artist: ${song.artist || 'Unknown'}. Key: ${song.key || 'N/A'}. Free chords for church worship and praise.`
+        : `${song.title} worship song lyrics with guitar chords, key (${song.key || 'N/A'}), and song structure. Artist: ${song.artist || 'Unknown'}. Free for church worship leaders.`;
 
     return {
-        title: `${song.title} Lyrics & Chords | COJ Worship`,
-        description: isHindi
-            ? `Read ${song.title} Christian worship song lyrics with chords in Hindi. Perfect for church worship, prayer, and guitar practice.`
-            : `Read ${song.title} worship song lyrics with chords, key, and structure for church worship. Original Key: ${song.key || 'N/A'}.`,
+        title,
+        description,
         keywords: [
             song.title,
             `${song.title} lyrics`,
             `${song.title} chords`,
+            `${song.title} guitar chords`,
             song.artist,
             "Christian worship",
             isHindi ? "Hindi Christian Song" : "English Christian Song",
-            "Lyrics and Chords"
-        ]
+            "worship lyrics and chords",
+            "church worship songs",
+            `${song.title} ${isHindi ? 'hindi' : 'english'} worship`
+        ].filter(Boolean),
+        alternates: {
+            canonical: canonicalUrl,
+        },
+        openGraph: {
+            type: 'article',
+            title,
+            description,
+            url: canonicalUrl,
+            siteName: 'COJ Worship',
+            images: song.img ? [{ url: song.img, alt: `${song.title} - Worship Song` }] : [{ url: '/images/logo-main.png', alt: 'COJ Worship' }],
+        },
+        twitter: {
+            card: 'summary',
+            title: `${song.title} - Lyrics & Chords`,
+            description,
+        },
     };
 }
 
@@ -150,21 +175,31 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
 
     const relatedSongs = (relatedSongsData || []).map((s: any) => ({
         title: s.title,
-        slug: s.id,
+        slug: generateSlug(s.title),
         artist: s.artist,
     }));
+
+    const songCanonicalUrl = `${SITE_URL}/songs/${generateSlug(song.title)}`;
 
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'MusicComposition',
         name: song.title,
+        url: songCanonicalUrl,
         composer: {
             '@type': 'Person',
-            name: song.artist,
+            name: song.artist || 'Unknown',
+        },
+        publisher: {
+            '@type': 'Organization',
+            name: 'COJ Worship - Call of Jesus Ministries',
+            url: SITE_URL,
         },
         inLanguage: song.category === 'hindi' ? 'hi' : 'en',
         musicalKey: song.key,
-        genre: 'Worship',
+        genre: 'Christian Worship',
+        ...(song.tempo && { tempo: { '@type': 'QuantitativeValue', value: song.tempo, unitText: 'BPM' } }),
+        ...(song.lyrics && { lyrics: { '@type': 'CreativeWork', text: song.lyrics.substring(0, 500) + '...' } }),
     };
 
     return (

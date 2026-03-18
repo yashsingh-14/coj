@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Share2, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { generateSlug } from '@/lib/seoUtils';
 
 interface ShareButtonProps {
     song: {
@@ -17,7 +18,7 @@ export function ShareButton({ song }: ShareButtonProps) {
     const [showMenu, setShowMenu] = useState(false);
 
     const shareUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/songs/${song.id}`
+        ? `${window.location.origin}/songs/${generateSlug(song.title)}`
         : '';
 
     const shareText = `Check out "${song.title}"${song.artist ? ` by ${song.artist}` : ''} on Call of Jesus!`;

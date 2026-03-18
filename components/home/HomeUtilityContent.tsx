@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import BlackRemoverImage from '@/components/ui/BlackRemoverImage';
+import { generateSlug } from '@/lib/seoUtils';
 import React, { useState, useEffect, TouchEvent } from 'react';
 import Sidebar from '../ui/Sidebar';
 import Logo from '../ui/Logo';
@@ -193,7 +194,7 @@ export default function HomeUtilityContent({
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {featuredSongs.map((song, i) => (
-                            <Link key={i} href={`/songs/${song.id}`} className="flex items-center gap-4 bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-3 hover:bg-[var(--foreground)]/5 transition-all group">
+                            <Link key={i} href={`/songs/${generateSlug(song.title)}`} className="flex items-center gap-4 bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-3 hover:bg-[var(--foreground)]/5 transition-all group">
                                 <div className="w-16 h-16 rounded-lg overflow-hidden relative flex-shrink-0">
                                     <img src={getSongImage(song)} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                                 </div>
@@ -376,7 +377,7 @@ export default function HomeUtilityContent({
 
                             {/* Card Container */}
                             <TiltCard className="w-full h-[180px] md:h-[280px]" max={10} scale={1.05}>
-                                <Link href={`/songs/${song.id}`} className="block relative w-full h-full rounded-[1.5rem] overflow-hidden shadow-2xl bg-[#111] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.4)] transition-shadow duration-500 border border-white/10">
+                                <Link href={`/songs/${generateSlug(song.title)}`} className="block relative w-full h-full rounded-[1.5rem] overflow-hidden shadow-2xl bg-[#111] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.4)] transition-shadow duration-500 border border-white/10">
 
                                     {/* Image */}
                                     <img
@@ -504,7 +505,7 @@ export default function HomeUtilityContent({
                         <TiltCard key={i} className="h-full min-h-[180px] md:min-h-[250px]" max={15} scale={1.05}>
                             <div className="relative h-full group">
                                 <Link
-                                    href={`/songs/${song.id}`}
+                                    href={`/songs/${generateSlug(song.title)}`}
                                     className="relative flex flex-col justify-end p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors"
                                 >
                                     {/* Album Art Background */}

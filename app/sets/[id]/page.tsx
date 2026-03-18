@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
+import { generateSlug } from '@/lib/seoUtils';
 
 // Ensure dynamic rendering
 export const revalidate = 60;
@@ -284,7 +285,7 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                                     <div className="text-white/20 font-mono text-xl font-bold w-8 text-center">{index + 1}</div>
 
                                     <div className="flex-1 min-w-0">
-                                        <Link href={`/songs/${item.songs.id}`} className="block hover:underline">
+                                        <Link href={`/songs/${generateSlug(item.songs.title)}`} className="block hover:underline">
                                             <h3 className="text-lg font-bold truncate pr-4">{item.songs.title}</h3>
                                         </Link>
                                         <div className="flex items-center gap-3 text-sm text-white/50">

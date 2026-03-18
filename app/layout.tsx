@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Define the primary domain - Update this if you switch to a custom domain like coj.org.in later
-const SITE_URL = 'https://cojworship.vercel.app';
+// Define the primary domain
+const SITE_URL = 'https://callofjesus.in';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -26,16 +26,30 @@ export const metadata: Metadata = {
     default: "COJ | Call of Jesus Ministries - Christian Worship Songs & Lyrics",
     template: "%s | COJ Worship"
   },
-  description: "Discover a vast collection of Christian worship songs, lyrics, and chords in English and Hindi. Join Call of Jesus Ministries in praise and worship.",
-  keywords: ["Christian songs", "Worship lyrics", "Hindi worship songs", "Christian chords", "Gospel lyrics", "COJ Ministries", "Call of Jesus", "Jesus songs", "Christian music"],
+  description: "Discover a vast collection of Christian worship songs with lyrics, chords, and guitar tabs in English and Hindi. Free worship resources for church worship leaders and musicians by Call of Jesus Ministries.",
+  keywords: ["Christian songs", "Worship lyrics", "Hindi worship songs", "Christian chords", "Gospel lyrics", "COJ Ministries", "Call of Jesus", "Jesus songs", "Christian music", "worship chords", "Hindi Christian songs lyrics", "guitar chords worship"],
   authors: [{ name: "Yash Singh" }, { name: "Call of Jesus Ministries" }],
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: SITE_URL,
     siteName: "COJ Worship",
-    title: "COJ | Call of Jesus Ministries - Worship & Word",
-    description: "Premium destination for Christian worship lyrics and chords.",
+    title: "COJ | Call of Jesus Ministries - Christian Worship Songs, Lyrics & Chords",
+    description: "Free Christian worship songs with lyrics, chords, and structure in English & Hindi. The ultimate resource for worship leaders and musicians.",
+    images: [
+      {
+        url: '/images/logo-main.png',
+        width: 512,
+        height: 512,
+        alt: 'COJ Worship - Call of Jesus Ministries',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'COJ | Call of Jesus Ministries - Worship Songs & Chords',
+    description: 'Free Christian worship songs with lyrics, chords in English & Hindi.',
+    images: ['/images/logo-main.png'],
   },
   icons: {
     icon: '/images/logo-footer-final.png',

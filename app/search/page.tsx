@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search as SearchIcon, X, ArrowRight, TrendingUp, Music, Mic2, Disc, Command } from 'lucide-react';
 import Link from 'next/link';
 import { getSongImage } from '@/lib/utils';
+import { generateSlug } from '@/lib/seoUtils';
 import { useFuzzySearch } from '@/lib/hooks/useFuzzySearch'; // New Hook
 
 // Production: Pre-defined popular searches to guide new users
@@ -131,7 +132,7 @@ export default function SearchPage() {
                         {results.length > 0 ? results.map((song, i) => (
                             <Link
                                 key={song.id}
-                                href={`/songs/${song.id}`}
+                                href={`/songs/${generateSlug(song.title)}`}
                                 className="group flex items-center gap-6 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-[var(--brand)]/30 hover:scale-[1.01] transition-all duration-300"
                                 style={{ animationDelay: `${i * 50}ms` }}
                             >
