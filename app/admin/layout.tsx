@@ -31,25 +31,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     useEffect(() => {
         const checkAdmin = async () => {
             const { data: { session } } = await supabase.auth.getSession();
+            console.log('[Admin] Session:', session ? 'exists' : 'null');
             if (!session) {
-                // If definitely not auth, redirect
+                router.push('/signin');
+                return;
             }
 
             const { data: { user } } = await supabase.auth.getUser();
+            console.log('[Admin] User:', user?.id || 'null');
             if (user) {
-                const { data: profile } = await supabase
+                const { data: profile, error } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id', user.id)
                     .single();
 
+                console.log('[Admin] Profile:', profile, 'Error:', error);
+
                 if (profile && profile.role === 'admin') {
                     setIsAdmin(true);
                 } else {
-                    if (!isLoading) {
-                        toast.error("Access Denied: Admins Only");
-                        router.push('/');
-                    }
+                    toast.error("Access Denied: Admins Only");
+                    router.push('/');
                 }
             } else {
                 router.push('/signin');

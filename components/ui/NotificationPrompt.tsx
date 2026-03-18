@@ -33,15 +33,18 @@ export default function NotificationPrompt() {
 
             if (permission === 'granted') {
                 // 1. Register Service Worker
-                const registration = await navigator.serviceWorker.register('/sw.js');
+                await navigator.serviceWorker.register('/sw.js');
 
-                // 2. Subscribe to Push Manager
+                // 2. Wait for SW to be fully active before subscribing
+                const registration = await navigator.serviceWorker.ready;
+
+                // 3. Subscribe to Push Manager
                 const subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
                 });
 
-                // 3. Send to Server
+                // 4. Send to Server
                 await fetch('/api/notifications/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

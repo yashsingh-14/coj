@@ -4,6 +4,7 @@ import { X, Home, Search, Heart, User, Sparkles, Music, Star, Settings, LogOut, 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
+import { useState, useEffect } from 'react';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -15,6 +16,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const logout = useAppStore(state => state.logout);
     const currentUser = useAppStore(state => state.currentUser);
 
+    // Prevent hydration mismatch: Zustand persist rehydrates from localStorage only on client.
+    // Without this guard, server HTML and client HTML differ for auth-dependent content.
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
     const menuItems = [
         { icon: Home, label: 'Home', href: '/' },
         { icon: Search, label: 'Search', href: '/search' },
@@ -25,8 +31,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         { icon: Heart, label: 'Favorites', href: '/favourites' },
     ];
 
-    const bottomItems = [
+    const bottomItems = mounted ? [
         ...(currentUser?.role === 'admin' ? [{ icon: ShieldCheck, label: 'Admin Panel', href: '/admin' }] : []),
+        { icon: User, label: 'Profile', href: '/profile' },
+        { icon: Settings, label: 'Settings', href: '/settings' },
+    ] : [
         { icon: User, label: 'Profile', href: '/profile' },
         { icon: Settings, label: 'Settings', href: '/settings' },
     ];
@@ -90,25 +99,29 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                 {/* Bottom Actions */}
                 <div className="p-6 bg-gradient-to-t from-black/40 to-transparent">
-                    <button
-                        onClick={async () => {
-                            try {
-                                const { supabase } = await import('@/lib/supabaseClient');
-                                await supabase.auth.signOut();
-                                logout();
-                                onClose();
-                                window.location.href = '/'; // Force reload/redirect to ensure clean state
-                            } catch (error) {
-                                console.error("Logout failed", error);
-                                // Force local logout anyway
-                                logout();
-                                window.location.href = '/';
-                            }
-                        }}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-white/40 transition-all font-medium text-sm"
-                    >
-                        <LogOut className="w-4 h-4" /> Sign Out
-                    </button>
+                    {!mounted ? (
+                        // Skeleton placeholder — matches what server renders to prevent hydration mismatch
+                        <div className="w-full py-3 rounded-xl bg-white/5 animate-pulse h-11" />
+                    ) : (
+                        <button
+                            onClick={async () => {
+                                try {
+                                    const { supabase } = await import('@/lib/supabaseClient');
+                                    await supabase.auth.signOut();
+                                    logout();
+                                    onClose();
+                                    window.location.href = '/';
+                                } catch (error) {
+                                    console.error("Logout failed", error);
+                                    logout();
+                                    window.location.href = '/';
+                                }
+                            }}
+                            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/5 bg-white/5 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 text-white/40 transition-all font-medium text-sm"
+                        >
+                            <LogOut className="w-4 h-4" /> Sign Out
+                        </button>
+                    )}
                 </div>
             </div>
         </>
