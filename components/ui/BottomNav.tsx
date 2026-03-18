@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Home, Heart, Search, ListMusic } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -42,7 +43,7 @@ function BottomNavComponent() {
                                     isActive ? "border-white scale-110" : "border-white/50"
                                 )}>
                                     {currentUser?.avatar ? (
-                                        <img src={currentUser.avatar} alt="Me" className="w-full h-full object-cover" />
+                                        <Image src={currentUser.avatar} alt="Me" width={24} height={24} className="w-full h-full object-cover" unoptimized />
                                     ) : (
                                         <div className="w-full h-full bg-white/20 flex items-center justify-center text-[10px] font-bold">
                                             {currentUser?.name?.[0] || 'U'}

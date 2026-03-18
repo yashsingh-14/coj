@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next'
-import { supabase } from '@/lib/supabaseClient'
+import { supabaseServer } from '@/lib/supabaseServer'
 import { generateSlug, SITE_URL } from '@/lib/seoUtils'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch all songs with title for slug generation
-    const { data: songs, error } = await supabase
+    const { data: songs, error } = await supabaseServer
         .from('songs')
         .select('id, title, updated_at')
 

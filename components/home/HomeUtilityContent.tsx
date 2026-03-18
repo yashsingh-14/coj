@@ -3,6 +3,7 @@
 import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle, Megaphone, PlayCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import BlackRemoverImage from '@/components/ui/BlackRemoverImage';
 import { generateSlug } from '@/lib/seoUtils';
@@ -124,7 +125,7 @@ export default function HomeUtilityContent({
                     ) : isAuthenticated && currentUser ? (
                         <div className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20">
                             {currentUser.avatar ? (
-                                <img src={currentUser.avatar} alt={currentUser.name} className="w-full h-full object-cover" />
+                                <Image src={currentUser.avatar} alt={currentUser.name} width={36} height={36} className="w-full h-full object-cover" unoptimized />
                             ) : (
                                 <span className="font-bold text-white text-xs">{currentUser.name.charAt(0)}</span>
                             )}
@@ -196,7 +197,7 @@ export default function HomeUtilityContent({
                         {featuredSongs.map((song, i) => (
                             <Link key={i} href={`/songs/${generateSlug(song.title)}`} className="flex items-center gap-4 bg-[var(--card)] border border-[var(--card-border)] rounded-xl p-3 hover:bg-[var(--foreground)]/5 transition-all group">
                                 <div className="w-16 h-16 rounded-lg overflow-hidden relative flex-shrink-0">
-                                    <img src={getSongImage(song)} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                    <Image src={getSongImage(song)} alt={song.title || 'Song'} width={64} height={64} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                                 </div>
                                 <div className="min-w-0">
                                     <h3 className="font-bold text-[var(--foreground)] truncate">{song.title}</h3>

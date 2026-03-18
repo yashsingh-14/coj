@@ -38,10 +38,10 @@ export const metadata: Metadata = {
     description: "Free Christian worship songs with lyrics, chords, and structure in English & Hindi. The ultimate resource for worship leaders and musicians.",
     images: [
       {
-        url: '/images/logo-main.png',
-        width: 512,
-        height: 512,
-        alt: 'COJ Worship - Call of Jesus Ministries',
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'COJ Worship - Call of Jesus Ministries - Christian Worship Songs',
       }
     ],
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'COJ | Call of Jesus Ministries - Worship Songs & Chords',
     description: 'Free Christian worship songs with lyrics, chords in English & Hindi.',
-    images: ['/images/logo-main.png'],
+    images: ['/images/og-image.png'],
   },
   icons: {
     icon: '/images/logo-footer-final.png',

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { Plus, Trash2, Edit, Mic2, Loader2, Search } from 'lucide-react';
 import { toast } from 'sonner';
@@ -89,7 +90,7 @@ export default function AdminArtistsPage() {
                             <div key={artist.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-white/[0.02] transition-colors">
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-full bg-white/5 overflow-hidden border border-white/10 shrink-0">
-                                        <img src={artist.image} alt={artist.name} className="w-full h-full object-cover" />
+                                        <Image src={artist.image} alt={artist.name} width={48} height={48} className="w-full h-full object-cover" unoptimized />
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-white mb-0.5">{artist.name} <span className="text-xs font-normal text-white/30 ml-2">({artist.id})</span></h3>

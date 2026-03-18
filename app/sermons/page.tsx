@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Share2, Youtube, Check, Calendar, Play } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { fetchSermons, YouTubeVideo } from '@/lib/youtube';
@@ -73,9 +74,11 @@ export default function SermonsPage() {
                                     {/* Video Thumbnail with Cinematic Overlay */}
                                     <div className="relative aspect-video w-full overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
-                                        <img
+                                        <Image
                                             src={video.thumbnail}
                                             alt={video.title}
+                                            width={640}
+                                            height={360}
                                             className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
                                         />
 
@@ -137,7 +140,7 @@ export default function SermonsPage() {
                                         {/* Footer With Official Logo */}
                                         <div className="relative mt-6 pt-4 border-t border-white/5 flex items-center gap-3">
                                             <div className="h-14 w-auto drop-shadow-lg">
-                                                <img src="/images/logo-footer-final.png" alt="COJ" className="h-full w-auto object-contain" />
+                                                <Image src="/images/logo-footer-final.png" alt="COJ" width={56} height={56} className="h-full w-auto object-contain" />
                                             </div>
                                             <div className="flex flex-col">
                                                 <span className="text-xs font-bold text-white tracking-widest uppercase group-hover:text-red-400 transition-colors">

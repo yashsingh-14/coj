@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { Users, Search, Shield, ShieldAlert, Loader2, Check, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
@@ -120,7 +121,7 @@ export default function AdminUsersPage() {
                                     <td className="px-4 py-3 md:px-6 md:py-4 flex items-center gap-3">
                                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 overflow-hidden flex items-center justify-center shrink-0">
                                             {user.avatar_url ? (
-                                                <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
+                                                <Image src={user.avatar_url} alt={user.name} width={40} height={40} className="w-full h-full object-cover" unoptimized />
                                             ) : (
                                                 <span className="text-xs font-bold text-white/60">
                                                     {(user.name || '?').charAt(0)}

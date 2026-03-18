@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, PlayCircle, Star, Play, CheckCircle, Mic2, Users, Music } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
@@ -61,7 +62,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 <div className="container mx-auto px-4 md:px-6 pb-8 md:pb-12 relative z-10">
                     <div className="flex flex-col md:flex-row items-end gap-6 md:gap-8">
                         <div className="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-[#02000F] shadow-2xl overflow-hidden relative hidden md:block bg-[#111]">
-                            <img src={artistImage} alt={artistName} className="w-full h-full object-cover" />
+                            <Image src={artistImage} alt={artistName} width={208} height={208} className="w-full h-full object-cover" />
                         </div>
 
                         <div className="flex-1">

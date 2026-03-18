@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Camera, Save, User, Mail, AtSign } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
@@ -69,7 +70,7 @@ export default function EditProfilePage() {
                     <div className="relative group cursor-pointer" onClick={() => toast.info("Avatar upload is simulated for now")}>
                         <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 group-hover:border-[var(--brand)] transition-colors">
                             {currentUser.avatar ? (
-                                <img src={currentUser.avatar} alt="Profile" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                <Image src={currentUser.avatar} alt="Profile" width={128} height={128} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" unoptimized />
                             ) : (
                                 <div className="w-full h-full bg-[var(--brand)] flex items-center justify-center text-4xl font-bold">
                                     {currentUser.name.charAt(0)}

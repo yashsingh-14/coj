@@ -1,71 +1,24 @@
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
-import { supabase } from '@/lib/supabaseClient';
-import { ALL_SONGS } from '@/data/songs';
 import { SongViewerSkeleton } from '@/components/ui/SkeletonLoader';
 import { generateSlug, SITE_URL } from '@/lib/seoUtils';
+import { fetchSongBySlug } from '@/lib/fetchSong';
+import { supabaseServer } from '@/lib/supabaseServer';
 
 const SongViewer = dynamic(() => import('@/components/songs/SongViewer'), {
     loading: () => <SongViewerSkeleton />,
 });
 
-
-// Ensure dynamic rendering for instant updates
+// Revalidate every 60 seconds
 export const revalidate = 60;
 
+// ─── METADATA ───────────────────────────────────────────────
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-
-    // 1. Check if UUID
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-
-    let song = null;
-
-    if (isUuid) {
-        const { data } = await supabase.from('songs').select('*').eq('id', slug).single();
-        song = data;
-    } else {
-        // 2. Fallback: Exact Title Match (e.g. way-maker -> Way Maker)
-        const titleQuery = slug.replace(/-/g, ' ');
-        const { data } = await supabase.from('songs').select('*').ilike('title', titleQuery).single();
-        song = data;
-
-        // 3. Fallback: Wildcard Search
-        if (!song) {
-            const { data: backup } = await supabase.from('songs').select('*').ilike('title', `%${titleQuery}%`).limit(1).single();
-            song = backup;
-        }
-
-        // 4. FINAL FALLBACK: Static Data (ALL_SONGS)
-        if (!song) {
-            const staticSong = ALL_SONGS.find(s =>
-                s.id === slug ||
-                s.title.toLowerCase() === titleQuery.toLowerCase() ||
-                s.title.toLowerCase().includes(titleQuery.toLowerCase())
-            );
-            if (staticSong) {
-                song = {
-                    id: staticSong.id,
-                    title: staticSong.title,
-                    artist: staticSong.artist,
-                    category: staticSong.category,
-                    key: staticSong.key,
-                    tempo: staticSong.tempo,
-                    lyrics: staticSong.lyrics,
-                    hindi_lyrics: staticSong.hindiLyrics,
-                    chords: staticSong.chords,
-                    youtube_id: staticSong.youtubeId,
-                    img: staticSong.img
-                };
-            }
-        }
-    }
+    const song = await fetchSongBySlug(slug);
 
     if (!song) {
-        return {
-            title: 'Song Not Found | COJ Worship',
-        };
+        return { title: 'Song Not Found | COJ Worship' };
     }
 
     const isHindi = song.category === 'hindi';
@@ -96,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             canonical: canonicalUrl,
         },
         openGraph: {
-            type: 'article',
+            type: 'article' as const,
             title,
             description,
             url: canonicalUrl,
@@ -104,69 +57,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             images: song.img ? [{ url: song.img, alt: `${song.title} - Worship Song` }] : [{ url: '/images/logo-main.png', alt: 'COJ Worship' }],
         },
         twitter: {
-            card: 'summary',
+            card: 'summary' as const,
             title: `${song.title} - Lyrics & Chords`,
             description,
         },
     };
 }
 
+// ─── PAGE COMPONENT ─────────────────────────────────────────
 export default async function SongPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-
-    // 1. Check if UUID
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-
-    let song = null;
-
-    if (isUuid) {
-        const { data } = await supabase.from('songs').select('*').eq('id', slug).single();
-        song = data;
-    } else {
-        // 2. Fallback: Exact Title Match
-        const titleQuery = slug.replace(/-/g, ' ');
-        // ilike is case-insensitive
-        const { data } = await supabase.from('songs').select('*').ilike('title', titleQuery).single();
-        song = data;
-
-        // 3. Fallback: Wildcard Search
-        if (!song) {
-            console.log(`Trying wildcard search for: ${titleQuery}`);
-            const { data: backup } = await supabase.from('songs').select('*').ilike('title', `%${titleQuery}%`).limit(1).single();
-            song = backup;
-        }
-
-        // 4. FINAL FALLBACK: Static Data (ALL_SONGS)
-        if (!song) {
-            const staticSong = ALL_SONGS.find(s =>
-                s.id === slug ||
-                s.title.toLowerCase() === titleQuery.toLowerCase() ||
-                s.title.toLowerCase().includes(titleQuery.toLowerCase())
-            );
-            if (staticSong) {
-                song = {
-                    id: staticSong.id,
-                    title: staticSong.title,
-                    artist: staticSong.artist,
-                    category: staticSong.category,
-                    key: staticSong.key,
-                    tempo: staticSong.tempo,
-                    lyrics: staticSong.lyrics,
-                    hindi_lyrics: staticSong.hindiLyrics,
-                    chords: staticSong.chords,
-                    youtube_id: staticSong.youtubeId,
-                    img: staticSong.img
-                };
-            }
-        }
-    }
+    // Uses React cache() → same request as generateMetadata, NO extra DB call
+    const song = await fetchSongBySlug(slug);
 
     if (!song) {
         notFound();
     }
 
     // Fetch Related Songs
-    const { data: relatedSongsData } = await supabase
+    const { data: relatedSongsData } = await supabaseServer
         .from('songs')
         .select('id, title, artist, category')
         .eq('category', song.category)
@@ -204,10 +113,9 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
 
     return (
         <>
-            <Script
-                id="song-jsonld"
+            {/* Inline <script> for JSON-LD — rendered in initial HTML so Google can see it */}
+            <script
                 type="application/ld+json"
-                strategy="afterInteractive"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <SongViewer
@@ -217,9 +125,9 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
                 originalKey={song.key || "C"}
                 tempo={song.tempo}
                 lyrics={song.lyrics}
-                hindiLyrics={song.hindi_lyrics} // Note snake_case from DB
+                hindiLyrics={song.hindi_lyrics}
                 chords={song.chords}
-                youtubeId={song.youtube_id} // Note snake_case from DB
+                youtubeId={song.youtube_id}
                 category={song.category}
                 relatedSongs={relatedSongs}
             />

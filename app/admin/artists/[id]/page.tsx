@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { ArrowLeft, Save, Loader2, Info } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
 
 export default function ArtistFormPage({ params }: { params: any }) {
@@ -180,7 +181,7 @@ export default function ArtistFormPage({ params }: { params: any }) {
                         />
                         {formData.image && (
                             <div className="mt-2 w-full h-32 rounded-xl bg-white/5 overflow-hidden border border-white/10 relative">
-                                <img src={formData.image} alt="Preview" className="w-full h-full object-cover opacity-60" />
+                                <Image src={formData.image} alt="Preview" width={400} height={128} className="w-full h-full object-cover opacity-60" unoptimized />
                                 <div className="absolute inset-0 flex items-center justify-center text-xs font-bold uppercase tracking-widest text-white/50">Preview</div>
                             </div>
                         )}
