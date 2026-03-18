@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Users, Search, Shield, ShieldAlert, Loader2, Check, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { syncUsersAdminV3 } from '@/app/actions/admin';
+import { syncUsersAdminV3, updateUserRoleAdmin } from '@/app/actions/admin';
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
@@ -48,13 +48,10 @@ export default function AdminUsersPage() {
 
     const handleRoleUpdate = async (userId: string, newRole: string) => {
         setUpdatingId(userId);
-        const { error } = await supabase
-            .from('profiles')
-            .update({ role: newRole })
-            .eq('id', userId);
+        const result = await updateUserRoleAdmin(userId, newRole);
 
-        if (error) {
-            toast.error("Failed to update role");
+        if (!result.success) {
+            toast.error(result.error || "Failed to update role");
         } else {
             toast.success("User role updated");
             setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));

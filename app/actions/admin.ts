@@ -133,3 +133,19 @@ export async function syncUsersAdminV3() {
         return { success: false, error: error.message };
     }
 }
+
+export async function updateUserRoleAdmin(userId: string, newRole: string) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { error } = await adminDb
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('id', userId);
+
+    if (error) {
+        console.error("Admin Role Update Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    return { success: true };
+}
