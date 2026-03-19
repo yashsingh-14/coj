@@ -8,19 +8,19 @@
     "description": "Christian worship songs with lyrics, chords, and guitar tabs in English and Hindi.",
     "icons": [
         {
-            "src": "/images/logo-footer-final.png",
+            "src": "/images/icon-512.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "/images/logo-footer-final.png",
+            "src": "/images/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "/images/logo-footer-final.png",
+            "src": "/images/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
