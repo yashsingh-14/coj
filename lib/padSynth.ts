@@ -47,7 +47,7 @@ export class PadSynth {
 
     private activeNotes: Map<string, ActiveNote> = new Map();
     private preset: PadPreset = 'atmospheric';
-    private masterVolume = 0.25; // Safe per-note volume to prevent clipping
+    private masterVolume = 0.20; // Lowered to 0.20 to guarantee NO clipping with max 4 polyphony + overlap
     private mainVolume = 1.0;   // global output volume
     private crossfadeTime = 2.0; // seconds
     private highpassFreq = 21; // Hz
@@ -55,15 +55,35 @@ export class PadSynth {
     private polyphonyMode: 'poly' | 'mono' = 'poly';
 
     constructor() {
-        if (typeof window !== 'undefined') {
-            this.audioContext = new AudioContext();
+        // We do NOT initialize AudioContext here anymore.
+        // It must be initialized lazily on the first user interaction (startNote)
+        // to prevent mobile Safari/Chrome 'suspended' race conditions and crackling.
+    }
 
-            // Direct stable output gain instead of pumping compressor
-            this.globalGain = this.audioContext.createGain();
-            this.globalGain.gain.value = this.mainVolume;
-
-            this.globalGain.connect(this.audioContext.destination);
+    private ensureAudioContext(): boolean {
+        if (typeof window === 'undefined') return false;
+        
+        if (!this.audioContext) {
+            try {
+                const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+                // 'interactive' gives a balanced buffer size to prevent mobile CPU underrun clicks
+                this.audioContext = new AudioContextClass({ latencyHint: 'interactive' });
+                
+                this.globalGain = this.audioContext.createGain();
+                this.globalGain.gain.value = this.mainVolume;
+                this.globalGain.connect(this.audioContext.destination);
+            } catch (err) {
+                console.error("Web Audio API not supported", err);
+                return false;
+            }
         }
+        
+        if (this.audioContext.state === 'suspended') {
+            // Must wait/resume before scheduling notes on mobile
+            this.audioContext.resume();
+        }
+        
+        return true;
     }
 
     setPolyphonyMode(mode: 'poly' | 'mono') {
@@ -134,10 +154,7 @@ export class PadSynth {
     }
 
     startNote(note: string) {
-        if (!this.audioContext || !this.globalGain) return;
-        if (this.audioContext.state === 'suspended') {
-            this.audioContext.resume();
-        }
+        if (!this.ensureAudioContext() || !this.audioContext || !this.globalGain) return;
 
         // Handle Poly/Mono modes
         if (this.polyphonyMode === 'mono') {
@@ -145,6 +162,16 @@ export class PadSynth {
             Array.from(this.activeNotes.keys()).forEach(n => {
                 if (n !== note) this.stopNote(n);
             });
+        } else {
+            // Mobile CPU Protection (Voice Stealing)
+            // Hard limit to 4 active notes minimum (most mobile devices stutter above 16 total generic oscillators)
+            if (this.activeNotes.size >= 4) {
+                const oldestNote = this.activeNotes.keys().next().value;
+                // If the oldest note isn't the current note, stop it to free up CPU
+                if (oldestNote && oldestNote !== note) {
+                    this.stopNote(oldestNote);
+                }
+            }
         }
 
         // If note already playing, stop it first to prevent double-triggering
@@ -158,7 +185,8 @@ export class PadSynth {
 
         // Master gain for this note with smooth Exponential approach
         const masterGain = ctx.createGain();
-        masterGain.gain.setValueAtTime(0, now);
+        // NEVER use exactly 0 in WebKit for exponential ramps/targets, it causes NaN math crackling/popping bugs!
+        masterGain.gain.setValueAtTime(0.0001, now);
         
         // Use setTargetAtTime for smooth, click-free attack
         // timeConstant (3rd arg) is 1/3 of the desired duration to reach 95%
@@ -339,8 +367,9 @@ export class PadSynth {
         // This avoids clicks and gracefully takes over from any current internal ramp value
         active.masterGain.gain.cancelScheduledValues(now);
         
+        // Again, never target exactly 0 on iOS/Safari for exponential curves.
         const releaseTimeConstant = fadeOut / 3;
-        active.masterGain.gain.setTargetAtTime(0, now, releaseTimeConstant);
+        active.masterGain.gain.setTargetAtTime(0.0001, now, releaseTimeConstant);
 
         // Cleanup after fade out finishes completely (roughly ~4-5 time constants)
         setTimeout(() => {
@@ -348,7 +377,7 @@ export class PadSynth {
                 try { osc.stop(); } catch { /* already stopped */ }
             });
             active.masterGain.disconnect();
-        }, fadeOut * 1000 + 100);
+        }, (fadeOut + 0.5) * 1000); // give enough buffer time
 
         this.activeNotes.delete(note);
     }
