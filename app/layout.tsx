@@ -64,6 +64,7 @@ export const metadata: Metadata = {
 
 import AppShell from "@/components/AppShell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export default function RootLayout({
   children,
@@ -78,6 +79,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AppShell>
             <ServiceWorkerRegister />
+            <InstallPrompt />
             {children}
           </AppShell>
           <Toaster position="bottom-right" theme="dark" richColors />
