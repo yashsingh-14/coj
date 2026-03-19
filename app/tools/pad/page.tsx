@@ -131,8 +131,8 @@ export default function PadPage() {
             </div>
 
             {/* Main Pad Grid */}
-            <div className="flex-1 flex flex-col justify-center px-4 md:px-12 pb-32 z-10 relative max-w-5xl mx-auto w-full">
-                <div className="flex flex-col gap-3 h-[65vh] w-full">
+            <div className="flex-1 flex flex-col justify-center px-4 md:px-12 pb-36 md:pb-32 z-10 relative max-w-5xl mx-auto w-full">
+                <div className="flex flex-col gap-3 h-[60vh] max-h-[500px] w-full mt-4">
                     {rows.map((row, rowIdx) => (
                         <div key={rowIdx} className="flex-1 flex gap-3">
                             {row.map(note => {

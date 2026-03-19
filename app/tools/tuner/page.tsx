@@ -149,7 +149,7 @@ export default function TunerPage() {
             <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full max-w-lg mx-auto pb-32">
                 
                 {/* Central Glass Radial Dial */}
-                <div className="relative w-72 h-72 flex items-center justify-center">
+                <div className="relative w-56 h-56 sm:w-72 sm:h-72 flex items-center justify-center z-20">
                     {/* Outer Glow Ring */}
                     <div className={`absolute inset-0 rounded-full border-2 transition-all duration-500 ${pitch ? (isTuned ? 'border-green-500/50 shadow-[0_0_50px_rgba(34,197,94,0.3)]' : 'border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.15)]') : 'border-white/10'}`} />
                     
@@ -184,10 +184,10 @@ export default function TunerPage() {
                             {pitch ? (
                                 <>
                                     <div className="flex items-baseline gap-1">
-                                        <span className={`text-6xl font-black tracking-tighter ${isTuned ? 'text-green-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]' : 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]'}`}>
+                                        <span className={`text-5xl sm:text-6xl font-black tracking-tighter ${isTuned ? 'text-green-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]' : 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]'}`}>
                                             {pitch.note.replace(/[0-9]/g, '')}
                                         </span>
-                                        <span className="text-2xl font-bold text-white/40">{pitch.octave}</span>
+                                        <span className="text-xl sm:text-2xl font-bold text-white/40">{pitch.octave}</span>
                                     </div>
                                     <span className={`text-sm font-bold tracking-widest uppercase mt-2 ${isTuned ? 'text-green-500' : 'text-amber-500'}`}>
                                         {isTuned ? 'In Tune' : pitch.cents > 0 ? 'Too Sharp' : 'Too Flat'}
@@ -209,7 +209,7 @@ export default function TunerPage() {
                 <div className="absolute top-0 bottom-0 left-0 right-0 flex justify-between px-4 sm:px-12 pointer-events-none">
                     
                     {/* Dark Premium Headstock & Neck Structure */}
-                    <div className="absolute top-[2vh] sm:top-[5vh] bottom-[-200px] left-1/2 -translate-x-1/2 flex flex-col items-center w-64 z-0 opacity-60 pointer-events-none">
+                    <div className="absolute top-[2vh] sm:top-[5vh] bottom-[-200px] left-1/2 -translate-x-1/2 flex flex-col items-center w-52 sm:w-64 z-0 opacity-60 pointer-events-none">
                         {/* Guitar Headstock Shape */}
                         <div 
                             className="w-full h-80 bg-[#1A1A24]/40 backdrop-blur-md border border-white/5 relative flex-1 flex-shrink-0"
@@ -240,7 +240,7 @@ export default function TunerPage() {
                     </div>
 
                     {/* Left Pegs */}
-                    <div className="flex flex-col justify-center gap-10 w-20 pointer-events-auto">
+                    <div className="flex flex-col justify-center gap-6 sm:gap-10 w-14 sm:w-20 pointer-events-auto z-30">
                         {leftStrings.map(str => {
                             const active = isActiveString(str);
                             return (
@@ -249,8 +249,8 @@ export default function TunerPage() {
                                     {/* Neon String connecting to dial */}
                                     <div className={`absolute left-full top-1/2 h-[1px] w-32 -z-10 transition-all duration-300 origin-left ${active ? 'bg-gradient-to-r from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
                                     {/* Tuning Peg */}
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
-                                        <span className={`text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
+                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
+                                        <span className={`text-lg sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
                                     </div>
                                 </button>
                             );
@@ -258,7 +258,7 @@ export default function TunerPage() {
                     </div>
 
                     {/* Right Pegs */}
-                    <div className="flex flex-col justify-center gap-10 w-20 pointer-events-auto">
+                    <div className="flex flex-col justify-center gap-6 sm:gap-10 w-14 sm:w-20 pointer-events-auto z-30">
                         {rightStrings.map(str => {
                             const active = isActiveString(str);
                             return (
@@ -267,8 +267,8 @@ export default function TunerPage() {
                                     {/* Neon String connecting to dial */}
                                     <div className={`absolute right-full top-1/2 h-[1px] w-32 -z-10 transition-all duration-300 origin-right ${active ? 'bg-gradient-to-l from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
                                     {/* Tuning Peg */}
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
-                                        <span className={`text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
+                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
+                                        <span className={`text-lg sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
                                     </div>
                                 </button>
                             );
