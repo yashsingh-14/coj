@@ -1,4 +1,4 @@
-const CACHE_NAME = 'coj-v2'; // Incremented version
+const CACHE_NAME = 'coj-v3'; // Bumped for TWA fix
 const OFFLINE_URL = '/offline';
 
 // Files to cache for offline use
@@ -40,16 +40,37 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - network-first for pages, cache-first for assets
 self.addEventListener('fetch', (event) => {
     // Skip non-GET requests
     if (event.request.method !== 'GET') return;
 
+    // For navigation requests (HTML pages) - NETWORK FIRST
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((fetchResponse) => {
+                    // Cache the latest version
+                    const responseToCache = fetchResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                    return fetchResponse;
+                })
+                .catch(() => {
+                    // Network failed - try cache, then offline page
+                    return caches.match(event.request).then((cachedResponse) => {
+                        return cachedResponse || caches.match(OFFLINE_URL);
+                    });
+                })
+        );
+        return;
+    }
+
+    // For static assets (JS, CSS, images) - CACHE FIRST
     event.respondWith(
         caches.match(event.request).then((response) => {
-            // Return cached version or fetch from network
             return response || fetch(event.request).then((fetchResponse) => {
-                // Cache successful responses
                 if (fetchResponse && fetchResponse.status === 200) {
                     const responseToCache = fetchResponse.clone();
                     caches.open(CACHE_NAME).then((cache) => {
@@ -58,7 +79,6 @@ self.addEventListener('fetch', (event) => {
                 }
                 return fetchResponse;
             }).catch(() => {
-                // If both cache and network fail, show offline page
                 return caches.match(OFFLINE_URL);
             });
         })
