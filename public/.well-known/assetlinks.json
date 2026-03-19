@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "in.callofjesus.twa",
+        "sha256_cert_fingerprints": ["FE:E6:FE:23:30:06:90:C7:B8:CC:E8:5F:5D:5B:D0:34:DD:A1:69:13:27:D9:8C:96:F6:93:00:B0:1E:0B:1C:FC"]
+      }
+    }]
