@@ -43,17 +43,46 @@ interface ActiveNote {
 
 export class PadSynth {
     private audioContext: AudioContext | null = null;
+    private globalGain: GainNode | null = null;
+
     private activeNotes: Map<string, ActiveNote> = new Map();
     private preset: PadPreset = 'atmospheric';
-    private masterVolume = 0.6;
+    private masterVolume = 0.25; // Safe per-note volume to prevent clipping
+    private mainVolume = 1.0;   // global output volume
     private crossfadeTime = 2.0; // seconds
     private highpassFreq = 21; // Hz
     private lowpassFreq = 756; // Hz
+    private polyphonyMode: 'poly' | 'mono' = 'poly';
 
     constructor() {
         if (typeof window !== 'undefined') {
             this.audioContext = new AudioContext();
+
+            // Direct stable output gain instead of pumping compressor
+            this.globalGain = this.audioContext.createGain();
+            this.globalGain.gain.value = this.mainVolume;
+
+            this.globalGain.connect(this.audioContext.destination);
         }
+    }
+
+    setPolyphonyMode(mode: 'poly' | 'mono') {
+        this.polyphonyMode = mode;
+    }
+
+    getPolyphonyMode() {
+        return this.polyphonyMode;
+    }
+
+    setMasterVolume(val: number) {
+        this.mainVolume = Math.max(0, Math.min(2.0, val));
+        if (this.globalGain && this.audioContext) {
+            this.globalGain.gain.setTargetAtTime(this.mainVolume, this.audioContext.currentTime, 0.05);
+        }
+    }
+
+    getMasterVolume() {
+        return this.mainVolume;
     }
 
     setPreset(preset: PadPreset) {
@@ -105,12 +134,20 @@ export class PadSynth {
     }
 
     startNote(note: string) {
-        if (!this.audioContext) return;
+        if (!this.audioContext || !this.globalGain) return;
         if (this.audioContext.state === 'suspended') {
             this.audioContext.resume();
         }
 
-        // If note already playing, stop it first
+        // Handle Poly/Mono modes
+        if (this.polyphonyMode === 'mono') {
+            // Stop all other notes when starting a new one
+            Array.from(this.activeNotes.keys()).forEach(n => {
+                if (n !== note) this.stopNote(n);
+            });
+        }
+
+        // If note already playing, stop it first to prevent double-triggering
         if (this.activeNotes.has(note)) {
             this.stopNote(note);
         }
@@ -119,10 +156,14 @@ export class PadSynth {
         const ctx = this.audioContext;
         const now = ctx.currentTime;
 
-        // Master gain for this note
+        // Master gain for this note with smooth Exponential approach
         const masterGain = ctx.createGain();
         masterGain.gain.setValueAtTime(0, now);
-        masterGain.gain.linearRampToValueAtTime(this.masterVolume, now + this.crossfadeTime * 0.3);
+        
+        // Use setTargetAtTime for smooth, click-free attack
+        // timeConstant (3rd arg) is 1/3 of the desired duration to reach 95%
+        const attackTimeConstant = (this.crossfadeTime * 0.3) / 3;
+        masterGain.gain.setTargetAtTime(this.masterVolume, now, attackTimeConstant);
 
         // Global highpass and lowpass filters
         const highpass = ctx.createBiquadFilter();
@@ -135,8 +176,8 @@ export class PadSynth {
         lowpass.frequency.setValueAtTime(this.lowpassFreq, now);
         lowpass.Q.setValueAtTime(0.7, now);
 
-        // Chain: ... → highpass → lowpass → masterGain → destination
-        highpass.connect(lowpass).connect(masterGain).connect(ctx.destination);
+        // Chain: ... → highpass → lowpass → masterGain → globalGain
+        highpass.connect(lowpass).connect(masterGain).connect(this.globalGain);
 
         let oscillators: OscillatorNode[] = [];
         let gains: GainNode[] = [];
@@ -147,12 +188,14 @@ export class PadSynth {
 
         switch (this.preset) {
             case 'atmospheric': {
+                // Two slightly detuned sine waves for warm ambient sound
                 const osc1 = ctx.createOscillator();
                 osc1.type = 'sine';
                 osc1.frequency.setValueAtTime(freq, now);
                 const osc2 = ctx.createOscillator();
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(freq * 1.003, now);
+                // Smaller detune (0.15%) to avoid excessive beating/wobble
+                osc2.frequency.setValueAtTime(freq * 1.0015, now);
                 const osc3 = ctx.createOscillator();
                 osc3.type = 'sine';
                 osc3.frequency.setValueAtTime(freq * 2, now);
@@ -182,7 +225,8 @@ export class PadSynth {
                 osc1.frequency.setValueAtTime(freq, now);
                 const osc2 = ctx.createOscillator();
                 osc2.type = 'sawtooth';
-                osc2.frequency.setValueAtTime(freq * 1.005, now);
+                // Smaller detune for stable Epic Saw
+                osc2.frequency.setValueAtTime(freq * 1.002, now);
 
                 const g1 = ctx.createGain(); g1.gain.setValueAtTime(0.3, now);
                 const g2 = ctx.createGain(); g2.gain.setValueAtTime(0.25, now);
@@ -253,7 +297,7 @@ export class PadSynth {
                 osc1.frequency.setValueAtTime(freq, now);
                 const osc2 = ctx.createOscillator();
                 osc2.type = 'sawtooth';
-                osc2.frequency.setValueAtTime(freq * 1.008, now);
+                osc2.frequency.setValueAtTime(freq * 1.004, now);
                 const osc3 = ctx.createOscillator();
                 osc3.type = 'triangle';
                 osc3.frequency.setValueAtTime(freq * 0.5, now);
@@ -291,12 +335,14 @@ export class PadSynth {
         const now = this.audioContext.currentTime;
         const fadeOut = this.crossfadeTime * 0.5;
 
-        // Smooth fade out
+        // Smooth fade out using setTargetAtTime
+        // This avoids clicks and gracefully takes over from any current internal ramp value
         active.masterGain.gain.cancelScheduledValues(now);
-        active.masterGain.gain.setValueAtTime(active.masterGain.gain.value, now);
-        active.masterGain.gain.linearRampToValueAtTime(0, now + fadeOut);
+        
+        const releaseTimeConstant = fadeOut / 3;
+        active.masterGain.gain.setTargetAtTime(0, now, releaseTimeConstant);
 
-        // Cleanup after fade out
+        // Cleanup after fade out finishes completely (roughly ~4-5 time constants)
         setTimeout(() => {
             active.oscillators.forEach(osc => {
                 try { osc.stop(); } catch { /* already stopped */ }

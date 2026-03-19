@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, Volume2, SlidersHorizontal, X } from 'lucide-react';
+import { ArrowLeft, ChevronUp, ChevronLeft, ChevronRight, Volume2, Settings2, X, Music4 } from 'lucide-react';
 import {
     PadSynth,
     PAD_NOTES,
@@ -12,33 +12,19 @@ import {
 
 const PRESETS: PadPreset[] = ['atmospheric', 'epicSaw', 'lushPad', 'organ', 'stringPad'];
 
-// Colors for each note pad when active
-const PAD_COLORS: Record<string, string> = {
-    'A': '#8b5cf6',
-    'A#': '#7c3aed',
-    'B': '#6366f1',
-    'C': '#3b82f6',
-    'C#': '#0ea5e9',
-    'D': '#14b8a6',
-    'D#': '#10b981',
-    'E': '#22c55e',
-    'F': '#84cc16',
-    'F#': '#eab308',
-    'G': '#f97316',
-    'G#': '#ef4444',
-};
-
 export default function PadPage() {
     const [activeNotes, setActiveNotes] = useState<Set<string>>(new Set());
     const [preset, setPreset] = useState<PadPreset>('atmospheric');
     const [showPresets, setShowPresets] = useState(false);
+    const [showVolume, setShowVolume] = useState(false);
     const [showSoundEditor, setShowSoundEditor] = useState(false);
     const [crossfade, setCrossfade] = useState(2.0);
     const [highpass, setHighpass] = useState(21);
     const [lowpass, setLowpass] = useState(756);
+    const [volume, setVolume] = useState(1.0);
+    const [polyphony, setPolyphony] = useState<'poly' | 'mono'>('poly');
     const synthRef = useRef<PadSynth | null>(null);
 
-    // Initialize synth
     useEffect(() => {
         synthRef.current = new PadSynth();
         return () => {
@@ -47,7 +33,6 @@ export default function PadPage() {
         };
     }, []);
 
-    // Update preset on synth
     useEffect(() => {
         if (synthRef.current) {
             synthRef.current.stopAll();
@@ -82,6 +67,21 @@ export default function PadPage() {
         synthRef.current?.setLowpass(val);
     };
 
+    const handleVolumeChange = (val: number) => {
+        setVolume(val);
+        synthRef.current?.setMasterVolume(val);
+    };
+
+    const togglePolyphony = () => {
+        const next = polyphony === 'poly' ? 'mono' : 'poly';
+        setPolyphony(next);
+        synthRef.current?.setPolyphonyMode(next);
+        if (next === 'mono' && activeNotes.size > 1) {
+            setActiveNotes(new Set());
+            synthRef.current?.stopAll();
+        }
+    };
+
     const prevPreset = () => {
         const idx = PRESETS.indexOf(preset);
         setPreset(PRESETS[(idx - 1 + PRESETS.length) % PRESETS.length]);
@@ -92,7 +92,7 @@ export default function PadPage() {
         setPreset(PRESETS[(idx + 1) % PRESETS.length]);
     };
 
-    // Arrange notes in 3 rows x 4 columns
+    // Arrange in 3 rows x 4 columns
     const rows = [
         PAD_NOTES.slice(0, 4),
         PAD_NOTES.slice(4, 8),
@@ -100,197 +100,280 @@ export default function PadPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white select-none overflow-hidden flex flex-col">
-            {/* Header - matching Infinite Pads style */}
-            <div className="px-3 py-3 flex items-center justify-between border-b border-white/5 bg-[#0a0a14] z-40 shrink-0">
+        <div className="min-h-screen bg-[#02000F] text-white select-none overflow-hidden flex flex-col relative font-sans">
+            
+            {/* Ambient Animated Background glow based on active notes */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-40">
+                {Array.from(activeNotes).map((note, i) => (
+                    <div 
+                        key={note}
+                        className="absolute w-[500px] h-[500px] rounded-full blur-[120px] mix-blend-screen animate-pulse"
+                        style={{
+                            background: note.includes('#') ? 'radial-gradient(circle, rgba(220,38,38,0.4) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(217,119,6,0.5) 0%, transparent 70%)',
+                            top: `${20 + (i * 15)}%`,
+                            left: `${10 + (i * 20)}%`,
+                            animationDuration: '4s'
+                        }}
+                    />
+                ))}
+            </div>
+
+            {/* Top Simple Header */}
+            <div className="px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
+                <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all backdrop-blur-md">
+                    <ArrowLeft className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm font-semibold tracking-wide text-white/80">Exit Pad</span>
+                </Link>
                 <div className="flex items-center gap-2">
-                    <Link href="/" className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-white/50" />
-                    </Link>
-
-                    {/* Preset name with dropdown */}
-                    <button
-                        onClick={() => setShowPresets(!showPresets)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
-                    >
-                        <span className="font-bold text-sm">{PAD_PRESET_LABELS[preset]}</span>
-                        <ChevronDown className={`w-3.5 h-3.5 text-white/40 transition-transform ${showPresets ? 'rotate-180' : ''}`} />
-                    </button>
-                </div>
-
-                {/* Right side icons */}
-                <div className="flex items-center gap-1">
-                    {/* Sound Editor toggle */}
-                    <button
-                        onClick={() => setShowSoundEditor(!showSoundEditor)}
-                        className={`p-2 rounded-lg transition-colors ${showSoundEditor ? 'bg-amber-500/20 text-amber-400' : 'hover:bg-white/10 text-white/40'}`}
-                    >
-                        <SlidersHorizontal className="w-5 h-5" />
-                    </button>
-
-                    {/* Volume icon */}
-                    <button className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white/40">
-                        <Volume2 className="w-5 h-5" />
-                    </button>
-
-                    {/* Prev/Next preset */}
-                    <button onClick={prevPreset} className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white/40">
-                        <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button onClick={nextPreset} className="p-2 rounded-lg hover:bg-white/10 transition-colors text-white/40">
-                        <ChevronRight className="w-5 h-5" />
-                    </button>
+                    <Music4 className="w-5 h-5 text-amber-500/50" />
+                    <span className="font-bold text-white/30 tracking-widest text-xs uppercase">COJ Infinity</span>
                 </div>
             </div>
 
-            {/* Preset Dropdown */}
-            {showPresets && (
-                <div className="absolute top-14 left-14 z-50 bg-[#0F0F16] border border-white/10 rounded-2xl overflow-hidden shadow-2xl min-w-[200px]">
-                    <div className="px-4 py-2 border-b border-white/5">
-                        <span className="text-[10px] font-bold text-white/30 uppercase tracking-wider">Factory</span>
-                    </div>
-                    {PRESETS.map(p => (
-                        <button
-                            key={p}
-                            onClick={() => { setPreset(p); setShowPresets(false); }}
-                            className={`w-full px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                                preset === p ? 'bg-white/10 text-white' : 'text-white/50 hover:bg-white/5 hover:text-white'
-                            }`}
-                        >
-                            {PAD_PRESET_LABELS[p]}
-                        </button>
-                    ))}
-                </div>
-            )}
-
-            {/* Main Content Area */}
-            <div className="flex-1 flex overflow-hidden">
-                {/* Pad Grid */}
-                <div className={`flex-1 p-2 pb-20 flex flex-col gap-1.5 transition-all ${showSoundEditor ? 'pr-0' : ''}`}>
+            {/* Main Pad Grid */}
+            <div className="flex-1 flex flex-col justify-center px-4 md:px-12 pb-32 z-10 relative max-w-5xl mx-auto w-full">
+                <div className="flex flex-col gap-3 h-[65vh] w-full">
                     {rows.map((row, rowIdx) => (
-                        <div key={rowIdx} className="flex-1 flex gap-1.5">
+                        <div key={rowIdx} className="flex-1 flex gap-3">
                             {row.map(note => {
                                 const isActive = activeNotes.has(note);
-                                const color = PAD_COLORS[note];
+                                const isSharp = note.includes('#');
 
                                 return (
                                     <button
                                         key={note}
                                         onPointerDown={(e) => { e.preventDefault(); handleNoteToggle(note); }}
-                                        className="flex-1 rounded-lg border transition-all duration-200 relative overflow-hidden group"
+                                        className="flex-1 rounded-2xl md:rounded-3xl border transition-all duration-300 relative overflow-hidden group shadow-2xl"
                                         style={{
-                                            borderColor: isActive ? `${color}80` : 'rgba(255,255,255,0.06)',
+                                            borderColor: isActive 
+                                                ? isSharp ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)' 
+                                                : 'rgba(255,255,255,0.05)',
                                             background: isActive
-                                                ? `linear-gradient(135deg, ${color}35, ${color}15)`
-                                                : 'rgba(255,255,255,0.015)',
+                                                ? isSharp 
+                                                    ? 'linear-gradient(135deg, rgba(220,38,38,0.4), rgba(153,27,27,0.1))'
+                                                    : 'linear-gradient(135deg, rgba(217,119,6,0.4), rgba(146,64,15,0.1))'
+                                                : 'rgba(20,20,30,0.5)',
                                             boxShadow: isActive
-                                                ? `0 0 30px ${color}20, inset 0 0 30px ${color}10`
-                                                : 'none',
+                                                ? isSharp 
+                                                    ? '0 0 40px rgba(220,38,38,0.3), inset 0 0 20px rgba(220,38,38,0.2)'
+                                                    : '0 0 40px rgba(245,158,11,0.3), inset 0 0 20px rgba(245,158,11,0.2)'
+                                                : '0 10px 30px rgba(0,0,0,0.5)',
+                                            backdropFilter: 'blur(12px)',
                                         }}
                                     >
-                                        {/* Active glow */}
-                                        {isActive && (
-                                            <div className="absolute inset-0 opacity-15 animate-pulse"
-                                                style={{ background: `radial-gradient(circle at center, ${color}, transparent 70%)` }}
-                                            />
-                                        )}
-
-                                        {/* Note label */}
-                                        <span
-                                            className="absolute top-2.5 left-3 text-base font-bold transition-colors"
-                                            style={{ color: isActive ? color : 'rgba(255,255,255,0.2)' }}
-                                        >
+                                        {/* Corner Label */}
+                                        <span className="absolute top-4 left-5 text-xl md:text-2xl font-black tracking-tighter transition-colors"
+                                            style={{ color: isActive ? '#fff' : 'rgba(255,255,255,0.2)' }}>
                                             {note}
                                         </span>
 
-                                        {/* Hover */}
-                                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.02] transition-colors" />
+                                        {/* Subtle internal ring for MPC look */}
+                                        <div className="absolute inset-2 border border-white/5 rounded-xl md:rounded-2xl pointer-events-none" />
+                                        
+                                        {/* Hover glow */}
+                                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-300" />
                                     </button>
                                 );
                             })}
                         </div>
                     ))}
                 </div>
+            </div>
 
-                {/* Sound Editor Panel (slides in from right) */}
-                {showSoundEditor && (
-                    <div className="w-72 bg-[#0a0a14] border-l border-white/5 p-5 pb-20 flex flex-col gap-6 overflow-y-auto shrink-0 animate-in slide-in-from-right">
-                        {/* Header */}
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-base font-bold">Sound Editor</h3>
-                            <button onClick={() => setShowSoundEditor(false)} className="p-1 rounded-lg hover:bg-white/10 text-white/40">
-                                <X className="w-4 h-4" />
+            {/* Floating Bottom Dock */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl px-2">
+                
+                {/* Popups anchoring to dock */}
+                <div className="relative w-full">
+                    {/* Presets Menu Popup */}
+                    {showPresets && (
+                        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-64 bg-[#12121A]/95 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-in slide-in-from-bottom-4">
+                            <div className="px-5 py-3 border-b border-white/5 bg-white/5">
+                                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Sound Library</span>
+                            </div>
+                            <div className="p-2 flex flex-col gap-1">
+                                {PRESETS.map(p => (
+                                    <button
+                                        key={p}
+                                        onClick={() => { setPreset(p); setShowPresets(false); }}
+                                        className={`w-full px-4 py-3 rounded-2xl text-left text-sm font-semibold transition-all ${
+                                            preset === p ? 'bg-amber-500/20 text-amber-400' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                                        }`}
+                                    >
+                                        {PAD_PRESET_LABELS[p]}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Volume Popup */}
+                    {showVolume && (
+                        <div className="absolute bottom-20 right-4 w-64 bg-[#12121A]/95 backdrop-blur-xl border border-white/10 rounded-3xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-in slide-in-from-bottom-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <span className="text-[11px] font-bold text-amber-500 uppercase tracking-widest">Master Out</span>
+                                <span className="text-sm font-black text-white/80">{Math.round(volume * 100)}%</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0"
+                                max="2.0"
+                                step="0.05"
+                                value={volume}
+                                onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                                className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer"
+                                style={{ accentColor: '#f59e0b' }}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* Main Dock Bar */}
+                <div className="flex items-center justify-between bg-[#1A1A24]/80 backdrop-blur-2xl border border-white/10 px-2 py-2 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
+                    
+                    {/* Left: Engine Config */}
+                    <button 
+                        onClick={() => setShowSoundEditor(true)}
+                        className="flex items-center gap-2 px-4 py-3 rounded-full hover:bg-white/10 transition-colors text-white/70 hover:text-white"
+                    >
+                        <Settings2 className="w-5 h-5 text-amber-500" />
+                        <span className="text-xs font-bold hidden sm:block">ENGINE</span>
+                    </button>
+
+                    {/* Center: Presets Navigator */}
+                    <div className="flex items-center bg-black/40 rounded-full p-1 border border-white/5">
+                        <button onClick={prevPreset} className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white">
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        
+                        <button 
+                            onClick={() => {
+                                setShowPresets(!showPresets);
+                                setShowVolume(false);
+                            }}
+                            className="flex items-center justify-center gap-2 px-6 py-2 min-w[140px] transition-colors group"
+                        >
+                            <span className="font-black text-sm tracking-wide text-white group-hover:text-amber-400 transition-colors">{PAD_PRESET_LABELS[preset]}</span>
+                            <ChevronUp className={`w-4 h-4 text-white/40 transition-transform ${showPresets ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        <button onClick={nextPreset} className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white">
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    {/* Right: Volume */}
+                    <button 
+                        onClick={() => {
+                            setShowVolume(!showVolume);
+                            setShowPresets(false);
+                        }}
+                        className={`flex items-center gap-2 px-4 py-3 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
+                    >
+                        <Volume2 className="w-5 h-5 text-amber-500" />
+                        <span className="text-xs font-bold hidden sm:block">VOL</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Sound Editor Modal (Centered Glassmorphic) */}
+            {showSoundEditor && (
+                <div className="absolute inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowSoundEditor(false)} />
+                    
+                    <div className="relative w-full max-w-sm bg-[#12121A]/90 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 sm:p-8 shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in zoom-in-95">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-lg font-black tracking-wide text-white">SOUND ENGINE</h3>
+                            <button onClick={() => setShowSoundEditor(false)} className="p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/60 transition-colors">
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
 
-                        {/* Crossfade Slider */}
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-lg">✕</span>
-                                    <span className="text-sm font-semibold">Crossfade</span>
+                        <div className="space-y-8">
+                            {/* Polyphony Switch */}
+                            <div className="space-y-3 p-4 rounded-3xl bg-black/40 border border-white/5">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm font-bold text-white/80">Voice Mode</span>
+                                    <div className="flex bg-[#1A1A24] rounded-xl p-1 border border-white/5">
+                                        <button 
+                                            onClick={() => togglePolyphony()}
+                                            className={`px-4 py-1.5 rounded-lg text-xs font-black tracking-wider transition-all ${polyphony === 'mono' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-white/40 hover:text-white'}`}
+                                        >
+                                            MONO
+                                        </button>
+                                        <button 
+                                            onClick={() => togglePolyphony()}
+                                            className={`px-4 py-1.5 rounded-lg text-xs font-black tracking-wider transition-all ${polyphony === 'poly' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-white/40 hover:text-white'}`}
+                                        >
+                                            POLY
+                                        </button>
+                                    </div>
                                 </div>
-                                <span className="text-sm font-bold text-white/60">{crossfade.toFixed(1)} s</span>
+                                <p className="text-[11px] text-white/40 leading-relaxed font-medium">
+                                    {polyphony === 'mono' ? 'Plays one note at a time. Ideal for playing scales and melodies smoothly.' : 'Plays multiple notes simultaneously. Ideal for building complex chords.'}
+                                </p>
                             </div>
-                            <p className="text-[11px] text-white/30">The time it takes sounds to fade</p>
-                            <input
-                                type="range"
-                                min="0.1"
-                                max="8.0"
-                                step="0.1"
-                                value={crossfade}
-                                onChange={(e) => handleCrossfadeChange(parseFloat(e.target.value))}
-                                className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
-                                style={{ accentColor: '#ffffff' }}
-                            />
-                        </div>
 
-                        {/* Highpass Slider */}
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">⌒</span>
-                                    <span className="text-sm font-semibold">Highpass</span>
+                            {/* Sliders */}
+                            <div className="space-y-6">
+                                {/* Crossfade Slider */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">Crossfade</span>
+                                        <span className="text-xs font-black text-white">{crossfade.toFixed(1)} s</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0.1"
+                                        max="8.0"
+                                        step="0.1"
+                                        value={crossfade}
+                                        onChange={(e) => handleCrossfadeChange(parseFloat(e.target.value))}
+                                        className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer"
+                                        style={{ accentColor: '#f59e0b' }}
+                                    />
                                 </div>
-                                <span className="text-sm font-bold text-white/60">{highpass} Hz</span>
-                            </div>
-                            <p className="text-[11px] text-white/30">Filter out lower frequencies for a thinner, brighter sound</p>
-                            <input
-                                type="range"
-                                min="10"
-                                max="2000"
-                                step="1"
-                                value={highpass}
-                                onChange={(e) => handleHighpassChange(parseInt(e.target.value))}
-                                className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer"
-                                style={{ accentColor: '#ffffff' }}
-                            />
-                        </div>
 
-                        {/* Lowpass Slider */}
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm">⌣</span>
-                                    <span className="text-sm font-semibold">Lowpass</span>
+                                {/* Highpass Slider */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">Highpass</span>
+                                        <span className="text-xs font-black text-white">{highpass} Hz</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="10"
+                                        max="2000"
+                                        step="1"
+                                        value={highpass}
+                                        onChange={(e) => handleHighpassChange(parseInt(e.target.value))}
+                                        className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer"
+                                        style={{ accentColor: '#f59e0b' }}
+                                    />
                                 </div>
-                                <span className="text-sm font-bold text-white/60">{lowpass} Hz</span>
+
+                                {/* Lowpass Slider */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">Lowpass</span>
+                                        <span className="text-xs font-black text-white">{lowpass} Hz</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="100"
+                                        max="5000"
+                                        step="1"
+                                        value={lowpass}
+                                        onChange={(e) => handleLowpassChange(parseInt(e.target.value))}
+                                        className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer"
+                                        style={{ accentColor: '#f59e0b' }}
+                                    />
+                                </div>
                             </div>
-                            <p className="text-[11px] text-white/30">Filter out higher frequencies for a softer, warmer sound</p>
-                            <input
-                                type="range"
-                                min="100"
-                                max="5000"
-                                step="1"
-                                value={lowpass}
-                                onChange={(e) => handleLowpassChange(parseInt(e.target.value))}
-                                className="w-full h-1 bg-white/10 rounded-full appearance-none cursor-pointer"
-                                style={{ accentColor: '#ffffff' }}
-                            />
                         </div>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
