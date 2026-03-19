@@ -20,7 +20,7 @@ const SITE_URL = 'https://callofjesus.in';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: {
-    canonical: '/',
+    canonical: SITE_URL,
   },
   title: {
     default: "COJ | Call of Jesus Ministries - Christian Worship Songs & Lyrics",
