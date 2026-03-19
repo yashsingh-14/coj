@@ -23,10 +23,10 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   title: {
-    default: "COJ | Call of Jesus Ministries - Christian Worship Songs & Lyrics",
-    template: "%s | COJ Worship"
+    default: "Call of Jesus Ministries | Worship Songs, Lyrics, Chords & Sermons — Hear the Word of God",
+    template: "%s | Call of Jesus Ministries"
   },
-  description: "Discover a vast collection of Christian worship songs with lyrics, chords, and guitar tabs in English and Hindi. Free worship resources for church worship leaders and musicians by Call of Jesus Ministries.",
+  description: "Enter the presence of God through worship and His Word. Listen to anointed sermons every Sunday & Friday, explore powerful Christian worship songs with lyrics, chords & guitar tabs in English and Hindi. A spiritual home for every believer — by Call of Jesus Ministries.",
   keywords: ["Christian songs", "Worship lyrics", "Hindi worship songs", "Christian chords", "Gospel lyrics", "COJ Ministries", "Call of Jesus", "Jesus songs", "Christian music", "worship chords", "Hindi Christian songs lyrics", "guitar chords worship"],
   authors: [{ name: "Yash Singh" }, { name: "Call of Jesus Ministries" }],
   openGraph: {
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "COJ Worship",
-    title: "COJ | Call of Jesus Ministries - Christian Worship Songs, Lyrics & Chords",
-    description: "Free Christian worship songs with lyrics, chords, and structure in English & Hindi. The ultimate resource for worship leaders and musicians.",
+    title: "Call of Jesus Ministries | Worship Songs, Lyrics, Chords & Sermons",
+    description: "Enter the presence of God through worship and His Word. Listen to anointed sermons, explore worship songs with lyrics, chords & guitar tabs in English & Hindi — a spiritual home for every believer.",
     images: [
       {
         url: 'https://callofjesus.in/images/og-image.png',
@@ -47,8 +47,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'COJ | Call of Jesus Ministries - Worship Songs & Chords',
-    description: 'Free Christian worship songs with lyrics, chords in English & Hindi.',
+    title: 'Call of Jesus Ministries | Worship Songs, Lyrics, Chords & Sermons',
+    description: 'Enter the presence of God through worship and His Word. Anointed sermons, worship songs, lyrics & chords in English & Hindi.',
     images: ['https://callofjesus.in/images/og-image.png'],
   },
   icons: {
