@@ -22,6 +22,7 @@ const GUITAR_TYPE_LABELS: Record<GuitarType, { name: string; sub: string }> = {
 const GUITAR_TYPES: GuitarType[] = ['acoustic', 'electric', 'bass4', 'bass5'];
 
 export default function TunerPage() {
+    const [hasStarted, setHasStarted] = useState(false);
     const [isListening, setIsListening] = useState(false);
     const [autoMode, setAutoMode] = useState(true);
     const [guitarType, setGuitarType] = useState<GuitarType>('acoustic');
@@ -96,10 +97,15 @@ export default function TunerPage() {
         } catch { /* Mic denied */ }
     }, [autoMode, strings]);
 
+    // Clean up on unmount
     useEffect(() => {
-        startListening();
         return () => stopListening();
-    }, [startListening, stopListening]);
+    }, [stopListening]);
+
+    const handleStart = () => {
+        setHasStarted(true);
+        startListening();
+    };
 
     // UI State Helpers
     const isTuned = pitch ? Math.abs(pitch.cents) <= 4 : false;
@@ -150,7 +156,19 @@ export default function TunerPage() {
                     {/* Inner Frosted Glass */}
                     <div className="absolute inset-4 rounded-full bg-[#12121A]/60 backdrop-blur-xl border border-white/5 shadow-inner flex flex-col items-center justify-center overflow-hidden">
                         
-                        {/* Dial Markings */}
+                        {!hasStarted ? (
+                            <button 
+                                onClick={handleStart}
+                                className="z-20 flex flex-col items-center justify-center gap-4 w-full h-full hover:bg-white/5 transition-colors group"
+                            >
+                                <div className="p-4 rounded-full bg-amber-500/20 text-amber-500 group-hover:scale-110 transition-transform">
+                                    <Mic className="w-8 h-8" />
+                                </div>
+                                <span className="font-bold tracking-widest uppercase text-sm text-amber-500">Tap to Start</span>
+                            </button>
+                        ) : (
+                            <>
+                                {/* Dial Markings */}
                         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-1 h-3 bg-amber-500 rounded-full" />
                         <div className="absolute top-8 left-8 w-0.5 h-2 bg-white/20 -rotate-45" />
                         <div className="absolute top-8 right-8 w-0.5 h-2 bg-white/20 rotate-45" />
@@ -182,7 +200,8 @@ export default function TunerPage() {
                                 </div>
                             )}
                         </div>
-
+                            </>
+                        )}
                     </div>
                 </div>
 
