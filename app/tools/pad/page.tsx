@@ -228,21 +228,21 @@ export default function PadPage() {
                     )}
                 </div>
 
-                {/* Main Dock Bar */}
-                <div className="grid grid-cols-[40px_minmax(0,1fr)_40px] items-center gap-1 bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-full overflow-hidden">
+                {/* Main Dock Bar — single row, everything INSIDE one pill */}
+                <div className="flex items-center bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-full overflow-hidden">
                     
                     {/* Left: Engine Config */}
                     <button 
                         onClick={() => setShowSoundEditor(true)}
-                        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10 transition-colors"
+                        className="flex-shrink-0 flex items-center justify-center w-12 h-12 hover:bg-white/10 transition-colors rounded-full"
                     >
                         <Settings2 className="w-5 h-5 text-amber-500" />
                     </button>
 
                     {/* Center: Presets Navigator */}
-                    <div className="flex items-center justify-between bg-black/40 rounded-full p-1 border border-white/5 min-w-0 w-full overflow-hidden">
-                        <button onClick={prevPreset} className="p-1 sm:p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white flex-shrink-0">
-                            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <div className="flex-1 flex items-center justify-between bg-black/40 rounded-full p-1 border border-white/5 min-w-0 overflow-hidden mx-1">
+                        <button onClick={prevPreset} className="p-1.5 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white flex-shrink-0">
+                            <ChevronLeft className="w-4 h-4" />
                         </button>
                         
                         <button 
@@ -250,16 +250,16 @@ export default function PadPage() {
                                 setShowPresets(!showPresets);
                                 setShowVolume(false);
                             }}
-                            className="flex-1 flex items-center justify-center gap-1 sm:gap-2 px-1 sm:px-4 py-1.5 sm:py-2 min-w-0 group"
+                            className="flex-1 flex items-center justify-center gap-1 px-1 py-1.5 min-w-0 group"
                         >
                             <span className="font-bold text-[11px] sm:text-sm tracking-wide text-white group-hover:text-amber-400 transition-colors truncate">
                                 {PAD_PRESET_LABELS[preset]}
                             </span>
-                            <ChevronUp className={`w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-white/40 transition-transform ${showPresets ? 'rotate-180' : ''}`} />
+                            <ChevronUp className={`w-3 h-3 flex-shrink-0 text-white/40 transition-transform ${showPresets ? 'rotate-180' : ''}`} />
                         </button>
 
-                        <button onClick={nextPreset} className="p-1 sm:p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white flex-shrink-0">
-                            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <button onClick={nextPreset} className="p-1.5 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white flex-shrink-0">
+                            <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>
 
@@ -269,7 +269,7 @@ export default function PadPage() {
                             setShowVolume(!showVolume);
                             setShowPresets(false);
                         }}
-                        className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
+                        className={`flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
                     >
                         <Volume2 className="w-5 h-5 text-amber-500" />
                     </button>
