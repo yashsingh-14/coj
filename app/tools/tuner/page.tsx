@@ -279,11 +279,11 @@ export default function TunerPage() {
             </div>
 
             {/* Floating Bottom Dock */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
+            <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md">
                 
                 {/* Presets Menu Popup */}
                 {showGuitarPicker && (
-                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full bg-[#12121A]/95 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-in slide-in-from-bottom-4">
+                    <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-full bg-[#12121A]/95 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-in slide-in-from-bottom-4">
                         <div className="px-5 py-3 border-b border-white/5 bg-white/5">
                             <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Select Instrument</span>
                         </div>
@@ -305,29 +305,26 @@ export default function TunerPage() {
                 )}
 
                 {/* Main Dock Bar */}
-                <div className="flex items-center justify-between bg-[#1A1A24]/80 backdrop-blur-2xl border border-white/10 px-2 py-2 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
+                <div className="grid grid-cols-[minmax(0,1fr)_1px_auto] items-center gap-0 bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-full overflow-hidden">
                     
                     {/* Guitar Selector */}
                     <button 
                         onClick={() => setShowGuitarPicker(!showGuitarPicker)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full hover:bg-white/5 transition-colors group"
+                        className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-full hover:bg-white/5 transition-colors group min-w-0 overflow-hidden"
                     >
                         <span className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate">
                             {GUITAR_TYPE_LABELS[guitarType].name}
                         </span>
-                        <ChevronUp className={`w-4 h-4 text-white/40 transition-transform flex-shrink-0 ${showGuitarPicker ? 'rotate-180' : ''}`} />
+                        <ChevronUp className={`w-4 h-4 text-white/40 transition-transform shrink-0 ${showGuitarPicker ? 'rotate-180' : ''}`} />
                     </button>
 
-                    <div className="w-px h-8 bg-white/10 mx-2" />
+                    <div className="w-px h-8 bg-white/10" />
 
                     {/* Auto Toggle */}
                     <button 
                         onClick={() => setAutoMode(!autoMode)}
-                        className={`flex items-center gap-3 px-6 py-3 rounded-full transition-colors ${autoMode ? 'bg-amber-500/10 text-amber-400' : 'hover:bg-white/5 text-white/40'}`}
+                        className={`flex items-center gap-2 px-3 py-2.5 rounded-full transition-colors shrink-0 ${autoMode ? 'bg-amber-500/10 text-amber-400' : 'hover:bg-white/5 text-white/40'}`}
                     >
-                        <span className="text-xs font-black tracking-widest uppercase hidden sm:block">
-                            {autoMode ? 'AUTO ON' : 'AUTO OFF'}
-                        </span>
                         <div className={`w-10 h-5 rounded-full transition-colors relative flex items-center shadow-inner ${autoMode ? 'bg-amber-500/40' : 'bg-black/40 border border-white/10'}`}>
                             <div className={`w-4 h-4 rounded-full bg-white shadow-md absolute transition-transform ${autoMode ? 'translate-x-5' : 'translate-x-1'}`} />
                         </div>

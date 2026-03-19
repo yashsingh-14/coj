@@ -181,7 +181,7 @@ export default function PadPage() {
             </div>
 
             {/* Floating Bottom Dock */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-2xl px-2">
+            <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-lg">
                 
                 {/* Popups anchoring to dock */}
                 <div className="relative w-full">
@@ -229,14 +229,14 @@ export default function PadPage() {
                 </div>
 
                 {/* Main Dock Bar */}
-                <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1 sm:gap-2 bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 p-1.5 sm:px-3 sm:py-2 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-[95%] sm:w-full mx-auto">
+                <div className="grid grid-cols-[40px_minmax(0,1fr)_40px] items-center gap-1 bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-full overflow-hidden">
                     
                     {/* Left: Engine Config */}
                     <button 
                         onClick={() => setShowSoundEditor(true)}
-                        className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full hover:bg-white/10 transition-colors text-white/70 hover:text-white shrink-0"
+                        className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10 transition-colors"
                     >
-                        <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                        <Settings2 className="w-5 h-5 text-amber-500" />
                     </button>
 
                     {/* Center: Presets Navigator */}
@@ -269,9 +269,9 @@ export default function PadPage() {
                             setShowVolume(!showVolume);
                             setShowPresets(false);
                         }}
-                        className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
+                        className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
                     >
-                        <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                        <Volume2 className="w-5 h-5 text-amber-500" />
                     </button>
                 </div>
             </div>
