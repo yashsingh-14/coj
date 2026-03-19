@@ -229,20 +229,19 @@ export default function PadPage() {
                 </div>
 
                 {/* Main Dock Bar */}
-                <div className="flex items-center justify-between bg-[#1A1A24]/80 backdrop-blur-2xl border border-white/10 px-2 py-2 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
+                <div className="flex items-center justify-between bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 p-2 sm:px-3 sm:py-2 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
                     
                     {/* Left: Engine Config */}
                     <button 
                         onClick={() => setShowSoundEditor(true)}
-                        className="flex items-center gap-2 px-4 py-3 rounded-full hover:bg-white/10 transition-colors text-white/70 hover:text-white"
+                        className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full hover:bg-white/10 transition-colors text-white/70 hover:text-white"
                     >
                         <Settings2 className="w-5 h-5 text-amber-500" />
-                        <span className="text-xs font-bold hidden sm:block">ENGINE</span>
                     </button>
 
                     {/* Center: Presets Navigator */}
-                    <div className="flex items-center bg-black/40 rounded-full p-1 border border-white/5">
-                        <button onClick={prevPreset} className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white">
+                    <div className="flex-1 flex items-center justify-between bg-black/40 rounded-full p-1 border border-white/5 mx-1 sm:mx-2 min-w-0">
+                        <button onClick={prevPreset} className="flex-shrink-0 p-2 sm:p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white">
                             <ChevronLeft className="w-5 h-5" />
                         </button>
                         
@@ -251,13 +250,15 @@ export default function PadPage() {
                                 setShowPresets(!showPresets);
                                 setShowVolume(false);
                             }}
-                            className="flex items-center justify-center gap-2 px-6 py-2 min-w[140px] transition-colors group"
+                            className="flex-1 flex items-center justify-center gap-1 sm:gap-2 px-1 sm:px-4 py-2 min-w-0 transition-colors group"
                         >
-                            <span className="font-black text-sm tracking-wide text-white group-hover:text-amber-400 transition-colors">{PAD_PRESET_LABELS[preset]}</span>
-                            <ChevronUp className={`w-4 h-4 text-white/40 transition-transform ${showPresets ? 'rotate-180' : ''}`} />
+                            <span className="font-black text-xs sm:text-sm tracking-wide text-white group-hover:text-amber-400 transition-colors truncate">
+                                {PAD_PRESET_LABELS[preset]}
+                            </span>
+                            <ChevronUp className={`w-3.5 h-3.5 flex-shrink-0 text-white/40 transition-transform ${showPresets ? 'rotate-180' : ''}`} />
                         </button>
 
-                        <button onClick={nextPreset} className="p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white">
+                        <button onClick={nextPreset} className="flex-shrink-0 p-2 sm:p-3 rounded-full hover:bg-white/10 transition-colors text-white/50 hover:text-white">
                             <ChevronRight className="w-5 h-5" />
                         </button>
                     </div>
@@ -268,10 +269,9 @@ export default function PadPage() {
                             setShowVolume(!showVolume);
                             setShowPresets(false);
                         }}
-                        className={`flex items-center gap-2 px-4 py-3 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
+                        className={`flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full transition-colors ${showVolume ? 'bg-white/10 text-white' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
                     >
                         <Volume2 className="w-5 h-5 text-amber-500" />
-                        <span className="text-xs font-bold hidden sm:block">VOL</span>
                     </button>
                 </div>
             </div>
