@@ -4,11 +4,11 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
 const apiKey = process.env.OPENAI_API_KEY;
-const isOpenRouter = apiKey?.startsWith('sk-or-');
+const baseURL = process.env.OPENAI_BASE_URL;
 
 const openai = new OpenAI({
     apiKey: apiKey,
-    baseURL: isOpenRouter ? 'https://openrouter.ai/api/v1' : undefined,
+    baseURL: baseURL,
 });
 
 // Rate Limiting Setup
@@ -24,7 +24,8 @@ const ratelimit = new Ratelimit({
 
 export async function POST(req: Request) {
     try {
-        // Rate Limiting Check
+        /* 
+        // Rate Limiting Check - Disabled because Upstash Redis instance is dead/unresolved
         const identifier = req.headers.get('x-forwarded-for') ?? 'anonymous';
         const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
 
@@ -42,6 +43,7 @@ export async function POST(req: Request) {
         }
 
         console.log(`Rate limit OK: ${remaining}/${limit} remaining`);
+        */
 
         // Input Validation
         const body = await req.json();
@@ -69,19 +71,19 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Server API Key missing. Did you restart the server?' }, { status: 500 });
         }
 
-        console.log("API Key present:", process.env.OPENAI_API_KEY.substring(0, 10) + "...");
-        console.log("Provider:", isOpenRouter ? "OpenRouter" : "Standard OpenAI");
-
         // Model Selection Logic
         let model = 'gpt-4o-mini'; // Default fallback
-        if (isOpenRouter) {
+        if (baseURL?.includes('bytez')) {
             if (useHighAccuracy) {
-                // Paid, Search-enabled model
-                model = 'perplexity/sonar';
+                model = 'openai/gpt-4o';
             } else {
-                // Free/Cheap model
-                // Reverting to Gemini Flash as Llama was too slow/inaccurate for Hindi
-                model = 'google/gemini-2.0-flash-exp:free';
+                model = 'openai/gpt-4o-mini';
+            }
+        } else if (baseURL?.includes('openrouter')) {
+            if (useHighAccuracy) {
+                model = 'deepseek/deepseek-chat:free';
+            } else {
+                model = 'google/gemini-2.0-flash-lite-preview-02-05:free';
             }
         }
 
@@ -141,8 +143,7 @@ export async function POST(req: Request) {
     [Do NOT leave this empty.]
     `;
 
-        console.log("Sending request to AI with PLAIN TEXT prompt (v5)...");
-
+        console.log(`Sending request to API (${model})...`);
         const completion = await openai.chat.completions.create({
             messages: [
                 { role: 'system', content: 'You are a precise data extractor. Output formatted plain text as requested.' },
@@ -154,15 +155,15 @@ export async function POST(req: Request) {
             temperature: 0.1,
             max_tokens: 4000,
         }, {
-            headers: isOpenRouter ? {
+            headers: baseURL?.includes('openrouter') ? {
                 "HTTP-Referer": "https://localhost:3000",
                 "X-Title": "LocalDev"
             } : undefined
         });
 
-        console.log("AI Response received.");
         const content = completion.choices[0].message.content;
 
+        console.log("AI Response received.");
         if (!content) throw new Error('No content received from AI');
 
         console.log("Raw Content (first 200 chars):", content.substring(0, 200) + "...");
