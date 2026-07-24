@@ -678,21 +678,20 @@ export default function HomeUtilityContent({
 
                     {/* Bottom Bar */}
                     <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="flex flex-col md:flex-row items-center gap-1 md:gap-4 text-xs text-white/30">
-                            <p>© 2026 Call of Jesus Ministries.</p>
-                            <span className="hidden md:block w-px h-3 bg-white/20"></span>
-                            <div className="flex items-center gap-1">
-                                <span>Developed by</span>
-                                <a href="https://www.instagram.com/yash.singh_1401/" target="_blank" rel="noopener noreferrer" className="relative group cursor-pointer">
-                                    <span className="group-hover:text-amber-500 transition-colors">Yash Singh</span>
+                        <div className="flex items-center text-xs text-white/30">
+                            <p>
+                                © 2026{" "}
+                                <span className="relative group cursor-default inline-block">
+                                    <span className="group-hover:text-amber-500 transition-colors">Call of Jesus Ministries</span>
                                     {/* Golden Shiny Line - Sunlight Reflection Effect */}
                                     <div className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-[#FFD700]/10 overflow-hidden rounded-full">
                                         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
                                             <div className="button-shine-overlay opacity-90"></div>
                                         </div>
                                     </div>
-                                </a>
-                            </div>
+                                </span>
+                                .
+                            </p>
                         </div>
                         <div className="flex gap-6">
                             <Link href="/privacy" className="text-xs text-white/20 hover:text-white/60 transition-colors">Privacy Policy</Link>
