@@ -10,77 +10,92 @@ export function useFuzzySearch() {
     const [allSongs, setAllSongs] = useState<Song[]>([]);
     const [isIndexReady, setIsIndexReady] = useState(false);
 
-    // Fetch the search index (lightweight) only once on mount
+    // Fetch the search index (lightweight metadata) only once on mount
     useEffect(() => {
+        let isMounted = true;
         const fetchSearchIndex = async () => {
             try {
-                // Fetch necessary fields for indexing + display in search list
-                // We fetch 'img' too if needed for basic display, or we fetch details on click. 
-                // Let's fetch enough to render the card: id, title, artist, category, img (if available)
+                // Fetch only necessary lightweight fields for search to avoid heavy payload
                 const { data, error } = await supabase
                     .from('songs')
-                    .select('*');
+                    .select('id, title, artist, category, img, tags, is_featured')
+                    .order('title', { ascending: true });
 
-                if (error) throw error;
+                if (error) {
+                    console.error("Failed to load search index from Supabase:", error);
+                }
 
-                if (data) {
+                if (isMounted && data) {
                     setAllSongs(data as Song[]);
-                    setIsIndexReady(true);
                 }
             } catch (err) {
                 console.error("Failed to load search index:", err);
+            } finally {
+                if (isMounted) {
+                    setIsIndexReady(true);
+                }
             }
         };
 
         fetchSearchIndex();
+        return () => { isMounted = false; };
     }, []);
 
     // Initialize Fuse instance with memoization
     const fuse = useMemo(() => {
-        if (!isIndexReady) return null;
+        if (!allSongs || allSongs.length === 0) return null;
 
         return new Fuse(allSongs, {
             keys: [
                 { name: 'title', weight: 0.7 },
                 { name: 'artist', weight: 0.5 },
-                { name: 'category', weight: 0.3 }
+                { name: 'category', weight: 0.3 },
+                { name: 'tags', weight: 0.2 }
             ],
             threshold: 0.4, // Allows typos (0.0 = exact, 1.0 = match anything)
-            distance: 100,   // How close the match must be to the query location
+            distance: 100,
             includeScore: true,
         });
-    }, [allSongs, isIndexReady]);
+    }, [allSongs]);
 
     // Perform Search
     useEffect(() => {
-        if (!query.trim()) {
+        const trimmed = query.trim();
+        if (!trimmed) {
             setResults([]);
             setLoading(false);
             return;
         }
 
-        if (!fuse) {
-            setLoading(true); // Index loading
-            return;
-        }
-
         setLoading(true);
-        // Debounce slightly to avoid heavy UI updates on every key, 
-        // though Fuse is fast enough for <10k items.
+
         const timer = setTimeout(() => {
-            const fuseResults = fuse.search(query);
-            const items = fuseResults.map(result => result.item);
-            setResults(items.slice(0, 50)); // Limit to 50 results
+            if (fuse) {
+                const fuseResults = fuse.search(trimmed);
+                const items = fuseResults.map(result => result.item);
+                setResults(items.slice(0, 50));
+            } else if (allSongs.length > 0) {
+                // Substring fallback while/if Fuse isn't initialized
+                const q = trimmed.toLowerCase();
+                const matched = allSongs.filter(s =>
+                    s.title?.toLowerCase().includes(q) ||
+                    s.artist?.toLowerCase().includes(q) ||
+                    s.category?.toLowerCase().includes(q)
+                );
+                setResults(matched.slice(0, 50));
+            } else {
+                setResults([]);
+            }
             setLoading(false);
-        }, 150);
+        }, 120);
 
         return () => clearTimeout(timer);
-    }, [query, fuse]);
+    }, [query, fuse, allSongs]);
 
     return {
         query,
         setQuery,
         results,
-        loading: loading || (!isIndexReady && query.length > 0)
+        loading: loading || (!isIndexReady && query.trim().length > 0 && allSongs.length === 0)
     };
 }

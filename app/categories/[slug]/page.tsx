@@ -52,8 +52,8 @@ export default function CategoryDetailPage() {
         const fetchCategorySongs = async () => {
             setIsLoading(true);
 
-            // 1. Fetch ALL songs (Client-side filtering is safer for mixed data)
-            const { data, error } = await supabase.from('songs').select('*');
+            // 1. Fetch ALL songs (lightweight metadata)
+            const { data, error } = await supabase.from('songs').select('id, title, artist, category, img, is_featured, hindi_lyrics');
 
             if (data) {
                 let filteredSongs = data;

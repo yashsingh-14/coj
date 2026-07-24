@@ -20,7 +20,7 @@ export default function SongsListPage() {
         const fetchSongs = async () => {
             const { data, error } = await supabase
                 .from('songs')
-                .select('*')
+                .select('id, title, artist, category, img, is_featured')
                 .order('title', { ascending: true });
 
             if (error) {
@@ -42,7 +42,7 @@ export default function SongsListPage() {
     );
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white pb-32 overflow-x-hidden selection:bg-[var(--brand)] selection:text-white">
+        <div className="min-h-screen bg-[#02000F] text-white pb-36 md:pb-32 overflow-x-hidden selection:bg-[var(--brand)] selection:text-white">
 
             {/* AMBIENT BACKGROUND */}
             <div className="fixed inset-0 pointer-events-none">
