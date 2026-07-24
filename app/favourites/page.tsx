@@ -8,11 +8,12 @@ import { useAppStore } from '@/store/useAppStore';
 import { getSongImage } from '@/lib/utils';
 import { generateSlug } from '@/lib/seoUtils';
 import { Song } from '@/data/types';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function FavouritesPage() {
     const { currentUser, isAuthenticated } = useAppStore();
     const router = useRouter();
+    const pathname = usePathname();
     const [favourites, setFavourites] = useState<Song[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -24,13 +25,19 @@ export default function FavouritesPage() {
     }, [isAuthenticated, loading, router]);
 
     useEffect(() => {
+        let isMounted = true;
         async function fetchFavourites() {
             if (!currentUser?.id) {
-                setLoading(false);
+                if (isMounted) {
+                    setFavourites([]);
+                    setLoading(false);
+                }
                 return;
             }
 
             try {
+                if (isMounted) setLoading(true);
+
                 // 1. Fetch song_ids from favourites table
                 const { data: favData, error: favError } = await supabase
                     .from('favourites')
@@ -39,42 +46,41 @@ export default function FavouritesPage() {
 
                 if (favError) {
                     console.error('Error fetching favourites:', favError);
-                    setLoading(false);
+                    if (isMounted) setFavourites([]);
                     return;
                 }
 
                 if (!favData || favData.length === 0) {
-                    setFavourites([]);
-                    setLoading(false);
+                    if (isMounted) setFavourites([]);
                     return;
                 }
 
                 // 2. Extract IDs
                 const songIds = favData.map(f => f.song_id);
 
-                // 3. Fetch actual song details
+                // 3. Fetch actual song details (lightweight metadata)
                 const { data: songsData, error: songsError } = await supabase
                     .from('songs')
-                    .select('*')
+                    .select('id, title, artist, category, img, is_featured')
                     .in('id', songIds);
 
                 if (songsError) {
                     console.error('Error fetching songs:', songsError);
                 }
 
-                if (songsData) {
+                if (isMounted && songsData) {
                     setFavourites(songsData);
                 }
-
             } catch (err) {
                 console.error('Unexpected error:', err);
             } finally {
-                setLoading(false);
+                if (isMounted) setLoading(false);
             }
         }
 
         fetchFavourites();
-    }, [currentUser]);
+        return () => { isMounted = false; };
+    }, [currentUser?.id, pathname]);
 
     if (loading) {
         return (

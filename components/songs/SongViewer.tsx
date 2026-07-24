@@ -73,25 +73,46 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
         };
     }, [isAutoScrolling, scrollSpeed]);
 
-    // Check Status on Mount
+    // Check Status on Mount & when songId or currentUser changes
     useEffect(() => {
+        let isMounted = true;
+
         async function checkStatus() {
             if (!currentUser) {
-                setIsCheckingFav(false);
+                if (isMounted) {
+                    setIsFavourite(false);
+                    setIsCheckingFav(false);
+                }
                 return;
-            };
+            }
 
-            const { data } = await supabase
-                .from('favourites')
-                .select('id')
-                .eq('user_id', currentUser.id)
-                .eq('song_id', songId)
-                .maybeSingle();
+            if (isMounted) setIsCheckingFav(true);
 
-            if (data) setIsFavourite(true);
-            setIsCheckingFav(false);
+            try {
+                const { data, error } = await supabase
+                    .from('favourites')
+                    .select('id')
+                    .eq('user_id', currentUser.id)
+                    .eq('song_id', songId)
+                    .maybeSingle();
+
+                if (error) {
+                    console.error('Error checking favourite status:', error);
+                }
+
+                if (isMounted) {
+                    setIsFavourite(!!data);
+                }
+            } catch (err) {
+                console.error('Error checking favourite status:', err);
+                if (isMounted) setIsFavourite(false);
+            } finally {
+                if (isMounted) setIsCheckingFav(false);
+            }
         }
+
         checkStatus();
+        return () => { isMounted = false; };
     }, [currentUser, songId]);
 
     const handleToggleFavourite = async () => {
@@ -102,7 +123,8 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
         // Optimistic Update
         const previousState = isFavourite;
-        setIsFavourite(!previousState);
+        const newState = !previousState;
+        setIsFavourite(newState);
 
         try {
             if (previousState) {
@@ -127,9 +149,9 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                 if (error) throw error;
                 toast.success("Added to favourites");
             }
-        } catch (error) {
-            console.error(error);
-            toast.error("Action failed");
+        } catch (error: any) {
+            console.error("Toggle favourite error:", error);
+            toast.error(error?.message || "Action failed");
             setIsFavourite(previousState); // Revert
         }
     };
