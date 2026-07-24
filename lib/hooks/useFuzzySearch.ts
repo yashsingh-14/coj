@@ -18,7 +18,7 @@ export function useFuzzySearch() {
                 // Fetch only necessary lightweight fields for search to avoid heavy payload
                 const { data, error } = await supabase
                     .from('songs')
-                    .select('id, title, artist, category, img, tags, is_featured')
+                    .select('id, title, artist, category, img, is_featured')
                     .order('title', { ascending: true });
 
                 if (error) {
@@ -49,8 +49,7 @@ export function useFuzzySearch() {
             keys: [
                 { name: 'title', weight: 0.7 },
                 { name: 'artist', weight: 0.5 },
-                { name: 'category', weight: 0.3 },
-                { name: 'tags', weight: 0.2 }
+                { name: 'category', weight: 0.3 }
             ],
             threshold: 0.4, // Allows typos (0.0 = exact, 1.0 = match anything)
             distance: 100,
