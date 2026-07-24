@@ -35,10 +35,10 @@ export default function HomeManager({ initialData }: {
     }, [mode]);
 
     return (
-        <div className="relative w-full min-h-screen overflow-hidden bg-[var(--background)]">
+        <div className="relative w-full bg-[var(--background)]">
             {showExperience && (
                 <div
-                    className="absolute inset-0 z-10 transition-opacity duration-1000 ease-in-out"
+                    className="fixed inset-0 z-20 transition-opacity duration-1000 ease-in-out bg-[var(--background)] overflow-hidden"
                     style={{ opacity: mode === 'EXPERIENCE' ? 1 : 0, pointerEvents: mode === 'EXPERIENCE' ? 'auto' : 'none' }}
                 >
                     <HeroCanvas />
@@ -48,7 +48,7 @@ export default function HomeManager({ initialData }: {
 
             {/* Utility Mode Content */}
             <div
-                className={`absolute inset-0 w-full min-h-screen bg-[var(--background)] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 overflow-y-auto pointer-events-auto' : 'opacity-0 overflow-hidden pointer-events-none'
+                className={`w-full min-h-screen bg-[var(--background)] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none h-screen overflow-hidden'
                     }`}
             >
                 <HomeUtilityContent
