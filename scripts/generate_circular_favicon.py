@@ -125,10 +125,13 @@ def main():
     create_clean_favicon(MASKABLE_ICON, os.path.join(APP_DIR, "apple-icon.png"), 180)
     
     print("[4/5] icon-512.png (PWA)...")
-    create_circular_from_maskable(MASKABLE_ICON, os.path.join(PUBLIC_IMAGES, "icon-512.png"), 512)
+    create_clean_favicon(MASKABLE_ICON, os.path.join(PUBLIC_IMAGES, "icon-512.png"), 512)
     
     print("[5/5] logo-footer-final.png...")
     create_clean_favicon(MASKABLE_ICON, os.path.join(PUBLIC_IMAGES, "logo-footer-final.png"), 512)
+    
+    print("[6/6] icon-maskable.png...")
+    create_clean_favicon(MASKABLE_ICON, os.path.join(PUBLIC_IMAGES, "icon-maskable.png"), 512)
     
     print("\nDone!")
 
