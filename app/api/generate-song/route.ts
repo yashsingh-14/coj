@@ -3,13 +3,55 @@ import OpenAI from 'openai';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
-const apiKey = process.env.OPENAI_API_KEY;
-const baseURL = process.env.OPENAI_BASE_URL;
+// ── Provider Configuration ──
+// Priority: NVIDIA Nemotron > OpenRouter > Direct OpenAI
+function getAIClient() {
+    const nvidiaKey = process.env.NVIDIA_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
+    const openaiBaseURL = process.env.OPENAI_BASE_URL;
 
-const openai = new OpenAI({
-    apiKey: apiKey,
-    baseURL: baseURL,
-});
+    if (nvidiaKey) {
+        return {
+            client: new OpenAI({
+                apiKey: nvidiaKey,
+                baseURL: 'https://integrate.api.nvidia.com/v1',
+            }),
+            provider: 'nvidia' as const,
+        };
+    }
+
+    if (openaiKey) {
+        return {
+            client: new OpenAI({
+                apiKey: openaiKey,
+                baseURL: openaiBaseURL,
+            }),
+            provider: (openaiBaseURL?.includes('openrouter') ? 'openrouter' :
+                       openaiBaseURL?.includes('bytez') ? 'bytez' : 'openai') as const,
+        };
+    }
+
+    return null;
+}
+
+// ── Model Selection per Provider ──
+function getModel(provider: string, useHighAccuracy: boolean): string {
+    switch (provider) {
+        case 'nvidia':
+            // Nemotron 3 Ultra 550B for high accuracy, Super 120B for speed
+            return useHighAccuracy
+                ? 'nvidia/nemotron-3-ultra-550b-a55b'
+                : 'nvidia/nemotron-3-super-120b-a12b';
+        case 'openrouter':
+            return useHighAccuracy
+                ? 'deepseek/deepseek-chat:free'
+                : 'google/gemini-2.0-flash-lite-preview-02-05:free';
+        case 'bytez':
+            return useHighAccuracy ? 'openai/gpt-4o' : 'openai/gpt-4o-mini';
+        default:
+            return useHighAccuracy ? 'gpt-4o' : 'gpt-4o-mini';
+    }
+}
 
 // Rate Limiting Setup
 const redis = Redis.fromEnv();
@@ -66,28 +108,17 @@ export async function POST(req: Request) {
         const { songName, artist, useHighAccuracy } = validationResult.data;
         console.log("Request for:", songName, artist || "(No Artist)", "High Accuracy:", useHighAccuracy);
 
-        if (!process.env.OPENAI_API_KEY) {
-            console.error("CRITICAL ERROR: OPENAI_API_KEY is missing in process.env");
-            return NextResponse.json({ error: 'Server API Key missing. Did you restart the server?' }, { status: 500 });
+        // ── Get AI Client ──
+        const aiSetup = getAIClient();
+        if (!aiSetup) {
+            console.error("CRITICAL ERROR: No AI API key found (checked NVIDIA_API_KEY and OPENAI_API_KEY)");
+            return NextResponse.json({ error: 'Server API Key missing. Set NVIDIA_API_KEY or OPENAI_API_KEY.' }, { status: 500 });
         }
 
-        // Model Selection Logic
-        let model = 'gpt-4o-mini'; // Default fallback
-        if (baseURL?.includes('bytez')) {
-            if (useHighAccuracy) {
-                model = 'openai/gpt-4o';
-            } else {
-                model = 'openai/gpt-4o-mini';
-            }
-        } else if (baseURL?.includes('openrouter')) {
-            if (useHighAccuracy) {
-                model = 'deepseek/deepseek-chat:free';
-            } else {
-                model = 'google/gemini-2.0-flash-lite-preview-02-05:free';
-            }
-        }
+        const { client, provider } = aiSetup;
+        const model = getModel(provider, useHighAccuracy);
 
-        console.log("Selected Model:", model);
+        console.log(`🚀 Provider: ${provider.toUpperCase()} | Model: ${model} | High Accuracy: ${useHighAccuracy}`);
 
         const prompt = `
     Role: You are an expert Music Database and Worship Leader Assistant.
@@ -143,19 +174,17 @@ export async function POST(req: Request) {
     [Do NOT leave this empty.]
     `;
 
-        console.log(`Sending request to API (${model})...`);
-        const completion = await openai.chat.completions.create({
+        console.log(`Sending request to ${provider.toUpperCase()} API (${model})...`);
+        const completion = await client.chat.completions.create({
             messages: [
                 { role: 'system', content: 'You are a precise data extractor. Output formatted plain text as requested.' },
                 { role: 'user', content: prompt }
             ],
-            // Use selected model
             model: model,
-            // no response_format needed for text
             temperature: 0.1,
             max_tokens: 4000,
         }, {
-            headers: baseURL?.includes('openrouter') ? {
+            headers: provider === 'openrouter' ? {
                 "HTTP-Referer": "https://localhost:3000",
                 "X-Title": "LocalDev"
             } : undefined
@@ -163,7 +192,7 @@ export async function POST(req: Request) {
 
         const content = completion.choices[0].message.content;
 
-        console.log("AI Response received.");
+        console.log(`✅ AI Response received from ${provider.toUpperCase()}.`);
         if (!content) throw new Error('No content received from AI');
 
         console.log("Raw Content (first 200 chars):", content.substring(0, 200) + "...");
@@ -222,7 +251,7 @@ export async function POST(req: Request) {
 
         // Handle specific errors
         if (error.message?.includes('API') || error.message?.includes('network')) {
-            const apiError = new ExternalAPIError('OpenRouter/OpenAI', error.message);
+            const apiError = new ExternalAPIError('NVIDIA/OpenRouter/OpenAI', error.message);
             const errorInfo = handleError(apiError);
             return NextResponse.json(
                 { error: errorInfo.userMessage, details: errorInfo.message },

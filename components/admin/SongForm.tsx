@@ -362,7 +362,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                                 className="w-4 h-4 rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500/50"
                                             />
                                             <span className={`text-xs font-bold uppercase tracking-wider ${useHighAccuracy ? 'text-indigo-400' : 'text-white/30 group-hover:text-white/50'} transition-colors`}>
-                                                High Accuracy (Paid)
+                                                High Accuracy (Nemotron Ultra 550B)
                                             </span>
                                         </label>
                                     </div>
