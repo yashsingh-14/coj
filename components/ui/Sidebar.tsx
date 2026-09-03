@@ -73,7 +73,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                             <Link
                                 key={i}
                                 href={item.href}
-                                onClick={onClose}
+                                onClick={() => {
+                                    if (item.label === 'Home') {
+                                        useAppStore.getState().setMode('EXPERIENCE');
+                                    }
+                                    onClose();
+                                }}
                                 className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group ${isActive ? 'bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/30' : 'text-white/60 hover:bg-white/10 hover:text-white'}`}
                             >
                                 <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-current group-hover:scale-110 transition-transform'}`} />

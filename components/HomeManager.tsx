@@ -1,12 +1,8 @@
 'use client';
 
 import { useAppStore } from '@/store/useAppStore';
-import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import HomeUtilityContent from '@/components/home/HomeUtilityContent';
-
-// Dynamically import 3D canvas to avoid SSR issues
-const HeroCanvas = dynamic(() => import('@/components/3d/HeroCanvas'), { ssr: false });
 import ExperienceOverlay from '@/components/hero/ExperienceOverlay';
 
 export default function HomeManager({ initialData }: {
@@ -17,13 +13,17 @@ export default function HomeManager({ initialData }: {
         heroSlides: any[];
         todaysVerse: any;
         announcements: any[];
+        events?: any[];
     }
 }) {
     const mode = useAppStore(state => state.mode);
     const setMode = useAppStore(state => state.setMode);
-    const [showExperience, setShowExperience] = useState(mode === 'EXPERIENCE');
+    const [showExperience, setShowExperience] = useState(true);
 
-
+    useEffect(() => {
+        // Reset mode to EXPERIENCE whenever homepage mounts
+        setMode('EXPERIENCE');
+    }, [setMode]);
 
     useEffect(() => {
         if (mode === 'UTILITY') {
@@ -38,17 +38,15 @@ export default function HomeManager({ initialData }: {
         <div className="relative w-full bg-[var(--background)]">
             {showExperience && (
                 <div
-                    className="fixed inset-0 z-20 transition-opacity duration-1000 ease-in-out bg-[var(--background)] overflow-hidden"
-                    style={{ opacity: mode === 'EXPERIENCE' ? 1 : 0, pointerEvents: mode === 'EXPERIENCE' ? 'auto' : 'none' }}
+                    className={`relative w-full min-h-screen z-20 transition-opacity duration-1000 ease-in-out bg-[var(--background)] overflow-x-hidden ${mode === 'EXPERIENCE' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none hidden'}`}
                 >
-                    <HeroCanvas />
-                    <ExperienceOverlay />
+                    <ExperienceOverlay initialData={initialData} />
                 </div>
             )}
 
             {/* Utility Mode Content */}
             <div
-                className={`w-full min-h-screen bg-[var(--background)] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none h-screen overflow-hidden'
+                className={`w-full min-h-screen bg-[var(--background)] transition-opacity duration-1000 ease-in-out ${mode === 'UTILITY' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none hidden'
                     }`}
             >
                 <HomeUtilityContent

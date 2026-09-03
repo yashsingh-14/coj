@@ -38,11 +38,11 @@ export async function GET(request: Request) {
             try {
                 await webpush.sendNotification(sub.keys ? { endpoint: sub.endpoint, keys: sub.keys } : { endpoint: sub.endpoint, keys: sub.keys }, payload);
                 successCount++;
-            } catch (err) {
+            } catch (err: any) {
                 console.error('Failed to send to', sub.id, err);
                 failureCount++;
                 // Optional: Delete invalid subscriptions
-                if (err.statusCode === 410) {
+                if (err?.statusCode === 410) {
                     await supabase.from('push_subscriptions').delete().eq('id', sub.id);
                 }
             }

@@ -27,7 +27,7 @@ export default function SongsListPage() {
                 console.error('Error fetching songs:', error);
                 toast.error('Failed to load songs');
             } else {
-                setSongs(data || []);
+                setSongs((data || []) as unknown as Song[]);
             }
             setIsLoading(false);
         };

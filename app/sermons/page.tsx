@@ -29,7 +29,23 @@ export default function SermonsPage() {
         loadSermons();
     }, []);
 
-    // ... (rest of code)
+    const handleShare = async (video: YouTubeVideo) => {
+        const url = `https://www.youtube.com/watch?v=${video.id}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: video.title,
+                    url: url,
+                });
+            } catch (err) {
+                // Ignore AbortError if user cancelled
+            }
+        } else {
+            await navigator.clipboard.writeText(url);
+            setCopiedId(video.id);
+            setTimeout(() => setCopiedId(null), 2000);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32 overflow-hidden relative">

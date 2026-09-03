@@ -6,7 +6,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch all songs with title for slug generation
     const { data: songs, error } = await supabaseServer
         .from('songs')
-        .select('id, title, updated_at')
+        .select('id, title, created_at')
 
     if (error) {
         console.error("Sitemap Supabase Error:", error);
@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const songUrls = (songs || []).map((song) => ({
         url: `${SITE_URL}/songs/${generateSlug(song.title)}`,
-        lastModified: new Date(song.updated_at || new Date()),
+        lastModified: new Date(song.created_at || new Date()),
         changeFrequency: 'weekly' as const,
         priority: 0.8,
     }))

@@ -26,7 +26,7 @@ export function useFuzzySearch() {
                 }
 
                 if (isMounted && data) {
-                    setAllSongs(data as Song[]);
+                    setAllSongs(data as unknown as Song[]);
                 }
             } catch (err) {
                 console.error("Failed to load search index:", err);

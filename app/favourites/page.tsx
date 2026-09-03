@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, ArrowLeft, Loader2 } from 'lucide-react';
+import { Heart, ArrowLeft, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import { getSongImage } from '@/lib/utils';
 import { generateSlug } from '@/lib/seoUtils';
 import { Song } from '@/data/types';
 import { usePathname, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function FavouritesPage() {
     const { currentUser, isAuthenticated } = useAppStore();
@@ -16,19 +17,24 @@ export default function FavouritesPage() {
     const pathname = usePathname();
     const [favourites, setFavourites] = useState<Song[]>([]);
     const [loading, setLoading] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Redirect if not logged in
-        if (!isAuthenticated && !loading) {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        // Redirect if not logged in after hydration
+        if (mounted && !isAuthenticated && !loading) {
             router.push('/signin');
         }
-    }, [isAuthenticated, loading, router]);
+    }, [isAuthenticated, loading, mounted, router]);
 
     useEffect(() => {
         let isMounted = true;
         async function fetchFavourites() {
             if (!currentUser?.id) {
-                if (isMounted) {
+                if (isMounted && mounted) {
                     setFavourites([]);
                     setLoading(false);
                 }
@@ -58,10 +64,10 @@ export default function FavouritesPage() {
                 // 2. Extract IDs
                 const songIds = favData.map(f => f.song_id);
 
-                // 3. Fetch actual song details (lightweight metadata)
+                // 3. Fetch actual song details including youtube_id for thumbnail resolution
                 const { data: songsData, error: songsError } = await supabase
                     .from('songs')
-                    .select('id, title, artist, category, img, is_featured')
+                    .select('id, title, artist, category, img, youtube_id, is_featured')
                     .in('id', songIds);
 
                 if (songsError) {
@@ -69,7 +75,7 @@ export default function FavouritesPage() {
                 }
 
                 if (isMounted && songsData) {
-                    setFavourites(songsData);
+                    setFavourites(songsData as unknown as Song[]);
                 }
             } catch (err) {
                 console.error('Unexpected error:', err);
@@ -78,11 +84,33 @@ export default function FavouritesPage() {
             }
         }
 
-        fetchFavourites();
+        if (mounted) {
+            fetchFavourites();
+        }
         return () => { isMounted = false; };
-    }, [currentUser?.id, pathname]);
+    }, [currentUser?.id, pathname, mounted]);
 
-    if (loading) {
+    const handleRemoveFavourite = async (songId: string, songTitle: string) => {
+        if (!currentUser?.id) return;
+        try {
+            const { error } = await supabase
+                .from('favourites')
+                .delete()
+                .eq('user_id', currentUser.id)
+                .eq('song_id', songId);
+
+            if (error) {
+                toast.error("Failed to remove song");
+            } else {
+                setFavourites(prev => prev.filter(s => s.id !== songId));
+                toast.success(`Removed "${songTitle}" from favourites`);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    if (!mounted || loading) {
         return (
             <div className="min-h-screen bg-[#02000F] flex items-center justify-center">
                 <Loader2 className="w-10 h-10 text-[var(--brand)] animate-spin" />
@@ -125,11 +153,24 @@ export default function FavouritesPage() {
                 {favourites.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
                         {favourites.map((song, i) => (
-                            <div key={i} className="w-full relative rounded-3xl overflow-hidden bg-[#111] border border-white/10 p-4">
-                                <div className="relative w-full h-full group">
+                            <div key={i} className="w-full relative rounded-3xl overflow-hidden bg-[#111] border border-white/10 p-4 group">
+                                {/* Remove Favourite Button */}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleRemoveFavourite(song.id, song.title);
+                                    }}
+                                    className="absolute top-6 right-6 z-20 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-pink-500 hover:bg-pink-500 hover:text-white transition-all opacity-80 group-hover:opacity-100"
+                                    title="Remove from favourites"
+                                >
+                                    <Heart className="w-4 h-4 fill-pink-500 group-hover:fill-white" />
+                                </button>
+
+                                <div className="relative w-full h-full">
                                     <Link
                                         href={`/songs/${generateSlug(song.title)}`}
-                                        className="relative flex flex-col justify-end p-6 rounded-[2rem] overflow-hidden h-full"
+                                        className="relative flex flex-col justify-end p-6 rounded-[2rem] overflow-hidden h-64 w-full block"
                                     >
                                         {/* Artist Background */}
                                         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"

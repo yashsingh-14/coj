@@ -90,7 +90,7 @@ export function frequencyToNote(frequency: number): PitchResult {
  * Autocorrelation pitch detection algorithm
  * More accurate than FFT for monophonic instruments like guitar.
  */
-export function detectPitch(buffer: Float32Array<ArrayBufferLike>, sampleRate: number): number | null {
+export function detectPitch(buffer: Float32Array, sampleRate: number): number | null {
     const SIZE = buffer.length;
 
     // 1. Check if the signal is loud enough (avoid noise detection)

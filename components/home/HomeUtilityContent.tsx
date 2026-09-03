@@ -107,16 +107,22 @@ export default function HomeUtilityContent({
 
             {/* HEADER */}
             <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-4 sticky top-0 z-40 bg-[var(--background)]/80 backdrop-blur-xl border-b border-[var(--card-border)] transition-colors duration-300">
-                <div className="flex items-center gap-4 animate-fade-in-down">
+                <div className="flex items-center gap-3 md:gap-4 animate-fade-in-down">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
                         className="p-2 -ml-2 rounded-full hover:bg-[var(--foreground)]/10 transition-colors"
                     >
                         <Menu className="w-6 h-6 text-[var(--foreground)]" />
                     </button>
-                    <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--muted-foreground)]">
+                    <Link href="/worship" className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--foreground)] to-[var(--muted-foreground)]">
                         COJ<span className="text-[var(--brand)]">worship</span>
-                    </h1>
+                    </Link>
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border border-white/10 hover:border-amber-400/50 hover:bg-white/5 text-neutral-300 hover:text-white transition-all ml-2"
+                    >
+                        <span>← Church Home</span>
+                    </Link>
                 </div>
 
                 <div className="animate-fade-in-down" style={{ animationDelay: '0.1s' }}>
@@ -321,11 +327,17 @@ export default function HomeUtilityContent({
                                 <span className="absolute -bottom-8 md:-bottom-20 right-0 text-[40px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
                             </h2>
 
-                            <div className="flex flex-col items-center gap-4 md:gap-8 translate-z-10">
+                            <div className="flex flex-col items-center gap-4 md:gap-6 translate-z-10">
                                 <div className="flex items-center gap-4">
                                     <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
                                     <span className="text-[var(--chord)] font-bold tracking-[0.4em] uppercase text-sm">{todaysVerse.reference}</span>
                                     <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
+                                </div>
+
+                                {/* Ps. Samson Wilson — Prominent Attribution Badge */}
+                                <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-amber-500/15 border border-amber-400/30 backdrop-blur-md shadow-lg shadow-amber-500/10">
+                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <strong className="font-bold text-amber-300 font-serif italic text-sm md:text-base tracking-wide">Ps. Samson Wilson</strong>
                                 </div>
 
                                 <Link href="/devotional" className="group relative px-6 md:px-10 py-3 md:py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block translate-z-10">
@@ -341,10 +353,10 @@ export default function HomeUtilityContent({
                             </div>
                         </div>
 
-                        {/* Signature */}
-                        <div className="absolute bottom-8 right-10 opacity-70">
-                            <p className="text-white/60 text-xs font-serif italic tracking-widest text-right verse-text-shine">
-                                Ps. Samson Wilson
+                        {/* Signature — Bottom Right */}
+                        <div className="absolute bottom-6 right-8 md:bottom-8 md:right-10">
+                            <p className="text-amber-300/50 text-[11px] md:text-xs font-serif italic tracking-[0.15em] text-right verse-text-shine">
+                                ✦ Ps. Samson Wilson
                             </p>
                         </div>
                     </div>

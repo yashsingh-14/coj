@@ -26,8 +26,8 @@ function getAIClient() {
                 apiKey: openaiKey,
                 baseURL: openaiBaseURL,
             }),
-            provider: (openaiBaseURL?.includes('openrouter') ? 'openrouter' :
-                       openaiBaseURL?.includes('bytez') ? 'bytez' : 'openai') as const,
+            provider: openaiBaseURL?.includes('openrouter') ? 'openrouter' :
+                       openaiBaseURL?.includes('bytez') ? 'bytez' : 'openai',
         };
     }
 

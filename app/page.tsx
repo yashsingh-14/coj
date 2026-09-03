@@ -52,6 +52,12 @@ export default async function Home() {
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
+  // 7. Fetch Official Events & Gatherings
+  const { data: eventsData } = await supabaseServer
+    .from('events')
+    .select('*')
+    .order('sort_order', { ascending: true });
+
 
   const homepageJsonLd = {
     '@context': 'https://schema.org',
@@ -98,7 +104,8 @@ export default async function Home() {
         featured: featured || [],
         heroSlides: slidesData?.value || [],
         todaysVerse: verseData || null,
-        announcements: announcementsData || []
+        announcements: announcementsData || [],
+        events: eventsData || []
       }} />
     </main>
   );

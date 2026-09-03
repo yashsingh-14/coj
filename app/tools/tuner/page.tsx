@@ -74,7 +74,7 @@ export default function TunerPage() {
 
             const detect = () => {
                 if (!analyserRef.current || !bufferRef.current || !audioContextRef.current) return;
-                analyserRef.current.getFloatTimeDomainData(bufferRef.current);
+                analyserRef.current.getFloatTimeDomainData(bufferRef.current as any);
                 const freq = detectPitch(bufferRef.current, audioContextRef.current.sampleRate);
                 
                 if (freq && freq > 25 && freq < 1200) {

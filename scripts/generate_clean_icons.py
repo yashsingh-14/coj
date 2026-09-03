@@ -13,7 +13,7 @@ def make_solid_black_bg(img_path):
     bg = Image.new("RGBA", img.size, (0, 0, 0, 255))
     # Paste original image using alpha channel as mask
     bg.paste(img, (0, 0), img)
-    return bg.convert("RGB")
+    return bg
 
 def main():
     if not os.path.exists(MASKABLE_ICON):

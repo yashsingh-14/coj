@@ -91,13 +91,13 @@ export default function CategoryDetailPage() {
 
                 // 3. Filter by Language (Robust)
                 if (languageFilter === 'hindi') {
-                    filteredSongs = filteredSongs.filter(song => isHindiSong(song));
+                    filteredSongs = filteredSongs.filter(song => isHindiSong(song as unknown as Song));
                 } else if (languageFilter === 'english') {
-                    filteredSongs = filteredSongs.filter(song => !isHindiSong(song));
+                    filteredSongs = filteredSongs.filter(song => !isHindiSong(song as unknown as Song));
                 }
 
                 console.log(`Filtered [${slug}]: ${filteredSongs.length} songs`);
-                setSongs(filteredSongs);
+                setSongs(filteredSongs as unknown as Song[]);
             }
             setIsLoading(false);
         };

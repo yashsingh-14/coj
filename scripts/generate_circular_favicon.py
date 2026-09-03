@@ -16,7 +16,7 @@ def make_solid_black_bg(img_path):
     img = Image.open(img_path).convert("RGBA")
     bg = Image.new("RGBA", img.size, (0, 0, 0, 255))
     bg.paste(img, (0, 0), img)
-    return bg.convert("RGB")
+    return bg
 
 def main():
     if not os.path.exists(MASKABLE_ICON):
