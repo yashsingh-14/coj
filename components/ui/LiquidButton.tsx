@@ -12,7 +12,7 @@ export interface LiquidButtonProps {
   className?: string;
   type?: "button" | "submit" | "reset";
   size?: "sm" | "md" | "lg";
-  variant?: "glass" | "amber";
+  variant?: "glass" | "amber" | "flame" | "spirit" | "celestial";
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   ariaLabel?: string;
@@ -42,15 +42,42 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
 
   const variantClasses = {
     glass:
-      "border-white/40 hover:border-amber-400/80 bg-white/10 text-white hover:shadow-[0_0_35px_rgba(245,158,11,0.35)]",
+      "border-[#F4EDE2]/25 hover:border-[#FF5A2E]/80 bg-[#F4EDE2]/[0.05] text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.35)]",
     amber:
-      "border-amber-500/40 hover:border-amber-400 bg-amber-500/10 text-white hover:shadow-[0_0_35px_rgba(245,158,11,0.4)]",
+      "border-[#FF5A2E]/40 hover:border-[#FF5A2E] bg-[#FF5A2E]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.4)]",
+    flame:
+      "border-[#FF5A2E]/40 hover:border-[#FF5A2E] bg-[#FF5A2E]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.4)]",
+    spirit:
+      "border-[#6E5BFF]/40 hover:border-[#6E5BFF] bg-[#6E5BFF]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(110,91,255,0.4)]",
+    celestial:
+      "border-[#6E5BFF]/30 hover:border-[#FF5A2E] bg-gradient-to-r from-[#6E5BFF]/15 via-[#E11D48]/15 to-[#FF5A2E]/15 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.35)]",
   }[variant];
 
   const baseClasses = `liquid-btn group relative inline-flex items-center justify-center gap-2.5 sm:gap-3 rounded-full border font-semibold tracking-wide backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-all duration-500 active:scale-95 ${sizeClasses} ${variantClasses} ${className}`;
 
+  const waveGradientClass =
+    variant === "spirit"
+      ? "bg-gradient-to-t from-[#4936E0] via-[#6E5BFF] to-[#A78BFA] text-[#6E5BFF]"
+      : variant === "celestial"
+      ? "bg-gradient-to-t from-[#6E5BFF] via-[#E11D48] to-[#FFB37A] text-[#E11D48]"
+      : "bg-gradient-to-t from-[#C2361A] via-[#FF5A2E] to-[#FFB37A] text-[#FF5A2E]";
+
+  const waveAccentColor =
+    variant === "spirit"
+      ? "text-[#C4B5FD]"
+      : variant === "celestial"
+      ? "text-[#FFB37A]"
+      : "text-[#FFB37A]";
+
+  const iconAccentColor =
+    variant === "spirit"
+      ? "text-[#A78BFA]"
+      : variant === "celestial"
+      ? "text-[#FFB37A]"
+      : "text-[#FF5A2E]";
+
   const waveElement = (
-    <div className="liquid-water-fill bg-gradient-to-t from-amber-500 via-amber-400 to-amber-300 text-amber-300 pointer-events-none">
+    <div className={`liquid-water-fill ${waveGradientClass} pointer-events-none`}>
       <svg
         className="liquid-wave-svg liquid-wave-1"
         viewBox="0 0 120 20"
@@ -62,7 +89,7 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
         />
       </svg>
       <svg
-        className="liquid-wave-svg liquid-wave-2 text-amber-200"
+        className={`liquid-wave-svg liquid-wave-2 ${waveAccentColor}`}
         viewBox="0 0 120 20"
         preserveAspectRatio="none"
       >
@@ -78,7 +105,7 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
     <>
       {waveElement}
       {icon && iconPosition === "left" && (
-        <span className="relative z-10 text-amber-400 group-hover:text-neutral-950 transition-colors duration-300">
+        <span className={`relative z-10 ${iconAccentColor} group-hover:text-neutral-950 transition-colors duration-300`}>
           {icon}
         </span>
       )}
@@ -86,7 +113,7 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
         {children}
       </span>
       {icon && iconPosition === "right" && (
-        <span className="relative z-10 text-amber-400 group-hover:text-neutral-950 group-hover:translate-x-1 transition-all duration-300">
+        <span className={`relative z-10 ${iconAccentColor} group-hover:text-neutral-950 group-hover:translate-x-1 transition-all duration-300`}>
           {icon}
         </span>
       )}

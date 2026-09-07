@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Playfair_Display } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display, Fraunces, Space_Grotesk } from "next/font/google";
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 import "./globals.css";
@@ -20,6 +19,19 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   style: ["normal", "italic"],
   weight: ["400", "500", "600", "700"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 // Define the primary domain
@@ -82,7 +94,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${fraunces.variable} ${spaceGrotesk.variable} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <AppShell>

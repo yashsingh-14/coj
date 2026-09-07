@@ -5,6 +5,14 @@
   font-family: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif;
 }
 
+.font-fraunces {
+  font-family: var(--font-fraunces), 'Fraunces', Georgia, serif;
+}
+
+.font-space {
+  font-family: var(--font-space-grotesk), 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* ═══════════ LIGHTWEIGHT CSS STARFIELD ═══════════ */
 @keyframes twinkle {
 
@@ -253,14 +261,14 @@
 
 @layer base {
   :root {
-    --background: #02000F;
-    --foreground: #ffffff;
+    --background: #07060A;
+    --foreground: #F4EDE2;
     --muted: #4e4d4d;
-    --muted-foreground: #9ca3af;
-    --brand: #FF6D00;
-    --accent: #FF9800;
-    --card: #0A0A0A;
-    --card-border: rgba(255, 255, 255, 0.05);
+    --muted-foreground: #8A8496;
+    --brand: #FF5A2E;
+    --accent: #FFB37A;
+    --card: #0D0B12;
+    --card-border: rgba(244, 237, 226, 0.08);
   }
 }
 
