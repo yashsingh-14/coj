@@ -691,7 +691,7 @@ export default function HomeUtilityContent({
                     {/* Bottom Bar */}
                     <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex items-center text-xs text-white/30">
-                            <p>
+                            <div>
                                 © 2026{" "}
                                 <span className="relative group cursor-default inline-block">
                                     <span className="group-hover:text-amber-500 transition-colors">Call of Jesus Ministries</span>
@@ -703,7 +703,7 @@ export default function HomeUtilityContent({
                                     </div>
                                 </span>
                                 .
-                            </p>
+                            </div>
                         </div>
                         <div className="flex gap-6">
                             <Link href="/privacy" className="text-xs text-white/20 hover:text-white/60 transition-colors">Privacy Policy</Link>
