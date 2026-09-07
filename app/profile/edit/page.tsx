@@ -56,14 +56,14 @@ export default function EditProfilePage() {
     return (
         <div className="min-h-screen bg-[#02000F] text-white pb-32">
             {/* Header */}
-            <div className="p-6 flex items-center gap-4 border-b border-white/5 bg-[#02000F]/80 backdrop-blur-xl sticky top-0 z-40">
-                <Link href="/profile" className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group">
-                    <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
+            <div className="px-4 py-4 sm:p-6 flex items-center gap-3 sm:gap-4 border-b border-white/5 bg-[#02000F]/80 backdrop-blur-xl sticky top-0 z-40">
+                <Link href="/profile" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group">
+                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
                 </Link>
-                <h1 className="text-2xl font-bold tracking-tight">Edit Profile</h1>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Edit Profile</h1>
             </div>
 
-            <div className="container mx-auto px-6 max-w-2xl mt-10">
+            <div className="container mx-auto px-4 sm:px-6 max-w-2xl mt-6 sm:mt-10">
 
                 {/* Avatar Uploader */}
                 <div className="flex flex-col items-center mb-12">

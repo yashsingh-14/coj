@@ -8,18 +8,18 @@ export const metadata = {
 
 export default function OurJourneyPage() {
     return (
-        <main className="min-h-screen bg-black text-white py-24 px-6 md:px-12">
+        <main className="min-h-screen bg-black text-white py-16 sm:py-24 px-4 sm:px-6 md:px-12">
             <LandingNavbar />
-            <div className="max-w-4xl mx-auto space-y-16 pt-12">
+            <div className="max-w-4xl mx-auto space-y-10 sm:space-y-16 pt-8 sm:pt-12">
                 <div className="text-center space-y-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold uppercase tracking-wider">
                         <Sparkles className="w-4 h-4 text-amber-400" />
                         His Faithfulness
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
                         Our <span className="font-serif italic font-normal text-amber-300">Journey</span>
                     </h1>
-                    <p className="text-neutral-300 text-lg md:text-xl font-light">
+                    <p className="text-neutral-300 text-base sm:text-lg md:text-xl font-light">
                         From a small prayer gathering to raising thousands of radical worshipers around the world.
                     </p>
                 </div>

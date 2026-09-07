@@ -193,36 +193,36 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
     const dateObj = new Date(set.event_date);
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 md:p-12 pb-32">
+        <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-6 sm:py-12 pb-32">
             <div className="max-w-4xl mx-auto">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
-                    <div>
-                        <Link href="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-6 transition-colors">
+                <div className="flex flex-col md:flex-row justify-between items-start gap-4 sm:gap-8 mb-8 sm:mb-12">
+                    <div className="w-full min-w-0">
+                        <Link href="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-4 sm:mb-6 transition-colors text-sm">
                             <ArrowLeft className="w-4 h-4" />
                             Back to Sets
                         </Link>
 
-                        <div className="flex items-center gap-4 mb-2">
-                            <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold rounded-full uppercase tracking-wider">
+                        <div className="flex items-center gap-3 sm:gap-4 mb-2 flex-wrap">
+                            <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">
                                 Service Plan
                             </span>
-                            <span className="text-white/40 text-sm flex items-center gap-1.5">
+                            <span className="text-white/40 text-xs sm:text-sm flex items-center gap-1.5">
                                 <Clock className="w-3.5 h-3.5" />
                                 {dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">{set.title}</h1>
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4 tracking-tight break-words">{set.title}</h1>
 
-                        <div className="flex items-center gap-6 text-white/50">
-                            <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4" />
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-white/50 text-xs sm:text-sm">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                 <span className="font-medium">{dateObj.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">
                                     {set.profiles?.name?.[0] || 'U'}
                                 </div>
                                 <span>{set.profiles?.name || 'Unknown Leader'}</span>
@@ -279,32 +279,32 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                             <p className="text-sm mt-2">Go to any song and click "Add to Set".</p>
                         </div>
                     ) : (
-                        <div className="space-y-3">
+                        <div className="space-y-2.5 sm:space-y-3">
                             {setSongs.map((item, index) => (
-                                <div key={item.id} className="group relative bg-white/5 border border-white/5 hover:border-white/10 rounded-xl p-4 flex items-center gap-4 transition-all hover:bg-white/[0.07]">
-                                    <div className="text-white/20 font-mono text-xl font-bold w-8 text-center">{index + 1}</div>
+                                <div key={item.id} className="group relative bg-white/5 border border-white/5 hover:border-white/10 rounded-xl p-3 sm:p-4 flex items-center gap-2.5 sm:gap-4 transition-all hover:bg-white/[0.07]">
+                                    <div className="text-white/20 font-mono text-base sm:text-xl font-bold w-6 sm:w-8 text-center shrink-0">{index + 1}</div>
 
                                     <div className="flex-1 min-w-0">
                                         <Link href={`/songs/${generateSlug(item.songs.title)}`} className="block hover:underline">
-                                            <h3 className="text-lg font-bold truncate pr-4">{item.songs.title}</h3>
+                                            <h3 className="text-sm sm:text-lg font-bold truncate pr-2 sm:pr-4">{item.songs.title}</h3>
                                         </Link>
-                                        <div className="flex items-center gap-3 text-sm text-white/50">
-                                            <span>{item.songs.artist}</span>
-                                            <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                                            <span className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] uppercase font-bold tracking-wider">{item.songs.category}</span>
+                                        <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm text-white/50">
+                                            <span className="truncate">{item.songs.artist}</span>
+                                            <span className="w-1 h-1 rounded-full bg-white/20 shrink-0"></span>
+                                            <span className="px-1.5 py-0.5 rounded bg-white/10 text-[9px] sm:text-[10px] uppercase font-bold tracking-wider shrink-0">{item.songs.category}</span>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-6">
-                                        <div className="text-center min-w-[3rem]">
-                                            <div className="text-[10px] uppercase tracking-wider text-white/30 font-bold">Key</div>
-                                            <div className="text-lg font-bold text-amber-500">{item.key_override || item.songs.key}</div>
+                                    <div className="flex items-center gap-2 sm:gap-6 shrink-0">
+                                        <div className="text-center min-w-[2.5rem] sm:min-w-[3rem]">
+                                            <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-white/30 font-bold">Key</div>
+                                            <div className="text-sm sm:text-lg font-bold text-amber-500">{item.key_override || item.songs.key}</div>
                                         </div>
 
-                                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => handleRemoveSong(item.id)}
-                                                className="p-2 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-colors"
+                                                className="p-1.5 sm:p-2 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-colors"
                                                 title="Remove from Set"
                                             >
                                                 <Trash2 className="w-4 h-4" />

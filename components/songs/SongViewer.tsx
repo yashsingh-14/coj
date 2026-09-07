@@ -363,7 +363,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
         <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[var(--brand)] selection:text-white pb-48">
 
             {/* 1. HERO HEADER */}
-            <div className="relative w-full h-96 overflow-hidden">
+            <div className="relative w-full h-72 sm:h-96 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#9C27B0] to-[var(--brand)] opacity-80 mix-blend-multiply"></div>
                 <div
                     className="absolute inset-0 bg-cover bg-center opacity-40 grayscale"
@@ -384,7 +384,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                         </Link>
 
                         {/* DISTINCT H1 AS REQUESTED - Semantic SEO */}
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2 md:mb-3 text-white drop-shadow-2xl">
+                        <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2 md:mb-3 text-white drop-shadow-2xl">
                             {title} – Lyrics & Chords
                         </h1>
 
@@ -518,7 +518,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
                 {/* RIGHT COLUMN: VIDEO & TOOLS */}
                 <div className="block lg:col-span-5 relative">
-                    <div className="sticky top-28 space-y-6">
+                    <div className="lg:sticky lg:top-28 space-y-6">
                         {/* Premium Video Player Box */}
                         <div className="group relative rounded-3xl overflow-hidden aspect-video shadow-2xl shadow-black/80 ring-1 ring-white/10 transition-all duration-500 hover:shadow-[var(--brand)]/20 hover:ring-[var(--brand)]/50">
 
@@ -622,7 +622,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
             {/* FLOATING AUTO-SCROLL BUTTON (Always Accessible) */}
             {chords && (
-                <div className="fixed bottom-32 right-4 z-50">
+                <div className="fixed bottom-36 sm:bottom-32 right-4 z-50">
                     <div className="flex flex-col gap-2">
                         {/* Play/Pause Button */}
                         <button
@@ -716,7 +716,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
             {/* RELATED SONGS */}
             {relatedSongs && relatedSongs.length > 0 && (
-                <div className="max-w-7xl mx-auto px-6 pb-24">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-24">
                     <h3 className="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4">You Might Also Like</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {relatedSongs.map((song) => (

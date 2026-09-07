@@ -36,34 +36,34 @@ const branchesData = [
 
 export default function OurBranchesPage() {
     return (
-        <main className="min-h-screen bg-black text-white py-24 px-6 md:px-12">
+        <main className="min-h-screen bg-black text-white py-16 sm:py-24 px-4 sm:px-6 md:px-12">
             <LandingNavbar />
-            <div className="max-w-7xl mx-auto space-y-16 pt-12">
+            <div className="max-w-7xl mx-auto space-y-10 sm:space-y-16 pt-8 sm:pt-12">
                 
                 <div className="text-center space-y-4 max-w-3xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold uppercase tracking-wider">
                         <MapPin className="w-4 h-4 text-amber-400" />
                         Church Locations & Gathering
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
                         Our <span className="font-serif italic font-normal text-amber-300">Branches</span>
                     </h1>
-                    <p className="text-neutral-300 text-lg md:text-xl font-light">
+                    <p className="text-neutral-300 text-base sm:text-lg md:text-xl font-light">
                         Join us live in person or connect online to experience the transforming presence of God.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                     {branchesData.map((branch) => (
                         <div
                             key={branch.id}
-                            className="rounded-3xl bg-neutral-900/90 border border-white/15 p-8 md:p-10 space-y-6 shadow-2xl flex flex-col justify-between hover:border-amber-400/40 transition-all"
+                            className="rounded-2xl sm:rounded-3xl bg-neutral-900/90 border border-white/15 p-5 sm:p-8 md:p-10 space-y-6 shadow-2xl flex flex-col justify-between hover:border-amber-400/40 transition-all"
                         >
                             <div className="space-y-4">
                                 <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider inline-block">
                                     {branch.city} Branch
                                 </span>
-                                <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight">
+                                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">
                                     {branch.name}
                                 </h2>
                                 <p className="text-neutral-300 text-sm flex items-start gap-2 leading-relaxed">
@@ -77,8 +77,8 @@ export default function OurBranchesPage() {
                                         Gathering & Timings
                                     </p>
                                     {branch.timings.map((t, idx) => (
-                                        <div key={idx} className="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                                            <span className="text-sm font-semibold text-neutral-200">{t.day}</span>
+                                        <div key={idx} className="flex flex-col sm:flex-row justify-between sm:items-center gap-1 sm:gap-0 bg-black/40 p-2.5 sm:p-3 rounded-xl border border-white/5">
+                                            <span className="text-xs sm:text-sm font-semibold text-neutral-200">{t.day}</span>
                                             <span className="text-xs text-amber-300 font-mono flex items-center gap-1">
                                                 <Clock className="w-3 h-3" />
                                                 {t.time}
@@ -103,7 +103,7 @@ export default function OurBranchesPage() {
                                 href={branch.mapUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full py-4 rounded-2xl bg-white text-black font-bold text-sm hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 shadow-xl"
+                                className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-black font-bold text-xs sm:text-sm hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 shadow-xl mt-4"
                             >
                                 <Navigation className="w-4 h-4 text-black" />
                                 <span>Get Google Maps Directions</span>

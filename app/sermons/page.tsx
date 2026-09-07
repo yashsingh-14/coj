@@ -48,7 +48,7 @@ export default function SermonsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32 overflow-hidden relative">
+        <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-6 pb-32 overflow-hidden relative">
             {/* Background Ambience - Disable if Data Saver is ON */}
             {!preferences.dataSaver && (
                 <div className="fixed inset-0 pointer-events-none">
@@ -58,17 +58,17 @@ export default function SermonsPage() {
             )}
 
             <div className="max-w-7xl mx-auto relative z-10">
-                <Link href="/" className="inline-flex items-center gap-2 p-3 px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-12 transition-all group">
-                    <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
-                    <span className="text-sm font-bold tracking-widest uppercase">Back</span>
+                <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-6 sm:mb-12 transition-all group text-xs sm:text-sm">
+                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
+                    <span className="font-bold tracking-widest uppercase">Back</span>
                 </Link>
 
                 <div className="text-center mb-8 md:mb-16 animate-fade-in-down">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
-                        <Youtube className="w-4 h-4 text-red-500" />
-                        <span className="text-red-500 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Channel: Call of Jesus Ministries</span>
+                    <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-red-500/10 border border-red-500/20 mb-3 sm:mb-4">
+                        <Youtube className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" />
+                        <span className="text-red-500 text-[9px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Channel: Call of Jesus Ministries</span>
                     </div>
-                    <h1 className="text-3xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
+                    <h1 className="text-2xl sm:text-4xl md:text-6xl font-black mb-2 sm:mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
                         WATCH <span className="text-red-500">SERMONS</span>
                     </h1>
                     <p className="text-white/40 text-sm md:text-lg max-w-2xl mx-auto px-4">

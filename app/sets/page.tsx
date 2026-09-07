@@ -66,23 +66,23 @@ export default function SetsPage() {
                 <div className="absolute bottom-[-10%] right-[10%] w-[40vw] h-[40vw] bg-amber-900/10 rounded-full blur-[100px] opacity-40 animate-pulse-slow delay-1000"></div>
             </div>
 
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-20">
+            <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-12 md:py-20">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 animate-fade-in-down">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-8 sm:mb-16 animate-fade-in-down">
                     <div>
-                        <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-8 transition-all duration-300 group">
+                        <Link href="/" className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-4 sm:mb-8 transition-all duration-300 group">
                             <ArrowLeft className="w-4 h-4 text-white/70 group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-medium text-white/90">Back to Dashboard</span>
+                            <span className="text-xs sm:text-sm font-medium text-white/90">Back to Dashboard</span>
                         </Link>
-                        <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+                        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-2 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
                             Worship Sets
                         </h1>
-                        <p className="text-lg text-white/40 font-medium">Plan, organize, and lead confident services.</p>
+                        <p className="text-sm sm:text-lg text-white/40 font-medium">Plan, organize, and lead confident services.</p>
                     </div>
 
                     <Link
                         href="/sets/new"
-                        className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transform hover:scale-105 active:scale-95 text-center">
+                        className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-full transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transform hover:scale-105 active:scale-95 text-center">
                         Create New Set
                     </Link>
                 </div>
@@ -93,14 +93,14 @@ export default function SetsPage() {
                         <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
                     </div>
                 ) : sets.length === 0 ? (
-                    <div className="text-center py-20 border border-white/10 rounded-3xl bg-white/5">
-                        <Calendar className="w-16 h-16 text-white/20 mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold mb-2">No Sets Yet</h2>
-                        <p className="text-white/40 mb-8">Get started by creating your first service plan.</p>
-                        <Link href="/sets/new" className="text-amber-500 hover:underline">Create a Set</Link>
+                    <div className="text-center py-16 sm:py-20 border border-white/10 rounded-2xl sm:rounded-3xl bg-white/5 p-4 sm:p-8">
+                        <Calendar className="w-12 h-12 sm:w-16 sm:h-16 text-white/20 mx-auto mb-4" />
+                        <h2 className="text-xl sm:text-2xl font-bold mb-2">No Sets Yet</h2>
+                        <p className="text-white/40 mb-6 sm:mb-8 text-sm sm:text-base">Get started by creating your first service plan.</p>
+                        <Link href="/sets/new" className="text-amber-500 hover:underline text-sm sm:text-base font-semibold">Create a Set</Link>
                     </div>
                 ) : (
-                    <div className="grid gap-8">
+                    <div className="grid gap-4 sm:gap-8">
                         {sets.map((set) => {
                             const dateObj = new Date(set.event_date);
                             const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
@@ -115,31 +115,31 @@ export default function SetsPage() {
                                 <Link
                                     href={`/sets/${set.id}`}
                                     key={set.id}
-                                    className="block backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 group relative"
+                                    className="block backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 group relative"
                                 >
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
                                     {/* Card Header */}
-                                    <div className="p-8 flex flex-col md:flex-row justify-between gap-6 items-center md:items-start">
-                                        <div className="flex gap-6 w-full">
-                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex flex-col items-center justify-center text-center shadow-lg shrink-0">
-                                                <span className="text-xs font-bold text-amber-500 uppercase tracking-wider">{month}</span>
-                                                <span className="text-2xl font-black">{day}</span>
+                                    <div className="p-4 sm:p-6 md:p-8 flex flex-col md:flex-row justify-between gap-4 sm:gap-6 items-start">
+                                        <div className="flex gap-4 sm:gap-6 w-full min-w-0">
+                                            <div className="w-13 h-13 sm:w-16 sm:h-16 p-2 rounded-xl sm:rounded-2xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex flex-col items-center justify-center text-center shadow-lg shrink-0">
+                                                <span className="text-[10px] sm:text-xs font-bold text-amber-500 uppercase tracking-wider">{month}</span>
+                                                <span className="text-lg sm:text-2xl font-black">{day}</span>
                                             </div>
-                                            <div>
-                                                <div className="flex items-center gap-3 mb-2 flex-wrap">
-                                                    <h2 className="text-2xl font-bold group-hover:text-amber-500 transition-colors">{set.title}</h2>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2 flex-wrap">
+                                                    <h2 className="text-lg sm:text-2xl font-bold group-hover:text-amber-500 transition-colors break-words">{set.title}</h2>
                                                     {isUpcoming ? (
-                                                        <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                        <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">
                                                             Upcoming
                                                         </span>
                                                     ) : (
-                                                        <span className="px-3 py-1 bg-white/5 border border-white/10 text-white/40 text-xs font-bold rounded-full uppercase tracking-wider">
+                                                        <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-white/5 border border-white/10 text-white/40 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">
                                                             Completed
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="flex items-center gap-4 text-white/40 text-sm flex-wrap">
+                                                <div className="flex items-center gap-3 sm:gap-4 text-white/40 text-xs sm:text-sm flex-wrap">
                                                     <span className="flex items-center gap-1.5"><UserIcon className="w-3.5 h-3.5" /> {leaderName}</span>
                                                     <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" /> {time}</span>
                                                     <span className="flex items-center gap-1.5"><Music2 className="w-3.5 h-3.5" /> {songCount} Songs</span>

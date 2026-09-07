@@ -119,7 +119,7 @@ export default function FavouritesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-4 md:p-6 pb-24 md:pb-32 overflow-hidden relative">
+        <div className="min-h-screen bg-[#02000F] text-white px-3 sm:px-6 py-4 pb-24 md:pb-32 overflow-hidden relative">
             {/* Ambient Background Effects */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-pink-900/10 rounded-full blur-[120px] animate-pulse-slow"></div>
@@ -129,18 +129,18 @@ export default function FavouritesPage() {
 
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pt-8 md:pt-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 pt-4 sm:pt-8 md:pt-12">
                     <div className="animate-fade-in-down">
-                        <Link href="/songs" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-6 text-xs font-bold uppercase tracking-[0.3em] transition-all group">
+                        <Link href="/songs" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-4 sm:mb-6 text-xs font-bold uppercase tracking-[0.3em] transition-all group">
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             Back to Library
                         </Link>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40 mb-4 drop-shadow-2xl">
+                        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40 mb-2 sm:mb-4 drop-shadow-2xl">
                             FAVOURITES
                         </h1>
-                        <div className="flex items-center gap-4 text-white/40 font-bold uppercase tracking-widest text-[10px] md:text-sm">
-                            <span className="flex items-center gap-2">
-                                <Heart className="w-4 h-4 text-pink-500 fill-pink-500/20" />
+                        <div className="flex items-center gap-3 sm:gap-4 text-white/40 font-bold uppercase tracking-widest text-[10px] md:text-sm">
+                            <span className="flex items-center gap-1.5 sm:gap-2">
+                                <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-500 fill-pink-500/20" />
                                 {favourites.length} Saved Songs
                             </span>
                             <div className="w-1 h-1 rounded-full bg-white/20"></div>
@@ -151,9 +151,9 @@ export default function FavouritesPage() {
 
                 {/* Grid Section */}
                 {favourites.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                         {favourites.map((song, i) => (
-                            <div key={i} className="w-full relative rounded-3xl overflow-hidden bg-[#111] border border-white/10 p-4 group">
+                            <div key={i} className="w-full relative rounded-2xl sm:rounded-3xl overflow-hidden bg-[#111] border border-white/10 p-2.5 sm:p-4 group">
                                 {/* Remove Favourite Button */}
                                 <button
                                     onClick={(e) => {
@@ -161,16 +161,16 @@ export default function FavouritesPage() {
                                         e.stopPropagation();
                                         handleRemoveFavourite(song.id, song.title);
                                     }}
-                                    className="absolute top-6 right-6 z-20 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-pink-500 hover:bg-pink-500 hover:text-white transition-all opacity-80 group-hover:opacity-100"
+                                    className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-pink-500 hover:bg-pink-500 hover:text-white transition-all opacity-80 group-hover:opacity-100"
                                     title="Remove from favourites"
                                 >
-                                    <Heart className="w-4 h-4 fill-pink-500 group-hover:fill-white" />
+                                    <Heart className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-pink-500 group-hover:fill-white" />
                                 </button>
 
                                 <div className="relative w-full h-full">
                                     <Link
                                         href={`/songs/${generateSlug(song.title)}`}
-                                        className="relative flex flex-col justify-end p-6 rounded-[2rem] overflow-hidden h-64 w-full block"
+                                        className="relative flex flex-col justify-end p-3 sm:p-6 rounded-xl sm:rounded-[2rem] overflow-hidden h-44 sm:h-64 w-full block"
                                     >
                                         {/* Artist Background */}
                                         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -180,9 +180,9 @@ export default function FavouritesPage() {
                                         {/* Glass Shine */}
                                         <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                                        <div className="relative z-10 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                                            <h3 className="text-xl font-bold text-white mb-1 line-clamp-1">{song.title}</h3>
-                                            <p className="text-white/60 text-sm font-medium">{song.artist}</p>
+                                        <div className="relative z-10 transform translate-y-1 sm:translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                                            <h3 className="text-sm sm:text-lg md:text-xl font-bold text-white mb-0.5 sm:mb-1 line-clamp-2">{song.title}</h3>
+                                            <p className="text-white/60 text-xs sm:text-sm font-medium line-clamp-1">{song.artist}</p>
                                         </div>
                                     </Link>
                                 </div>

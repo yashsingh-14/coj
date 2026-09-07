@@ -15,27 +15,27 @@ export default async function ArtistsPage() {
     const displayArtists = artists || [];
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32">
+        <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-4 sm:py-6 pb-32">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-10 pt-4">
-                <Link href="/" className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors group border border-white/5">
-                    <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
+            <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-10 pt-2 sm:pt-4">
+                <Link href="/" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors group border border-white/5">
+                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
                 </Link>
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-amber-500 drop-shadow-lg">
+                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-amber-500 drop-shadow-lg">
                         Featured Artists
                     </h1>
-                    <p className="text-white/60 font-medium tracking-wide">Voices leading the global church in worship</p>
+                    <p className="text-xs sm:text-sm md:text-base text-white/60 font-medium tracking-wide">Voices leading the global church in worship</p>
                 </div>
             </div>
 
-            <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {displayArtists.map((artist) => (
-                    <TiltCard key={artist.id} className="h-full min-h-[350px]" max={10} scale={1.03}>
+                    <TiltCard key={artist.id} className="h-full min-h-[280px] sm:min-h-[350px]" max={10} scale={1.03}>
                         <div className="relative h-full group">
                             <Link
                                 href={`/artists/${artist.id}`}
-                                className="relative flex flex-col justify-end p-8 rounded-[2.5rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors shadow-2xl"
+                                className="relative flex flex-col justify-end p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors shadow-2xl"
                             >
                                 {/* Artist Background */}
                                 <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 grayscale-[0.2] group-hover:grayscale-0" style={{ backgroundImage: `url('${artist.image || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070'}' )` }} />
@@ -45,19 +45,19 @@ export default async function ArtistsPage() {
                                 <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                                 {/* Icon Badge */}
-                                <div className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 -translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                                    <Mic2 className="w-6 h-6 text-white" />
+                                <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 -translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                    <Mic2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 </div>
 
                                 {/* Content */}
-                                <div className="relative z-10 transform-style-3d translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                    <div className="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur border border-white/10 mb-3">
-                                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">{artist.genre}</span>
+                                <div className="relative z-10 transform-style-3d translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                    <div className="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/10 backdrop-blur border border-white/10 mb-2 sm:mb-3">
+                                        <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white/80">{artist.genre}</span>
                                     </div>
 
-                                    <h2 className="text-3xl font-black text-white mb-2 leading-none">{artist.name}</h2>
+                                    <h2 className="text-xl sm:text-3xl font-black text-white mb-1 sm:mb-2 leading-none">{artist.name}</h2>
 
-                                    <div className="flex gap-4 text-xs font-bold text-white/60 mt-2">
+                                    <div className="flex gap-3 sm:gap-4 text-xs font-bold text-white/60 mt-1 sm:mt-2">
                                         <span className="flex items-center gap-1.5"><Music className="w-3.5 h-3.5 text-amber-500" /> {artist.songs_count} Songs</span>
                                         <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-blue-500" /> {artist.followers}</span>
                                     </div>

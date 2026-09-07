@@ -55,7 +55,7 @@ export default function EventsPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 pb-32 overflow-hidden relative">
+        <div className="min-h-screen bg-[#02000F] text-white p-4 sm:p-6 pb-32 overflow-hidden relative">
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/10 rounded-full blur-[100px] animate-pulse-slow"></div>
@@ -64,9 +64,9 @@ export default function EventsPage() {
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">
-                <Link href="/" className="inline-flex items-center gap-2 p-3 px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-12 transition-all group">
-                    <ArrowLeft className="w-5 h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
-                    <span className="text-sm font-bold tracking-widest uppercase">Back</span>
+                <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-8 sm:mb-12 transition-all group">
+                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
+                    <span className="text-xs sm:text-sm font-bold tracking-widest uppercase">Back</span>
                 </Link>
 
                 <div className="text-center mb-8 md:mb-16">
@@ -74,7 +74,7 @@ export default function EventsPage() {
                         <Calendar className="w-4 h-4 text-amber-500" />
                         <span className="text-amber-500 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">Weekly Gatherings</span>
                     </div>
-                    <h1 className="text-3xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
+                    <h1 className="text-2xl sm:text-3xl md:text-6xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50 drop-shadow-2xl">
                         JOIN US <span className="text-amber-500">OFFLINE</span>
                     </h1>
                     <p className="text-white/40 text-sm md:text-lg max-w-2xl mx-auto px-4">
@@ -140,7 +140,7 @@ export default function EventsPage() {
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500 hover:text-black hover:scale-105 transition-all duration-300 group shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                        className="inline-flex items-center gap-3 px-4 sm:px-6 py-3 md:px-8 md:py-4 bg-white/5 border border-white/10 rounded-full hover:bg-amber-500 hover:text-black hover:scale-105 transition-all duration-300 group shadow-[0_0_30px_rgba(0,0,0,0.5)]"
                     >
                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-black/10">
                             <MapPin className="w-5 h-5" />

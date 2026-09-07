@@ -21,6 +21,16 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true); }, []);
 
+    // Lock body scroll when sidebar is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [isOpen]);
+
     const menuItems = [
         { icon: Home, label: 'Home', href: '/' },
         { icon: Search, label: 'Search', href: '/search' },
@@ -51,9 +61,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             />
 
             {/* Floating Glass Dock */}
-            <div className={`fixed top-4 bottom-4 left-4 w-72 bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl z-50 transform transition-all duration-500 cubic-bezier(0.23, 1, 0.32, 1) flex flex-col overflow-hidden ${isOpen ? 'translate-x-0 opacity-100 scale-100' : '-translate-x-[120%] opacity-0 scale-95'}`}>
+            <div className={`fixed top-2 bottom-2 left-2 sm:top-4 sm:bottom-4 sm:left-4 w-[85vw] max-w-72 bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl z-50 transform transition-all duration-500 cubic-bezier(0.23, 1, 0.32, 1) flex flex-col overflow-hidden ${isOpen ? 'translate-x-0 opacity-100 scale-100' : '-translate-x-[120%] opacity-0 scale-95'}`}>
 
-                <div className="p-8 flex items-center justify-between">
+                <div className="p-5 sm:p-8 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white tracking-tight">
                         COJ<span className="text-[var(--brand)]">worship</span>
                     </h2>

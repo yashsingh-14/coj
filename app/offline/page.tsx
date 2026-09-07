@@ -22,19 +22,19 @@ export default function OfflinePage() {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-2 sm:mb-4">
                     You're Offline
                 </h1>
 
                 {/* Description */}
-                <p className="text-lg text-white/60 mb-8 max-w-md mx-auto">
+                <p className="text-sm sm:text-lg text-white/60 mb-6 sm:mb-8 max-w-md mx-auto">
                     It looks like you've lost your internet connection. Please check your network and try again.
                 </p>
 
                 {/* Retry Button */}
                 <button
                     onClick={() => window.location.reload()}
-                    className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-xl transition-colors"
+                    className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 sm:px-8 py-3 rounded-xl transition-colors text-sm sm:text-base"
                 >
                     Try Again
                 </button>

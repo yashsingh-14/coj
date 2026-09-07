@@ -132,7 +132,7 @@ export default function TunerPage() {
             />
 
             {/* Top Simple Header */}
-            <div className="px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
+            <div className="px-4 sm:px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
                 <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all backdrop-blur-md">
                     <ArrowLeft className="w-4 h-4 text-amber-500" />
                     <span className="text-sm font-semibold tracking-wide text-white/80">Exit Tuner</span>
@@ -149,7 +149,7 @@ export default function TunerPage() {
             <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full max-w-lg mx-auto pb-32">
                 
                 {/* Central Glass Radial Dial */}
-                <div className="relative w-56 h-56 sm:w-72 sm:h-72 flex items-center justify-center z-20">
+                <div className="relative w-48 h-48 sm:w-72 sm:h-72 flex items-center justify-center z-20">
                     {/* Outer Glow Ring */}
                     <div className={`absolute inset-0 rounded-full border-2 transition-all duration-500 ${pitch ? (isTuned ? 'border-green-500/50 shadow-[0_0_50px_rgba(34,197,94,0.3)]' : 'border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.15)]') : 'border-white/10'}`} />
                     
@@ -240,17 +240,17 @@ export default function TunerPage() {
                     </div>
 
                     {/* Left Pegs */}
-                    <div className="flex flex-col justify-center gap-6 sm:gap-10 w-14 sm:w-20 pointer-events-auto z-30">
+                    <div className="flex flex-col justify-center gap-4 sm:gap-10 w-11 sm:w-20 pointer-events-auto z-30">
                         {leftStrings.map(str => {
                             const active = isActiveString(str);
                             return (
                                 <button key={str.label} onClick={() => { setActiveStringIndex(strings.findIndex(s => s.label === str.label)); setAutoMode(false); }}
-                                    className="relative flex items-center justify-center group">
+                                    className="relative flex items-center justify-center group min-w-[44px] min-h-[44px]">
                                     {/* Neon String connecting to dial */}
-                                    <div className={`absolute left-full top-1/2 h-[1px] w-32 -z-10 transition-all duration-300 origin-left ${active ? 'bg-gradient-to-r from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
+                                    <div className={`absolute left-full top-1/2 h-[1px] w-20 sm:w-32 -z-10 transition-all duration-300 origin-left ${active ? 'bg-gradient-to-r from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
                                     {/* Tuning Peg */}
-                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
-                                        <span className={`text-lg sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
+                                    <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
+                                        <span className={`text-base sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
                                     </div>
                                 </button>
                             );
@@ -258,17 +258,17 @@ export default function TunerPage() {
                     </div>
 
                     {/* Right Pegs */}
-                    <div className="flex flex-col justify-center gap-6 sm:gap-10 w-14 sm:w-20 pointer-events-auto z-30">
+                    <div className="flex flex-col justify-center gap-4 sm:gap-10 w-11 sm:w-20 pointer-events-auto z-30">
                         {rightStrings.map(str => {
                             const active = isActiveString(str);
                             return (
                                 <button key={str.label} onClick={() => { setActiveStringIndex(strings.findIndex(s => s.label === str.label)); setAutoMode(false); }}
-                                    className="relative flex items-center justify-center group">
+                                    className="relative flex items-center justify-center group min-w-[44px] min-h-[44px]">
                                     {/* Neon String connecting to dial */}
-                                    <div className={`absolute right-full top-1/2 h-[1px] w-32 -z-10 transition-all duration-300 origin-right ${active ? 'bg-gradient-to-l from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
+                                    <div className={`absolute right-full top-1/2 h-[1px] w-20 sm:w-32 -z-10 transition-all duration-300 origin-right ${active ? 'bg-gradient-to-l from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
                                     {/* Tuning Peg */}
-                                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
-                                        <span className={`text-lg sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
+                                    <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
+                                        <span className={`text-base sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
                                     </div>
                                 </button>
                             );

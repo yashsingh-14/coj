@@ -89,14 +89,14 @@ export default function SignUpPage() {
                 <div className="flex flex-col items-center mb-6 animate-fade-in-down">
                     <div className="relative">
                         <div className="absolute inset-0 bg-[var(--brand)] blur-3xl opacity-20 rounded-full scale-100"></div>
-                        <Logo className="relative z-10 w-53 h-auto" />
+                        <Logo className="relative z-10 w-40 sm:w-52 h-auto" />
                     </div>
-                    <h2 className="-mt-20 text-3xl font-bold text-white tracking-tight">Join the Family</h2>
+                    <h2 className="-mt-16 sm:-mt-20 text-2xl sm:text-3xl font-bold text-white tracking-tight">Join the Family</h2>
                     <p className="text-white/40 text-sm mt-2">Begin your journey of worship</p>
                 </div>
 
                 {/* Glass Form */}
-                <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+                <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden group">
                     {/* Shimmer Effect on Card Border */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 

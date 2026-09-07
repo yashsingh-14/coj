@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function GivePage() {
     return (
-        <main className="min-h-screen bg-black text-white py-24 px-6 md:px-12">
+        <main className="min-h-screen bg-black text-white py-24 px-4 sm:px-6 md:px-12">
             <LandingNavbar />
             <div className="max-w-5xl mx-auto space-y-16 pt-12">
                 
@@ -17,7 +17,7 @@ export default function GivePage() {
                         <Heart className="w-4 h-4 text-amber-400" />
                         Kingdom Partnership
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
                         Give & <span className="font-serif italic font-normal text-amber-300">Partner</span>
                     </h1>
                     <p className="text-neutral-300 text-lg md:text-xl font-light">
@@ -27,7 +27,7 @@ export default function GivePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     
-                    <div className="rounded-3xl bg-neutral-900 border border-white/15 p-8 md:p-10 space-y-6 shadow-2xl">
+                    <div className="rounded-3xl bg-neutral-900 border border-white/15 p-5 sm:p-8 md:p-10 space-y-6 shadow-2xl">
                         <div className="flex items-center gap-3 border-b border-white/10 pb-4">
                             <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
                                 <Building2 className="w-5 h-5 text-amber-400" />

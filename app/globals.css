@@ -7,18 +7,35 @@
 
 /* ═══════════ LIGHTWEIGHT CSS STARFIELD ═══════════ */
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.8; }
+
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
 }
 
 @keyframes drift {
-  from { transform: translateY(0) translateX(0); }
-  to { transform: translateY(-20px) translateX(10px); }
+  from {
+    transform: translateY(0) translateX(0);
+  }
+
+  to {
+    transform: translateY(-20px) translateX(10px);
+  }
 }
 
 @keyframes heroTimerProgress {
-  0% { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
+  0% {
+    transform: scaleX(0);
+  }
+
+  100% {
+    transform: scaleX(1);
+  }
 }
 
 /* ═══════════ HERO ENTRANCE ANIMATION ═══════════ */
@@ -27,6 +44,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -44,6 +62,7 @@
     transform: translateY(115%);
     opacity: 0;
   }
+
   100% {
     transform: translateY(0%);
     opacity: 1;
@@ -55,6 +74,7 @@
     transform: translateY(0%);
     opacity: 1;
   }
+
   100% {
     transform: translateY(-115%);
     opacity: 0;
@@ -117,6 +137,7 @@
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -141,36 +162,36 @@
 
 .starfield::before {
   box-shadow:
-    120px 80px 0 0 rgba(255,255,255,0.3),
-    340px 150px 0 0 rgba(255,255,255,0.2),
-    550px 60px 0 0 rgba(255,255,255,0.4),
-    780px 200px 0 0 rgba(255,255,255,0.15),
-    950px 100px 0 0 rgba(255,255,255,0.3),
-    1100px 250px 0 0 rgba(255,255,255,0.2),
-    200px 300px 0 0 rgba(255,255,255,0.25),
-    450px 350px 0 0 rgba(255,255,255,0.35),
-    700px 320px 0 0 rgba(255,255,255,0.2),
-    900px 380px 0 0 rgba(255,255,255,0.15),
-    150px 450px 0 0 rgba(255,255,255,0.3),
-    600px 500px 0 0 rgba(255,255,255,0.2),
-    1050px 470px 0 0 rgba(255,255,255,0.25);
+    120px 80px 0 0 rgba(255, 255, 255, 0.3),
+    340px 150px 0 0 rgba(255, 255, 255, 0.2),
+    550px 60px 0 0 rgba(255, 255, 255, 0.4),
+    780px 200px 0 0 rgba(255, 255, 255, 0.15),
+    950px 100px 0 0 rgba(255, 255, 255, 0.3),
+    1100px 250px 0 0 rgba(255, 255, 255, 0.2),
+    200px 300px 0 0 rgba(255, 255, 255, 0.25),
+    450px 350px 0 0 rgba(255, 255, 255, 0.35),
+    700px 320px 0 0 rgba(255, 255, 255, 0.2),
+    900px 380px 0 0 rgba(255, 255, 255, 0.15),
+    150px 450px 0 0 rgba(255, 255, 255, 0.3),
+    600px 500px 0 0 rgba(255, 255, 255, 0.2),
+    1050px 470px 0 0 rgba(255, 255, 255, 0.25);
   animation-delay: 0s;
 }
 
 .starfield::after {
   box-shadow:
-    80px 120px 0 0 rgba(255,255,255,0.2),
-    280px 220px 0 0 rgba(255,255,255,0.35),
-    480px 180px 0 0 rgba(255,255,255,0.15),
-    680px 280px 0 0 rgba(255,255,255,0.3),
-    880px 160px 0 0 rgba(255,255,255,0.2),
-    1020px 320px 0 0 rgba(255,255,255,0.25),
-    160px 380px 0 0 rgba(255,255,255,0.15),
-    380px 420px 0 0 rgba(255,255,255,0.3),
-    580px 460px 0 0 rgba(255,255,255,0.2),
-    820px 500px 0 0 rgba(255,255,255,0.15),
-    1000px 550px 0 0 rgba(255,255,255,0.25),
-    250px 560px 0 0 rgba(255,255,255,0.2);
+    80px 120px 0 0 rgba(255, 255, 255, 0.2),
+    280px 220px 0 0 rgba(255, 255, 255, 0.35),
+    480px 180px 0 0 rgba(255, 255, 255, 0.15),
+    680px 280px 0 0 rgba(255, 255, 255, 0.3),
+    880px 160px 0 0 rgba(255, 255, 255, 0.2),
+    1020px 320px 0 0 rgba(255, 255, 255, 0.25),
+    160px 380px 0 0 rgba(255, 255, 255, 0.15),
+    380px 420px 0 0 rgba(255, 255, 255, 0.3),
+    580px 460px 0 0 rgba(255, 255, 255, 0.2),
+    820px 500px 0 0 rgba(255, 255, 255, 0.15),
+    1000px 550px 0 0 rgba(255, 255, 255, 0.25),
+    250px 560px 0 0 rgba(255, 255, 255, 0.2);
   animation-delay: 2s;
 }
 
@@ -180,6 +201,7 @@
     opacity: 0;
     transform: translateY(40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -192,8 +214,17 @@
 
 /* ═══════════ AMBIENT GLOW PULSE ═══════════ */
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
 }
 
 .animate-glow-pulse {
@@ -202,8 +233,13 @@
 
 /* ═══════════ GRADIENT TEXT SHIMMER ═══════════ */
 @keyframes text-shimmer {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
+  }
 }
 
 .text-shimmer {

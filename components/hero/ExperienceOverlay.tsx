@@ -10,7 +10,7 @@ import {
     Headphones, BookOpen, Heart, Flame, Sparkles, Quote,
     Calendar, Clock, MapPin, Sun, Wine, Navigation,
     Volume2, VolumeX, Play, Pause,
-    Share2, Copy, Check
+    Share2, Copy, Check, Mail, Phone
 } from 'lucide-react';
 import BlackRemoverImage from "@/components/ui/BlackRemoverImage";
 import { generateSlug } from '@/lib/seoUtils';
@@ -18,6 +18,8 @@ import { getSongImage } from '@/lib/utils';
 import { getVerseOfTheDay } from '@/lib/getVerseOfTheDay';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
+import CircularTestimonials from "@/components/ui/CircularTestimonials";
+import LiquidButton from "@/components/ui/LiquidButton";
 
 const ICON_MAP: Record<string, any> = {
     BookOpen,
@@ -751,6 +753,40 @@ export default function ExperienceOverlay({ initialData }: {
         }
     ];
 
+    // Rich Testimonials dataset for 3D Circular Testimonials Showcase
+    const testimonialsData = [
+        {
+            name: "Sister Shweta",
+            designation: "Creative Miracle • New Delhi",
+            quote: "In 2020, during a routine medical examination, I was informed of a condition requiring surgical removal. But after earnest prayer at Call of Jesus Ministries, God performed a creative miracle! The doctors verified a completely brand-new organ. Truly, nothing is too hard for God!",
+            src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80"
+        },
+        {
+            name: "Brother Rajesh",
+            designation: "Cancer Healed • Faridabad",
+            quote: "Diagnosed with stage 3 cancer, I came to the healing service with faith that moved mountains. After anointed prayer, post-service PET scans showed zero cancer cells remaining in my body! By His stripes, I am healed and alive.",
+            src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"
+        },
+        {
+            name: "Sister Priya",
+            designation: "Mental Freedom • Noida",
+            quote: "For years, I battled severe panic attacks, sleepless nights, and chronic depression. When I stepped into the prophetic presence of God here, every chain shattered. Jesus filled my heart with divine peace that surpasses all understanding.",
+            src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80"
+        },
+        {
+            name: "Brother Samuel",
+            designation: "Supernatural Favor • Gurugram",
+            quote: "Standing on the verge of total business bankruptcy with mounting debts, I anchored my soul on God's Word. Within 90 days, supernatural contracts and miraculous debt clearance took place. God supplied every need exceedingly!",
+            src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80"
+        },
+        {
+            name: "Sister Surabhi",
+            designation: "Miracle Healing • New Delhi",
+            quote: "Mandatory medical screenings initially showed reactive results for an incurable condition. Through intense prayer & covenant grace, repeat screenings at two top diagnostic centers came back 100% clear!",
+            src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80"
+        }
+    ];
+
     return (
         <div className="relative w-full min-h-screen bg-[#02000F] text-white selection:bg-amber-500/30 selection:text-white overflow-x-hidden">
 
@@ -996,39 +1032,34 @@ export default function ExperienceOverlay({ initialData }: {
 
                             {/* Interactive Action Buttons */}
                             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                                <button
+                                <LiquidButton
                                     onClick={handleCopyVerse}
-                                    className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/[0.08] border border-white/15 hover:border-amber-400/50 hover:bg-amber-500/15 text-neutral-200 hover:text-white text-xs md:text-sm font-semibold uppercase tracking-wider transition-all duration-300 shadow-lg"
+                                    size="sm"
+                                    icon={copiedVerse ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                                    iconPosition="left"
                                 >
-                                    {copiedVerse ? (
-                                        <>
-                                            <Check className="w-4 h-4 text-emerald-400" />
-                                            <span className="text-emerald-300">Copied!</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Copy className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                                            <span>Copy Verse</span>
-                                        </>
-                                    )}
-                                </button>
+                                    {copiedVerse ? "Copied!" : "Copy Verse"}
+                                </LiquidButton>
 
-                                <button
+                                <LiquidButton
                                     onClick={handleShareVerse}
-                                    className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-white/[0.08] border border-white/15 hover:border-amber-400/50 hover:bg-amber-500/15 text-neutral-200 hover:text-white text-xs md:text-sm font-semibold uppercase tracking-wider transition-all duration-300 shadow-lg"
+                                    size="sm"
+                                    icon={<Share2 className="w-3.5 h-3.5" />}
+                                    iconPosition="left"
                                 >
-                                    <Share2 className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                                    <span>Share</span>
-                                </button>
+                                    Share
+                                </LiquidButton>
 
                                 {verse?.reflection && (
-                                    <button
+                                    <LiquidButton
                                         onClick={() => setShowDevotional(!showDevotional)}
-                                        className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-amber-500/15 border border-amber-500/30 hover:bg-amber-500/25 text-amber-300 text-xs md:text-sm font-semibold uppercase tracking-wider transition-all duration-300 shadow-lg"
+                                        size="sm"
+                                        variant="amber"
+                                        icon={<BookOpen className="w-3.5 h-3.5" />}
+                                        iconPosition="left"
                                     >
-                                        <BookOpen className="w-4 h-4 text-amber-400" />
-                                        <span>{showDevotional ? "Hide Devotional" : "Daily Devotional"}</span>
-                                    </button>
+                                        {showDevotional ? "Hide Devotional" : "Daily Devotional"}
+                                    </LiquidButton>
                                 )}
                             </div>
 
@@ -1056,16 +1087,17 @@ export default function ExperienceOverlay({ initialData }: {
                         </p>
                     </div>
 
-                    <a
+                    <LiquidButton
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/10 text-white font-medium text-xs uppercase tracking-wider transition-all duration-300 group self-start md:self-auto"
+                        size="md"
+                        icon={<ArrowRight className="w-4 h-4" />}
+                        iconPosition="right"
+                        className="self-start md:self-auto"
                     >
-                        <MapPin className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                        <span>Get Directions to Church</span>
-                        <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover:translate-x-1 group-hover:text-amber-400 transition-all" />
-                    </a>
+                        Get Directions to Church
+                    </LiquidButton>
                 </div>
 
                 {/* Event Cards Grid */}
@@ -1299,12 +1331,15 @@ export default function ExperienceOverlay({ initialData }: {
                                 Worship <span className="font-playfair italic font-normal bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-transparent">Songs</span>
                             </h2>
                         </div>
-                        <button
+                        <LiquidButton
                             onClick={() => setMode('UTILITY')}
-                            className="hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-white hover:border-white/20 hover:bg-white/[0.06] transition-all"
+                            size="sm"
+                            icon={<ArrowRight className="w-3.5 h-3.5" />}
+                            iconPosition="right"
+                            className="hidden md:inline-flex"
                         >
-                            View All <ArrowRight className="w-3 h-3" />
-                        </button>
+                            View All
+                        </LiquidButton>
                     </div>
 
                     {/* Horizontal Scroll Songs (desktop) / Grid (mobile) */}
@@ -1343,7 +1378,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* GOD STORIES — Ultra-Premium Sanctuary Testimony Showcase       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="stories" className="relative py-14 md:py-20 px-6 md:px-12 max-w-7xl mx-auto space-y-8 overflow-hidden">
+            <section id="stories" className="relative py-12 md:py-20 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto space-y-6 md:space-y-8 overflow-hidden">
                 {/* Heavenly Ambient Glow Behind Stories */}
                 <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[650px] h-[450px] bg-amber-500/[0.05] rounded-full blur-[160px] pointer-events-none" />
                 <div className="absolute -bottom-10 right-10 w-[450px] h-[350px] bg-rose-500/[0.03] rounded-full blur-[140px] pointer-events-none" />
@@ -1363,165 +1398,241 @@ export default function ExperienceOverlay({ initialData }: {
                         </p>
                     </div>
 
-                    {/* Controls & Share Button */}
+                    {/* Actions: Share Your Story & View All */}
                     <div className="flex items-center gap-3">
-                        <Link
+                        <LiquidButton
                             href="/share-testimony"
-                            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-amber-500/30 bg-white/[0.04] text-xs font-bold uppercase tracking-widest text-neutral-200 hover:text-white hover:border-amber-400 hover:bg-amber-500/10 backdrop-blur-md transition-all duration-300 shadow-sm"
+                            size="sm"
+                            variant="amber"
+                            icon={<ArrowRight className="w-3.5 h-3.5" />}
+                            iconPosition="right"
                         >
-                            <span>Share Your Story</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-amber-400" />
-                        </Link>
-                        {canScrollLeft && (
-                            <button
-                                onClick={() => scrollCarousel('left')}
-                                className="w-11 h-11 rounded-full border border-white/15 bg-white/[0.04] hover:bg-amber-400 hover:text-black hover:border-amber-400 flex items-center justify-center transition-all duration-300 shadow-md backdrop-blur-md active:scale-95"
-                                aria-label="Previous Stories"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-                        )}
-                        <button
-                            onClick={() => scrollCarousel('right')}
-                            className="w-11 h-11 rounded-full border border-white/15 bg-white/[0.04] hover:bg-amber-400 hover:text-black hover:border-amber-400 flex items-center justify-center transition-all duration-300 shadow-md backdrop-blur-md active:scale-95"
-                            aria-label="Next Stories"
+                            Share Your Story
+                        </LiquidButton>
+                        <LiquidButton
+                            href="/god-stories"
+                            size="sm"
+                            variant="glass"
+                            icon={<ArrowRight className="w-3.5 h-3.5" />}
+                            iconPosition="right"
                         >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
+                            All Stories
+                        </LiquidButton>
                     </div>
                 </div>
 
-                {/* Horizontal Story Cards Carousel */}
-                <div
-                    ref={carouselRef}
-                    onScroll={updateScrollButtons}
-                    className="flex gap-5 md:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-4 px-1"
-                >
-                    {godStories.map((story, i) => (
-                        <Link
-                            key={i}
-                            href="/god-stories"
-                            className="gsap-story-card group relative flex-shrink-0 w-[300px] sm:w-[370px] md:w-[410px] snap-start rounded-3xl border border-white/10 hover:border-amber-400/50 bg-gradient-to-b from-white/[0.05] via-[#090518]/90 to-[#02000f] backdrop-blur-2xl p-7 md:p-8 flex flex-col justify-between transition-all duration-500 hover:shadow-[0_0_50px_rgba(245,158,11,0.22)] hover:-translate-y-2 overflow-hidden"
-                        >
-                            {/* Golden Ambient Flare in corner */}
-                            <div className="absolute -top-16 -right-16 w-40 h-40 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500 pointer-events-none" />
-
-                            {/* Top Golden Accent Shimmer */}
-                            <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400/30 to-transparent group-hover:via-amber-400 transition-all duration-500" />
-
-                            <div className="relative z-10 space-y-5">
-                                {/* Category Badge + Quote Watermark */}
-                                <div className="flex items-center justify-between">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 text-[10px] font-bold tracking-[0.2em] uppercase font-mono shadow-sm">
-                                        <Sparkles className="w-3 h-3 text-amber-400" />
-                                        <span>{story.category}</span>
-                                    </div>
-                                    <Quote className="w-7 h-7 text-amber-400/25 group-hover:text-amber-400/60 group-hover:rotate-6 transition-all duration-500" />
-                                </div>
-
-                                {/* Title */}
-                                <h3 className="font-playfair text-xl md:text-2xl text-white group-hover:text-amber-200 leading-snug line-clamp-2 transition-colors duration-300">
-                                    {story.title}
-                                </h3>
-
-                                {/* Excerpt */}
-                                <p className="text-xs md:text-sm text-neutral-300/85 font-light leading-relaxed line-clamp-3">
-                                    &ldquo;{story.excerpt}&rdquo;
-                                </p>
-
-                                {/* Scripture anchor */}
-                                <div className="pt-1 flex items-center gap-1.5 text-[11px] font-mono text-amber-400/80 tracking-wider">
-                                    <span>✦</span>
-                                    <span>{story.scripture}</span>
-                                </div>
-                            </div>
-
-                            {/* Card Footer: Person profile + Read button */}
-                            <div className="relative z-10 pt-6 mt-6 border-t border-white/[0.08] flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 text-neutral-950 font-black text-xs flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
-                                        {story.person.replace('Sister ', 'S.').replace('Brother ', 'B.').slice(0, 2).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <p className="text-xs font-bold text-white group-hover:text-amber-200 transition-colors">
-                                            {story.person}
-                                        </p>
-                                        <p className="text-[10px] text-neutral-400 flex items-center gap-1 font-light">
-                                            <MapPin className="w-2.5 h-2.5 text-amber-400" /> {story.city}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 group-hover:text-white transition-colors duration-300">
-                                    <span>Read Story</span>
-                                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-300" />
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
+                {/* 3D Circular Testimonial Carousel Showcase */}
+                <div className="relative pt-2 pb-2">
+                    <CircularTestimonials
+                        testimonials={testimonialsData}
+                        autoplay={true}
+                        colors={{
+                            name: "#ffffff",
+                            designation: "#fbbf24",
+                            testimony: "#e5e7eb",
+                            arrowBackground: "rgba(255, 255, 255, 0.08)",
+                            arrowForeground: "#ffffff",
+                            arrowHoverBackground: "#f59e0b"
+                        }}
+                    />
                 </div>
             </section>
 
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* SHARE TESTIMONY — Playfair & Emerald Gradient                  */}
+            {/* SHARE TESTIMONY — Ultra-Luxury Sanctuary Encounter Banner       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="testimony" className="relative py-14 md:py-20 px-6 overflow-hidden">
-                {/* Background image */}
-                <div className="absolute inset-0">
-                    <img src="/images/testimony-bg.jpg" alt="" className="gsap-curtain-img w-full h-full object-cover" style={{ filter: 'brightness(0.15) saturate(0.6)' }} />
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#02000F] via-[#02000F]/80 to-transparent" />
-                </div>
-
-                <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-6">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/[0.05]">
-                            <BookOpen className="w-3 h-3 text-emerald-400" />
-                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-emerald-300/70">Your Story Matters</span>
-                        </div>
-                        <h2 className="text-3xl sm:text-5xl md:text-7xl font-extralight text-white tracking-tight leading-[1.05]">
-                            Share Your
-                            <br />
-                            <span className="font-playfair italic font-normal bg-gradient-to-r from-emerald-200 to-emerald-400 bg-clip-text text-transparent">
-                                Testimony
-                            </span>
-                        </h2>
-                        <p className="text-sm md:text-base text-neutral-400 font-light leading-relaxed max-w-md">
-                            Your breakthrough can spark someone else&apos;s faith. Every testimony is proof that God is still working miracles today.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                            <Link href="/share-testimony" className="group relative inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black font-semibold text-sm rounded-full hover:shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-[0.98] transition-all duration-300 overflow-hidden">
-                                <span className="relative z-10">Share Your Story</span>
-                                <ArrowRight className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                            <Link href="/god-stories" className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/15 bg-white/[0.04] text-white font-medium text-sm rounded-full hover:bg-white/[0.08] transition-all">
-                                <span>Read Stories</span>
-                            </Link>
-                        </div>
+            <section id="testimony" className="relative py-12 md:py-20 px-4 sm:px-6 md:px-12 max-w-7xl mx-auto overflow-hidden">
+                {/* Outer Glass Sanctuary Container Card */}
+                <div className="relative rounded-3xl sm:rounded-[2.5rem] border border-amber-500/20 bg-gradient-to-b from-white/[0.05] via-[#080417]/85 to-[#02000F] backdrop-blur-2xl p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
+                    
+                    {/* Background Sanctuary Worshipper with Warm Golden Hue */}
+                    <div className="absolute inset-0 z-0">
+                        <img
+                            src="/images/testimony-bg.jpg"
+                            alt="Worship and Prayer"
+                            className="gsap-curtain-img w-full h-full object-cover"
+                            style={{ filter: 'brightness(0.24) saturate(0.85)' }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#02000F] via-[#02000F]/90 to-[#02000F]/60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-transparent to-transparent" />
                     </div>
 
-                    {/* Right: Stats cards */}
-                    <div className="hidden md:grid grid-cols-2 gap-4">
-                        {[
-                            { num: '500+', count: 500, suffix: '+', label: 'Testimonies Shared' },
-                            { num: '25+', count: 25, suffix: '+', label: 'Cities Impacted' },
-                            { num: '∞', count: 0, suffix: '', label: 'Lives Transformed' },
-                            { num: '7+', count: 7, suffix: '+', label: 'Years of Ministry' },
-                        ].map((stat, i) => (
-                            <div
-                                key={i}
-                                className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm hover:bg-white/[0.06] hover:border-white/10 transition-all duration-500"
-                            >
-                                <p
-                                    className={`text-2xl md:text-3xl font-extralight text-white ${stat.count ? 'gsap-stat-number' : ''}`}
-                                    data-count={stat.count || undefined}
-                                    data-suffix={stat.suffix || undefined}
-                                >
-                                    {stat.num}
-                                </p>
-                                <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-neutral-500 mt-1">{stat.label}</p>
+                    {/* Ambient Golden Halo Glows */}
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-500/[0.12] rounded-full blur-[120px] pointer-events-none" />
+                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-rose-500/[0.08] rounded-full blur-[120px] pointer-events-none" />
+                    
+                    {/* Top Golden Accent Line */}
+                    <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+
+                    <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                        
+                        {/* Left: Typography, Impact, and Interactive CTAs */}
+                        <div className="lg:col-span-7 space-y-6">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+                                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                                <span className="text-xs font-bold tracking-[0.25em] uppercase text-amber-300">Your Story Has Power</span>
                             </div>
-                        ))}
+
+                            <h2 className="text-3xl sm:text-5xl md:text-6xl font-extralight text-white tracking-tight leading-[1.08]">
+                                Share Your{' '}
+                                <br />
+                                <span className="font-playfair italic font-normal bg-gradient-to-r from-amber-200 via-amber-300 to-yellow-500 bg-clip-text text-transparent">
+                                    Miracle & Faith
+                                </span>
+                            </h2>
+
+                            <p className="text-sm md:text-base text-neutral-300/90 font-light leading-relaxed max-w-xl">
+                                &ldquo;They triumphed over him by the blood of the Lamb and by the word of their testimony.&rdquo; (Rev 12:11).
+                                Your breakthrough is living proof that Jesus Christ is moving with power today. Speak of His goodness and ignite someone else&apos;s faith.
+                            </p>
+
+                            {/* Trust & Impact Highlights */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                                <div className="flex items-center gap-2 text-xs text-neutral-300 font-light">
+                                    <div className="w-4 h-4 rounded-full bg-amber-400/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-2.5 h-2.5" />
+                                    </div>
+                                    <span>Pastoral Verification</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-neutral-300 font-light">
+                                    <div className="w-4 h-4 rounded-full bg-amber-400/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-2.5 h-2.5" />
+                                    </div>
+                                    <span>Global Inspiration</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-neutral-300 font-light">
+                                    <div className="w-4 h-4 rounded-full bg-amber-400/20 text-amber-400 flex items-center justify-center flex-shrink-0">
+                                        <Check className="w-2.5 h-2.5" />
+                                    </div>
+                                    <span>100% Confidential</span>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+                                <LiquidButton
+                                    href="/share-testimony"
+                                    size="lg"
+                                    variant="amber"
+                                    icon={<ArrowRight className="w-4 h-4" />}
+                                    iconPosition="right"
+                                >
+                                    Submit Your Testimony
+                                </LiquidButton>
+                                <LiquidButton
+                                    href="/god-stories"
+                                    size="lg"
+                                    variant="glass"
+                                    icon={<ArrowRight className="w-4 h-4" />}
+                                    iconPosition="right"
+                                >
+                                    Read God Stories
+                                </LiquidButton>
+                            </div>
+                        </div>
+
+                        {/* Right: Glassmorphism Miracle Counters & Helpline */}
+                        <div className="lg:col-span-5 space-y-4">
+                            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                                {[
+                                    {
+                                        num: '500+',
+                                        count: 500,
+                                        suffix: '+',
+                                        label: 'Testimonies Shared',
+                                        sub: 'Documented Miracles',
+                                        icon: Sparkles
+                                    },
+                                    {
+                                        num: '25+',
+                                        count: 25,
+                                        suffix: '+',
+                                        label: 'Cities Reached',
+                                        sub: 'Across 6+ Nations',
+                                        icon: MapPin
+                                    },
+                                    {
+                                        num: '10K+',
+                                        count: 10000,
+                                        suffix: '+',
+                                        label: 'Lives Touched',
+                                        sub: 'Supernatural Grace',
+                                        icon: Heart
+                                    },
+                                    {
+                                        num: '12+',
+                                        count: 12,
+                                        suffix: '+',
+                                        label: 'Years of Ministry',
+                                        sub: 'Unbroken Glory',
+                                        icon: Flame
+                                    },
+                                ].map((stat, i) => {
+                                    const IconComp = stat.icon;
+                                    return (
+                                        <div
+                                            key={i}
+                                            className="group relative p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-white/[0.08] via-white/[0.03] to-[#040212]/90 border border-white/10 hover:border-amber-400/50 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_35px_rgba(245,158,11,0.18)] overflow-hidden flex flex-col justify-between"
+                                        >
+                                            {/* Golden Ambient Corner Flare */}
+                                            <div className="absolute -top-10 -right-10 w-24 h-24 bg-amber-400/10 rounded-full blur-2xl group-hover:bg-amber-400/25 transition-all duration-500 pointer-events-none" />
+                                            
+                                            {/* Top Icon & Dot */}
+                                            <div className="flex items-center justify-between mb-2 sm:mb-3">
+                                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-300 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all duration-300 shadow-sm">
+                                                    <IconComp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+                                                </div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 group-hover:bg-amber-400 transition-colors" />
+                                            </div>
+
+                                            {/* Stat Number & Descriptions */}
+                                            <div>
+                                                <p
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-extralight text-white font-mono tracking-tight group-hover:text-amber-200 transition-colors ${stat.count ? 'gsap-stat-number' : ''}`}
+                                                    data-count={stat.count || undefined}
+                                                    data-suffix={stat.suffix || undefined}
+                                                >
+                                                    {stat.num}
+                                                </p>
+                                                <p className="text-[11px] font-bold tracking-wider uppercase text-neutral-300 mt-1">
+                                                    {stat.label}
+                                                </p>
+                                                <p className="text-[10px] text-neutral-400 font-light mt-0.5">
+                                                    {stat.sub}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Pastoral Helpline / Prayer Support Card */}
+                            <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-white/[0.03] to-white/[0.01] border border-amber-500/20 backdrop-blur-md flex items-center justify-between gap-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-300 flex-shrink-0">
+                                        <Phone className="w-4 h-4 text-amber-400 animate-pulse" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-white tracking-wide">
+                                            Need Prayer With Your Story?
+                                        </p>
+                                        <p className="text-[10px] sm:text-[11px] text-neutral-400 font-light">
+                                            24/7 Pastoral Care is ready to stand in faith with you.
+                                        </p>
+                                    </div>
+                                </div>
+                                <LiquidButton
+                                    href="/contact"
+                                    size="sm"
+                                    icon={<ArrowRight className="w-3 h-3" />}
+                                    iconPosition="right"
+                                    className="flex-shrink-0 !py-1.5 !px-3 text-[11px]"
+                                >
+                                    Connect
+                                </LiquidButton>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -1549,14 +1660,15 @@ export default function ExperienceOverlay({ initialData }: {
                             <p className="text-sm text-neutral-400 font-light max-w-xl leading-relaxed">
                                 Access hundreds of worship songs with guitar chords, lyrics, and key transposer — in Hindi & English. Built for worship leaders, musicians, and singers.
                             </p>
-                            <button
+                            <LiquidButton
                                 onClick={() => setMode('UTILITY')}
-                                className="group inline-flex items-center gap-3 px-8 py-3.5 bg-amber-400 hover:bg-amber-300 text-black font-bold text-sm rounded-full tracking-wide transition-all duration-300 shadow-xl shadow-amber-500/10 hover:scale-105 active:scale-[0.98]"
+                                size="lg"
+                                variant="amber"
+                                icon={<ArrowRight className="w-4 h-4" />}
+                                iconPosition="right"
                             >
-                                <Music className="w-4 h-4" />
-                                <span>Enter Worship Portal</span>
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </button>
+                                Enter Worship Portal
+                            </LiquidButton>
                         </div>
 
                         {/* Right (2 cols) — Feature list */}
@@ -1683,104 +1795,178 @@ export default function ExperienceOverlay({ initialData }: {
                         className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
                     >
                         <input name="email" type="email" placeholder="Enter your email" className="flex-1 px-5 py-3.5 rounded-full bg-white/[0.04] border border-white/10 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-amber-500/40 focus:bg-white/[0.06] transition-all" />
-                        <button type="submit" className="px-6 py-3.5 rounded-full bg-white text-black font-bold text-sm hover:bg-neutral-200 hover:scale-105 active:scale-[0.98] transition-all">
+                        <LiquidButton
+                            type="submit"
+                            size="md"
+                            variant="glass"
+                            className="flex-shrink-0"
+                        >
                             Subscribe
-                        </button>
+                        </LiquidButton>
                     </form>
                 </div>
             </section>
 
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* FOOTER — Minimalist Luxury Footer                             */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <footer className="relative border-t border-white/[0.06] pt-16 pb-8 px-6 bg-[#02000F] text-white overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[1px] bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+            {/* FOOTER — Ultra-Luxury Architectural Footer                    */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <footer className="relative border-t border-white/[0.08] pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-12 bg-[#02000F] text-white overflow-hidden">
+                {/* Ambient Golden Top Glow */}
+                <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-amber-500/35 to-transparent" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-amber-500/[0.07] rounded-full blur-[110px] pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12">
-                        {/* Brand */}
-                        <div className="md:col-span-3 space-y-5">
-                            <div className="flex items-center gap-3">
-                                <BlackRemoverImage src="/images/logo-footer-final.png" alt="COJ Logo" threshold={80} className="w-10 h-10 object-contain flex-shrink-0" />
+                    {/* Top Section: Brand Block + Links Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pb-12">
+                        {/* Brand Column */}
+                        <div className="lg:col-span-4 space-y-4">
+                            <div className="flex items-center gap-3.5">
+                                <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/10 p-1.5 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.18)]">
+                                    <BlackRemoverImage src="/images/logo-footer-final.png" alt="COJ Logo" threshold={80} className="w-full h-full object-contain" />
+                                </div>
                                 <div>
-                                    <h4 className="text-sm font-black tracking-wider text-white uppercase">CALL OF JESUS</h4>
-                                    <p className="text-[9px] font-bold text-amber-500/80 tracking-[0.35em] uppercase">MINISTRIES</p>
+                                    <h4 className="text-base font-black tracking-wider text-white uppercase font-sans">CALL OF JESUS</h4>
+                                    <p className="text-[10px] font-bold text-amber-400 tracking-[0.35em] uppercase">MINISTRIES</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed max-w-sm">
+                                A spiritual home for every believer. Proclaiming the New Covenant Gospel of Grace, supernatural breakthrough, and raising radical lovers of Jesus worldwide.
+                            </p>
+                            {/* Social Buttons */}
+                            <div className="flex items-center gap-2.5 pt-1">
                                 {[
-                                    { icon: Facebook, href: 'https://www.facebook.com/callofjesusministries' },
-                                    { icon: Instagram, href: 'https://www.instagram.com/callofjesusministries' },
-                                    { icon: Youtube, href: 'https://www.youtube.com/@callofjesusministries' },
+                                    { icon: Facebook, href: 'https://www.facebook.com/callofjesusministries', label: 'Facebook' },
+                                    { icon: Instagram, href: 'https://www.instagram.com/callofjesusministries', label: 'Instagram' },
+                                    { icon: Youtube, href: 'https://www.youtube.com/@callofjesusministries', label: 'YouTube' },
                                 ].map((s, i) => (
-                                    <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center hover:bg-white/10 hover:border-white/15 transition-all">
-                                        <s.icon className="w-3.5 h-3.5 text-neutral-500" />
+                                    <a
+                                        key={i}
+                                        href={s.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={s.label}
+                                        className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-neutral-400 hover:text-amber-300 hover:border-amber-500/40 hover:bg-amber-500/10 active:scale-95 transition-all duration-300 shadow-sm"
+                                    >
+                                        <s.icon className="w-4 h-4" />
                                     </a>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Kingdom */}
-                        <div className="md:col-span-3 space-y-4">
-                            <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-600">Kingdom</h4>
-                            <ul className="space-y-2.5 text-sm text-neutral-500">
-                                <li><Link href="/give" className="hover:text-white transition-colors">Give</Link></li>
-                                <li><Link href="/share-testimony" className="hover:text-white transition-colors">Share Testimony</Link></li>
-                                <li><Link href="/contact" className="hover:text-white transition-colors">Connect</Link></li>
-                            </ul>
-                        </div>
+                        {/* Navigation Columns (2-col on mobile, 4-col on tablet/desktop) */}
+                        <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+                            {/* Kingdom */}
+                            <div className="space-y-3.5">
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-400 flex items-center gap-1.5">
+                                    <span>Kingdom</span>
+                                </h4>
+                                <ul className="space-y-2 text-xs sm:text-sm text-neutral-400">
+                                    <li><Link href="/give" className="hover:text-white transition-colors">Give / Partner</Link></li>
+                                    <li><Link href="/share-testimony" className="hover:text-white transition-colors">Share Testimony</Link></li>
+                                    <li><Link href="/contact" className="hover:text-white transition-colors">Connect with Us</Link></li>
+                                    <li><Link href="/events" className="hover:text-white transition-colors">Special Services</Link></li>
+                                </ul>
+                            </div>
 
-                        {/* Grow */}
-                        <div className="md:col-span-3 space-y-4">
-                            <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-600">Grow</h4>
-                            <ul className="space-y-2.5 text-sm text-neutral-500">
-                                <li><Link href="/events" className="hover:text-white transition-colors">Weekly Events</Link></li>
-                                <li><Link href="/sermons" className="hover:text-white transition-colors">Sermons</Link></li>
-                                <li><Link href="/god-stories" className="hover:text-white transition-colors">God Stories</Link></li>
-                                <li><button onClick={() => setMode('UTILITY')} className="hover:text-white transition-colors">Worship Songs</button></li>
-                                <li><Link href="/devotional" className="hover:text-white transition-colors">Devotionals</Link></li>
-                            </ul>
-                        </div>
+                            {/* Grow */}
+                            <div className="space-y-3.5">
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-400 flex items-center gap-1.5">
+                                    <span>Grow</span>
+                                </h4>
+                                <ul className="space-y-2 text-xs sm:text-sm text-neutral-400">
+                                    <li><Link href="/sermons" className="hover:text-white transition-colors">Sermons Archive</Link></li>
+                                    <li><Link href="/god-stories" className="hover:text-white transition-colors">Miracle Stories</Link></li>
+                                    <li><Link href="/devotional" className="hover:text-white transition-colors">Daily Devotionals</Link></li>
+                                    <li><Link href="/podcasts" className="hover:text-white transition-colors">Audio Teachings</Link></li>
+                                </ul>
+                            </div>
 
-                        {/* About */}
-                        <div className="md:col-span-3 space-y-4">
-                            <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-600">About</h4>
-                            <ul className="space-y-2.5 text-sm text-neutral-500">
-                                <li><Link href="/our-journey" className="hover:text-white transition-colors">Our Journey</Link></li>
-                                <li><Link href="/our-vision-and-mission" className="hover:text-white transition-colors">Vision & Mission</Link></li>
-                                <li><Link href="/our-leaders" className="hover:text-white transition-colors">Our Leaders</Link></li>
-                                <li><a href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1"><span>Church Location</span><MapPin className="w-3 h-3 text-amber-400" /></a></li>
-                            </ul>
+                            {/* About */}
+                            <div className="space-y-3.5">
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-400 flex items-center gap-1.5">
+                                    <span>About Us</span>
+                                </h4>
+                                <ul className="space-y-2 text-xs sm:text-sm text-neutral-400">
+                                    <li><Link href="/our-journey" className="hover:text-white transition-colors">Our Journey</Link></li>
+                                    <li><Link href="/our-vision-and-mission" className="hover:text-white transition-colors">Vision & Mission</Link></li>
+                                    <li><Link href="/our-leaders" className="hover:text-white transition-colors">Our Leaders</Link></li>
+                                    <li><Link href="/our-branches" className="hover:text-white transition-colors">Our Branches</Link></li>
+                                </ul>
+                            </div>
+
+                            {/* Worship Resources */}
+                            <div className="space-y-3.5">
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-400 flex items-center gap-1.5">
+                                    <span>Worship</span>
+                                </h4>
+                                <ul className="space-y-2 text-xs sm:text-sm text-neutral-400">
+                                    <li><button onClick={() => setMode('UTILITY')} className="hover:text-white transition-colors text-left">Worship Portal</button></li>
+                                    <li><Link href="/songs" className="hover:text-white transition-colors">Songs Catalog</Link></li>
+                                    <li><Link href="/tools/tuner" className="hover:text-white transition-colors">Guitar Tuner</Link></li>
+                                    <li><Link href="/tools/pad" className="hover:text-white transition-colors">Worship Pads</Link></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Contact Bar */}
-                    <div className="border-t border-white/[0.05] pt-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <p className="text-[9px] text-neutral-600 uppercase tracking-widest">Email</p>
-                            <p className="text-sm text-neutral-400 mt-1">contact@callofjesus.in</p>
-                        </div>
-                        <div>
-                            <p className="text-[9px] text-neutral-600 uppercase tracking-widest">Church Location</p>
-                            <a href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6" target="_blank" rel="noopener noreferrer" className="text-sm text-amber-400 hover:underline mt-1 inline-flex items-center gap-1">
-                                <span>Call of Jesus Ministries Church</span>
-                                <Navigation className="w-3 h-3" />
-                            </a>
-                        </div>
-                        <div>
-                            <p className="text-[9px] text-neutral-600 uppercase tracking-widest">Weekly Gatherings</p>
-                            <p className="text-xs text-neutral-400 mt-1">Sun: 10:30 AM IST • Fri: 7:00 PM - 9:30 PM IST</p>
+                    {/* Middle Section: 3 Luxury Info & Gathering Cards */}
+                    <div className="border-t border-white/[0.06] pt-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                        {/* Card 1: Email */}
+                        <a
+                            href="mailto:contact@callofjesus.in"
+                            className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-amber-500/30 flex items-center gap-3.5 transition-all group shadow-sm"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
+                                <Mail className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Direct Inquiries</p>
+                                <p className="text-xs sm:text-sm text-white font-medium group-hover:text-amber-300 transition-colors">contact@callofjesus.in</p>
+                            </div>
+                        </a>
+
+                        {/* Card 2: Church Location */}
+                        <a
+                            href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-amber-500/30 flex items-center gap-3.5 transition-all group shadow-sm"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
+                                <MapPin className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Church Arena</p>
+                                <p className="text-xs sm:text-sm text-white font-medium flex items-center gap-1.5 group-hover:text-amber-300 transition-colors">
+                                    <span>Get Maps Directions</span>
+                                    <Navigation className="w-3 h-3 text-amber-400" />
+                                </p>
+                            </div>
+                        </a>
+
+                        {/* Card 3: Gatherings */}
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-3.5 shadow-sm">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                                <Clock className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Weekly Gatherings</p>
+                                <p className="text-xs sm:text-sm text-white font-medium">Sun 10:30 AM IST • Fri 7:00 PM IST</p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Bottom */}
-                    <div className="border-t border-white/[0.04] pt-5 flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-700 gap-3">
-                        <p>© {new Date().getFullYear()} Call of Jesus Ministries – All Rights Reserved</p>
+                    {/* Bottom Legal & Copyright Bar */}
+                    <div className="border-t border-white/[0.05] pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-neutral-500 gap-3">
+                        <p>© {new Date().getFullYear()} Call of Jesus Ministries. All rights reserved.</p>
                         <div className="flex items-center gap-4">
-                            <Link href="/terms" className="hover:text-neutral-400 transition-colors">Terms</Link>
-                            <span className="w-0.5 h-0.5 rounded-full bg-neutral-700" />
-                            <Link href="/privacy" className="hover:text-neutral-400 transition-colors">Privacy</Link>
+                            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                            <span className="w-1 h-1 rounded-full bg-neutral-700" />
+                            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                            <span className="w-1 h-1 rounded-full bg-neutral-700" />
+                            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
                         </div>
                     </div>
                 </div>

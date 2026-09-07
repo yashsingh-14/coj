@@ -28,7 +28,7 @@ export default function ShareTestimonyPage() {
     };
 
     return (
-        <main className="min-h-screen bg-black text-white py-24 px-6 md:px-12">
+        <main className="min-h-screen bg-black text-white py-24 px-4 sm:px-6 md:px-12">
             <LandingNavbar />
             <div className="max-w-3xl mx-auto space-y-12 pt-12">
                 
@@ -37,7 +37,7 @@ export default function ShareTestimonyPage() {
                         <HeartHandshake className="w-4 h-4 text-amber-400" />
                         Praise Report Form
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight">
                         Share Your <span className="font-serif italic font-normal text-amber-300">Testimony</span>
                     </h1>
                     <p className="text-neutral-300 text-base md:text-lg font-light">
@@ -60,7 +60,7 @@ export default function ShareTestimonyPage() {
                         </button>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="rounded-3xl bg-neutral-900/80 border border-white/15 p-8 md:p-10 space-y-6 shadow-2xl">
+                    <form onSubmit={handleSubmit} className="rounded-3xl bg-neutral-900/80 border border-white/15 p-5 sm:p-8 md:p-10 space-y-6 shadow-2xl">
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>

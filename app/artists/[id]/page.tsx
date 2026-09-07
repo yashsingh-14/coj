@@ -43,7 +43,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
     return (
         <div className="min-h-screen bg-[#02000F] text-white pb-32">
             {/* HERO... */}
-            <div className="relative h-[50vh] md:h-[60vh] min-h-[400px] md:min-h-[500px] w-full overflow-hidden flex items-end">
+            <div className="relative min-h-[350px] sm:min-h-[450px] md:h-[60vh] w-full overflow-hidden flex items-end">
                 {/* Background */}
                 <img
                     src={artistImage}
@@ -53,50 +53,50 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/80 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#02000F]/50 to-transparent" />
 
-                <div className="absolute top-6 left-6 z-20">
-                    <Link href="/artists" className="p-3 rounded-full bg-black/20 hover:bg-white/10 backdrop-blur-xl border border-white/5 transition-all group">
-                        <ArrowLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
+                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
+                    <Link href="/artists" className="p-2.5 sm:p-3 rounded-full bg-black/40 hover:bg-white/10 backdrop-blur-xl border border-white/5 transition-all group">
+                        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
                     </Link>
                 </div>
 
-                <div className="container mx-auto px-4 md:px-6 pb-8 md:pb-12 relative z-10">
-                    <div className="flex flex-col md:flex-row items-end gap-6 md:gap-8">
+                <div className="container mx-auto px-4 sm:px-6 pb-6 sm:pb-8 md:pb-12 relative z-10">
+                    <div className="flex flex-col md:flex-row items-start md:items-end gap-4 sm:gap-6 md:gap-8">
                         <div className="w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-[#02000F] shadow-2xl overflow-hidden relative hidden md:block bg-[#111]">
                             <Image src={artistImage} alt={artistName} width={208} height={208} className="w-full h-full object-cover" />
                         </div>
 
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="bg-blue-500/20 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+                                <span className="bg-blue-500/20 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
                                     <CheckCircle className="w-3 h-3" /> Verified Artist
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter text-white drop-shadow-2xl mb-4 leading-none">{artistName}</h1>
+                            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white drop-shadow-2xl mb-2 sm:mb-4 leading-tight break-words">{artistName}</h1>
 
-                            <div className="flex flex-wrap items-center gap-3 md:gap-6 text-xs md:text-sm font-medium text-white/60 mb-6 md:mb-8">
-                                <span className="flex items-center gap-2">
-                                    <Users className="w-4 h-4 text-white/40" /> {artistStats.followers} Listeners
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 md:gap-6 text-xs sm:text-sm font-medium text-white/60 mb-4 sm:mb-6 md:mb-8">
+                                <span className="flex items-center gap-1.5 sm:gap-2">
+                                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/40" /> {artistStats.followers} Listeners
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                                <span className="flex items-center gap-2">
-                                    <Music className="w-4 h-4 text-white/40" /> {artistStats.songs} Tracks
+                                <span className="flex items-center gap-1.5 sm:gap-2">
+                                    <Music className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/40" /> {artistStats.songs} Tracks
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                                <span className="uppercase tracking-widest text-[10px] border border-white/10 px-2 py-0.5 rounded-full">
+                                <span className="uppercase tracking-widest text-[9px] sm:text-[10px] border border-white/10 px-2 py-0.5 rounded-full">
                                     {artistStats.genre}
                                 </span>
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="flex flex-wrap gap-3 sm:gap-4">
                                 {displaySongs.length > 0 && (
                                     <Link
                                         href={`/songs/${generateSlug(displaySongs[0].title)}`}
-                                        className="px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold tracking-widest uppercase flex items-center gap-3 hover:scale-105 transition-transform shadow-lg shadow-orange-500/20"
+                                        className="px-5 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs sm:text-sm tracking-widest uppercase flex items-center gap-2 sm:gap-3 hover:scale-105 transition-transform shadow-lg shadow-orange-500/20"
                                     >
-                                        <Play className="w-5 h-5 fill-current" /> Play Latest
+                                        <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current" /> Play Latest
                                     </Link>
                                 )}
-                                <button className="px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md text-white font-bold tracking-widest uppercase transition-all">
+                                <button className="px-5 sm:px-8 py-3 sm:py-4 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 backdrop-blur-md text-white font-bold text-xs sm:text-sm tracking-widest uppercase transition-all">
                                     Follow
                                 </button>
                             </div>
@@ -106,9 +106,9 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
             </div>
 
             {/* POPULAR TRACKS */}
-            <div className="container mx-auto px-6 mt-12">
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold flex items-center gap-3">
+            <div className="container mx-auto px-4 sm:px-6 mt-8 sm:mt-12">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
+                    <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3">
                         Popular <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Tracks</span>
                     </h2>
                     <span className="text-xs font-bold uppercase tracking-widest text-white/40">
@@ -117,46 +117,45 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 </div>
 
                 {displaySongs.length === 0 ? (
-                    <div className="p-12 text-center border border-white/10 rounded-2xl bg-white/5">
-                        <h3 className="text-xl font-bold text-white/60">No songs found for this artist</h3>
-                        <p className="text-white/40 mt-2">Check back later or try checking another artist.</p>
+                    <div className="p-8 sm:p-12 text-center border border-white/10 rounded-2xl bg-white/5">
+                        <h3 className="text-lg sm:text-xl font-bold text-white/60">No songs found for this artist</h3>
+                        <p className="text-white/40 text-xs sm:text-sm mt-2">Check back later or try checking another artist.</p>
                     </div>
                 ) : (
-                    <div className="grid gap-4">
+                    <div className="grid gap-3 sm:gap-4">
                         {displaySongs.map((song, i) => (
                             <TiltCard key={song.id} className="w-full" max={5} scale={1.02}>
                                 <Link
                                     href={`/songs/${generateSlug(song.title)}`}
-                                    className="group flex items-center gap-6 p-4 md:p-6 rounded-3xl bg-[#0A0A0A] border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all duration-300 relative overflow-hidden cursor-pointer"
+                                    className="group flex items-center gap-3 sm:gap-6 p-3 sm:p-4 md:p-6 rounded-2xl sm:rounded-3xl bg-[#0A0A0A] border border-white/5 hover:border-white/10 hover:bg-white/5 transition-all duration-300 relative overflow-hidden cursor-pointer"
                                 >
                                     {/* Background Shine */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                                    <span className="text-2xl font-black text-white/10 w-8 text-center group-hover:text-amber-500 transition-colors">{i + 1}</span>
+                                    <span className="text-lg sm:text-2xl font-black text-white/10 w-6 sm:w-8 text-center group-hover:text-amber-500 transition-colors shrink-0">{i + 1}</span>
 
-                                    <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform bg-[#111]">
-                                        {/* Artist/Song thumb - prioritize YouTube, then Custom */}
+                                    <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform bg-[#111] shrink-0">
                                         <img
                                             src={getSongImage(song)}
                                             alt={song.title}
                                             className="w-full h-full object-cover"
                                         />
                                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <PlayCircle className="w-8 h-8 text-white" />
+                                            <PlayCircle className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                         </div>
                                     </div>
 
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="text-xl font-bold text-white group-hover:text-amber-500 transition-colors truncate">{song.title}</h3>
+                                        <h3 className="text-base sm:text-xl font-bold text-white group-hover:text-amber-500 transition-colors truncate">{song.title}</h3>
                                         <div className="flex items-center gap-2 text-xs text-white/40 uppercase tracking-widest mt-1">
                                             <span>{song.category}</span>
                                         </div>
                                     </div>
 
                                     <button
-                                        className="p-3 rounded-full hover:bg-white/10 text-white/30 hover:text-red-500 transition-colors z-20"
+                                        className="p-2 sm:p-3 rounded-full hover:bg-white/10 text-white/30 hover:text-red-500 transition-colors z-20 shrink-0"
                                     >
-                                        <Star className="w-5 h-5" />
+                                        <Star className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </button>
                                 </Link>
                             </TiltCard>
@@ -167,12 +166,12 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
 
             {/* DISCOGRAPHY / ALBUMS (Latest) */}
             {displaySongs.length > 0 && (
-                <div className="container mx-auto px-6 mt-20">
-                    <h2 className="text-3xl font-bold mb-8">Latest Release</h2>
-                    <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-[#111] to-[#050505] border border-white/5 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden group">
+                <div className="container mx-auto px-4 sm:px-6 mt-12 sm:mt-20">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">Latest Release</h2>
+                    <div className="p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] bg-gradient-to-br from-[#111] to-[#050505] border border-white/5 flex flex-col md:flex-row items-center gap-6 sm:gap-8 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-[50%] h-full bg-gradient-to-l from-amber-500/10 to-transparent opacity-50 pointer-events-none" />
 
-                        <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl shadow-2xl bg-cover bg-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+                        <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-64 md:h-64 rounded-2xl shadow-2xl bg-cover bg-center shrink-0 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
                             <img
                                 src={getSongImage(displaySongs[0])}
                                 className="w-full h-full object-cover"
@@ -181,13 +180,13 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                         </div>
 
                         <div className="flex-1 text-center md:text-left z-10">
-                            <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest mb-4 text-amber-500">Featured Track</span>
-                            <h3 className="text-3xl md:text-6xl font-black italic tracking-tighter mb-4">{displaySongs[0].title}</h3>
-                            <p className="text-white/60 max-w-xl mb-8 leading-relaxed">Experience the powerful sound of {artistName}. Listen to their latest featured track "{displaySongs[0].title}" now.</p>
+                            <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest mb-3 sm:mb-4 text-amber-500">Featured Track</span>
+                            <h3 className="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter mb-2 sm:mb-4">{displaySongs[0].title}</h3>
+                            <p className="text-white/60 max-w-xl mb-6 sm:mb-8 text-xs sm:text-base leading-relaxed">Experience the powerful sound of {artistName}. Listen to their latest featured track "{displaySongs[0].title}" now.</p>
                             <div className="flex gap-4 justify-center md:justify-start">
                                 <Link
                                     href={`/songs/${generateSlug(displaySongs[0].title)}`}
-                                    className="px-6 py-3 rounded-full bg-white text-black font-bold text-sm tracking-widest uppercase hover:bg-amber-500 transition-colors"
+                                    className="px-6 py-3 rounded-full bg-white text-black font-bold text-xs sm:text-sm tracking-widest uppercase hover:bg-amber-500 transition-colors"
                                 >
                                     Listen Now
                                 </Link>

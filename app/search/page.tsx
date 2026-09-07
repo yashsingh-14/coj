@@ -28,7 +28,7 @@ export default function SearchPage() {
             <div className="absolute bottom-[-10%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[var(--brand)]/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
 
             {/* Main Container */}
-            <div className="max-w-4xl mx-auto px-4 md:px-6 py-4 md:py-12 relative z-10 flex flex-col pb-28 md:pb-32">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 md:py-12 relative z-10 flex flex-col pb-28 md:pb-32">
 
                 {/* Header / Close */}
                 <div className="flex justify-end mb-4 md:mb-8">
@@ -85,7 +85,7 @@ export default function SearchPage() {
                                         <button
                                             key={i}
                                             onClick={() => setQuery(term)}
-                                            className="px-4 md:px-6 py-2.5 md:py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-[var(--brand)]/50 text-white/70 hover:text-white transition-all text-xs md:text-sm font-bold"
+                                            className="px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-[var(--brand)]/50 text-white/70 hover:text-white transition-all text-xs md:text-sm font-bold"
                                         >
                                             {term}
                                         </button>

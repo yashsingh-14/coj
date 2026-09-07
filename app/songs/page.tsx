@@ -52,7 +52,7 @@ export default function SongsListPage() {
 
             {/* STICKY HEADER */}
             <div className="sticky top-0 z-40 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <Link href="/" className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors group">
                             <ArrowLeft className="w-5 h-5 text-white/50 group-hover:text-white" />
@@ -62,9 +62,9 @@ export default function SongsListPage() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 relative z-10">
                 {/* SEARCH INPUT */}
-                <div className="relative group mb-12 max-w-2xl mx-auto">
+                <div className="relative group mb-8 sm:mb-12 max-w-2xl mx-auto">
                     <div className={`absolute -inset-0.5 bg-gradient-to-r from-[var(--brand)] to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 ${isFocused ? 'opacity-50' : ''}`}></div>
                     <div className="relative bg-[#0A0A0A] rounded-2xl flex items-center px-6 py-4 border border-white/10 shadow-2xl">
                         <Search className={`w-5 h-5 mr-4 transition-colors ${isFocused ? 'text-[var(--brand)]' : 'text-white/30'}`} />
@@ -86,16 +86,16 @@ export default function SongsListPage() {
                         <div className="w-12 h-12 border-4 border-white/10 border-t-[var(--brand)] rounded-full animate-spin"></div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-8">
                         {filteredSongs.map((song, i) => (
-                            <TiltCard key={song.id} className="h-full min-h-[350px]" scale={1.03} max={10}>
+                            <TiltCard key={song.id} className="h-full min-h-[220px] sm:min-h-[350px]" scale={1.03} max={10}>
                                 <div className="relative h-full group">
                                     {/* NEON GLOW ON HOVER */}
                                     <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[var(--brand)] to-purple-600 blur-[30px] opacity-0 group-hover:opacity-70 transition-all duration-500 group-hover:scale-105"></div>
 
                                     <Link
                                         href={`/songs/${generateSlug(song.title)}`}
-                                        className="relative flex flex-col justify-end p-6 rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors aspect-[3/4]"
+                                        className="relative flex flex-col justify-end p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors aspect-[3/4]"
                                     >
                                         {/* Album Art Background */}
                                         <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url('${getSongImage(song)}')` }}></div>
@@ -108,8 +108,8 @@ export default function SongsListPage() {
                                                     {song.category.toUpperCase()}
                                                 </span>
                                             </div>
-                                            <h3 className="font-black text-2xl text-white leading-none mb-1 drop-shadow-lg">{song.title}</h3>
-                                            <p className="text-sm text-white/70 font-bold uppercase tracking-widest">{song.artist}</p>
+                                            <h3 className="font-black text-base sm:text-2xl text-white leading-none mb-1 drop-shadow-lg line-clamp-2">{song.title}</h3>
+                                            <p className="text-[10px] sm:text-sm text-white/70 font-bold uppercase tracking-widest truncate">{song.artist}</p>
 
                                             {/* Fake Equalizer */}
                                             <div className="w-full h-1 bg-white/20 rounded-full mt-4 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity delay-100">

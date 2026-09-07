@@ -200,12 +200,12 @@ export default function SettingsPage() {
                 <h1 className="text-xl md:text-2xl font-bold tracking-tight">Settings</h1>
             </div>
 
-            <div className="container mx-auto px-6 max-w-2xl py-8">
+            <div className="container mx-auto px-4 sm:px-6 max-w-2xl py-6 sm:py-8">
 
                 {sections.map((section, idx) => (
-                    <div key={idx} className="mb-10">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-4 px-2">{section.title}</h2>
-                        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-3xl overflow-hidden divide-y divide-[var(--card-border)] transition-colors duration-300">
+                    <div key={idx} className="mb-8 sm:mb-10">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted-foreground)] mb-3 sm:mb-4 px-2">{section.title}</h2>
+                        <div className="bg-[var(--card)] border border-[var(--card-border)] rounded-2xl sm:rounded-3xl overflow-hidden divide-y divide-[var(--card-border)] transition-colors duration-300">
                             {section.items.map((item, i) => (
                                 item.type === 'link' ? (
                                     <Link
@@ -216,50 +216,50 @@ export default function SettingsPage() {
                                                 toast("Feature coming soon!");
                                             }
                                         }}
-                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-[var(--muted)]/10 transition-colors group"
+                                        className="flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 md:p-5 hover:bg-[var(--muted)]/10 transition-colors group"
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors text-[var(--foreground)]">
-                                            <item.icon className="w-5 h-5" />
+                                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors text-[var(--foreground)] shrink-0">
+                                            <item.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="font-medium text-[var(--foreground)] group-hover:translate-x-1 transition-transform">{item.label}</h3>
-                                            <p className="text-sm text-[var(--muted-foreground)]">{item.sub}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-medium text-sm sm:text-base text-[var(--foreground)] group-hover:translate-x-1 transition-transform truncate">{item.label}</h3>
+                                            <p className="text-xs sm:text-sm text-[var(--muted-foreground)] truncate">{item.sub}</p>
                                         </div>
-                                        <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)]/50 group-hover:text-[var(--foreground)] transition-colors" />
+                                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--muted-foreground)]/50 group-hover:text-[var(--foreground)] transition-colors shrink-0" />
                                     </Link>
                                 ) : item.type === 'toggle' ? (
                                     <div
                                         key={i}
                                         onClick={item.action}
-                                        className="flex items-center gap-4 p-4 md:p-5 hover:bg-[var(--muted)]/10 transition-colors cursor-pointer group select-none"
+                                        className="flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 md:p-5 hover:bg-[var(--muted)]/10 transition-colors cursor-pointer group select-none"
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors text-[var(--foreground)]">
-                                            <item.icon className="w-5 h-5" />
+                                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center group-hover:bg-[var(--brand)]/20 group-hover:text-[var(--brand)] transition-colors text-[var(--foreground)] shrink-0">
+                                            <item.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="font-medium text-[var(--foreground)]">{item.label}</h3>
-                                            <p className="text-sm text-[var(--muted-foreground)]">{item.sub}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-medium text-sm sm:text-base text-[var(--foreground)] truncate">{item.label}</h3>
+                                            <p className="text-xs sm:text-sm text-[var(--muted-foreground)] truncate">{item.sub}</p>
                                         </div>
                                         {/* Toggle Switch UI */}
-                                        <div className={`w-12 h-7 rounded-full p-1 transition-colors duration-300 ${item.value ? 'bg-[var(--brand)]' : 'bg-[var(--muted)]'}`}>
-                                            <div className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${item.value ? 'translate-x-5' : 'translate-x-0'}`} />
+                                        <div className={`w-11 sm:w-12 h-6 sm:h-7 rounded-full p-1 transition-colors duration-300 shrink-0 ${item.value ? 'bg-[var(--brand)]' : 'bg-[var(--muted)]'}`}>
+                                            <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${item.value ? 'translate-x-5' : 'translate-x-0'}`} />
                                         </div>
                                     </div>
                                 ) : (
                                     <div
                                         key={i}
                                         onClick={item.action}
-                                        className={`flex items-center gap-4 p-4 md:p-5 ${item.action ? 'cursor-pointer hover:bg-[var(--muted)]/10' : 'opacity-60'} transition-colors`}
+                                        className={`flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 md:p-5 ${item.action ? 'cursor-pointer hover:bg-[var(--muted)]/10' : 'opacity-60'} transition-colors`}
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center text-[var(--foreground)]">
-                                            <item.icon className="w-5 h-5" />
+                                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--muted)]/10 flex items-center justify-center text-[var(--foreground)] shrink-0">
+                                            <item.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="font-medium text-[var(--foreground)]">{item.label}</h3>
-                                            <p className="text-sm text-[var(--muted-foreground)]">{item.sub}</p>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-medium text-sm sm:text-base text-[var(--foreground)] truncate">{item.label}</h3>
+                                            <p className="text-xs sm:text-sm text-[var(--muted-foreground)] truncate">{item.sub}</p>
                                         </div>
                                         {item.action && (
-                                            <ChevronRight className="w-5 h-5 text-[var(--muted-foreground)]/50" />
+                                            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--muted-foreground)]/50 shrink-0" />
                                         )}
                                     </div>
                                 )
@@ -270,7 +270,7 @@ export default function SettingsPage() {
 
                 <button
                     onClick={handleLogout}
-                    className="w-full p-4 md:p-5 rounded-3xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold flex items-center justify-center gap-3 hover:bg-red-500/20 transition-all mb-12"
+                    className="w-full p-3.5 sm:p-4 md:p-5 rounded-2xl sm:rounded-3xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold flex items-center justify-center gap-3 hover:bg-red-500/20 transition-all mb-12 text-sm sm:text-base"
                 >
                     <LogOut className="w-5 h-5" />
                     Sign Out

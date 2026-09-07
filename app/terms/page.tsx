@@ -13,34 +13,34 @@ export default function TermsPage() {
                 <div className="absolute top-[20%] left-[20%] w-[20vw] h-[20vw] bg-[var(--brand)]/10 rounded-full blur-[80px] opacity-30"></div>
             </div>
 
-            <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 md:py-20">
+            <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12 md:py-20">
                 {/* Navigation */}
-                <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-12 transition-all duration-300 group">
+                <Link href="/" className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-6 sm:mb-12 transition-all duration-300 group">
                     <ArrowLeft className="w-4 h-4 text-white/70 group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-sm font-medium text-white/90">Back to Home</span>
+                    <span className="text-xs sm:text-sm font-medium text-white/90">Back to Home</span>
                 </Link>
 
                 {/* Header */}
-                <div className="flex flex-col items-center text-center mb-16 animate-fade-in-down">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.2)] transform-style-3d animate-float">
-                        <FileText className="w-10 h-10 text-blue-500 drop-shadow-lg" />
+                <div className="flex flex-col items-center text-center mb-8 sm:mb-16 animate-fade-in-down">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center mb-4 sm:mb-6 shadow-[0_0_30px_rgba(59,130,246,0.2)] transform-style-3d animate-float">
+                        <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 drop-shadow-lg" />
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-2 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
                         Terms of Service
                     </h1>
-                    <p className="text-lg text-white/40 font-medium tracking-wide uppercase text-xs">
+                    <p className="text-white/40 font-medium tracking-wide uppercase text-[10px] sm:text-xs">
                         Last Updated: December 20, 2024
                     </p>
                 </div>
 
                 {/* Content Card */}
-                <div className="backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                <div className="backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 shadow-2xl relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
 
-                    <div className="space-y-12 relative z-10">
+                    <div className="space-y-8 sm:space-y-12 relative z-10">
                         {/* Intro */}
                         <div className="prose prose-invert prose-lg max-w-none">
-                            <p className="text-xl text-white/80 leading-relaxed font-light">
+                            <p className="text-base sm:text-xl text-white/80 leading-relaxed font-light">
                                 Welcome to <span className="text-blue-500 font-bold">Call of Jesus Ministries</span>.
                                 By accessing our platform, you agree to be bound by these terms. We exist to serve the Kingdom, and these guidelines ensure a safe, respectful environment for all worshippers.
                             </p>

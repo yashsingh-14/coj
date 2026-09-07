@@ -63,16 +63,16 @@ export default function CreateSetPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white p-6 md:p-12">
+        <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-6 sm:py-12 pb-32">
             <div className="max-w-2xl mx-auto">
-                <Link href="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-8 transition-colors">
+                <Link href="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-6 sm:mb-8 transition-colors text-sm">
                     <ArrowLeft className="w-4 h-4" />
                     Back to Sets
                 </Link>
 
-                <div className="mb-10">
-                    <h1 className="text-4xl font-black mb-2">Create New Set</h1>
-                    <p className="text-white/40">Plan a new service or event.</p>
+                <div className="mb-6 sm:mb-10">
+                    <h1 className="text-2xl sm:text-4xl font-black mb-2">Create New Set</h1>
+                    <p className="text-white/40 text-sm sm:text-base">Plan a new service or event.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">

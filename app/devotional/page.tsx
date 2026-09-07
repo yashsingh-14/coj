@@ -48,7 +48,7 @@ export default function DevotionalPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="relative z-50 px-6 py-6 flex items-center justify-between">
+            <nav className="relative z-50 px-4 sm:px-6 py-6 flex items-center justify-between">
                 <Link href="/" className="p-3 bg-white/5 backdrop-blur-md rounded-full border border-white/10 hover:bg-white/10 transition-colors group">
                     <ChevronLeft className="w-6 h-6 text-white group-hover:-translate-x-1 transition-transform" />
                 </Link>
@@ -80,7 +80,7 @@ export default function DevotionalPage() {
             </nav>
 
             {/* Content */}
-            <main className="relative z-10 max-w-4xl mx-auto px-6 pt-10">
+            <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-10">
 
                 {/* Header */}
                 <div className="text-center mb-16">
@@ -88,7 +88,7 @@ export default function DevotionalPage() {
                         <Calendar className="w-4 h-4 text-amber-500" />
                         <span className="text-xs font-bold tracking-widest text-amber-500 uppercase">{today}</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-serif italic text-white mb-6 leading-tight">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-serif italic text-white mb-6 leading-tight">
                         Daily <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-500 to-amber-200">Devotional</span>
                     </h1>
                     <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
@@ -97,31 +97,31 @@ export default function DevotionalPage() {
                 </div>
 
                 {/* Verse Card */}
-                <div className="relative p-8 md:p-12 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[3rem] shadow-2xl mb-16 overflow-hidden group">
+                <div className="relative p-5 sm:p-8 md:p-12 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-[3rem] shadow-2xl mb-12 sm:mb-16 overflow-hidden group">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-50"></div>
 
                     <div className="relative z-10 text-center">
-                        <h2 className="text-3xl md:text-5xl font-serif leading-tight text-white mb-8">
+                        <h2 className="text-2xl sm:text-3xl md:text-5xl font-serif leading-tight text-white mb-6 sm:mb-8">
                             &quot;{todaysVerse.text}&quot;
                         </h2>
-                        <div className="inline-block border-t border-b border-white/10 py-3 px-8">
-                            <span className="text-amber-500 font-bold tracking-[0.3em] uppercase">{todaysVerse.reference}</span>
+                        <div className="inline-block border-t border-b border-white/10 py-2.5 sm:py-3 px-6 sm:px-8">
+                            <span className="text-amber-500 font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase text-xs sm:text-sm">{todaysVerse.reference}</span>
                         </div>
                     </div>
 
                     {/* Decorative Elements */}
-                    <div className="absolute -top-10 -left-10 text-[150px] font-serif text-white/5 pointer-events-none">&quot;</div>
-                    <div className="absolute -bottom-20 -right-10 text-[150px] font-serif text-white/5 pointer-events-none rotate-180">&quot;</div>
+                    <div className="absolute -top-10 -left-10 text-[100px] sm:text-[150px] font-serif text-white/5 pointer-events-none">&quot;</div>
+                    <div className="absolute -bottom-20 -right-10 text-[100px] sm:text-[150px] font-serif text-white/5 pointer-events-none rotate-180">&quot;</div>
                 </div>
 
                 {/* Reflection */}
                 <div className="prose prose-lg prose-invert mx-auto">
-                    <p className="text-xl text-white/90 leading-relaxed mb-8 first-letter:text-5xl first-letter:font-serif first-letter:mr-3 first-letter:float-left first-letter:text-amber-500">
+                    <p className="text-base sm:text-xl text-white/90 leading-relaxed mb-8 first-letter:text-4xl sm:first-letter:text-5xl first-letter:font-serif first-letter:mr-3 first-letter:float-left first-letter:text-amber-500">
                         {todaysVerse.reflection}
                     </p>
-                    <div className="p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-2xl my-10">
-                        <h3 className="text-amber-500 font-bold mb-2 uppercase tracking-wide text-sm">Prayer for Today</h3>
-                        <p className="text-white/90 italic">
+                    <div className="p-5 sm:p-8 bg-amber-500/5 border-l-4 border-amber-500 rounded-r-2xl my-8 sm:my-10">
+                        <h3 className="text-amber-500 font-bold mb-2 uppercase tracking-wide text-xs sm:text-sm">Prayer for Today</h3>
+                        <p className="text-white/90 italic text-sm sm:text-base">
                             &quot;{todaysVerse.prayer}&quot;
                         </p>
                     </div>

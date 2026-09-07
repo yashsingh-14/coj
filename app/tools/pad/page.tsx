@@ -119,7 +119,7 @@ export default function PadPage() {
             </div>
 
             {/* Top Simple Header */}
-            <div className="px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
+            <div className="px-4 sm:px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
                 <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all backdrop-blur-md">
                     <ArrowLeft className="w-4 h-4 text-amber-500" />
                     <span className="text-sm font-semibold tracking-wide text-white/80">Exit Pad</span>
@@ -143,7 +143,7 @@ export default function PadPage() {
                                     <button
                                         key={note}
                                         onPointerDown={(e) => { e.preventDefault(); handleNoteToggle(note); }}
-                                        className="flex-1 rounded-2xl md:rounded-3xl border transition-all duration-300 relative overflow-hidden group shadow-2xl"
+                                        className="flex-1 rounded-xl sm:rounded-2xl md:rounded-3xl border transition-all duration-300 relative overflow-hidden group shadow-2xl"
                                         style={{
                                             borderColor: isActive 
                                                 ? isSharp ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)' 
@@ -162,13 +162,13 @@ export default function PadPage() {
                                         }}
                                     >
                                         {/* Corner Label */}
-                                        <span className="absolute top-4 left-5 text-xl md:text-2xl font-black tracking-tighter transition-colors"
+                                        <span className="absolute top-2 left-2.5 sm:top-4 sm:left-5 text-base sm:text-xl md:text-2xl font-black tracking-tighter transition-colors"
                                             style={{ color: isActive ? '#fff' : 'rgba(255,255,255,0.2)' }}>
                                             {note}
                                         </span>
 
                                         {/* Subtle internal ring for MPC look */}
-                                        <div className="absolute inset-2 border border-white/5 rounded-xl md:rounded-2xl pointer-events-none" />
+                                        <div className="absolute inset-1 sm:inset-2 border border-white/5 rounded-lg sm:rounded-xl md:rounded-2xl pointer-events-none" />
                                         
                                         {/* Hover glow */}
                                         <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-300" />
