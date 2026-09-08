@@ -200,10 +200,9 @@ function HeroSection() {
 
     // Mobile 3-Split Cinematic Hero Intro Timer
     useEffect(() => {
-        // Guarantee muted autoplay on mobile devices
+        // Guarantee muted autoplay and synchronous start on mobile devices
         if (topVideoRef.current) {
             topVideoRef.current.muted = true;
-            topVideoRef.current.currentTime = 2;
             topVideoRef.current.play().catch(() => { });
         }
         if (mobileMiddleVidRef.current) {
@@ -212,7 +211,6 @@ function HeroSection() {
         }
         if (bottomVideoRef.current) {
             bottomVideoRef.current.muted = true;
-            bottomVideoRef.current.currentTime = 14;
             bottomVideoRef.current.play().catch(() => { });
         }
 
@@ -372,7 +370,8 @@ function HeroSection() {
                 >
                     <video
                         ref={topVideoRef}
-                        src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
+                        src="/videos/hero-mobile-top.mp4"
+                        poster="/videos/hero-poster-top.jpg"
                         autoPlay
                         muted
                         loop
@@ -394,7 +393,8 @@ function HeroSection() {
                 >
                     <video
                         ref={mobileMiddleVidRef}
-                        src="/videos/coj%20video.mp4"
+                        src="/videos/hero-mobile-middle.mp4"
+                        poster="/videos/hero-poster-middle.jpg"
                         autoPlay
                         muted
                         loop
@@ -425,7 +425,8 @@ function HeroSection() {
                 >
                     <video
                         ref={bottomVideoRef}
-                        src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
+                        src="/videos/hero-mobile-bottom.mp4"
+                        poster="/videos/hero-poster-bottom.jpg"
                         autoPlay
                         muted
                         loop
@@ -433,12 +434,12 @@ function HeroSection() {
                         preload="auto"
                         className="w-full h-full object-cover object-[center_85%]"
                     />
-                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/15 pointer-events-none" />
                     <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
                 </div>
 
-                {/* Bottom fade into the page */}
-                <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/85 via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
+                {/* Subtle bottom blend into page background — keeps congregation bright and visible */}
+                <div className="absolute bottom-0 inset-x-0 h-16 sm:h-20 bg-gradient-to-t from-[#07060A] via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
             {/* Hero Content */}
