@@ -205,14 +205,14 @@ function HeroSection() {
             bottomVideoRef.current.play().catch(() => {});
         }
 
-        // Keep 3-split playing for 3.2s, then trigger smooth expansion to single video
+        // Keep 3-split playing for 8s so users can fully enjoy the multi-cam worship, then expand smoothly
         const expandTimer = setTimeout(() => {
             setIsMobileSplitExpanded(true);
             setTimeout(() => {
                 topVideoRef.current?.pause();
                 bottomVideoRef.current?.pause();
-            }, 1200);
-        }, 3200);
+            }, 1600);
+        }, 8000);
 
         return () => clearTimeout(expandTimer);
     }, []);
@@ -359,7 +359,7 @@ function HeroSection() {
                         height: '35%',
                         transform: isMobileSplitExpanded ? 'translate3d(0, -100%, 0)' : 'translate3d(0, 0, 0)',
                         opacity: isMobileSplitExpanded ? 0 : 1,
-                        transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        transition: 'transform 1400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 1400ms cubic-bezier(0.22, 1, 0.36, 1)',
                         WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
                         maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)'
                     }}
@@ -384,7 +384,7 @@ function HeroSection() {
                         height: '35%',
                         transform: isMobileSplitExpanded ? 'translate3d(0, 100%, 0)' : 'translate3d(0, 0, 0)',
                         opacity: isMobileSplitExpanded ? 0 : 1,
-                        transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        transition: 'transform 1400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 1400ms cubic-bezier(0.22, 1, 0.36, 1)',
                         WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
                         maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)'
                     }}
