@@ -513,34 +513,34 @@ function HeroSection() {
 // ══════════════════════════════════════════════════════════════════════
 const TESTIMONIALS_DATA = [
     {
-        name: "Sister Shweta",
-        designation: "Creative Miracle • New Delhi",
-        quote: "In 2020, during a routine medical examination, I was informed of a condition requiring surgical removal. But after earnest prayer at Call of Jesus Ministries, God performed a creative miracle! The doctors verified a completely brand-new organ. Truly, nothing is too hard for God!",
-        src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&h=750&q=80"
-    },
-    {
         name: "Brother Rajesh",
         designation: "Cancer Healed • Faridabad",
-        quote: "Diagnosed with stage 3 cancer, I came to the healing service with faith that moved mountains. After anointed prayer, post-service PET scans showed zero cancer cells remaining in my body! By His stripes, I am healed and alive.",
-        src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&h=750&q=80"
+        quote: "Diagnosed with stage 3 cancer, I came to the healing service with faith that moved mountains. After anointed prayer at the altar, post-service PET scans showed zero cancer cells remaining in my body! By His stripes, I am healed and alive.",
+        src: "/images/stories/story-1.webp"
     },
     {
-        name: "Sister Priya",
+        name: "Youth Revival",
+        designation: "Overcomers Conference • New Delhi",
+        quote: "Hundreds of young lives were delivered from substance abuse and spiritual depression in a single night. The Holy Spirit moved tangibly across the auditorium, igniting hearts with divine fire and lasting purpose.",
+        src: "/images/stories/story-2.webp"
+    },
+    {
+        name: "Sister Priya & Worship Team",
         designation: "Mental Freedom • Noida",
-        quote: "For years, I battled severe panic attacks, sleepless nights, and chronic depression. When I stepped into the prophetic presence of God here, every chain shattered. Jesus filled my heart with divine peace that surpasses all understanding.",
-        src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=750&q=80"
+        quote: "For years, I battled severe panic attacks, sleepless nights, and chronic depression. When we stepped into corporate prophetic worship, every chain shattered. Jesus filled our hearts with divine peace that surpasses all understanding.",
+        src: "/images/stories/story-3.webp"
+    },
+    {
+        name: "Sisters Fellowship",
+        designation: "Prophetic Restoration • New Delhi",
+        quote: "Broken marriages restored, incurable medical reports overturned, and barren wombs blessed. Standing together in sisterhood and covenant prayer, God revealed His faithfulness to every daughter of the King.",
+        src: "/images/stories/story-4.webp"
     },
     {
         name: "Brother Samuel",
         designation: "Supernatural Favor • Gurugram",
         quote: "Standing on the verge of total business bankruptcy with mounting debts, I anchored my soul on God's Word. Within 90 days, supernatural contracts and miraculous debt clearance took place. God supplied every need exceedingly!",
-        src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&h=750&q=80"
-    },
-    {
-        name: "Sister Surabhi",
-        designation: "Miracle Healing • New Delhi",
-        quote: "Mandatory medical screenings initially showed reactive results for an incurable condition. Through intense prayer & covenant grace, repeat screenings at two top diagnostic centers came back 100% clear!",
-        src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&h=750&q=80"
+        src: "/images/stories/story-5.webp"
     }
 ];
 

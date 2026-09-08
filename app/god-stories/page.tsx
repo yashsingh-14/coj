@@ -11,35 +11,43 @@ export const metadata = {
 const storiesData = [
     {
         id: 1,
-        title: "Sister Surabhi - Healed from Incurable Disease",
+        title: "Brother Rajesh - Cancer Healed at the Altar",
         category: "Miracle Healing",
-        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80",
-        snippet: "Sister Surabhi underwent mandatory medical screenings after her internship. To her shock, initial reports came back reactive. Through intense prayer & covenant grace, her medical reports were completely turned around!",
-        fullText: "Sister Surabhi, a medical student, underwent mandatory health checks. Initial reports showed alarming reactive results for an incurable disease. Frightened, she reached out for prayer during Friday prophetic service. Apostle and the pastoral team prayed for creative healing. A week later, repeated screenings at two top diagnostic centers came back 100% negative and completely clear! Praise Lord Jesus!"
+        image: "/images/stories/story-1.webp",
+        snippet: "Diagnosed with stage 3 cancer, faith moved mountains. Post-service PET scans showed zero cancer cells remaining!",
+        fullText: "Diagnosed with stage 3 cancer, Brother Rajesh came to the Call of Jesus Ministries healing service with faith that moved mountains. After anointed prayer at the altar, repeated diagnostic screenings and post-service PET scans showed zero cancer cells remaining in his body! By His stripes, he is completely healed and alive to praise the Lord Jesus Christ."
     },
     {
         id: 2,
-        title: "Creative Miracle: Complete Organ & Health Restoration",
-        category: "Creative Miracle",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80",
-        snippet: "After suffering chronic pain and surgical complications, supernatural prayer resulted in full restoration and instantaneous relief.",
-        fullText: "Brother Amit suffered severe complications following a complex surgery. Doctors advised lifelong medication and warned of permanent dysfunction. During a worship service, power of God swept through the auditorium. He felt intense warmth and was completely delivered from all pain. Subsequent medical scans confirmed total anatomical restoration."
+        title: "Youth Revival - Overcomers Conference Breakthrough",
+        category: "Deliverance & Revival",
+        image: "/images/stories/story-2.webp",
+        snippet: "Hundreds of young lives delivered from addiction and depression as Holy Spirit swept the auditorium.",
+        fullText: "During the Overcomers Youth Conference, hundreds of young lives were delivered from substance abuse, chronic depression, and suicidal ideation in a single anointed night. The tangible power of the Holy Spirit moved through the auditorium, restoring purpose, purity, and passion for God."
     },
     {
         id: 3,
-        title: "Financial Breakthrough & Debt Freedom",
-        category: "Financial Miracle",
-        image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80",
-        snippet: "Facing crippling debt and business bankruptcy, obedience in tithing and prayer opened supernatural doors of supply.",
-        fullText: "When faced with immense financial loss and impending legal trouble due to business debt, Brother Rajesh stood on God's word. Through covenant giving and prayer, unexpected global contracts were signed within 30 days, completely wiping out every financial burden."
+        title: "Sister Priya & Worship Team - Delivered from Panic & Depression",
+        category: "Inner Healing & Freedom",
+        image: "/images/stories/story-3.webp",
+        snippet: "Eight years of chronic panic attacks, sleepless nights, and fear shattered during prophetic corporate worship.",
+        fullText: "For over eight years, Sister Priya battled debilitating panic attacks, sleepless night terrors, and severe anxiety. Stepping into corporate prophetic worship at Call of Jesus Ministries, every chain shattered. Jesus filled her soul with divine supernatural peace that surpasses all human understanding."
     },
     {
         id: 4,
-        title: "Delivered from Severe Anxiety & Depression",
-        category: "Deliverance & Freedom",
-        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80",
-        snippet: "Overcoming 8 years of insomnia and panic attacks through the tangible presence of God.",
-        fullText: "Sister Priya struggled with severe panic attacks and night terror for over eight years. Attending Call of Jesus Ministries service for the first time, she experienced the overwhelming love of God. The spirit of fear left her instantly, replaced by divine peace."
+        title: "Sisters Fellowship - Barren Wombs Blessed & Marriages Restored",
+        category: "Prophetic Restoration",
+        image: "/images/stories/story-4.webp",
+        snippet: "Covenant prayer bringing breakthrough in barrenness, broken families, and terminal medical verdicts.",
+        fullText: "During the annual Sisters Fellowship conference, God moved mightily among the daughters of the King. Barren sisters testified of healthy pregnancies, broken families received supernatural reconciliation, and reactive medical diagnoses were miraculously overturned."
+    },
+    {
+        id: 5,
+        title: "Brother Samuel - Supernatural Debt Clearance & Provision",
+        category: "Financial Miracle",
+        image: "/images/stories/story-5.webp",
+        snippet: "Facing imminent bankruptcy and crippling debts, obedience and prayer opened supernatural financial doors.",
+        fullText: "Standing on the absolute verge of total business bankruptcy with mounting debts, Brother Samuel anchored his soul on God's covenant promises. Within 90 days, unexpected supernatural contracts were signed and complete debt clearance took place. God supplied every single need exceedingly!"
     }
 ];
 
