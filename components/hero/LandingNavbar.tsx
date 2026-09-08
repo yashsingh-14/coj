@@ -89,22 +89,13 @@ export default function LandingNavbar() {
                                         <div className="text-[10px] text-white/40 font-normal">Sunday & Friday Messages</div>
                                     </div>
                                 </Link>
-                                <Link href="/podcasts" className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-white/10 hover:text-[#FDE047] transition-all text-xs font-semibold">
+                                <Link href="/devotional" className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-white/10 hover:text-[#FDE047] transition-all text-xs font-semibold">
                                     <div className="w-7 h-7 rounded-lg bg-[#F59E0B]/15 flex items-center justify-center text-[#F59E0B]">
-                                        <Sparkles className="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <div className="font-bold">Podcasts</div>
-                                        <div className="text-[10px] text-white/40 font-normal">Spirit-led teachings</div>
-                                    </div>
-                                </Link>
-                                <Link href="/books" className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-white/10 hover:text-[#FFD700] transition-all text-xs font-semibold">
-                                    <div className="w-7 h-7 rounded-lg bg-[#FFB37A]/15 flex items-center justify-center text-[#FFB37A]">
                                         <BookOpen className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <div className="font-bold">Books</div>
-                                        <div className="text-[10px] text-white/40 font-normal">Spiritual growth resources</div>
+                                        <div className="font-bold">Daily Devotionals</div>
+                                        <div className="text-[10px] text-white/40 font-normal">Scripture & reflection</div>
                                     </div>
                                 </Link>
                                 <Link href="/god-stories" className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-white/10 hover:text-[#FFB37A] transition-all text-xs font-semibold">
@@ -231,175 +222,199 @@ export default function LandingNavbar() {
                 </div>
             </div>
 
-            {/* Mobile & Tablet Luxury Menu Drawer */}
+            {/* Mobile & Tablet Luxury Glassmorphic Menu Drawer */}
             {mobileMenuOpen && (
-                <div className="lg:hidden fixed inset-x-0 top-14 md:top-16 max-h-[calc(100vh-4rem)] overflow-y-auto bg-[#07060A]/98 backdrop-blur-md border-b border-[#F4EDE2]/10 shadow-[0_25px_70px_rgba(0,0,0,0.95)] px-4 sm:px-8 py-6 space-y-6 animate-fade-in-down font-space">
-                    {/* Ambient Glow in Menu */}
-                    <div className="absolute top-0 right-10 w-64 h-64 bg-[radial-gradient(circle,rgba(255,90,46,0.14)_0%,transparent_70%)] rounded-full pointer-events-none" />
-                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-[radial-gradient(circle,rgba(245,158,11,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                <div className="lg:hidden fixed inset-x-0 top-14 md:top-16 max-h-[calc(100vh-3.5rem)] md:max-h-[calc(100vh-4rem)] overflow-y-auto bg-[#07060A]/90 backdrop-blur-3xl border-b border-white/[0.08] shadow-[0_30px_90px_rgba(0,0,0,0.95)] px-4 sm:px-8 py-6 space-y-5 animate-fade-in-down font-space relative">
+                    {/* Top ambient luxury shimmer line */}
+                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#FF5A2E]/40 to-transparent pointer-events-none" />
 
-                    {/* Tablet/Mobile Grid Layout */}
-                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                    {/* Ambient Glows in Menu */}
+                    <div className="absolute top-0 right-10 w-72 h-72 bg-[radial-gradient(circle,rgba(255,90,46,0.14)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                    <div className="absolute bottom-10 left-10 w-60 h-60 bg-[radial-gradient(circle,rgba(245,158,11,0.10)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
-                        {/* Section 1: Grow & Word */}
-                        <div className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] border border-[#F4EDE2]/10 space-y-3">
-                            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-[#FF5A2E]">
-                                <Sparkles className="w-3.5 h-3.5" />
+                    {/* Tablet/Mobile Glass Container */}
+                    <div className="relative z-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+
+                        {/* Section 1: Grow in Christ */}
+                        <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.015] border border-white/[0.08] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)] p-4 sm:p-5 space-y-3">
+                            <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-[#FF9E79]">
+                                <Sparkles className="w-3.5 h-3.5 text-[#FF5A2E]" />
                                 <span>Grow in Christ</span>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
+                            <div className="space-y-2">
                                 <Link
                                     href="/sermons"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#FF5A2E]/10 flex items-center justify-center text-[#FF5A2E] shrink-0">
-                                        <Radio className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FF9E79] group-hover/item:text-white group-hover/item:border-[#FF5A2E]/40 group-hover/item:shadow-[0_0_15px_rgba(255,90,46,0.25)] shrink-0 transition-all">
+                                            <Radio className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">Sermons</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">Watch & Listen</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FFB37A] transition-colors">Sermons</div>
-                                        <div className="text-[10px] text-white/40">Watch & Listen</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
 
                                 <Link
-                                    href="/podcasts"
+                                    href="/devotional"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#F59E0B]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#F59E0B]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#F59E0B]/15 flex items-center justify-center text-[#F59E0B] shrink-0">
-                                        <Sparkles className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#F59E0B] group-hover/item:text-white group-hover/item:border-[#F59E0B]/40 group-hover/item:shadow-[0_0_15px_rgba(245,158,11,0.25)] shrink-0 transition-all">
+                                            <BookOpen className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">Daily Devotionals</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">Scripture & reflection</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FDE047] transition-colors">Podcasts</div>
-                                        <div className="text-[10px] text-white/40">Audio teachings</div>
-                                    </div>
-                                </Link>
-
-                                <Link
-                                    href="/books"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FFB37A]/30 flex items-center gap-2.5 transition-all group"
-                                >
-                                    <div className="w-7 h-7 rounded-lg bg-[#FFB37A]/15 flex items-center justify-center text-[#FFB37A] shrink-0">
-                                        <BookOpen className="w-3.5 h-3.5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FFD700] transition-colors">Books</div>
-                                        <div className="text-[10px] text-white/40">Study library</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
 
                                 <Link
                                     href="/god-stories"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#C2361A]/15 flex items-center justify-center text-[#FF5A2E] shrink-0">
-                                        <Flame className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FF8C68] group-hover/item:text-white group-hover/item:border-[#FF5A2E]/40 group-hover/item:shadow-[0_0_15px_rgba(255,90,46,0.25)] shrink-0 transition-all">
+                                            <Flame className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">God Stories</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">Miracle reports</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FFB37A] transition-colors">God Stories</div>
-                                        <div className="text-[10px] text-white/40">Miracle reports</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
                             </div>
                         </div>
 
-                        {/* Section 2: Church & Leadership */}
-                        <div className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] border border-[#F4EDE2]/10 space-y-3">
-                            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-[#FFB37A]">
+                        {/* Section 2: Church & Ministry */}
+                        <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.05] to-white/[0.015] border border-white/[0.08] backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.08)] p-4 sm:p-5 space-y-3">
+                            <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-[#FFB37A]">
                                 <MapPin className="w-3.5 h-3.5 text-[#FF5A2E]" />
                                 <span>Church & Ministry</span>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-1 gap-2">
+                            <div className="space-y-2">
                                 <Link
                                     href="/our-branches"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#FF5A2E]/15 flex items-center justify-center text-[#FF5A2E] shrink-0">
-                                        <MapPin className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FF9E79] group-hover/item:text-white group-hover/item:border-[#FF5A2E]/40 group-hover/item:shadow-[0_0_15px_rgba(255,90,46,0.25)] shrink-0 transition-all">
+                                            <MapPin className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">Our Branches</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">Locations & timings</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FFB37A] transition-colors">Our Branches</div>
-                                        <div className="text-[10px] text-white/40">Locations & timings</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
 
                                 <Link
                                     href="/our-journey"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#F59E0B]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#F59E0B]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#F59E0B]/15 flex items-center justify-center text-[#F59E0B]">
-                                        <Sparkles className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#F59E0B] group-hover/item:text-white group-hover/item:border-[#F59E0B]/40 group-hover/item:shadow-[0_0_15px_rgba(245,158,11,0.25)] shrink-0 transition-all">
+                                            <Sparkles className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">Our Journey</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">From prayer roots</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FDE047] transition-colors">Our Journey</div>
-                                        <div className="text-[10px] text-white/40">From prayer roots</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
 
                                 <Link
                                     href="/our-vision-and-mission"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FFB37A]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF5A2E]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#FF5A2E]/15 flex items-center justify-center text-[#FF5A2E]">
-                                        <Flame className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FF8C68] group-hover/item:text-white group-hover/item:border-[#FF5A2E]/40 group-hover/item:shadow-[0_0_15px_rgba(255,90,46,0.25)] shrink-0 transition-all">
+                                            <Flame className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">Vision & Mission</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">Kingdom calling</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FFB37A] transition-colors">Vision & Mission</div>
-                                        <div className="text-[10px] text-white/40">Kingdom calling</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
 
                                 <Link
                                     href="/our-leaders"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#C2361A]/30 flex items-center gap-2.5 transition-all group"
+                                    className="group/item p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.04] hover:border-[#FF8C68]/30 flex items-center justify-between transition-all duration-300 active:scale-[0.98]"
                                 >
-                                    <div className="w-7 h-7 rounded-lg bg-[#C2361A]/15 flex items-center justify-center text-[#FF8C68]">
-                                        <UserCheck className="w-3.5 h-3.5" />
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 flex items-center justify-center text-[#FFB37A] group-hover/item:text-white group-hover/item:border-[#FF8C68]/40 group-hover/item:shadow-[0_0_15px_rgba(255,140,104,0.25)] shrink-0 transition-all">
+                                            <UserCheck className="w-4 h-4" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="text-xs sm:text-sm font-semibold text-[#F4EDE2] group-hover/item:text-white transition-colors">Our Leaders</div>
+                                            <div className="text-[10px] sm:text-[11px] text-white/40 group-hover/item:text-white/65 transition-colors">Pastoral team</div>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-xs font-bold text-[#F4EDE2] group-hover:text-[#FFB37A] transition-colors">Our Leaders</div>
-                                        <div className="text-[10px] text-white/40">Pastoral team</div>
+                                    <div className="w-6 h-6 rounded-lg bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-white/20 group-hover/item:text-amber-400 group-hover/item:border-amber-400/30 group-hover/item:translate-x-0.5 transition-all">
+                                        <ChevronRight className="w-3.5 h-3.5" />
                                     </div>
                                 </Link>
                             </div>
                         </div>
 
                         {/* Section 3: Worship & Giving Highlight */}
-                        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#FF5A2E]/15 via-[#0D0B12] to-[#F59E0B]/15 border border-[#FF5A2E]/30 space-y-3 flex flex-col justify-between">
+                        <div className="relative rounded-3xl bg-gradient-to-br from-[#FF5A2E]/12 via-white/[0.03] to-[#F59E0B]/08 border border-[#FF5A2E]/25 backdrop-blur-2xl shadow-[0_8px_32px_rgba(255,90,46,0.15),inset_0_1px_1px_rgba(255,255,255,0.1)] p-4 sm:p-5 space-y-4 flex flex-col justify-between">
                             <div>
-                                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-[#FFB37A]">
+                                <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.25em] text-[#FFB37A]">
                                     <Music className="w-3.5 h-3.5 text-[#FF5A2E]" />
                                     <span>Worship Portal</span>
                                 </div>
-                                <p className="text-xs text-neutral-300 mt-2 leading-relaxed font-light">
+                                <p className="text-xs text-white/60 mt-2.5 leading-relaxed font-light">
                                     Interactive worship songs, transposed guitar chords, lyrics & pads.
                                 </p>
                                 <Link
                                     href="/worship"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="mt-3.5 w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] hover:opacity-95 text-neutral-950 font-bold text-xs flex items-center justify-between transition-all shadow-[0_0_20px_rgba(255,90,46,0.3)] active:scale-95"
+                                    className="mt-3.5 w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] hover:opacity-95 text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-between transition-all shadow-[0_0_25px_rgba(255,90,46,0.35)] active:scale-[0.98]"
                                 >
                                     <span>Enter Worship Chords</span>
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
                             </div>
 
-                            <div className="pt-3 border-t border-white/10 space-y-2">
-                                <div className="flex items-center gap-2 text-[10px] text-[#FFB37A]">
-                                    <Clock className="w-3 h-3 text-[#FF5A2E]" />
+                            <div className="pt-3 border-t border-white/10 space-y-2.5">
+                                <div className="flex items-center gap-2 text-[10px] text-[#FFB37A] font-medium">
+                                    <Clock className="w-3.5 h-3.5 text-[#FF5A2E]" />
                                     <span>Sun: 10:30 AM • Fri: 7:00 PM</span>
                                 </div>
                                 <Link
                                     href="/give"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="w-full py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/10 text-[#F4EDE2] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all"
+                                    className="w-full py-2.5 rounded-2xl bg-white/[0.05] hover:bg-white/[0.12] border border-white/10 text-[#F4EDE2] font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                                 >
                                     <Heart className="w-3.5 h-3.5 text-[#FF5A2E] fill-[#FF5A2E]" />
                                     <span>Partner / Give</span>

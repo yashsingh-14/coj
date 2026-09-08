@@ -634,3 +634,22 @@ body {
     transform-origin: center;
   }
 }
+
+/* ═══════════ FOOTER GRAND WORDMARK LETTER BLOW EFFECT ═══════════ */
+.letter-blow {
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.28s ease-out,
+              filter 0.28s ease-out;
+  will-change: transform, filter;
+  position: relative;
+}
+
+.letter-blow:hover {
+  transform: translateY(-4px) scale(1.08);
+  filter: drop-shadow(0 0 12px rgba(255, 90, 46, 0.55))
+          drop-shadow(0 0 24px rgba(245, 158, 11, 0.35))
+          brightness(1.22);
+  z-index: 20;
+}
