@@ -186,6 +186,37 @@ function HeroSection() {
     const video2Ref = useRef<HTMLVideoElement>(null);
     const heroBoxRef = useRef<HTMLDivElement>(null);
 
+    // Mobile 3-Split Cinematic Hero Intro (Ankit Sajwan Style)
+    const [isMobileSplitExpanded, setIsMobileSplitExpanded] = useState(false);
+    const topVideoRef = useRef<HTMLVideoElement>(null);
+    const bottomVideoRef = useRef<HTMLVideoElement>(null);
+
+    // Mobile 3-Split Cinematic Hero Intro Timer
+    useEffect(() => {
+        // Guarantee muted autoplay on mobile devices with staggered start
+        if (topVideoRef.current) {
+            topVideoRef.current.muted = true;
+            topVideoRef.current.currentTime = 1;
+            topVideoRef.current.play().catch(() => {});
+        }
+        if (bottomVideoRef.current) {
+            bottomVideoRef.current.muted = true;
+            bottomVideoRef.current.currentTime = 10;
+            bottomVideoRef.current.play().catch(() => {});
+        }
+
+        // Keep 3-split playing for 3.2s, then trigger smooth expansion to single video
+        const expandTimer = setTimeout(() => {
+            setIsMobileSplitExpanded(true);
+            setTimeout(() => {
+                topVideoRef.current?.pause();
+                bottomVideoRef.current?.pause();
+            }, 1200);
+        }, 3200);
+
+        return () => clearTimeout(expandTimer);
+    }, []);
+
     const [kineticIndex, setKineticIndex] = useState(0);
     const [prevKineticIndex, setPrevKineticIndex] = useState<number | null>(null);
     const [isKineticSwapping, setIsKineticSwapping] = useState(false);
@@ -314,6 +345,63 @@ function HeroSection() {
                 />
                 <div className="absolute inset-0 bg-black/25" />
                 <div className="absolute bottom-0 inset-x-0 h-40 sm:h-56 md:h-72 bg-gradient-to-t from-[#07060A] via-[#07060A]/85 via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
+            </div>
+
+            {/* Mobile 3-Split Cinematic Panels (Ankit Sajwan Style — Seamless, Zero Borders) */}
+            <div
+                onClick={() => setIsMobileSplitExpanded(true)}
+                style={{ zIndex: 8 }}
+                className="block md:hidden absolute inset-0 overflow-hidden select-none pointer-events-none"
+            >
+                {/* Top Panel (Video 1 - Stage / Choir) */}
+                <div
+                    style={{
+                        height: '35%',
+                        transform: isMobileSplitExpanded ? 'translate3d(0, -100%, 0)' : 'translate3d(0, 0, 0)',
+                        opacity: isMobileSplitExpanded ? 0 : 1,
+                        transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
+                        maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)'
+                    }}
+                    className="absolute top-0 inset-x-0 overflow-hidden"
+                >
+                    <video
+                        ref={topVideoRef}
+                        src="/videos/coj%20video.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        className="w-full h-full object-cover object-[center_20%]"
+                    />
+                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                </div>
+
+                {/* Bottom Panel (Video 3 - Congregation / Worship) */}
+                <div
+                    style={{
+                        height: '35%',
+                        transform: isMobileSplitExpanded ? 'translate3d(0, 100%, 0)' : 'translate3d(0, 0, 0)',
+                        opacity: isMobileSplitExpanded ? 0 : 1,
+                        transition: 'transform 1000ms cubic-bezier(0.16, 1, 0.3, 1), opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
+                        maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)'
+                    }}
+                    className="absolute bottom-0 inset-x-0 overflow-hidden"
+                >
+                    <video
+                        ref={bottomVideoRef}
+                        src="/videos/coj%20video.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        className="w-full h-full object-cover object-[center_85%]"
+                    />
+                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                </div>
             </div>
 
             {/* Hero Content */}
