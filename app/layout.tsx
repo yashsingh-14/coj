@@ -85,6 +85,7 @@ export const metadata: Metadata = {
 import AppShell from "@/components/AppShell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import InstallPrompt from "@/components/InstallPrompt";
+import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 
 export default function RootLayout({
   children,
@@ -97,12 +98,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${fraunces.variable} ${spaceGrotesk.variable} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <AppShell>
-            <ServiceWorkerRegister />
-            <InstallPrompt />
-            {children}
-          </AppShell>
-          <Toaster position="bottom-right" theme="dark" richColors />
+          <SmoothScrollProvider>
+            <AppShell>
+              <ServiceWorkerRegister />
+              <InstallPrompt />
+              {children}
+            </AppShell>
+            <Toaster position="bottom-right" theme="dark" richColors />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

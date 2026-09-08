@@ -654,7 +654,7 @@ export default function HomeUtilityContent({
                             <h4 className="text-white font-bold mb-6">Ministries</h4>
                             <ul className="space-y-4">
                                 <li>
-                                    <Link href="/our-mission" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Our Mission</Link>
+                                    <Link href="/our-vision-and-mission" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Our Vision & Mission</Link>
                                 </li>
                                 <li>
                                     <Link href="/events" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Events</Link>
