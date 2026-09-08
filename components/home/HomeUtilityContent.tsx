@@ -1,11 +1,12 @@
 'use client';
 
-import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Youtube, Instagram, Facebook, MessageCircle, Megaphone, PlayCircle } from 'lucide-react';
+import { Star, Sparkles, Mic2, User, Menu, ChevronRight, Heart, Music2, TrendingUp, ArrowRight, Megaphone, PlayCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import BlackRemoverImage from '@/components/ui/BlackRemoverImage';
+import LandingFooter from '@/components/hero/LandingFooter';
 import { generateSlug } from '@/lib/seoUtils';
 import React, { useState, useEffect, TouchEvent } from 'react';
 import Sidebar from '../ui/Sidebar';
@@ -563,158 +564,9 @@ export default function HomeUtilityContent({
             </section>
 
             {/* FOOTER */}
-            {/* PREMIUM FOOTER */}
-            <footer className="relative mt-32 pt-20 pb-10 overflow-hidden">
-                {/* Background Decor */}
-                <div className="absolute inset-0 bg-[#02000F]"></div>
-                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFD700] to-transparent shadow-[0_0_20px_#FFD700] opacity-80"></div>
-                <div className="absolute top-[1px] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-900 to-transparent opacity-50"></div>
-                <div className="absolute bottom-0 left-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none"></div>
-                <div className="absolute top-0 right-[-10%] w-[40%] h-[40%] bg-amber-900/10 rounded-full blur-[100px] pointer-events-none"></div>
-
-                <div className="relative z-10 px-6 max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
-                        {/* Brand Column */}
-                        <div className="md:col-span-5">
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="relative w-14 h-14 -ml-2">
-                                    <div className="w-full h-full animate-fire-pulse-footer">
-                                        <BlackRemoverImage
-                                            src="/images/logo-footer-final.png"
-                                            alt="COJ Fire"
-                                            threshold={80}
-                                            className="w-full h-full object-contain scale-125"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex flex-col justify-center w-full">
-                                    <span className="text-xl font-black text-white leading-none tracking-tight">CALL OF JESUS</span>
-
-                                    {/* Divider with Shine */}
-                                    <div className="relative h-[2px] w-50 my-0.5 rounded-full overflow-hidden">
-                                        {/* Base Gold Line */}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-amber-500 via-amber-600/50 to-transparent shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
-
-                                        {/* Running Shine */}
-                                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-                                            <div className="button-shine-overlay opacity-80"></div>
-                                        </div>
-                                    </div>
-
-                                    <span className="text-[0.65rem] font-bold text-amber-500 tracking-[0.35em] uppercase leading-tight ml-0.5 text-left">MINISTRIES</span>
-                                </div>
-                            </div>
-                            <p className="text-white/40 text-sm leading-relaxed max-w-sm mb-8">
-                                Empowering worship leaders and believers to encounter God through music, lyrics, and creative expression. Built for His glory.
-                            </p>
-
-                            <div className="flex gap-4">
-                                <div className="flex gap-4">
-                                    {[
-                                        { icon: Youtube, label: 'Youtube', href: 'https://www.youtube.com/@callofjesusministries' },
-                                        { icon: Instagram, label: 'Instagram', href: 'https://www.instagram.com/cojministries/?igshid=OGQ5ZDc2ODk2ZA%3D%3D#' },
-                                        { icon: Facebook, label: 'Facebook', href: 'https://www.facebook.com/COJMinistries?mibextid=zLoPMf' },
-                                        { icon: MessageCircle, label: 'WhatsApp', href: 'https://www.whatsapp.com/channel/0029Vb5y3CxGJP8Bjv8eeT09' }
-                                    ].map((social) => (
-                                        <a
-                                            href={social.href}
-                                            key={social.label}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/10 hover:border-amber-500/50 hover:scale-110 transition-all duration-300 group"
-                                        >
-                                            <span className="sr-only">{social.label}</span>
-                                            <social.icon className="w-4 h-4" />
-                                        </a>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Links Columns */}
-                        <div className="md:col-span-2 col-span-6">
-                            <h4 className="text-white font-bold mb-6">Discover</h4>
-                            <ul className="space-y-4">
-                                <li>
-                                    <Link href="/new-arrivals" className="text-white/40 hover:text-amber-500 text-sm transition-colors">New Arrivals</Link>
-                                </li>
-                                <li>
-                                    <Link href="/trending" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Trending</Link>
-                                </li>
-                                <li>
-                                    <Link href="/artists" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Artists</Link>
-                                </li>
-                                <li>
-                                    <Link href="/devotional" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Devotionals</Link>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="md:col-span-2 col-span-6">
-                            <h4 className="text-white font-bold mb-6">Ministries</h4>
-                            <ul className="space-y-4">
-                                <li>
-                                    <Link href="/our-vision-and-mission" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Our Vision & Mission</Link>
-                                </li>
-                                <li>
-                                    <Link href="/events" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Events</Link>
-                                </li>
-                                <li>
-                                    <Link href="/sermons" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Sermons</Link>
-                                </li>
-                                <li>
-                                    <Link href="/give" className="text-white/40 hover:text-amber-500 text-sm transition-colors">Give</Link>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="md:col-span-3">
-                            <h4 className="text-white font-bold mb-6">Join the Updates</h4>
-                            <div className="relative">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email"
-                                    className="w-full bg-white/5 border border-white/10 rounded-full px-5 py-3 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/10 transition-colors"
-                                />
-                                <button
-                                    onClick={handleSubscribe}
-                                    disabled={loading}
-                                    className="absolute right-1 top-1 bottom-1 px-4 bg-amber-500 rounded-full text-black font-bold text-xs hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                    {loading ? '...' : 'JOIN'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Bottom Bar */}
-                    <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="flex items-center text-xs text-white/30">
-                            <div>
-                                © 2026{" "}
-                                <span className="relative group cursor-default inline-block">
-                                    <span className="group-hover:text-amber-500 transition-colors">Call of Jesus Ministries</span>
-                                    {/* Golden Shiny Line - Sunlight Reflection Effect */}
-                                    <div className="absolute -bottom-0.5 left-0 right-0 h-[1.5px] bg-[#FFD700]/10 overflow-hidden rounded-full">
-                                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-                                            <div className="button-shine-overlay opacity-90"></div>
-                                        </div>
-                                    </div>
-                                </span>
-                                .
-                            </div>
-                        </div>
-                        <div className="flex gap-6">
-                            <Link href="/privacy" className="text-xs text-white/20 hover:text-white/60 transition-colors">Privacy Policy</Link>
-                            <Link href="/terms" className="text-xs text-white/20 hover:text-white/60 transition-colors">Terms of Service</Link>
-                        </div>
-                    </div>
-                </div>
-                {/* Bottom Golden Glow */}
-                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFD700] to-transparent shadow-[0_0_20px_#FFD700] opacity-80"></div>
-                <div className="absolute bottom-[1px] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-900 to-transparent opacity-50"></div>
-            </footer>
+            <div className="mt-32">
+                <LandingFooter />
+            </div>
 
         </div >
     );

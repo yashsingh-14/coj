@@ -187,7 +187,7 @@
 
 /* ═══════════ PERFORMANCE: OFF-SCREEN PAINT CONTAINMENT ═══════════ */
 .perf-section {
-  contain: paint layout;
+  /* Do not use contain: paint layout — it breaks 3D perspective stacks and causes GPU repaint stalls during scroll */
 }
 
 /* ═══════════ HARDWARE-ACCELERATED NATIVE SCROLL REVEAL ═══════════ */

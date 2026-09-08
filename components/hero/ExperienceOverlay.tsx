@@ -137,10 +137,23 @@ function BackToTopButton() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// SECTION SEAM — Removed borders between sections as requested
+// SECTION SEAM — Elegant luminous section transition marker
 // ══════════════════════════════════════════════════════════════════════
-function SectionSeam() {
-    return null;
+function SectionSeam({ variant = 'amber' }: { variant?: 'amber' | 'rose' | 'purple' }) {
+    const glowClass = variant === 'rose'
+        ? 'via-rose-500/35 border-rose-400/40'
+        : variant === 'purple'
+            ? 'via-purple-500/35 border-purple-400/40'
+            : 'via-amber-500/40 border-amber-400/40';
+
+    return (
+        <div className="relative w-full py-3 sm:py-5 flex items-center justify-center overflow-hidden pointer-events-none z-20">
+            <div className="w-full max-w-4xl h-[1px] bg-gradient-to-r from-transparent via-white/[0.08] to-transparent relative">
+                <div className={`absolute left-1/2 -top-[1px] -translate-x-1/2 w-32 sm:w-48 h-[2px] bg-gradient-to-r from-transparent ${glowClass.split(' ')[0]} to-transparent`} />
+                <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45 border ${glowClass.split(' ')[1]} bg-[#07060A] shadow-[0_0_8px_rgba(245,158,11,0.5)]`} />
+            </div>
+        </div>
+    );
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -503,31 +516,31 @@ const TESTIMONIALS_DATA = [
         name: "Sister Shweta",
         designation: "Creative Miracle • New Delhi",
         quote: "In 2020, during a routine medical examination, I was informed of a condition requiring surgical removal. But after earnest prayer at Call of Jesus Ministries, God performed a creative miracle! The doctors verified a completely brand-new organ. Truly, nothing is too hard for God!",
-        src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80"
+        src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&h=750&q=80"
     },
     {
         name: "Brother Rajesh",
         designation: "Cancer Healed • Faridabad",
         quote: "Diagnosed with stage 3 cancer, I came to the healing service with faith that moved mountains. After anointed prayer, post-service PET scans showed zero cancer cells remaining in my body! By His stripes, I am healed and alive.",
-        src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"
+        src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&h=750&q=80"
     },
     {
         name: "Sister Priya",
         designation: "Mental Freedom • Noida",
         quote: "For years, I battled severe panic attacks, sleepless nights, and chronic depression. When I stepped into the prophetic presence of God here, every chain shattered. Jesus filled my heart with divine peace that surpasses all understanding.",
-        src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80"
+        src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&h=750&q=80"
     },
     {
         name: "Brother Samuel",
         designation: "Supernatural Favor • Gurugram",
         quote: "Standing on the verge of total business bankruptcy with mounting debts, I anchored my soul on God's Word. Within 90 days, supernatural contracts and miraculous debt clearance took place. God supplied every need exceedingly!",
-        src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80"
+        src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&h=750&q=80"
     },
     {
         name: "Sister Surabhi",
         designation: "Miracle Healing • New Delhi",
         quote: "Mandatory medical screenings initially showed reactive results for an incurable condition. Through intense prayer & covenant grace, repeat screenings at two top diagnostic centers came back 100% clear!",
-        src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80"
+        src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&h=750&q=80"
     }
 ];
 
@@ -670,260 +683,280 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </div>
 
-            <SectionSeam />
-
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* VERSE OF THE DAY — Large Luxury Sanctuary Showcase Card        */}
+            {/* 1. DAILY PROMISE — Intimate Scripture Sanctuary                */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* VERSE OF THE DAY — Our Mission Style                          */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="verse" className="perf-section relative py-14 sm:py-24 md:py-36 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-white font-space">
+            <section id="verse" className="perf-section min-h-[75vh] sm:min-h-[85vh] flex flex-col justify-center items-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                {/* Background Ambience — Clean Static (No Animation) */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-amber-900/10 rounded-full blur-[120px] pointer-events-none" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-red-900/10 rounded-full blur-[120px] pointer-events-none" />
-                    <div className="starfield opacity-30 pointer-events-none" />
-                </div>
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* AMBIENT GRADIENT AURA FRAMING (AJU BAJU AUR NICHE GLOW)     */}
+                {/* Sacred Sanctuary Palette: Intimate Warm Amber & Honey Gold   */}
+                {/* ─────────────────────────────────────────────────────────── */}
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="text-center mb-0 relative reveal-on-scroll">
-                        {/* Big Bold Heading */}
-                        <h2 className="text-3xl sm:text-5xl md:text-[80px] lg:text-[100px] font-black leading-none mb-3 sm:mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
-                            DAILY <span className="text-amber-500">PROMISE</span>
-                        </h2>
+                {/* Left Side Aura ("Baaye Aju-Baju") — Warm Amber Gold Pillar */}
+                <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.26)_0%,rgba(217,119,6,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                        {/* Scripture Quote — Exactly Our Mission Style */}
-                        <div className="relative max-w-5xl mx-auto">
-                            <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-red-600/20 blur-xl opacity-50 rounded-full pointer-events-none" />
-                            <blockquote className="relative text-base sm:text-2xl md:text-4xl lg:text-5xl font-serif font-medium italic leading-relaxed sm:leading-tight text-white drop-shadow-xl px-1 sm:px-4 py-2 sm:py-6">
-                                <span className="text-amber-500 font-serif text-2xl sm:text-5xl md:text-7xl absolute -top-3 sm:-top-4 left-0 md:-left-8 opacity-40 select-none">&ldquo;</span>
-                                {verse?.text || "God is our refuge and strength, a very present help in trouble."}
-                                <span className="text-amber-500 font-serif text-2xl sm:text-5xl md:text-7xl absolute -bottom-5 sm:-bottom-8 right-0 md:-right-8 opacity-40 select-none">&rdquo;</span>
-                            </blockquote>
-                        </div>
+                {/* Right Side Aura ("Daaye Aju-Baju") — Honey Gold Radiance */}
+                <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,0.22)_0%,rgba(245,158,11,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                        {/* Pastor Attribution — Right Corner */}
-                        <p className="text-right pr-2 sm:pr-6 md:pr-10 mt-4 sm:mt-6 text-xs sm:text-sm md:text-base font-serif italic text-white/50">
-                            — Ps. Samson Wilson
-                        </p>
+                {/* Bottom Horizon Aura ("Niche Ka Gradient") — Luminous Sanctuary Atmosphere */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[50%] sm:h-[60%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(245,158,11,0.20)_0%,rgba(217,119,6,0.08)_35%,transparent_80%)] transform-gpu" />
 
-                        {/* Golden Divider */}
-                        <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-4 sm:mt-6 rounded-full opacity-50 pointer-events-none" />
-                    </div>
+                {/* Starfield overlay for heavenly depth */}
+                <div className="starfield opacity-30 pointer-events-none" />
 
-                    {/* Reference & Actions — Clean & Minimal */}
-                    <div className="text-center mt-6 sm:mt-10 space-y-5 sm:space-y-6 reveal-on-scroll reveal-delay-1">
-                        <p className="text-xs sm:text-sm font-bold tracking-[0.3em] uppercase text-amber-400/80">
-                            — {verse?.reference || "Psalm 46:1"} —
-                        </p>
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-on-scroll">
+                    {/* Minimalist Editorial Title: Daily Promise */}
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                        Daily <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Promise</span>
+                    </h2>
 
-                        {/* Tiny Action Row */}
-                        <div className="flex items-center justify-center gap-4 sm:gap-5">
-                            <button
-                                onClick={handleCopyVerse}
-                                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/10 flex items-center justify-center text-white/40 hover:text-amber-400 transition-all duration-300 active:scale-90"
-                                aria-label="Copy verse"
-                            >
-                                {copiedVerse ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                            </button>
-                            <button
-                                onClick={handleShareVerse}
-                                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/10 hover:border-amber-500/40 hover:bg-amber-500/10 flex items-center justify-center text-white/40 hover:text-amber-400 transition-all duration-300 active:scale-90"
-                                aria-label="Share verse"
-                            >
-                                <Share2 className="w-4 h-4" />
-                            </button>
-                            {verse?.reflection && (
-                                <button
-                                    onClick={() => setShowDevotional(!showDevotional)}
-                                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all duration-300 active:scale-90 ${showDevotional ? 'border-amber-500/50 bg-amber-500/15 text-amber-400' : 'border-white/10 hover:border-amber-500/40 hover:bg-amber-500/10 text-white/40 hover:text-amber-400'}`}
-                                    aria-label="Daily devotional"
-                                >
-                                    <BookOpen className="w-4 h-4" />
-                                </button>
-                            )}
+                    {/* Scripture Quote — Centered Editorial Masterpiece */}
+                    <div className="max-w-3xl mx-auto py-2 sm:py-4">
+                        <blockquote className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light italic leading-relaxed sm:leading-snug text-white/95 tracking-tight">
+                            &ldquo;{verse?.text || "God is our refuge and strength, a very present help in trouble."}&rdquo;
+                        </blockquote>
+
+                        {/* Attribution: Reference & Ps. Samson Wilson */}
+                        <div className="mt-6 sm:mt-8 flex items-center justify-center gap-3">
+                            <span className="text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase text-amber-400">
+                                {verse?.reference || "Psalm 46:1"}
+                            </span>
+                            <span className="text-white/30">•</span>
+                            <span className="text-xs sm:text-sm font-serif italic text-white/50">
+                                Ps. Samson Wilson
+                            </span>
                         </div>
                     </div>
 
-                    {/* Devotional Expand */}
+                    {/* Understated Action Buttons */}
+                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2">
+                        <button
+                            onClick={handleCopyVerse}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300 text-xs tracking-wider transition-all duration-300 active:scale-95"
+                            aria-label="Copy verse"
+                        >
+                            {copiedVerse ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span>{copiedVerse ? 'Copied' : 'Copy'}</span>
+                        </button>
+                        <button
+                            onClick={handleShareVerse}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300 text-xs tracking-wider transition-all duration-300 active:scale-95"
+                            aria-label="Share verse"
+                        >
+                            <Share2 className="w-3.5 h-3.5" />
+                            <span>Share</span>
+                        </button>
+                        {verse?.reflection && (
+                            <button
+                                onClick={() => setShowDevotional(!showDevotional)}
+                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs tracking-wider transition-all duration-300 active:scale-95 ${
+                                    showDevotional
+                                        ? 'border-amber-400/50 bg-amber-500/10 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]'
+                                        : 'border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300'
+                                }`}
+                                aria-label="Daily devotional reflection"
+                            >
+                                <BookOpen className="w-3.5 h-3.5" />
+                                <span>Reflection</span>
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Expanded Devotional Reflection */}
                     {verse?.reflection && showDevotional && (
-                        <div className="mt-10 sm:mt-14 max-w-2xl mx-auto text-left animate-fade-in-down">
-                            <div className="border-l-2 border-amber-500/30 pl-5 sm:pl-7 space-y-4">
-                                <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-amber-500/60 font-bold">
-                                    Daily Reflection
+                        <div className="mt-8 max-w-2xl mx-auto p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-amber-500/20 backdrop-blur-md text-left space-y-4 animate-fade-in-down">
+                            <p className="text-[11px] uppercase tracking-[0.25em] text-amber-400 font-bold">
+                                Daily Devotional Reflection
+                            </p>
+                            <p className="text-sm sm:text-base text-white/80 leading-relaxed font-light">
+                                {verse.reflection}
+                            </p>
+                            {verse.prayer && (
+                                <p className="text-sm sm:text-base text-amber-200/90 font-serif italic pt-3 border-t border-white/5">
+                                    <span className="font-bold text-amber-400 not-italic text-xs tracking-widest uppercase">Prayer — </span>
+                                    {verse.prayer}
                                 </p>
-                                <p className="text-sm sm:text-base text-white/60 leading-relaxed font-light">
-                                    {verse.reflection}
-                                </p>
-                                {verse.prayer && (
-                                    <p className="text-sm sm:text-base text-white/80 font-fraunces italic leading-relaxed pt-2">
-                                        <span className="font-bold text-amber-400/80 not-italic text-xs tracking-widest uppercase">Prayer — </span>
-                                        {verse.prayer}
-                                    </p>
-                                )}
-                            </div>
+                            )}
                         </div>
                     )}
                 </div>
             </section>
 
-            <SectionSeam />
-
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* WEEKLY GATHERINGS — Our Mission Style (Clean, No Clutter, No Animation) */}
+            {/* 2. WEEKLY GATHERINGS — Editorial Community Timetable            */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="gatherings" className="perf-section relative py-14 sm:py-24 md:py-36 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-white font-space">
+            <section id="gatherings" className="perf-section min-h-[75vh] sm:min-h-[85vh] flex flex-col justify-center items-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                {/* Background Ambience — Static, Pure Minimal Ambient Glows (Zero Animation) */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-amber-900/10 rounded-full blur-[120px] pointer-events-none" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-red-900/10 rounded-full blur-[120px] pointer-events-none" />
-                    <div className="starfield opacity-30 pointer-events-none" />
-                </div>
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* AMBIENT GRADIENT AURA FRAMING (AJU BAJU AUR NICHE GLOW)     */}
+                {/* Community Palette: Pentecost Flame & Ruby Garnet Embers     */}
+                {/* ─────────────────────────────────────────────────────────── */}
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    {/* Big Bold Heading — Centered (Same Scale as Our Mission & Daily Promise) */}
-                    <div className="text-center mb-0 relative reveal-on-scroll">
-                        <h2 className="text-3xl sm:text-5xl md:text-[80px] lg:text-[100px] font-black leading-none mb-3 sm:mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
-                            WEEKLY <span className="text-amber-500">GATHERINGS</span>
+                {/* Left Side Aura ("Baaye Aju-Baju") — Radiant Ruby Flame Vertical Light */}
+                <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.24)_0%,rgba(225,29,72,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
+
+                {/* Right Side Aura ("Daaye Aju-Baju") — Warm Sunset Flame Vertical Light */}
+                <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.22)_0%,rgba(255,90,46,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
+
+                {/* Bottom Horizon Aura ("Niche Ka Gradient") — Luminous Flame Atmosphere */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[50%] sm:h-[60%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(255,90,46,0.18)_0%,rgba(225,29,72,0.08)_35%,transparent_80%)] transform-gpu" />
+
+                {/* Starfield overlay for heavenly depth */}
+                <div className="starfield opacity-30 pointer-events-none" />
+
+                <div className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 space-y-8 sm:space-y-10 reveal-on-scroll">
+                    {/* Minimalist Editorial Title: Weekly Gatherings */}
+                    <div className="text-center space-y-3">
+                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                            Weekly <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-rose-300 to-amber-200">Gatherings</span>
                         </h2>
-
-                        {/* Subtitle */}
-                        <div className="relative max-w-3xl mx-auto">
-                            <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-red-600/20 blur-xl opacity-50 rounded-full pointer-events-none" />
-                            <p className="relative text-sm sm:text-xl md:text-2xl font-serif italic text-white/80 leading-relaxed px-2 sm:px-4">
-                                Experience the presence of God together. Come as you are.
-                            </p>
-                        </div>
-
-                        {/* Golden Divider */}
-                        <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-6 sm:mt-10 rounded-full opacity-50 pointer-events-none" />
+                        <p className="text-sm sm:text-base text-white/60 max-w-xl mx-auto font-light leading-relaxed">
+                            Experience the tangible presence of God together. Come as you are.
+                        </p>
                     </div>
 
-                    {/* Clean Minimal Event Schedule — Pure Luxury Typography, Zero Clutter */}
-                    <div className="mt-12 sm:mt-16 md:mt-20 max-w-4xl mx-auto divide-y divide-white/10 reveal-on-scroll reveal-delay-1">
+                    {/* Editorial Service Schedule List — Sleek, Unified, Professional */}
+                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08]">
                         {eventsList.map((event: any, i: number) => {
                             const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
 
                             return (
                                 <div
                                     key={event.id || i}
-                                    className="flex flex-col sm:flex-row sm:items-center justify-between py-6 sm:py-8 gap-3 sm:gap-6 group"
+                                    className="group py-5 sm:py-6 px-2 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors rounded-xl"
                                 >
-                                    {/* Left: Icon + Title + Hindi Subtitle */}
-                                    <div className="flex items-center gap-4 sm:gap-5">
-                                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/[0.03] border border-white/10 group-hover:border-amber-500/40 flex items-center justify-center shrink-0 transition-colors duration-300">
-                                            <IconComponent className="w-5 h-5 text-amber-500" />
+                                    {/* Left: Clean Icon + Title + Hindi Badge + Desc */}
+                                    <div className="flex items-start sm:items-center gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 text-amber-400 group-hover:border-amber-400/40 group-hover:scale-105 transition-all duration-300">
+                                            <IconComponent className="w-4 h-4" />
                                         </div>
-                                        <div>
-                                            <h3 className="text-base sm:text-xl md:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors duration-300">
-                                                {event.title_en || event.titleEn}
-                                                <span className="font-serif italic text-white/45 font-normal text-sm sm:text-base md:text-lg ml-2 sm:ml-3">
-                                                    {event.title_hi || event.titleHi}
-                                                </span>
-                                            </h3>
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2.5 flex-wrap">
+                                                <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-amber-300 transition-colors">
+                                                    {event.title_en || event.titleEn}
+                                                </h3>
+                                                {(event.title_hi || event.titleHi) && (
+                                                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/[0.04] text-amber-400/80 font-serif italic">
+                                                        {event.title_hi || event.titleHi}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {(event.desc_en || event.descEn) && (
+                                                <p className="text-xs sm:text-sm text-white/50 font-light">
+                                                    {event.desc_en || event.descEn}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {/* Right: Day & Time */}
-                                    <div className="sm:text-right pl-14 sm:pl-0">
-                                        <p className="text-xs sm:text-sm md:text-base font-medium text-amber-400/90 tracking-wide">
+                                    {/* Right: Clean Timing with Subtle Pulse */}
+                                    <div className="flex items-center gap-2 pl-14 sm:pl-0">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                        <span className="text-xs sm:text-sm text-white/70 font-light tracking-wide">
                                             {event.time_en || event.timeEn}
-                                        </p>
+                                        </span>
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
 
-                    {/* Clean Directions CTA */}
-                    <div className="text-center mt-12 sm:mt-16 reveal-on-scroll reveal-delay-2">
+                    {/* Directions CTA Button */}
+                    <div className="text-center pt-2">
                         <a
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-3.5 rounded-full border border-white/15 hover:border-amber-500/50 bg-white/[0.02] hover:bg-amber-500/10 text-white/80 hover:text-amber-400 transition-all duration-300 text-xs sm:text-sm uppercase tracking-[0.2em] font-semibold"
+                            className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-white/15 hover:border-amber-400/50 bg-white/[0.03] hover:bg-white/[0.06] text-white/90 hover:text-amber-300 transition-all duration-300 text-xs sm:text-sm tracking-wider active:scale-95"
                         >
-                            <MapPin className="w-4 h-4 text-amber-500" />
+                            <MapPin className="w-4 h-4 text-amber-400" />
                             <span>Get Directions to Church</span>
-                            <ArrowRight className="w-4 h-4" />
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </a>
                     </div>
                 </div>
             </section>
 
-            <SectionSeam />
-
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* OUR MISSION & VISION — Exact Match with /our-mission            */}
+            {/* 3. OUR VISION — Atmospheric Editorial Sanctuary                 */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="vision" className="perf-section relative py-14 sm:py-24 md:py-36 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-white font-space">
+            <section id="vision" className="perf-section min-h-[85vh] sm:min-h-screen flex flex-col justify-center items-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 sm:h-44 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 sm:h-44 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                {/* Background Ambience — Clean Static (No Animation) */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-amber-900/10 rounded-full blur-[120px] pointer-events-none" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-red-900/10 rounded-full blur-[120px] pointer-events-none" />
-                    <div className="starfield opacity-30 pointer-events-none" />
-                </div>
+                {/* ─────────────────────────────────────────────────────────── */}
+                {/* AMBIENT GRADIENT AURA FRAMING (AJU BAJU AUR NICHE GLOW)     */}
+                {/* COJ Brand Signature Palette: Amber Gold + Flame + Amethyst   */}
+                {/* ─────────────────────────────────────────────────────────── */}
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    {/* Mission Header */}
-                    <div className="text-center mb-0 relative reveal-on-scroll">
-                        <h2 className="text-3xl sm:text-5xl md:text-[80px] lg:text-[100px] font-black leading-none mb-3 sm:mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
-                            OUR <span className="text-amber-500">MISSION</span>
-                        </h2>
+                {/* Left Side Aura ("Baaye Aju-Baju") — Radiant Amber-Gold Vertical Light */}
+                <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.28)_0%,rgba(217,119,6,0.12)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                        <div className="relative max-w-5xl mx-auto">
-                            <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-red-600/20 blur-xl opacity-50 rounded-full pointer-events-none" />
-                            <h3 className="relative text-base sm:text-2xl md:text-4xl lg:text-5xl font-serif font-medium italic leading-relaxed sm:leading-tight text-white drop-shadow-xl px-1 sm:px-4 py-2 sm:py-6">
-                                <span className="text-amber-500 font-serif text-2xl sm:text-5xl md:text-7xl absolute -top-3 sm:-top-4 left-0 md:-left-8 opacity-40 select-none">&ldquo;</span>
-                                To prepare people across the world for the <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-red-500 font-bold not-italic">second coming</span> of Jesus Christ.
-                                <span className="text-amber-500 font-serif text-2xl sm:text-5xl md:text-7xl absolute -bottom-5 sm:-bottom-8 right-0 md:-right-8 opacity-40 select-none">&rdquo;</span>
-                            </h3>
-                        </div>
+                {/* Right Side Aura ("Daaye Aju-Baju") — Radiant Flame & Amethyst Vertical Light */}
+                <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.24)_0%,rgba(110,91,255,0.16)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                        <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-4 sm:mt-8 rounded-full opacity-50 pointer-events-none" />
+                {/* Bottom Horizon Aura ("Niche Ka Gradient") — Luminous Atmosphere */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[55%] sm:h-[65%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(245,158,11,0.24)_0%,rgba(255,90,46,0.14)_32%,rgba(110,91,255,0.06)_62%,transparent_82%)] transform-gpu" />
+
+                {/* Starfield overlay for heavenly depth */}
+                <div className="starfield opacity-30 pointer-events-none" />
+
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8 reveal-on-scroll">
+                    {/* Minimalist Editorial Title: Our Mission */}
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                        Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
+                    </h2>
+
+                    {/* COJ Original Mission Statement with Shimmering Italic Accents */}
+                    <div className="flex justify-center max-w-3xl mx-auto">
+                        <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center">
+                            To <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">prepare people</span> across the world for the <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">second coming</span> of Jesus Christ.
+                        </p>
                     </div>
                 </div>
             </section>
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* TRENDING WORSHIP — Bento Grid                                  */}
+            {/* TRENDING WORSHIP — Editorial Atmospheric Showcase              */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             {trending.length > 0 && (
                 <>
                     <SectionSeam />
-                    <section id="trending" className="perf-section relative py-12 sm:py-20 md:py-32 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+                    <section id="trending" className="perf-section min-h-[75vh] flex flex-col justify-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                         {/* Seamless Section Top & Bottom Fade Overlays */}
-                        <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                        <div className="pointer-events-none absolute top-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                        {/* Ambient Amber Gold & Flame Ember Glows matching Logo Palette */}
-                        <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
-                        <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
-                        <div className="starfield opacity-30 pointer-events-none z-0" />
+                        {/* Left Side Aura — Warm Copper & Amber Vertical Pillar */}
+                        <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.24)_0%,rgba(255,90,46,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
+                        {/* Right Side Aura — Deep Flame Vertical Pillar */}
+                        <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.22)_0%,rgba(245,158,11,0.08)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                        <div className="relative z-10 max-w-7xl mx-auto space-y-6 sm:space-y-8">
-                            <div className="flex items-end justify-between gap-4 reveal-on-scroll">
-                                <div className="space-y-2 sm:space-y-3">
-                                    <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
-                                        <Music className="w-3.5 h-3.5 text-amber-500" />
-                                        <span>Now Trending</span>
-                                    </div>
-                                    <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
-                                        TRENDING <span className="text-amber-500">WORSHIP</span>
+                        {/* Bottom Horizon Aura — Luminous Atmosphere */}
+                        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[50%] sm:h-[60%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(245,158,11,0.18)_0%,rgba(255,90,46,0.08)_35%,transparent_80%)] transform-gpu" />
+
+                        {/* Starfield overlay for depth */}
+                        <div className="starfield opacity-30 pointer-events-none" />
+
+                        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-8 sm:space-y-10 reveal-on-scroll">
+                            {/* Editorial Title */}
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
+                                <div className="space-y-3">
+                                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                                        Trending <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Worship</span>
                                     </h2>
+                                    <p className="text-sm sm:text-base text-white/60 max-w-xl font-light leading-relaxed">
+                                        The most loved worship songs from our community this season.
+                                    </p>
                                 </div>
                                 <LiquidButton
                                     onClick={() => setMode('UTILITY')}
@@ -937,7 +970,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 </LiquidButton>
                             </div>
 
-                            {/* Horizontal Scroll Songs (desktop) / Grid (mobile) */}
+                            {/* Horizontal Scroll Songs */}
                             <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-3.5 md:gap-5 pb-3 sm:pb-4 scroll-smooth reveal-on-scroll reveal-delay-1">
                                 {trending.slice(0, 8).map((song, i) => {
                                     const rankBadgeStyle = i === 0
@@ -962,7 +995,6 @@ export default function ExperienceOverlay({ initialData }: {
                                                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                 style={{ filter: 'brightness(0.85) contrast(1.04) saturate(1.05)' }}
                                             />
-                                            {/* Bottom vignette for crisp title legibility while keeping artwork vibrant */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-transparent to-transparent" />
 
                                             <div className="relative z-10 p-3.5 sm:p-4 md:p-6 space-y-1 sm:space-y-1.5">
@@ -986,35 +1018,37 @@ export default function ExperienceOverlay({ initialData }: {
             <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* GOD STORIES — Ultra-Premium Sanctuary Testimony Showcase       */}
+            {/* GOD STORIES — Editorial Atmospheric Testimony Sanctuary        */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="stories" className="perf-section relative py-12 sm:py-20 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="stories" className="perf-section min-h-[75vh] flex flex-col justify-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                {/* Ambient Flame Ember & Amber Gold Glows matching Logo Palette */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.20)_0%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
-                <div className="starfield opacity-30 pointer-events-none z-0" />
+                {/* Left Side Aura — Warm Flame Vertical Pillar (Hardware-accelerated soft feathering) */}
+                <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.24)_0%,rgba(225,29,72,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                <div className="relative z-10 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
+                {/* Right Side Aura — Amber Gold Vertical Pillar (Hardware-accelerated soft feathering) */}
+                <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.22)_0%,rgba(255,90,46,0.08)_45%,transparent_75%)] blur-2xl transform-gpu" />
+
+                {/* Bottom Horizon Aura */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[50%] sm:h-[60%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(255,90,46,0.18)_0%,rgba(245,158,11,0.08)_35%,transparent_80%)] transform-gpu" />
+
+                {/* Starfield overlay */}
+                <div className="starfield opacity-30 pointer-events-none" />
+
+                <div className="relative z-10 max-w-5xl mx-auto w-full space-y-8 sm:space-y-10">
                     {/* Section Header */}
-                    <div id="stories-header" className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-on-scroll">
-                        <div className="space-y-2 sm:space-y-3">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
-                                <Heart className="w-3.5 h-3.5 text-amber-500 fill-amber-500/30" />
-                                <span>Testimonies of Faith</span>
-                            </div>
-                            <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
-                                GOD <span className="text-amber-500">STORIES</span>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-on-scroll">
+                        <div className="space-y-3">
+                            <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                                God <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-orange-200 to-white">Stories</span>
                             </h2>
-                            <p className="text-xs sm:text-sm md:text-base text-white/60 font-light max-w-xl leading-relaxed">
+                            <p className="text-sm sm:text-base text-white/60 max-w-xl font-light leading-relaxed">
                                 Supernatural healings, broken addictions, and miraculous encounters. Documented evidence that Jesus Christ is alive and moving with power today.
                             </p>
                         </div>
 
-                        {/* Actions: Share Your Story & View All */}
                         <div className="flex items-center gap-3">
                             <LiquidButton
                                 href="/share-testimony"
@@ -1037,11 +1071,11 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
                     </div>
 
-                    {/* 3D Circular Testimonial Carousel Showcase */}
-                    <div className="relative pt-2 pb-2 reveal-on-scroll reveal-delay-1">
+                    {/* Circular Testimonial Carousel — Isolated without parent translateY for silky smooth scroll */}
+                    <div className="relative pt-2 pb-2">
                         <CircularTestimonials
                             testimonials={TESTIMONIALS_DATA}
-                            autoplay={true}
+                            autoplay={false}
                             colors={{
                                 name: "#F4EDE2",
                                 designation: "#F59E0B",
@@ -1058,30 +1092,32 @@ export default function ExperienceOverlay({ initialData }: {
             <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* SOCIAL MEDIA                                                  */}
+            {/* CONNECT WITH US — Editorial Community Platforms                */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="social" className="perf-section relative py-12 sm:py-20 md:py-32 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="social" className="perf-section min-h-[75vh] flex flex-col justify-center items-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                {/* Ambient Flame Ember & Amber Gold Glows matching Logo Palette */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
-                <div className="starfield opacity-30 pointer-events-none z-0" />
+                {/* Left Side Aura — Amethyst & Amber Vertical Pillar */}
+                <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.20)_0%,rgba(245,158,11,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                <div className="relative z-10 max-w-7xl mx-auto space-y-8 sm:space-y-12">
-                    {/* Header with Global Badge & Subtitle */}
-                    <div className="space-y-3 sm:space-y-4 reveal-on-scroll">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 backdrop-blur-md text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400">
-                            <Globe className="w-3.5 h-3.5 text-amber-400" />
-                            <span>Global Fellowship</span>
-                        </div>
-                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
-                            FOLLOW US <span className="text-amber-500">ONLINE</span>
+                {/* Right Side Aura — Amber & Amethyst Vertical Pillar */}
+                <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.20)_0%,rgba(139,92,246,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
+
+                {/* Bottom Horizon Aura */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[50%] sm:h-[60%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(139,92,246,0.14)_0%,rgba(245,158,11,0.06)_35%,transparent_80%)] transform-gpu" />
+
+                {/* Starfield overlay */}
+                <div className="starfield opacity-30 pointer-events-none" />
+
+                <div className="relative z-10 max-w-4xl mx-auto w-full space-y-8 sm:space-y-10 reveal-on-scroll">
+                    <div className="text-center space-y-3">
+                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                            Connect <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-purple-200 via-amber-100 to-white">With Us</span>
                         </h2>
-                        <p className="font-serif italic text-white/60 text-sm sm:text-lg max-w-2xl leading-relaxed">
-                            Connect with our global ministry across your favorite platforms for daily word, live worship, and community fellowship.
+                        <p className="text-sm sm:text-base text-white/60 max-w-xl mx-auto font-light leading-relaxed">
+                            Join our global ministry across your favorite platforms for daily word, live worship, and community fellowship.
                         </p>
                     </div>
 
@@ -1095,7 +1131,6 @@ export default function ExperienceOverlay({ initialData }: {
                                 icon: MessageCircle,
                                 href: 'https://whatsapp.com/channel/0029VaBFUhk9Guw4VxXqHI0m',
                                 accent: '#25D366',
-                                gradient: 'from-[#25D366]/15',
                                 hoverBorder: 'hover:border-[#25D366]/40 hover:shadow-[#25D366]/10'
                             },
                             {
@@ -1105,7 +1140,6 @@ export default function ExperienceOverlay({ initialData }: {
                                 icon: Facebook,
                                 href: 'https://www.facebook.com/callofjesusministries',
                                 accent: '#1877F2',
-                                gradient: 'from-[#1877F2]/15',
                                 hoverBorder: 'hover:border-[#1877F2]/40 hover:shadow-[#1877F2]/10'
                             },
                             {
@@ -1115,7 +1149,6 @@ export default function ExperienceOverlay({ initialData }: {
                                 icon: Youtube,
                                 href: 'https://www.youtube.com/@callofjesusministries',
                                 accent: '#FF0000',
-                                gradient: 'from-[#FF0000]/15',
                                 hoverBorder: 'hover:border-[#FF0000]/40 hover:shadow-[#FF0000]/10'
                             },
                             {
@@ -1125,7 +1158,6 @@ export default function ExperienceOverlay({ initialData }: {
                                 icon: Instagram,
                                 href: 'https://www.instagram.com/callofjesusministries',
                                 accent: '#E4405F',
-                                gradient: 'from-[#E4405F]/15',
                                 hoverBorder: 'hover:border-[#E4405F]/40 hover:shadow-[#E4405F]/10'
                             },
                         ].map((social, i) => (
@@ -1137,7 +1169,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 className={`group relative rounded-3xl p-6 sm:p-7 min-h-[190px] sm:min-h-[230px] flex flex-col justify-between backdrop-blur-2xl bg-white/[0.03] border ${social.hoverBorder} transition-all duration-500 hover:-translate-y-1.5 overflow-hidden shadow-2xl`}
                                 style={{ borderColor: `${social.accent}25` }}
                             >
-                                {/* Platform Colored Ambient Bloom — Subtle by default, brilliant on hover */}
+                                {/* Platform Colored Ambient Bloom */}
                                 <div
                                     className="absolute inset-0 opacity-40 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                                     style={{
@@ -1145,7 +1177,7 @@ export default function ExperienceOverlay({ initialData }: {
                                     }}
                                 />
 
-                                {/* Giant Subtle Background Watermark Logo for Depth */}
+                                {/* Giant Subtle Background Watermark Logo */}
                                 <social.icon
                                     className="absolute -bottom-4 -right-4 w-32 h-32 transition-all duration-700 pointer-events-none group-hover:scale-110 group-hover:rotate-3"
                                     style={{ color: social.accent, opacity: 0.08 }}
@@ -1169,7 +1201,7 @@ export default function ExperienceOverlay({ initialData }: {
                                     </div>
                                 </div>
 
-                                {/* Bottom Info: Title, Subtitle, and Action Prompt */}
+                                {/* Bottom Info */}
                                 <div className="relative z-10 pt-6">
                                     <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                                         {social.name}
@@ -1193,113 +1225,76 @@ export default function ExperienceOverlay({ initialData }: {
             <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* NEWSLETTER — Spacious Luxury Showcase                           */}
+            {/* STAY CONNECTED — Editorial Newsletter Sanctuary                */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="newsletter" className="perf-section relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="newsletter" className="perf-section min-h-[75vh] flex flex-col justify-center items-center relative py-20 sm:py-28 px-5 sm:px-8 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-b from-[#07060A] to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 sm:h-40 bg-gradient-to-t from-[#07060A] to-transparent z-10" />
 
-                {/* Subtle Amber Glow in Background */}
-                <div className="absolute w-[500px] h-[350px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.10)_0%,rgba(255,90,46,0.06)_50%,transparent_70%)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
-                <div className="starfield opacity-30 pointer-events-none z-0" />
+                {/* Left Side Aura — Warm Amber Vertical Pillar */}
+                <div className="pointer-events-none absolute -left-20 sm:-left-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.24)_0%,rgba(255,90,46,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                {/* Spacious Floating Architectural Card */}
-                <div className="relative z-10 max-w-6xl mx-auto rounded-3xl p-6 sm:p-12 md:p-16 bg-gradient-to-br from-white/[0.03] to-white/[0.005] border border-white/10 backdrop-blur-xl shadow-2xl reveal-on-scroll">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-                        {/* Left Side: Headline, Subtitle, and Benefits */}
-                        <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-left">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400">
-                                <Mail className="w-3.5 h-3.5 text-amber-400" />
-                                <span>Stay Connected</span>
-                            </div>
+                {/* Right Side Aura — Sunset Flame Vertical Pillar */}
+                <div className="pointer-events-none absolute -right-20 sm:-right-32 top-1/2 -translate-y-1/2 w-48 sm:w-80 h-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.22)_0%,rgba(245,158,11,0.10)_45%,transparent_75%)] blur-2xl transform-gpu" />
 
-                            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-[1.05] tracking-tight text-white">
-                                JOIN THE <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-500 to-red-500">MOVEMENT</span>
-                            </h2>
+                {/* Bottom Horizon Aura */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-[50%] sm:h-[60%] bg-[radial-gradient(ellipse_120%_90%_at_50%_100%,rgba(245,158,11,0.18)_0%,rgba(255,90,46,0.10)_35%,transparent_80%)] transform-gpu" />
 
-                            <p className="font-serif italic text-white/70 text-sm sm:text-lg md:text-xl leading-relaxed max-w-xl">
-                                Be the first to receive weekly spirit-filled devotionals, fresh worship releases, and prophetic updates directly in your inbox.
-                            </p>
+                {/* Starfield overlay */}
+                <div className="starfield opacity-30 pointer-events-none" />
 
-                            <div className="w-16 h-[2px] bg-gradient-to-r from-amber-500 to-transparent rounded-full opacity-60" />
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-on-scroll">
+                    {/* Editorial Title */}
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                        Stay <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Connected</span>
+                    </h2>
 
-                            {/* 3 Clear Benefit Checkmarks */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                                <div className="flex items-center gap-2.5 text-xs sm:text-sm text-white/60">
-                                    <div className="w-5 h-5 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Check className="w-3 h-3" />
-                                    </div>
-                                    <span>Weekly Devotionals</span>
-                                </div>
-                                <div className="flex items-center gap-2.5 text-xs sm:text-sm text-white/60">
-                                    <div className="w-5 h-5 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Check className="w-3 h-3" />
-                                    </div>
-                                    <span>Worship Drops</span>
-                                </div>
-                                <div className="flex items-center gap-2.5 text-xs sm:text-sm text-white/60">
-                                    <div className="w-5 h-5 rounded-full bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Check className="w-3 h-3" />
-                                    </div>
-                                    <span>Gathering Updates</span>
-                                </div>
-                            </div>
-                        </div>
+                    <p className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight leading-relaxed text-white/80 max-w-2xl mx-auto">
+                        Receive weekly spirit-filled devotionals, fresh worship releases, and prophetic updates directly in your inbox.
+                    </p>
 
-                        {/* Right Side: Interactive Subscription Panel */}
-                        <div className="lg:col-span-5">
-                            <div className="rounded-2xl bg-black/40 border border-white/10 p-6 sm:p-8 space-y-4 shadow-xl">
-                                <div>
-                                    <h3 className="text-base sm:text-lg font-bold text-white">
-                                        Get Direct Updates
-                                    </h3>
-                                    <p className="text-xs text-white/50 mt-1 font-light">
-                                        Join believers across the globe growing in faith together.
-                                    </p>
-                                </div>
-
-                                <form
-                                    onSubmit={async (e) => {
-                                        e.preventDefault();
-                                        const form = e.target as HTMLFormElement;
-                                        const email = (form.elements.namedItem('email') as HTMLInputElement).value;
-                                        if (!email || !/^\S+@\S+\.\S+$/.test(email)) { toast.error("Please enter a valid email."); return; }
-                                        try {
-                                            const { error } = await supabase.from('subscribers').insert([{ email }]);
-                                            if (error?.code === '23505') toast.success("Already subscribed!");
-                                            else if (error) toast.error("Failed. Try again.");
-                                            else { toast.success("Subscribed successfully! 🎉"); (form.elements.namedItem('email') as HTMLInputElement).value = ''; }
-                                        } catch { toast.error("Failed to subscribe."); }
-                                    }}
-                                    className="space-y-3"
+                    {/* Clean Centered Email Subscription */}
+                    <div className="max-w-lg mx-auto pt-4">
+                        <form
+                            onSubmit={async (e) => {
+                                e.preventDefault();
+                                const form = e.target as HTMLFormElement;
+                                const emailVal = (form.elements.namedItem('email') as HTMLInputElement).value;
+                                if (!emailVal || !/^\S+@\S+\.\S+$/.test(emailVal)) { toast.error("Please enter a valid email."); return; }
+                                try {
+                                    const { error } = await supabase.from('subscribers').insert([{ email: emailVal }]);
+                                    if (error?.code === '23505') toast.success("Already subscribed!");
+                                    else if (error) toast.error("Failed. Try again.");
+                                    else { toast.success("Subscribed successfully! 🎉"); (form.elements.namedItem('email') as HTMLInputElement).value = ''; }
+                                } catch { toast.error("Failed to subscribe."); }
+                            }}
+                            className="space-y-3"
+                        >
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <input
+                                    name="email"
+                                    type="email"
+                                    placeholder="Enter your email address"
+                                    className="flex-1 px-5 py-3.5 rounded-full bg-white/[0.04] border border-white/15 hover:border-white/25 focus:border-amber-400/50 text-sm text-white placeholder-white/40 focus:outline-none transition-all"
+                                />
+                                <button
+                                    type="submit"
+                                    className="px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold uppercase tracking-wider text-xs sm:text-sm transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20 active:scale-[0.98] flex items-center justify-center gap-2"
                                 >
-                                    <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
-                                        <input
-                                            name="email"
-                                            type="email"
-                                            placeholder="Enter your email address"
-                                            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/15 hover:border-white/25 focus:border-amber-500 text-xs sm:text-sm text-white placeholder-white/40 focus:outline-none transition-all"
-                                        />
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold uppercase tracking-wider text-xs sm:text-sm transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20 active:scale-[0.99] flex items-center justify-center gap-2"
-                                    >
-                                        <span>Subscribe Now</span>
-                                        <Send className="w-3.5 h-3.5" />
-                                    </button>
-                                </form>
-
-                                <p className="text-[11px] text-white/40 text-center font-light pt-1">
-                                    🔒 No spam ever. Unsubscribe with 1-click anytime.
-                                </p>
+                                    <span>Subscribe</span>
+                                    <Send className="w-3.5 h-3.5" />
+                                </button>
                             </div>
-                        </div>
+                        </form>
+
+                        <p className="text-xs text-white/40 font-light pt-4">
+                            No spam ever. Unsubscribe with one click anytime.
+                        </p>
                     </div>
                 </div>
             </section>
+
 
             <SectionSeam />
 

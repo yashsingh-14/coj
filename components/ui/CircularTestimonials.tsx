@@ -75,7 +75,6 @@ export const CircularTestimonials = ({
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const imageContainerRef = useRef<HTMLDivElement>(null);
-  const autoplayIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const testimonialsLength = useMemo(() => testimonials.length, [testimonials]);
   const activeTestimonial = useMemo(
@@ -83,29 +82,18 @@ export const CircularTestimonials = ({
     [activeIndex, testimonials]
   );
 
-  // Responsive gap calculation
+  // Responsive gap calculation with check to prevent redundant re-renders
   useEffect(() => {
     function handleResize() {
       if (imageContainerRef.current) {
-        setContainerWidth(imageContainerRef.current.offsetWidth);
+        const newWidth = imageContainerRef.current.offsetWidth;
+        setContainerWidth((prev) => (prev !== newWidth ? newWidth : prev));
       }
     }
     handleResize();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Autoplay
-  useEffect(() => {
-    if (autoplay && testimonialsLength > 0) {
-      autoplayIntervalRef.current = setInterval(() => {
-        setActiveIndex((prev) => (prev + 1) % testimonialsLength);
-      }, 6000);
-    }
-    return () => {
-      if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
-    };
-  }, [autoplay, testimonialsLength]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -118,15 +106,13 @@ export const CircularTestimonials = ({
     // eslint-disable-next-line
   }, [activeIndex, testimonialsLength]);
 
-  // Navigation handlers
+  // Navigation handlers (Manual only - no auto-timer)
   const handleNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % testimonialsLength);
-    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
   }, [testimonialsLength]);
 
   const handlePrev = useCallback(() => {
     setActiveIndex((prev) => (prev - 1 + testimonialsLength) % testimonialsLength);
-    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
   }, [testimonialsLength]);
 
   // Touch Swipe handlers
@@ -158,8 +144,11 @@ export const CircularTestimonials = ({
         zIndex: 3,
         opacity: 1,
         pointerEvents: "auto",
-        transform: `translateX(0px) translateY(0px) scale(1) rotateY(0deg)`,
-        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+        transform: `translate3d(0px, 0px, 0px) scale(1) rotateY(0deg)`,
+        transition: "transform 0.45s cubic-bezier(.25,.1,.25,1), opacity 0.45s ease-out",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        willChange: "transform, opacity",
       };
     }
     if (isLeft) {
@@ -168,8 +157,11 @@ export const CircularTestimonials = ({
         opacity: 0.8,
         pointerEvents: "auto",
         cursor: "pointer",
-        transform: `translateX(-${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(15deg)`,
-        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+        transform: `translate3d(-${gap}px, -${maxStickUp}px, 0px) scale(0.85) rotateY(15deg)`,
+        transition: "transform 0.45s cubic-bezier(.25,.1,.25,1), opacity 0.45s ease-out",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        willChange: "transform, opacity",
       };
     }
     if (isRight) {
@@ -178,17 +170,22 @@ export const CircularTestimonials = ({
         opacity: 0.8,
         pointerEvents: "auto",
         cursor: "pointer",
-        transform: `translateX(${gap}px) translateY(-${maxStickUp}px) scale(0.85) rotateY(-15deg)`,
-        transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+        transform: `translate3d(${gap}px, -${maxStickUp}px, 0px) scale(0.85) rotateY(-15deg)`,
+        transition: "transform 0.45s cubic-bezier(.25,.1,.25,1), opacity 0.45s ease-out",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        willChange: "transform, opacity",
       };
     }
-    // Hide all other images
+    // Hide all other images cleanly without keeping GPU compositing layers
     return {
       zIndex: 1,
       opacity: 0,
       pointerEvents: "none",
-      transform: `translateX(0px) translateY(-${maxStickUp}px) scale(0.7) rotateY(0deg)`,
-      transition: "all 0.8s cubic-bezier(.4,2,.3,1)",
+      transform: `translate3d(0px, -${maxStickUp}px, 0px) scale(0.7) rotateY(0deg)`,
+      transition: "transform 0.45s cubic-bezier(.25,.1,.25,1), opacity 0.45s ease-out",
+      backfaceVisibility: "hidden",
+      WebkitBackfaceVisibility: "hidden",
     };
   }
 
@@ -226,14 +223,17 @@ export const CircularTestimonials = ({
                   key={testimonial.src + index}
                   src={testimonial.src}
                   alt={testimonial.name}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
                   onClick={() => {
                     if (isLeft) handlePrev();
                     if (isRight) handleNext();
                   }}
-                  className={`testimonial-image absolute inset-0 w-full h-full object-cover rounded-2xl sm:rounded-3xl border transition-shadow duration-500 ${
+                  className={`testimonial-image absolute inset-0 w-full h-full object-cover rounded-2xl sm:rounded-3xl border transition-[box-shadow,border-color] duration-500 ${
                     isActive
-                      ? "border-amber-400/40 shadow-[0_20px_50px_rgba(245,158,11,0.25)]"
-                      : "border-white/10 shadow-[0_15px_35px_rgba(0,0,0,0.6)]"
+                      ? "border-amber-400/40 shadow-[0_12px_32px_rgba(245,158,11,0.22)]"
+                      : "border-white/10 shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
                   }`}
                   data-index={index}
                   style={getImageStyle(index)}
@@ -314,7 +314,6 @@ export const CircularTestimonials = ({
                   key={dotIdx}
                   onClick={() => {
                     setActiveIndex(dotIdx);
-                    if (autoplayIntervalRef.current) clearInterval(autoplayIntervalRef.current);
                   }}
                   aria-label={`Go to slide ${dotIdx + 1}`}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
