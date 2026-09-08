@@ -43,9 +43,9 @@ export default function LandingNavbar() {
 
     return (
         <nav
-            className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 border-none ${
+            className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 border-none ${
                 isScrolled || mobileMenuOpen
-                    ? 'bg-[#07060A]/90 backdrop-blur-xl shadow-lg'
+                    ? 'bg-[#07060A]/95 backdrop-blur-sm shadow-md border-b border-white/[0.04]'
                     : 'bg-transparent'
             }`}
         >
@@ -233,10 +233,10 @@ export default function LandingNavbar() {
 
             {/* Mobile & Tablet Luxury Menu Drawer */}
             {mobileMenuOpen && (
-                <div className="lg:hidden fixed inset-x-0 top-14 md:top-16 max-h-[calc(100vh-4rem)] overflow-y-auto bg-[#07060A]/98 backdrop-blur-2xl border-b border-[#F4EDE2]/10 shadow-[0_25px_70px_rgba(0,0,0,0.95)] px-4 sm:px-8 py-6 space-y-6 animate-fade-in-down font-space">
+                <div className="lg:hidden fixed inset-x-0 top-14 md:top-16 max-h-[calc(100vh-4rem)] overflow-y-auto bg-[#07060A]/98 backdrop-blur-md border-b border-[#F4EDE2]/10 shadow-[0_25px_70px_rgba(0,0,0,0.95)] px-4 sm:px-8 py-6 space-y-6 animate-fade-in-down font-space">
                     {/* Ambient Glow in Menu */}
-                    <div className="absolute top-0 right-10 w-64 h-64 bg-[#FF5A2E]/10 rounded-full blur-[90px] pointer-events-none" />
-                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-[#6E5BFF]/15 rounded-full blur-[80px] pointer-events-none" />
+                    <div className="absolute top-0 right-10 w-64 h-64 bg-[radial-gradient(circle,rgba(255,90,46,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-[radial-gradient(circle,rgba(110,91,255,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
                     {/* Tablet/Mobile Grid Layout */}
                     <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">

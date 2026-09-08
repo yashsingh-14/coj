@@ -53,7 +53,7 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
       "border-[#6E5BFF]/30 hover:border-[#FF5A2E] bg-gradient-to-r from-[#6E5BFF]/15 via-[#E11D48]/15 to-[#FF5A2E]/15 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.35)]",
   }[variant];
 
-  const baseClasses = `liquid-btn group relative inline-flex items-center justify-center gap-2.5 sm:gap-3 rounded-full border font-semibold tracking-wide backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-all duration-500 active:scale-95 ${sizeClasses} ${variantClasses} ${className}`;
+  const baseClasses = `liquid-btn group relative inline-flex items-center justify-center gap-2.5 sm:gap-3 rounded-full border font-semibold tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-all duration-300 active:scale-95 ${sizeClasses} ${variantClasses} ${className}`;
 
   const waveGradientClass =
     variant === "spirit"

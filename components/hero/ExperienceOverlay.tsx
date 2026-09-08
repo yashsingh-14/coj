@@ -71,6 +71,343 @@ const DEFAULT_EVENTS = [
     }
 ];
 
+// ══════════════════════════════════════════════════════════════════════
+// SCROLL PROGRESS BAR — Pure rAF, Zero React Re-Renders
+// ══════════════════════════════════════════════════════════════════════
+function ScrollProgressBar() {
+    const barRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        let ticking = false;
+        const onScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const docH = document.documentElement.scrollHeight - window.innerHeight;
+                    if (docH > 0 && barRef.current) {
+                        const progress = Math.min(1, Math.max(0, window.scrollY / docH));
+                        barRef.current.style.transform = `scaleX(${progress})`;
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    return (
+        <div
+            ref={barRef}
+            className="fixed top-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#C2361A] via-[#FF5A2E] to-[#FFB37A] z-[100] origin-left pointer-events-none"
+            style={{ transform: 'scaleX(0)' }}
+        />
+    );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// BACK TO TOP BUTTON — Self-contained, Zero Page Re-Renders
+// ══════════════════════════════════════════════════════════════════════
+function BackToTopButton() {
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+        let ticking = false;
+        const handleScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const shouldShow = window.scrollY > 600;
+                    setShow((prev) => (prev !== shouldShow ? shouldShow : prev));
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return (
+        <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className={`fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-[#0D0B12]/95 border border-[#F4EDE2]/15 text-[#F4EDE2] flex items-center justify-center hover:border-[#FF5A2E]/60 hover:text-[#FF5A2E] active:scale-95 transition-all duration-300 shadow-2xl ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
+            aria-label="Scroll to top"
+        >
+            <ArrowUp className="w-4 h-4 text-inherit" />
+        </button>
+    );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// HERO SECTION — Fully Isolated State & Timers (Zero Below-Fold Re-renders)
+// ══════════════════════════════════════════════════════════════════════
+const HERO_VIDEOS = [
+    {
+        id: 'anniversary',
+        src: '/videos/coj video for hero annivercery.mp4',
+        title: '12th Anniversary Celebration',
+        tag: 'Anniversary Special',
+        label: '01'
+    },
+    {
+        id: 'worship',
+        src: '/videos/coj video.mp4',
+        title: 'Call of Jesus Ministries',
+        tag: 'Worship Experience',
+        label: '02'
+    }
+];
+
+const KINETIC_PHRASES = [
+    { text: "Meets Earth", gradient: "from-[#FFB37A] via-[#FF5A2E] to-[#C2361A]" },
+    { text: "Heals Hearts", gradient: "from-[#C4B5FD] via-[#6E5BFF] to-[#FF5A2E]" },
+    { text: "Transforms Lives", gradient: "from-[#A78BFA] via-[#EC4899] to-[#FF5A2E]" },
+    { text: "Ignites Revival", gradient: "from-[#FDE047] via-[#FF5A2E] to-[#C2361A]" }
+];
+
+function HeroSection() {
+    const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+    const [isVideoMuted] = useState(true);
+    const [isVideoPlaying] = useState(true);
+    const [isHeroVisible, setIsHeroVisible] = useState(true);
+    const video1Ref = useRef<HTMLVideoElement>(null);
+    const video2Ref = useRef<HTMLVideoElement>(null);
+    const heroBoxRef = useRef<HTMLDivElement>(null);
+
+    const [kineticIndex, setKineticIndex] = useState(0);
+    const [prevKineticIndex, setPrevKineticIndex] = useState<number | null>(null);
+    const [isKineticSwapping, setIsKineticSwapping] = useState(false);
+
+    // Auto-pause everything when hero scrolls out of view
+    useEffect(() => {
+        const heroEl = document.getElementById('hero');
+        if (!heroEl) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const isVisible = entries[0]?.isIntersecting ?? false;
+                setIsHeroVisible(isVisible);
+                const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
+                const otherVid = activeVideoIndex === 0 ? video2Ref.current : video1Ref.current;
+
+                if (isVisible && isVideoPlaying) {
+                    currentVid?.play().catch(() => {});
+                } else {
+                    currentVid?.pause();
+                    otherVid?.pause();
+                }
+            },
+            { threshold: 0.05 }
+        );
+
+        observer.observe(heroEl);
+        return () => observer.disconnect();
+    }, [activeVideoIndex, isVideoPlaying]);
+
+    // Kinetic Typography Swap - ONLY runs when Hero is visible
+    useEffect(() => {
+        if (!isHeroVisible) return;
+        const interval = setInterval(() => {
+            setPrevKineticIndex(kineticIndex);
+            setIsKineticSwapping(true);
+            setKineticIndex((prev) => (prev + 1) % KINETIC_PHRASES.length);
+
+            const timer = setTimeout(() => {
+                setIsKineticSwapping(false);
+                setPrevKineticIndex(null);
+            }, 680);
+
+            return () => clearTimeout(timer);
+        }, 3400);
+
+        return () => clearInterval(interval);
+    }, [kineticIndex, isHeroVisible]);
+
+    // Video auto-slide - ONLY runs when Hero is visible & playing
+    useEffect(() => {
+        if (!isVideoPlaying || !isHeroVisible) return;
+        const autoSlideTimer = setInterval(() => {
+            setActiveVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
+        }, 8000);
+
+        return () => clearInterval(autoSlideTimer);
+    }, [activeVideoIndex, isVideoPlaying, isHeroVisible]);
+
+    // Video active switch
+    useEffect(() => {
+        const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
+        const otherVid = activeVideoIndex === 0 ? video2Ref.current : video1Ref.current;
+
+        if (currentVid) {
+            currentVid.currentTime = 0;
+            if (isVideoPlaying && isHeroVisible) {
+                currentVid.play().catch(() => {});
+            }
+        }
+        if (otherVid) {
+            otherVid.pause();
+        }
+    }, [activeVideoIndex, isVideoPlaying, isHeroVisible]);
+
+    // Hero fade on scroll - native hardware-accelerated transform & opacity
+    useEffect(() => {
+        let ticking = false;
+        const handleScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    if (heroBoxRef.current && window.scrollY < window.innerHeight) {
+                        const progress = Math.min(1, window.scrollY / (window.innerHeight * 0.6));
+                        heroBoxRef.current.style.transform = `translate3d(0, ${-40 * progress}px, 0)`;
+                        heroBoxRef.current.style.opacity = `${Math.max(0.15, 1 - 0.85 * progress)}`;
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleNextVideo = () => {
+        setActiveVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
+    };
+
+    return (
+        <section id="hero" className="relative w-full h-[100dvh] flex items-center justify-center text-center overflow-hidden">
+            {/* Background Video Slider */}
+            <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
+                <video
+                    ref={video1Ref}
+                    src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
+                    autoPlay
+                    muted={isVideoMuted}
+                    playsInline
+                    preload="metadata"
+                    onEnded={handleNextVideo}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                        activeVideoIndex === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    }`}
+                />
+                <video
+                    ref={video2Ref}
+                    src="/videos/coj%20video.mp4"
+                    muted={isVideoMuted}
+                    playsInline
+                    preload="metadata"
+                    onEnded={handleNextVideo}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                        activeVideoIndex === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    }`}
+                />
+                <div className="absolute inset-0 bg-black/25" />
+                <div className="absolute bottom-0 inset-x-0 h-16 md:h-24 bg-gradient-to-t from-[#07060A] to-transparent pointer-events-none z-[4]" />
+            </div>
+
+            {/* Hero Content */}
+            <div ref={heroBoxRef} className="hero-content-box relative z-10 flex flex-col items-center px-6 will-change-transform">
+                <div className="hero-fade-in flex flex-col items-center" style={{ animationDelay: '0.4s' }}>
+                    <p className="text-xs md:text-sm font-medium tracking-[0.35em] text-[#F4EDE2]/80 uppercase mb-1 md:mb-1.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        Call of Jesus Ministries
+                    </p>
+
+                    <h1 className="flex flex-col items-center">
+                        <span
+                            className="block text-5xl sm:text-7xl md:text-8xl lg:text-[120px] font-extralight tracking-[-0.02em] text-[#F4EDE2] leading-[1.05]"
+                            style={{ textShadow: '0 2px 40px rgba(0,0,0,0.3)' }}
+                        >
+                            Where Heaven
+                        </span>
+
+                        <div className="relative text-5xl sm:text-7xl md:text-8xl lg:text-[120px] h-[1.25em] w-full max-w-4xl overflow-hidden flex items-center justify-center select-none mt-1">
+                            <span
+                                key={`kinetic-curr-${kineticIndex}`}
+                                className={`block font-fraunces italic font-normal bg-gradient-to-r ${KINETIC_PHRASES[kineticIndex].gradient} bg-clip-text text-transparent leading-[1.1] whitespace-nowrap ${isKineticSwapping ? 'kinetic-phrase-in' : ''}`}
+                                style={{ textShadow: '0 2px 40px rgba(0,0,0,0.3)' }}
+                            >
+                                {KINETIC_PHRASES[kineticIndex].text}
+                            </span>
+
+                            {isKineticSwapping && prevKineticIndex !== null && (
+                                <span
+                                    key={`kinetic-prev-${prevKineticIndex}`}
+                                    className={`absolute font-fraunces italic font-normal bg-gradient-to-r ${KINETIC_PHRASES[prevKineticIndex].gradient} bg-clip-text text-transparent leading-[1.1] whitespace-nowrap kinetic-phrase-out`}
+                                    style={{ textShadow: '0 2px 40px rgba(0,0,0,0.3)' }}
+                                >
+                                    {KINETIC_PHRASES[prevKineticIndex].text}
+                                </span>
+                            )}
+                        </div>
+                    </h1>
+                </div>
+
+                <div className="hero-fade-in pt-4" style={{ animationDelay: '0.9s' }}>
+                    <LiquidButton
+                        href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        size="lg"
+                        variant="celestial"
+                        icon={<ArrowRight className="w-4 h-4 text-[#FFB37A] group-hover:text-neutral-950 group-hover:translate-x-1.5 transition-all duration-300" />}
+                        iconPosition="right"
+                    >
+                        Get Directions
+                    </LiquidButton>
+                </div>
+
+                <Link
+                    href="/worship"
+                    className="hero-fade-in text-[#F4EDE2]/60 hover:text-[#C4B5FD] text-xs tracking-[0.15em] uppercase font-medium transition-colors duration-300 mt-5 md:mt-6"
+                    style={{ animationDelay: '1.1s' }}
+                >
+                    Explore Worship Songs →
+                </Link>
+            </div>
+
+            {/* Static Minimal Scroll Indicator */}
+            <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-2 opacity-40 pointer-events-none">
+                <div className="w-5 h-8 rounded-full border border-white/30 flex items-start justify-center p-1.5">
+                    <div className="w-1 h-2 rounded-full bg-white" />
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// TESTIMONIALS DATASET — Static Constant Outside Component
+// ══════════════════════════════════════════════════════════════════════
+const TESTIMONIALS_DATA = [
+    {
+        name: "Sister Shweta",
+        designation: "Creative Miracle • New Delhi",
+        quote: "In 2020, during a routine medical examination, I was informed of a condition requiring surgical removal. But after earnest prayer at Call of Jesus Ministries, God performed a creative miracle! The doctors verified a completely brand-new organ. Truly, nothing is too hard for God!",
+        src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80"
+    },
+    {
+        name: "Brother Rajesh",
+        designation: "Cancer Healed • Faridabad",
+        quote: "Diagnosed with stage 3 cancer, I came to the healing service with faith that moved mountains. After anointed prayer, post-service PET scans showed zero cancer cells remaining in my body! By His stripes, I am healed and alive.",
+        src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"
+    },
+    {
+        name: "Sister Priya",
+        designation: "Mental Freedom • Noida",
+        quote: "For years, I battled severe panic attacks, sleepless nights, and chronic depression. When I stepped into the prophetic presence of God here, every chain shattered. Jesus filled my heart with divine peace that surpasses all understanding.",
+        src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80"
+    },
+    {
+        name: "Brother Samuel",
+        designation: "Supernatural Favor • Gurugram",
+        quote: "Standing on the verge of total business bankruptcy with mounting debts, I anchored my soul on God's Word. Within 90 days, supernatural contracts and miraculous debt clearance took place. God supplied every need exceedingly!",
+        src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80"
+    },
+    {
+        name: "Sister Surabhi",
+        designation: "Miracle Healing • New Delhi",
+        quote: "Mandatory medical screenings initially showed reactive results for an incurable condition. Through intense prayer & covenant grace, repeat screenings at two top diagnostic centers came back 100% clear!",
+        src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80"
+    }
+];
+
 export default function ExperienceOverlay({ initialData }: {
     initialData?: {
         trending?: any[];
@@ -89,146 +426,7 @@ export default function ExperienceOverlay({ initialData }: {
     const verse = initialData?.todaysVerse || getVerseOfTheDay();
     const eventsList = (initialData?.events && initialData.events.length > 0) ? initialData.events : DEFAULT_EVENTS;
 
-    // Carousel
-    const carouselRef = useRef<HTMLDivElement>(null);
-    const [canScrollLeft, setCanScrollLeft] = useState(false);
-    const [canScrollRight, setCanScrollRight] = useState(true);
-    const [showBackToTop, setShowBackToTop] = useState(false);
-
-    // ══════════════════════════════════════════════════════════════════════
-    // HERO VIDEO SLIDER STATE & CONTROLS
-    // Slide 1: Anniversary Special Video | Slide 2: Ministry Worship Video
-    // ══════════════════════════════════════════════════════════════════════
-    const HERO_VIDEOS = [
-        {
-            id: 'anniversary',
-            src: '/videos/coj video for hero annivercery.mp4',
-            title: '12th Anniversary Celebration',
-            tag: 'Anniversary Special',
-            label: '01'
-        },
-        {
-            id: 'worship',
-            src: '/videos/coj video.mp4',
-            title: 'Call of Jesus Ministries',
-            tag: 'Worship Experience',
-            label: '02'
-        }
-    ];
-
-    const [activeVideoIndex, setActiveVideoIndex] = useState(0);
-    const [isVideoMuted, setIsVideoMuted] = useState(true);
-    const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-    const video1Ref = useRef<HTMLVideoElement>(null);
-    const video2Ref = useRef<HTMLVideoElement>(null);
-
-    // ═══ KINETIC TYPOGRAPHY ROTATING PHRASES (From Motion Spec) ═══
-    const KINETIC_PHRASES = [
-        { text: "Meets Earth", gradient: "from-[#FFB37A] via-[#FF5A2E] to-[#C2361A]" },
-        { text: "Heals Hearts", gradient: "from-[#C4B5FD] via-[#6E5BFF] to-[#FF5A2E]" },
-        { text: "Transforms Lives", gradient: "from-[#A78BFA] via-[#EC4899] to-[#FF5A2E]" },
-        { text: "Ignites Revival", gradient: "from-[#FDE047] via-[#FF5A2E] to-[#C2361A]" }
-    ];
-    const [kineticIndex, setKineticIndex] = useState(0);
-    const [prevKineticIndex, setPrevKineticIndex] = useState<number | null>(null);
-    const [isKineticSwapping, setIsKineticSwapping] = useState(false);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setPrevKineticIndex(kineticIndex);
-            setIsKineticSwapping(true);
-            setKineticIndex((prev) => (prev + 1) % KINETIC_PHRASES.length);
-
-            const timer = setTimeout(() => {
-                setIsKineticSwapping(false);
-                setPrevKineticIndex(null);
-            }, 680);
-
-            return () => clearTimeout(timer);
-        }, 3400);
-
-        return () => clearInterval(interval);
-    }, [kineticIndex]);
-
-    const toggleVideoSound = () => {
-        setIsVideoMuted((prev) => {
-            const next = !prev;
-            if (video1Ref.current) video1Ref.current.muted = next;
-            if (video2Ref.current) video2Ref.current.muted = next;
-            return next;
-        });
-    };
-
-    const toggleVideoPlayback = () => {
-        setIsVideoPlaying((prev) => {
-            const next = !prev;
-            const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
-            if (currentVid) {
-                if (next) currentVid.play().catch(() => { });
-                else currentVid.pause();
-            }
-            return next;
-        });
-    };
-
-    const handleNextVideo = () => {
-        setActiveVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
-    };
-
-    const handlePrevVideo = () => {
-        setActiveVideoIndex((prev) => (prev - 1 + HERO_VIDEOS.length) % HERO_VIDEOS.length);
-    };
-
-    useEffect(() => {
-        const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
-        const otherVid = activeVideoIndex === 0 ? video2Ref.current : video1Ref.current;
-
-        if (currentVid) {
-            currentVid.currentTime = 0;
-            if (isVideoPlaying) {
-                currentVid.play().catch(() => { });
-            }
-        }
-        if (otherVid) {
-            otherVid.pause();
-        }
-    }, [activeVideoIndex, isVideoPlaying]);
-
-    // ═══ AUTO-SLIDE TIMER (Every 8 Seconds) ═══
-    useEffect(() => {
-        if (!isVideoPlaying) return;
-        const autoSlideTimer = setInterval(() => {
-            setActiveVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
-        }, 8000);
-
-        return () => clearInterval(autoSlideTimer);
-    }, [activeVideoIndex, isVideoPlaying]);
-
-    // ═══ AUTO-PAUSE HERO VIDEO ON SCROLL (Performance Booster) ═══
-    useEffect(() => {
-        const heroEl = document.getElementById('hero');
-        if (!heroEl) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                const isVisible = entries[0]?.isIntersecting;
-                const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
-                if (!currentVid) return;
-
-                if (isVisible && isVideoPlaying) {
-                    currentVid.play().catch(() => { });
-                } else if (!isVisible) {
-                    currentVid.pause();
-                }
-            },
-            { threshold: 0.05 }
-        );
-
-        observer.observe(heroEl);
-        return () => observer.disconnect();
-    }, [activeVideoIndex, isVideoPlaying]);
-
-    // ═══ VERSE OF THE DAY INTERACTIONS ═══
+    // Verse of the Day Interactions
     const [copiedVerse, setCopiedVerse] = useState(false);
     const [showDevotional, setShowDevotional] = useState(false);
 
@@ -254,426 +452,72 @@ export default function ExperienceOverlay({ initialData }: {
         }
     };
 
-    // ══════════════════════════════════════════════════════════════════════
-    // GSAP — High-Performance Native Scroll Animation Engine
-    // Elements are fully visible by default. GSAP.context hides + animates
-    // them smoothly. Uses native GPU compositor scroll for zero lag.
-    // ══════════════════════════════════════════════════════════════════════
+    // Hardware-Accelerated Native IntersectionObserver for reveals & counters
     useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        let ctx: any = null;
-
-        const boot = async () => {
-            try {
-                const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-                    import('gsap'),
-                    import('gsap/ScrollTrigger'),
-                ]);
-
-                gsap.registerPlugin(ScrollTrigger);
-
-                // ── All animations inside gsap.context ───────────────
-                ctx = gsap.context(() => {
-
-                    // ─── HERO: Content subtle fade on scroll ───
-                    const heroBox = document.querySelector('.hero-content-box');
-                    if (heroBox) {
-                        gsap.to(heroBox, {
-                            y: -40,
-                            opacity: 0.15,
-                            ease: 'none',
-                            scrollTrigger: {
-                                trigger: '#hero',
-                                start: 'top top',
-                                end: '60% top',
-                                scrub: true,
-                            },
-                        });
+        const revealObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                        revealObserver.unobserve(entry.target);
                     }
+                });
+            },
+            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+        );
 
-                    // ─── Helper: animate a group of elements ─────────
-                    const revealGroup = (
-                        selector: string,
-                        trigger: string,
-                        fromVars: gsap.TweenVars,
-                        stagger = 0.08,
-                    ) => {
-                        const els = document.querySelectorAll(selector);
-                        if (!els.length) return;
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+            revealObserver.observe(el);
+        });
 
-                        gsap.set(els, { opacity: 0, ...fromVars });
-
-                        gsap.to(els, {
-                            opacity: 1,
-                            x: 0, y: 0, scale: 1,
-                            duration: 0.8,
-                            stagger,
-                            ease: 'power2.out',
-                            scrollTrigger: {
-                                trigger,
-                                start: 'top 85%',
-                                toggleActions: 'play none none none',
-                                once: true,
-                            },
-                        });
-                    };
-
-                    // ─── VERSE section fade-in ───────────────────────
-                    revealGroup('#verse .relative.z-10 > *', '#verse', { y: 25 }, 0.08);
-
-                    // ─── GATHERINGS heading slide from left ──────────
-                    revealGroup('#gatherings > div:first-child > div > *', '#gatherings', { x: -30 }, 0.06);
-
-                    // ─── EVENT CARDS stagger from bottom ─────────────
-                    revealGroup('.gsap-event-card', '#gatherings', { y: 40, scale: 0.98 }, 0.1);
-
-                    // ─── CHURCH BANNER slide up ──────────────────────
-                    revealGroup('.gsap-church-banner', '#gatherings', { y: 30 }, 0);
-
-                    // ─── VISION left column ──────────────────────────
-                    revealGroup('#vision .relative.z-10 > div:first-child > *', '#vision', { x: -40 }, 0.08);
-
-                    // ─── VISION right column ─────────────────────────
-                    revealGroup('#vision .relative.z-10 > div:last-child > *', '#vision', { x: 40 }, 0.1);
-
-                    // ─── TRENDING heading ────────────────────────────
-                    revealGroup('#trending > div:first-child > div > *', '#trending', { x: -30 }, 0.06);
-
-                    // ─── BENTO SONG ITEMS stagger ────────────────────
-                    revealGroup('.gsap-bento-song', '#trending', { y: 35, scale: 0.97 }, 0.08);
-
-                    // ─── GOD STORIES heading & cards stagger ───────────
-                    const storiesHeader = document.querySelector('#stories-header');
-                    if (storiesHeader) {
-                        gsap.set(storiesHeader, { x: -25, opacity: 0 });
-                        gsap.to(storiesHeader, {
-                            x: 0,
-                            opacity: 1,
-                            duration: 0.9,
-                            ease: 'power2.out',
-                            scrollTrigger: {
-                                trigger: '#stories',
-                                start: 'top 85%',
-                                toggleActions: 'play none none none',
-                            },
-                        });
-                    }
-
-                    // ─── TESTIMONY section ───────────────────────────
-                    revealGroup('#testimony .relative.z-10 > div:first-child > *', '#testimony', { x: -30 }, 0.08);
-                    revealGroup('#testimony .relative.z-10 > div:last-child > div', '#testimony', { y: 25, scale: 0.98 }, 0.06);
-
-                    // ─── PODCASTS heading + cards ─────────────────────
-                    revealGroup('#podcasts .relative.z-10 > *', '#podcasts', { y: 25 }, 0.06);
-                    revealGroup('.gsap-podcast-card', '#podcasts', { y: 25, scale: 0.97 }, 0.06);
-
-                    // ─── SOCIAL heading ──────────────────────────────
-                    revealGroup('#social > div:first-child > *', '#social', { x: -30 }, 0.06);
-                    revealGroup('.gsap-social-card', '#social', { y: 30, scale: 0.98 }, 0.08);
-
-                    // ─── NEWSLETTER ──────────────────────────────────
-                    revealGroup('#newsletter > div > *', '#newsletter', { y: 20 }, 0.08);
-
-                    // ═══════════════════════════════════════════════════
-                    // STATS COUNTER — numbers count up from 0
-                    // ═══════════════════════════════════════════════════
-                    document.querySelectorAll('.gsap-stat-number').forEach((el) => {
+        const counterObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target as HTMLElement;
                         const countTo = parseInt(el.getAttribute('data-count') || '0', 10);
                         const suffix = el.getAttribute('data-suffix') || '';
-                        if (!countTo) return;
-
-                        const obj = { val: 0 };
-                        gsap.set(el, {});
-                        gsap.to(obj, {
-                            val: countTo,
-                            duration: 1.8,
-                            ease: 'power2.out',
-                            scrollTrigger: {
-                                trigger: el,
-                                start: 'top 90%',
-                                toggleActions: 'play none none none',
-                            },
-                            onUpdate: () => {
-                                (el as HTMLElement).textContent = Math.floor(obj.val) + suffix;
-                            },
-                        });
-                    });
-
-                    // ═══════════════════════════════════════════════════
-                    // INFINITE MARQUEE
-                    // ═══════════════════════════════════════════════════
-                    const marqueeInner = document.querySelector('.gsap-marquee-inner') as HTMLElement;
-                    if (marqueeInner) {
-                        const mWidth = marqueeInner.scrollWidth / 2;
-                        gsap.to(marqueeInner, {
-                            x: -mWidth,
-                            duration: 22,
-                            ease: 'none',
-                            repeat: -1,
-                        });
+                        if (countTo > 0) {
+                            const startTime = performance.now();
+                            const duration = 1600;
+                            const updateCount = (now: number) => {
+                                const progress = Math.min(1, (now - startTime) / duration);
+                                const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                                el.textContent = Math.floor(ease * countTo) + suffix;
+                                if (progress < 1) {
+                                    requestAnimationFrame(updateCount);
+                                }
+                            };
+                            requestAnimationFrame(updateCount);
+                        }
+                        counterObserver.unobserve(el);
                     }
-
                 });
+            },
+            { threshold: 0.1 }
+        );
 
-            } catch (err) {
-                console.warn('GSAP init skipped:', err);
-            }
-        };
-
-        boot();
-
-        let ticking = false;
-        const progressBar = document.querySelector('.gsap-scroll-progress') as HTMLElement;
-
-        const onScroll = () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    const docH = document.documentElement.scrollHeight - window.innerHeight;
-                    if (docH > 0 && progressBar) {
-                        const progress = Math.min(1, Math.max(0, window.scrollY / docH));
-                        progressBar.style.transform = `scaleX(${progress})`;
-                    }
-                    const shouldShow = window.scrollY > 600;
-                    setShowBackToTop((prev) => (prev !== shouldShow ? shouldShow : prev));
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-
-        window.addEventListener('scroll', onScroll, { passive: true });
+        document.querySelectorAll('.stat-counter-number').forEach((el) => {
+            counterObserver.observe(el);
+        });
 
         return () => {
-            window.removeEventListener('scroll', onScroll);
-            if (ctx) ctx.revert();
+            revealObserver.disconnect();
+            counterObserver.disconnect();
         };
     }, []);
 
-    const scrollCarousel = (direction: 'left' | 'right') => {
-        if (!carouselRef.current) return;
-        carouselRef.current.scrollBy({ left: direction === 'left' ? -420 : 420, behavior: 'smooth' });
-        setTimeout(updateScrollButtons, 350);
-    };
-
-    const updateScrollButtons = () => {
-        if (!carouselRef.current) return;
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        setCanScrollLeft(scrollLeft > 10);
-        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    };
-
-    // God Stories — Rich Testimonial Data
-    const godStories = [
-        {
-            title: "Creative Miracle: A New Ovary Created After Surgical Removal",
-            excerpt: "In 2020, during a routine medical examination, Shweta was informed she had a cyst. After prayer, God performed a creative miracle and doctors verified a completely new organ.",
-            category: "Creative Miracle",
-            person: "Sister Shweta",
-            city: "New Delhi",
-            scripture: "Jeremiah 32:27 • Is anything too hard for God?"
-        },
-        {
-            title: "Healed from Cancer: Brother Rajesh's Testimony",
-            excerpt: "Diagnosed with stage 3 cancer, Brother Rajesh came to the healing service with faith that moved mountains. Post-service PET scans showed zero cancer cells.",
-            category: "Cancer Healed",
-            person: "Brother Rajesh",
-            city: "Faridabad",
-            scripture: "Isaiah 53:5 • By His stripes we are healed"
-        },
-        {
-            title: "Delivered from Depression: Sister Priya's Journey to Freedom",
-            excerpt: "For years, Sister Priya struggled with severe depression and mental torment. After the prophetic gathering, peace filled her heart and all chains were broken.",
-            category: "Mental Freedom",
-            person: "Sister Priya",
-            city: "Noida",
-            scripture: "John 8:36 • Who the Son sets free is free indeed"
-        },
-        {
-            title: "Financial Breakthrough: God's Supernatural Provision",
-            excerpt: "On the verge of business bankruptcy and heavy debts, Brother Samuel stood on God's Word and experienced supernatural debt clearance within 3 months.",
-            category: "Supernatural Favor",
-            person: "Brother Samuel",
-            city: "Gurugram",
-            scripture: "Philippians 4:19 • My God shall supply all your needs"
-        }
-    ];
-
-    // Rich Testimonials dataset for 3D Circular Testimonials Showcase
-    const testimonialsData = [
-        {
-            name: "Sister Shweta",
-            designation: "Creative Miracle • New Delhi",
-            quote: "In 2020, during a routine medical examination, I was informed of a condition requiring surgical removal. But after earnest prayer at Call of Jesus Ministries, God performed a creative miracle! The doctors verified a completely brand-new organ. Truly, nothing is too hard for God!",
-            src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80"
-        },
-        {
-            name: "Brother Rajesh",
-            designation: "Cancer Healed • Faridabad",
-            quote: "Diagnosed with stage 3 cancer, I came to the healing service with faith that moved mountains. After anointed prayer, post-service PET scans showed zero cancer cells remaining in my body! By His stripes, I am healed and alive.",
-            src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"
-        },
-        {
-            name: "Sister Priya",
-            designation: "Mental Freedom • Noida",
-            quote: "For years, I battled severe panic attacks, sleepless nights, and chronic depression. When I stepped into the prophetic presence of God here, every chain shattered. Jesus filled my heart with divine peace that surpasses all understanding.",
-            src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80"
-        },
-        {
-            name: "Brother Samuel",
-            designation: "Supernatural Favor • Gurugram",
-            quote: "Standing on the verge of total business bankruptcy with mounting debts, I anchored my soul on God's Word. Within 90 days, supernatural contracts and miraculous debt clearance took place. God supplied every need exceedingly!",
-            src: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80"
-        },
-        {
-            name: "Sister Surabhi",
-            designation: "Miracle Healing • New Delhi",
-            quote: "Mandatory medical screenings initially showed reactive results for an incurable condition. Through intense prayer & covenant grace, repeat screenings at two top diagnostic centers came back 100% clear!",
-            src: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80"
-        }
-    ];
-
     return (
         <div className="relative w-full min-h-screen bg-[#07060A] text-[#F4EDE2] selection:bg-[#FF5A2E]/30 selection:text-white font-space overflow-x-hidden">
-
-            {/* ═══ SCROLL PROGRESS BAR ═══ */}
-            <div className="gsap-scroll-progress fixed top-0 left-0 w-full h-[3px] bg-gradient-to-r from-[#C2361A] via-[#FF5A2E] to-[#FFB37A] z-[100] origin-left" style={{ transform: 'scaleX(0)' }} />
-
+            <ScrollProgressBar />
             <LandingNavbar />
+            <HeroSection />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* HERO — Full-screen cinematic hero                             */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="hero" className="relative w-full h-[100dvh] flex items-center justify-center text-center overflow-hidden">
-
-                {/* Background Video Slider */}
-                <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
-                    {/* Slide 1 Video: Anniversary Celebration */}
-                    <video
-                        ref={video1Ref}
-                        src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
-                        autoPlay
-                        muted={isVideoMuted}
-                        playsInline
-                        preload="metadata"
-                        onEnded={handleNextVideo}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                            }`}
-                    />
-
-                    {/* Slide 2 Video: Ministry Worship */}
-                    <video
-                        ref={video2Ref}
-                        src="/videos/coj%20video.mp4"
-                        muted={isVideoMuted}
-                        playsInline
-                        preload="metadata"
-                        onEnded={handleNextVideo}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                            }`}
-                    />
-
-
-                    {/* Clean Hardware-Accelerated Vignette Overlay */}
-                    <div className="absolute inset-0 bg-black/25" />
-
-                    {/* Compact Edge Fade Only at the Very Bottom Edge (Does not hide video) */}
-                    <div className="absolute bottom-0 inset-x-0 h-16 md:h-24 bg-gradient-to-t from-[#07060A] to-transparent pointer-events-none z-[4]" />
-                </div>
-
-                {/* Hero Content — Centered Minimal (Ankit Sajwan Style) */}
-                <div className="hero-content-box relative z-10 flex flex-col items-center px-6">
-
-                    {/* Main Headline with Subtitle brought down directly on top */}
-                    <div className="hero-fade-in flex flex-col items-center" style={{ animationDelay: '0.4s' }}>
-                        {/* Subtitle — Brought right next to Where Heaven */}
-                        <p className="text-xs md:text-sm font-medium tracking-[0.35em] text-[#F4EDE2]/80 uppercase mb-1 md:mb-1.5 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-                            Call of Jesus Ministries
-                        </p>
-
-                        <h1 className="flex flex-col items-center">
-                            <span
-                                className="block text-5xl sm:text-7xl md:text-8xl lg:text-[120px] font-extralight tracking-[-0.02em] text-[#F4EDE2] leading-[1.05]"
-                                style={{ textShadow: '0 2px 40px rgba(0,0,0,0.3)' }}
-                            >
-                                Where Heaven
-                            </span>
-
-                            {/* Kinetic Masked Flip Container (Properly Sized & Centered) */}
-                            <div className="relative text-5xl sm:text-7xl md:text-8xl lg:text-[120px] h-[1.25em] w-full max-w-4xl overflow-hidden flex items-center justify-center select-none mt-1">
-                                {/* Current / Incoming Phrase */}
-                                <span
-                                    key={`kinetic-curr-${kineticIndex}`}
-                                    className={`block font-fraunces italic font-normal bg-gradient-to-r ${KINETIC_PHRASES[kineticIndex].gradient} bg-clip-text text-transparent leading-[1.1] whitespace-nowrap ${isKineticSwapping ? 'kinetic-phrase-in' : ''
-                                        }`}
-                                    style={{ textShadow: '0 2px 40px rgba(0,0,0,0.3)' }}
-                                >
-                                    {KINETIC_PHRASES[kineticIndex].text}
-                                </span>
-
-                                {/* Previous / Outgoing Phrase (slides up and out through the mask) */}
-                                {isKineticSwapping && prevKineticIndex !== null && (
-                                    <span
-                                        key={`kinetic-prev-${prevKineticIndex}`}
-                                        className={`absolute font-fraunces italic font-normal bg-gradient-to-r ${KINETIC_PHRASES[prevKineticIndex].gradient} bg-clip-text text-transparent leading-[1.1] whitespace-nowrap kinetic-phrase-out`}
-                                        style={{ textShadow: '0 2px 40px rgba(0,0,0,0.3)' }}
-                                    >
-                                        {KINETIC_PHRASES[prevKineticIndex].text}
-                                    </span>
-                                )}
-                            </div>
-                        </h1>
-                    </div>
-
-                    {/* Single Celestial Pill CTA — Clean & Minimal */}
-                    <div className="hero-fade-in pt-4" style={{ animationDelay: '0.9s' }}>
-                        <a
-                            href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="liquid-btn group relative inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[#6E5BFF]/35 hover:border-[#FF5A2E] bg-gradient-to-r from-[#6E5BFF]/15 via-[#E11D48]/15 to-[#FF5A2E]/15 text-[#F4EDE2] font-semibold text-sm tracking-wide backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_40px_rgba(255,90,46,0.35)] transition-all duration-500"
-                        >
-                            {/* Water Bottle Liquid Fill (Rises up on hover with animated waves) */}
-                            <div className="liquid-water-fill bg-gradient-to-t from-[#6E5BFF] via-[#E11D48] to-[#FFB37A] text-[#E11D48]">
-                                <svg className="liquid-wave-svg liquid-wave-1" viewBox="0 0 120 20" preserveAspectRatio="none">
-                                    <path d="M0,10 C30,22 40,-2 60,10 C80,22 90,-2 120,10 L120,20 L0,20 Z" fill="currentColor" />
-                                </svg>
-                                <svg className="liquid-wave-svg liquid-wave-2 text-[#FFB37A]" viewBox="0 0 120 20" preserveAspectRatio="none">
-                                    <path d="M0,10 C30,22 40,-2 60,10 C80,22 90,-2 120,10 L120,20 L0,20 Z" fill="currentColor" />
-                                </svg>
-                            </div>
-
-                            <span className="relative z-10 font-bold group-hover:text-neutral-950 transition-colors duration-500">Get Directions</span>
-                            <ArrowRight className="relative z-10 w-4 h-4 text-[#FFB37A] group-hover:text-neutral-950 group-hover:translate-x-1.5 transition-all duration-300" />
-                        </a>
-                    </div>
-
-                    {/* Secondary Link — With balanced gap */}
-                    <Link
-                        href="/worship"
-                        className="hero-fade-in text-[#F4EDE2]/60 hover:text-[#C4B5FD] text-xs tracking-[0.15em] uppercase font-medium transition-colors duration-300 mt-5 md:mt-6"
-                        style={{ animationDelay: '1.1s' }}
-                    >
-                        Explore Worship Songs →
-                    </Link>
-                </div>
-
-
-
-                {/* Scroll indicator */}
-                <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-2 opacity-40 animate-float-slow pointer-events-none">
-                    <div className="w-5 h-8 rounded-full border border-white/30 flex items-start justify-center p-1.5">
-                        <div className="w-1 h-2 rounded-full bg-white animate-float-slow" />
-                    </div>
-                </div>
-            </section>
-
-
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* INFINITE MARQUEE BANNER                                       */}
+            {/* INFINITE MARQUEE BANNER — Pure CSS Compositor Animation       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <div className="relative py-6 overflow-hidden bg-[#07060A] border-y border-[#F4EDE2]/5">
-                <div className="gsap-marquee-inner flex whitespace-nowrap will-change-transform">
+                <div className="animate-marquee flex whitespace-nowrap will-change-transform">
                     {Array.from({ length: 2 }).map((_, setIdx) => (
                         <div key={setIdx} className="flex items-center gap-8 px-4">
                             {[
@@ -700,14 +544,14 @@ export default function ExperienceOverlay({ initialData }: {
             {/* VERSE OF THE DAY — Large Luxury Sanctuary Showcase Card        */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="verse" className="perf-section relative py-28 md:py-44 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2]">
-                {/* Ambient Ember & Spirit Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.30),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                {/* Ambient Ember & Spirit Fire Glows matching Our Vision (Zero Blur Shaders) */}
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,90,46,0.22)_0%,rgba(255,90,46,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0" />
+                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle_at_center,rgba(110,91,255,0.18)_0%,rgba(110,91,255,0.05)_45%,transparent_70%)] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-6xl mx-auto">
                     {/* Grand Sanctuary Showcase Card (Large Paper Layout) */}
-                    <div className="relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 sm:p-14 md:p-20 bg-[#0D0B12] border border-[#F4EDE2]/15 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(110,91,255,0.08)] overflow-hidden group">
+                    <div className="reveal-on-scroll relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 sm:p-14 md:p-20 bg-[#0D0B12] border border-[#F4EDE2]/15 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(110,91,255,0.08)] overflow-hidden group">
 
                         {/* Multi-Color Celestial Top Edge Accent Glow */}
                         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#FB7185] to-transparent" />
@@ -722,7 +566,7 @@ export default function ExperienceOverlay({ initialData }: {
                             {/* Card Top Header: Badge, Today's Date, and Ps. Samson Wilson tag */}
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/[0.08] pb-8">
                                 <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#6E5BFF]/40 bg-[#6E5BFF]/15 shadow-lg shadow-[#6E5BFF]/15">
-                                    <Sparkles className="w-4 h-4 text-[#A78BFA] animate-pulse" />
+                                    <Sparkles className="w-4 h-4 text-[#A78BFA]" />
                                     <span className="text-xs font-black tracking-[0.25em] uppercase text-[#C4B5FD]">
                                         Verse of the Day
                                     </span>
@@ -758,7 +602,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                                     {/* Ps. Samson Wilson Pill with Dual Gradient */}
                                     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#6E5BFF]/15 to-[#FF5A2E]/15 border border-[#6E5BFF]/30 text-xs md:text-sm font-medium text-[#F4EDE2] shadow-md">
-                                        <span className="w-2 h-2 rounded-full bg-[#FF5A2E] animate-pulse" />
+                                        <span className="w-2 h-2 rounded-full bg-[#FF5A2E]" />
                                         <strong className="font-bold bg-gradient-to-r from-[#C4B5FD] to-[#FFB37A] bg-clip-text text-transparent font-fraunces italic text-sm md:text-base tracking-wide">Ps. Samson Wilson</strong>
                                     </div>
                                 </div>
@@ -827,13 +671,13 @@ export default function ExperienceOverlay({ initialData }: {
             {/* WEEKLY GATHERINGS & CHURCH LOCATION                           */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="gatherings" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision (Zero Blur Shaders) */}
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(110,91,255,0.20)_0%,rgba(110,91,255,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.18)_0%,rgba(245,158,11,0.05)_45%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-12">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-3">
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#F59E0B]/30 bg-[#F59E0B]/10 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
                             <Calendar className="w-3.5 h-3.5 text-[#F59E0B]" />
@@ -861,7 +705,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </LiquidButton>
                 </div>
 
-                {/* Event Cards Grid with Individual Themed Palettes (Spirit Violet, Flame Ember, Covenant Rose) */}
+                {/* Event Cards Grid with Individual Themed Palettes */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {eventsList.map((event: any, i: number) => {
                         const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
@@ -895,12 +739,14 @@ export default function ExperienceOverlay({ initialData }: {
                                 badge: "text-[#FB7185] border-[#E11D48]/20"
                             };
 
+                        const delayClass = i === 0 ? "reveal-delay-1" : i === 1 ? "reveal-delay-2" : "reveal-delay-3";
+
                         return (
                             <div
                                 key={event.id || i}
-                                className={`gsap-event-card gsap-tilt-card group relative rounded-3xl p-7 flex flex-col justify-between bg-[#0D0B12] border border-[#F4EDE2]/10 ${cardTheme.borderHover} transition-all duration-500 hover:scale-[1.02] shadow-2xl overflow-hidden`}
+                                className={`reveal-on-scroll ${delayClass} group relative rounded-3xl p-7 flex flex-col justify-between bg-[#0D0B12] border border-[#F4EDE2]/10 ${cardTheme.borderHover} transition-all duration-500 hover:scale-[1.02] shadow-2xl overflow-hidden`}
                             >
-                                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${cardTheme.glow} to-transparent rounded-full blur-2xl pointer-events-none group-hover:scale-150 transition-transform duration-700`} />
+                                <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${cardTheme.glow} to-transparent rounded-full pointer-events-none group-hover:scale-150 transition-transform duration-700`} />
 
                                 <div className="space-y-5 relative z-10">
                                     <div className="flex items-center justify-between">
@@ -960,7 +806,7 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
 
                 {/* Main Church Arena Location Banner */}
-                <div className="gsap-church-banner relative rounded-3xl p-8 md:p-10 bg-gradient-to-r from-[#0D0B12] via-[#07060A] to-[#0D0B12] border border-[#F4EDE2]/15 shadow-2xl shadow-black/60 flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden">
+                <div className="reveal-on-scroll relative rounded-3xl p-8 md:p-10 bg-gradient-to-r from-[#0D0B12] via-[#07060A] to-[#0D0B12] border border-[#F4EDE2]/15 shadow-2xl shadow-black/60 flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden">
                     {/* Top Accent Line */}
                     <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-[#6E5BFF] via-[#FF5A2E] to-[#F59E0B]" />
 
@@ -997,14 +843,14 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="vision" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space selection:bg-[#FF5A2E]/30 selection:text-white">
                 {/* Ambient Ember & Spirit Fire Glows */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.32),transparent_70%)] blur-[45px] md:blur-[60px] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[45px] md:blur-[60px] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22)_0%,transparent_70%)] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0" />
+                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none" />
 
                 <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
 
                     {/* Left: Sticky Brand Header & Vision Narrative */}
-                    <div id="vision-header" className="lg:col-span-5 lg:sticky lg:top-32 space-y-6">
+                    <div id="vision-header" className="lg:col-span-5 lg:sticky lg:top-32 space-y-6 reveal-on-scroll">
                         {/* Kicker — Divine Calling */}
                         <div className="flex items-center gap-2.5 text-[13px] text-[#FF5A2E] tracking-[0.03em] font-medium uppercase">
                             <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none">
@@ -1055,7 +901,7 @@ export default function ExperienceOverlay({ initialData }: {
                             <div className="absolute left-[23px] top-[14px] bottom-[14px] w-[1px] bg-gradient-to-b from-[#FF5A2E] via-[#FF5A2E]/75 to-[#6E5BFF]/60 pointer-events-none" />
 
                             {/* Pillar 01 — Set the Captives Free */}
-                            <div className="relative pl-16 pb-14 last:pb-0 group">
+                            <div className="relative pl-16 pb-14 last:pb-0 group reveal-on-scroll reveal-delay-1">
                                 {/* Pillar Index Badge (01) */}
                                 <div className="absolute left-0 top-0 w-[47px] h-[47px] rounded-full flex items-center justify-center font-fraunces text-base italic bg-[#0D0B12] border border-[#F4EDE2]/15 text-[#FF5A2E] z-10 shadow-[0_0_15px_rgba(255,90,46,0.15)] group-hover:border-[#FF5A2E]/60 group-hover:shadow-[0_0_25px_rgba(255,90,46,0.35)] transition-all duration-300">
                                     01
@@ -1084,7 +930,7 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Pillar 02 — Reign and Equip */}
-                            <div className="relative pl-16 pb-0 group">
+                            <div className="relative pl-16 pb-0 group reveal-on-scroll reveal-delay-2">
                                 {/* Pillar Index Badge (02) */}
                                 <div className="absolute left-0 top-0 w-[47px] h-[47px] rounded-full flex items-center justify-center font-fraunces text-base italic bg-[#0D0B12] border border-[#F4EDE2]/15 text-[#6E5BFF] z-10 shadow-[0_0_15px_rgba(110,91,255,0.15)] group-hover:border-[#6E5BFF]/60 group-hover:shadow-[0_0_25px_rgba(110,91,255,0.35)] transition-all duration-300">
                                     02
@@ -1123,12 +969,12 @@ export default function ExperienceOverlay({ initialData }: {
             {trending.length > 0 && (
                 <section id="trending" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                     {/* Ambient Holy Spirit Violet & Flame Ember Glows matching Our Vision */}
-                    <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                    <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                    <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
+                    <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                     <div className="starfield opacity-30 pointer-events-none z-0" />
 
                     <div className="relative z-10 max-w-7xl mx-auto space-y-8">
-                        <div className="flex items-end justify-between gap-4">
+                        <div className="flex items-end justify-between gap-4 reveal-on-scroll">
                             <div className="space-y-2">
                                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_20px_rgba(110,91,255,0.15)]">
                                     <Music className="w-3.5 h-3.5 text-[#A78BFA]" />
@@ -1151,7 +997,7 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
 
                         {/* Horizontal Scroll Songs (desktop) / Grid (mobile) */}
-                        <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-4 md:gap-5 pb-4 scroll-smooth will-change-transform">
+                        <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-4 md:gap-5 pb-4 scroll-smooth reveal-on-scroll reveal-delay-1">
                             {trending.slice(0, 8).map((song, i) => {
                                 const rankBadgeStyle = i === 0
                                     ? 'bg-gradient-to-r from-[#F59E0B] via-[#FF5A2E] to-[#C2361A] text-white shadow-lg shadow-[#FF5A2E]/30 text-[10px] px-3 py-1'
@@ -1167,14 +1013,14 @@ export default function ExperienceOverlay({ initialData }: {
                                     <Link
                                         key={i}
                                         href={`/songs/${generateSlug(song.title)}`}
-                                        className={`gsap-bento-song group relative rounded-2xl overflow-hidden flex flex-col justify-end border border-[#F4EDE2]/10 hover:border-[#6E5BFF]/50 transition-all duration-500 flex-shrink-0 ${i === 0 ? 'w-[85vw] md:w-[420px] min-h-[300px] md:min-h-[420px]' : 'w-[42vw] md:w-[280px] min-h-[220px] md:min-h-[320px]'
+                                        className={`group relative rounded-2xl overflow-hidden flex flex-col justify-end border border-[#F4EDE2]/10 hover:border-[#6E5BFF]/50 transition-all duration-300 flex-shrink-0 ${i === 0 ? 'w-[85vw] md:w-[420px] min-h-[300px] md:min-h-[420px]' : 'w-[42vw] md:w-[280px] min-h-[220px] md:min-h-[320px]'
                                             }`}
                                     >
                                         <img
                                             src={getSongImage(song)}
                                             alt={song.title}
                                             loading="lazy"
-                                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             style={{ filter: 'brightness(0.45) saturate(0.9)' }}
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#07060A]/95 via-[#07060A]/40 to-transparent" />
@@ -1202,16 +1048,16 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="stories" className="perf-section relative py-24 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.28),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.20)_0%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
                     {/* Section Header */}
-                    <div id="stories-header" className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div id="stories-header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-on-scroll">
                         <div className="space-y-3">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#FB7185]/30 bg-[#FB7185]/10 shadow-[0_0_20px_rgba(251,113,133,0.15)]">
-                                <Heart className="w-3.5 h-3.5 text-[#FB7185] fill-[#FB7185]/40 animate-pulse" />
+                                <Heart className="w-3.5 h-3.5 text-[#FB7185] fill-[#FB7185]/40" />
                                 <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#FB7185]">Testimonies of Faith</span>
                             </div>
                             <h2 className="font-fraunces font-medium text-4xl sm:text-5xl md:text-6xl text-[#F4EDE2] tracking-tight leading-[1.08]">
@@ -1246,9 +1092,9 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* 3D Circular Testimonial Carousel Showcase */}
-                    <div className="relative pt-2 pb-2">
+                    <div className="relative pt-2 pb-2 reveal-on-scroll reveal-delay-1">
                         <CircularTestimonials
-                            testimonials={testimonialsData}
+                            testimonials={TESTIMONIALS_DATA}
                             autoplay={true}
                             colors={{
                                 name: "#F4EDE2",
@@ -1269,13 +1115,13 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="testimony" className="perf-section relative py-20 md:py-28 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Holy Spirit Violet & Flame Ember Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
                     {/* Outer Glass Sanctuary Container Card */}
-                    <div className="relative rounded-3xl sm:rounded-[2.5rem] border border-[#F4EDE2]/15 bg-gradient-to-b from-[#0D0B12] via-[#07060A]/95 to-[#07060A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
+                    <div className="relative rounded-3xl sm:rounded-[2.5rem] border border-[#F4EDE2]/15 bg-gradient-to-b from-[#0D0B12] via-[#07060A]/95 to-[#07060A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] reveal-on-scroll">
                     
                     {/* Background Sanctuary Worshipper with Warm Hue */}
                     <div className="absolute inset-0 z-0">
@@ -1283,7 +1129,7 @@ export default function ExperienceOverlay({ initialData }: {
                             src="/images/testimony-bg.jpg"
                             alt="Worship and Prayer"
                             loading="lazy"
-                            className="gsap-curtain-img w-full h-full object-cover"
+                            className="w-full h-full object-cover"
                             style={{ filter: 'brightness(0.22) saturate(0.85)' }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-[#07060A] via-[#07060A]/90 to-[#07060A]/60" />
@@ -1291,8 +1137,8 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Ambient Ember & Spirit Halo Glows */}
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FF5A2E]/[0.12] rounded-full blur-[60px] pointer-events-none transform-gpu" />
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#6E5BFF]/[0.10] rounded-full blur-[60px] pointer-events-none transform-gpu" />
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-[radial-gradient(circle,rgba(255,90,46,0.14)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[radial-gradient(circle,rgba(110,91,255,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
                     
                     {/* Multi-Color Celestial Top Accent Line */}
                     <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#E11D48] via-[#FF5A2E] to-transparent" />
@@ -1433,14 +1279,14 @@ export default function ExperienceOverlay({ initialData }: {
                                     return (
                                         <div
                                             key={i}
-                                            className={`group relative p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#0D0B12] border border-[#F4EDE2]/10 ${stat.theme.border} transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col justify-between`}
+                                            className={`group relative p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#0D0B12] border border-[#F4EDE2]/10 ${stat.theme.border} transition-all duration-300 hover:-translate-y-0.5 overflow-hidden flex flex-col justify-between`}
                                         >
                                             {/* Ambient Corner Flare */}
-                                            <div className={`absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-bl ${stat.theme.glow} to-transparent rounded-full blur-2xl group-hover:scale-150 transition-all duration-500 pointer-events-none`} />
+                                            <div className={`absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-bl ${stat.theme.glow} to-transparent rounded-full opacity-60 group-hover:scale-125 transition-all duration-300 pointer-events-none`} />
                                             
                                             {/* Top Icon & Dot */}
                                             <div className="flex items-center justify-between mb-2 sm:mb-3">
-                                                <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${stat.theme.iconBox} flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-sm`}>
+                                                <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${stat.theme.iconBox} flex items-center justify-center group-hover:scale-105 transition-all duration-300 shadow-sm`}>
                                                     <IconComp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-inherit" />
                                                 </div>
                                                 <div className={`w-1.5 h-1.5 rounded-full ${stat.theme.dot} opacity-60 group-hover:opacity-100 transition-opacity`} />
@@ -1449,7 +1295,7 @@ export default function ExperienceOverlay({ initialData }: {
                                             {/* Stat Number & Descriptions */}
                                             <div>
                                                 <p
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-fraunces font-medium text-[#F4EDE2] tracking-tight ${stat.theme.hoverText} transition-colors ${stat.count ? 'gsap-stat-number' : ''}`}
+                                                    className={`text-2xl sm:text-3xl md:text-4xl font-fraunces font-medium text-[#F4EDE2] tracking-tight ${stat.theme.hoverText} transition-colors ${stat.count ? 'stat-counter-number' : ''}`}
                                                     data-count={stat.count || undefined}
                                                     data-suffix={stat.suffix || undefined}
                                                 >
@@ -1505,16 +1351,16 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="worship-cta" className="perf-section relative py-20 md:py-28 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.28),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.20)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
-                    <div className="relative rounded-[24px] overflow-hidden border border-[#F4EDE2]/15 shadow-2xl">
+                    <div className="relative rounded-[24px] overflow-hidden border border-[#F4EDE2]/15 shadow-2xl reveal-on-scroll">
                         {/* Multi-Color Ambient BG */}
                         <div className="absolute inset-0 bg-gradient-to-br from-[#6E5BFF]/15 via-[#07060A] to-[#FF5A2E]/15" />
                         <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-[#6E5BFF] via-[#FF5A2E] to-[#F59E0B]" />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#6E5BFF]/[0.08] rounded-full blur-[50px] pointer-events-none transform-gpu" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[radial-gradient(circle,rgba(110,91,255,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
                         <div className="relative z-10 p-8 md:p-14 grid grid-cols-1 md:grid-cols-5 gap-10 items-center">
                             {/* Left (3 cols) */}
@@ -1568,20 +1414,22 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="podcasts" className="perf-section relative py-28 px-6 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.24),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.20),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.14)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_20px_rgba(110,91,255,0.15)]">
-                        <Headphones className="w-3.5 h-3.5 text-[#C4B5FD]" />
-                        <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#C4B5FD]">Listen Anywhere</span>
+                    <div className="reveal-on-scroll space-y-3">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_20px_rgba(110,91,255,0.15)]">
+                            <Headphones className="w-3.5 h-3.5 text-[#C4B5FD]" />
+                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#C4B5FD]">Listen Anywhere</span>
+                        </div>
+                        <h2 className="font-fraunces font-medium text-4xl sm:text-6xl md:text-8xl text-[#F4EDE2] tracking-tight">
+                            Audio <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#6E5BFF] to-[#38BDF8] bg-clip-text text-transparent">Podcasts</span>
+                        </h2>
                     </div>
-                    <h2 className="font-fraunces font-medium text-4xl sm:text-6xl md:text-8xl text-[#F4EDE2] tracking-tight">
-                        Audio <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#6E5BFF] to-[#38BDF8] bg-clip-text text-transparent">Podcasts</span>
-                    </h2>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto pt-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto pt-4 reveal-on-scroll reveal-delay-1">
                         {[
                             { top: 'Listen on', name: 'Spotify', icon: '🎵', hoverBorder: 'hover:border-[#1DB954]/50 group-hover:text-[#1DB954]' },
                             { top: 'Listen on', name: 'Apple Music', icon: '🎧', hoverBorder: 'hover:border-[#FC3C44]/50 group-hover:text-[#FC3C44]' },
@@ -1591,7 +1439,7 @@ export default function ExperienceOverlay({ initialData }: {
                             <a
                                 key={i}
                                 href="#"
-                                className={`gsap-podcast-card group flex flex-col items-center justify-center gap-1.5 px-4 py-6 bg-[#0D0B12] border border-[#F4EDE2]/10 rounded-2xl ${p.hoverBorder} hover:bg-[#0D0B12]/80 transition-all duration-300`}
+                                className={`group flex flex-col items-center justify-center gap-1.5 px-4 py-6 bg-[#0D0B12] border border-[#F4EDE2]/10 rounded-2xl ${p.hoverBorder} hover:bg-[#0D0B12]/80 transition-all duration-300`}
                             >
                                 <span className="text-2xl mb-1">{p.icon}</span>
                                 <p className="text-[9px] text-[#8A8496] uppercase tracking-widest">{p.top}</p>
@@ -1608,12 +1456,12 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="social" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.20),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-10">
-                    <div className="space-y-2">
+                    <div className="space-y-2 reveal-on-scroll">
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#FB7185]/30 bg-[#FB7185]/10 shadow-[0_0_20px_rgba(251,113,133,0.15)]">
                             <Instagram className="w-3.5 h-3.5 text-[#FB7185]" />
                             <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#FB7185]">Stay Connected</span>
@@ -1623,7 +1471,7 @@ export default function ExperienceOverlay({ initialData }: {
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 reveal-on-scroll reveal-delay-1">
                         {[
                             { name: 'WhatsApp', sub: 'Join Channel', icon: MessageCircle, href: 'https://whatsapp.com/channel/0029VaBFUhk9Guw4VxXqHI0m', accent: '#25D366', gradient: 'from-green-600/15', borderHover: 'hover:border-[#25D366]/40' },
                             { name: 'Facebook', sub: '10K+ Followers', icon: Facebook, href: 'https://www.facebook.com/callofjesusministries', accent: '#1877F2', gradient: 'from-blue-600/15', borderHover: 'hover:border-[#1877F2]/40' },
@@ -1635,9 +1483,9 @@ export default function ExperienceOverlay({ initialData }: {
                                 href={social.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`gsap-social-card gsap-tilt-card group relative rounded-2xl p-6 min-h-[200px] flex flex-col justify-between bg-gradient-to-br ${social.gradient} to-transparent bg-[#0D0B12] border border-[#F4EDE2]/10 ${social.borderHover} transition-all duration-500 hover:scale-[1.02] overflow-hidden`}
+                                className={`group relative rounded-2xl p-6 min-h-[200px] flex flex-col justify-between bg-gradient-to-br ${social.gradient} to-transparent bg-[#0D0B12] border border-[#F4EDE2]/10 ${social.borderHover} transition-all duration-300 hover:scale-[1.02] overflow-hidden`}
                             >
-                                <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(ellipse at bottom, ${social.accent}08, transparent)` }} />
+                                <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(ellipse at bottom, ${social.accent}08, transparent)` }} />
 
                                 <social.icon className="w-7 h-7 text-white/40 group-hover:text-white/70 transition-colors relative z-10" />
                                 <div className="relative z-10">
@@ -1656,10 +1504,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="newsletter" className="perf-section relative py-20 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Core Convergence Glow matching Our Vision */}
-                <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.20)_0%,rgba(255,90,46,0.16)_50%,transparent_70%)] blur-[40px] md:blur-[55px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.16)_0%,rgba(255,90,46,0.12)_50%,transparent_70%)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+                <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 reveal-on-scroll">
                     <h3 className="font-fraunces font-medium text-2xl sm:text-3xl text-[#F4EDE2]">
                         Stay Updated with <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#FF5A2E] to-[#FFB37A] bg-clip-text text-transparent">COJ</span>
                     </h3>
@@ -1701,7 +1549,7 @@ export default function ExperienceOverlay({ initialData }: {
             <footer className="relative border-t border-[#F4EDE2]/10 pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-12 bg-[#07060A] text-[#F4EDE2] overflow-hidden">
                 {/* Celestial Top Glow Line */}
                 <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#E11D48] via-[#FF5A2E] to-transparent" />
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-gradient-to-r from-[#6E5BFF]/[0.12] via-[#FF5A2E]/[0.12] to-[#F59E0B]/[0.12] rounded-full blur-[40px] pointer-events-none transform-gpu" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-[radial-gradient(ellipse_at_center,rgba(110,91,255,0.12)_0%,rgba(255,90,46,0.08)_40%,transparent_70%)] rounded-full pointer-events-none" />
                 <div className="starfield opacity-25 pointer-events-none z-0" />
 
                 <div className="max-w-7xl mx-auto">
@@ -1861,13 +1709,7 @@ export default function ExperienceOverlay({ initialData }: {
 
 
             {/* BACK TO TOP */}
-            <button
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className={`fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-[#0D0B12]/90 backdrop-blur-md border border-[#F4EDE2]/15 text-[#F4EDE2] flex items-center justify-center hover:border-[#FF5A2E]/60 hover:text-[#FF5A2E] hover:scale-110 transition-all duration-300 shadow-2xl ${showBackToTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
-                aria-label="Scroll to top"
-            >
-                <ArrowUp className="w-4 h-4 text-inherit" />
-            </button>
+            <BackToTopButton />
 
         </div>
     );

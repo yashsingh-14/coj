@@ -271,37 +271,12 @@ export const CircularTestimonials = ({
                 </h3>
               </div>
 
-              {/* Word-by-word animated blur-in quote */}
-              <motion.div
+              <p
                 className="font-sans leading-relaxed text-sm sm:text-base md:text-lg text-neutral-300 font-light italic"
                 style={{ color: colorTestimony, fontSize: fontSizeQuote }}
               >
-                &ldquo;
-                {activeTestimonial.quote.split(" ").map((word, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{
-                      filter: "blur(8px)",
-                      opacity: 0,
-                      y: 4,
-                    }}
-                    animate={{
-                      filter: "blur(0px)",
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      duration: 0.2,
-                      ease: "easeInOut",
-                      delay: 0.015 * i,
-                    }}
-                    style={{ display: "inline-block" }}
-                  >
-                    {word}&nbsp;
-                  </motion.span>
-                ))}
-                &rdquo;
-              </motion.div>
+                &ldquo;{activeTestimonial.quote}&rdquo;
+              </p>
             </motion.div>
           </AnimatePresence>
 
