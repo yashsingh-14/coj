@@ -190,28 +190,88 @@
   /* Do not use contain: paint layout — it breaks 3D perspective stacks and causes GPU repaint stalls during scroll */
 }
 
-/* ═══════════ HARDWARE-ACCELERATED NATIVE SCROLL REVEAL ═══════════ */
+/* ═══════════ APPLE / LUXURY SCROLL REVEAL ENGINE ═══════════ */
+/* Smooth Blur-to-Focus Glide */
+.reveal-blur {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(32px) scale(0.98);
+  transition: 
+    opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
+}
+
+.reveal-blur.is-revealed {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0) scale(1);
+  will-change: auto;
+}
+
+/* Subtle Scale & Elevation Lift */
+.reveal-scale {
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(0.93) translateY(24px);
+  transition: 
+    opacity 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.05s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
+}
+
+.reveal-scale.is-revealed {
+  opacity: 1;
+  filter: blur(0px);
+  transform: scale(1) translateY(0);
+  will-change: auto;
+}
+
+/* Standard Gentle Upward Reveal */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: blur(6px);
+  transform: translateY(28px);
+  transition: 
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
 }
 
 .reveal-on-scroll.is-revealed {
   opacity: 1;
+  filter: blur(0px);
   transform: translateY(0);
+  will-change: auto;
 }
 
-.reveal-delay-1 { transition-delay: 0.05s; }
-.reveal-delay-2 { transition-delay: 0.10s; }
-.reveal-delay-3 { transition-delay: 0.15s; }
-.reveal-delay-4 { transition-delay: 0.20s; }
+/* Child Stagger Container */
+.reveal-stagger.is-revealed > *:nth-child(1) { transition-delay: 0.05s; }
+.reveal-stagger.is-revealed > *:nth-child(2) { transition-delay: 0.12s; }
+.reveal-stagger.is-revealed > *:nth-child(3) { transition-delay: 0.19s; }
+.reveal-stagger.is-revealed > *:nth-child(4) { transition-delay: 0.26s; }
+.reveal-stagger.is-revealed > *:nth-child(5) { transition-delay: 0.33s; }
+.reveal-stagger.is-revealed > *:nth-child(6) { transition-delay: 0.40s; }
+
+/* Orchestrated Delay Modifiers */
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
 
 @media (prefers-reduced-motion: reduce) {
+  .reveal-blur,
+  .reveal-scale,
   .reveal-on-scroll {
     opacity: 1 !important;
+    filter: none !important;
     transform: none !important;
     transition: none !important;
+    will-change: auto !important;
   }
 }
 
