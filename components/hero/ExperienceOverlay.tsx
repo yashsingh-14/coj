@@ -555,7 +555,7 @@ export default function ExperienceOverlay({ initialData }: {
                         autoPlay
                         muted={isVideoMuted}
                         playsInline
-                        preload="auto"
+                        preload="metadata"
                         onEnded={handleNextVideo}
                         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
                             }`}
@@ -567,7 +567,7 @@ export default function ExperienceOverlay({ initialData }: {
                         src="/videos/coj%20video.mp4"
                         muted={isVideoMuted}
                         playsInline
-                        preload="auto"
+                        preload="metadata"
                         onEnded={handleNextVideo}
                         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'
                             }`}
@@ -699,15 +699,15 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* VERSE OF THE DAY — Large Luxury Sanctuary Showcase Card        */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="verse" className="relative py-28 md:py-44 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2]">
+            <section id="verse" className="perf-section relative py-28 md:py-44 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2]">
                 {/* Ambient Ember & Spirit Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.30),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.30),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-6xl mx-auto">
                     {/* Grand Sanctuary Showcase Card (Large Paper Layout) */}
-                    <div className="relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 sm:p-14 md:p-20 bg-[#0D0B12] border border-[#F4EDE2]/15 backdrop-blur-xl shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(110,91,255,0.08)] overflow-hidden group">
+                    <div className="relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 sm:p-14 md:p-20 bg-[#0D0B12] border border-[#F4EDE2]/15 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(110,91,255,0.08)] overflow-hidden group">
 
                         {/* Multi-Color Celestial Top Edge Accent Glow */}
                         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#FB7185] to-transparent" />
@@ -826,10 +826,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* WEEKLY GATHERINGS & CHURCH LOCATION                           */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="gatherings" className="relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="gatherings" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.22),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-12">
@@ -995,10 +995,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* OUR VISION — Redesigned Sequential Rail & Ember Glow Sanctuary */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="vision" className="relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space selection:bg-[#FF5A2E]/30 selection:text-white">
+            <section id="vision" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space selection:bg-[#FF5A2E]/30 selection:text-white">
                 {/* Ambient Ember & Spirit Fire Glows */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.32),transparent_70%)] blur-[75px] md:blur-[110px] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[75px] md:blur-[110px] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.32),transparent_70%)] blur-[45px] md:blur-[60px] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[45px] md:blur-[60px] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none" />
 
                 <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -1121,10 +1121,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* TRENDING WORSHIP — Bento Grid                                  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             {trending.length > 0 && (
-                <section id="trending" className="relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+                <section id="trending" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                     {/* Ambient Holy Spirit Violet & Flame Ember Glows matching Our Vision */}
-                    <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                    <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                    <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
+                    <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
                     <div className="starfield opacity-30 pointer-events-none z-0" />
 
                     <div className="relative z-10 max-w-7xl mx-auto space-y-8">
@@ -1173,6 +1173,7 @@ export default function ExperienceOverlay({ initialData }: {
                                         <img
                                             src={getSongImage(song)}
                                             alt={song.title}
+                                            loading="lazy"
                                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                             style={{ filter: 'brightness(0.45) saturate(0.9)' }}
                                         />
@@ -1199,10 +1200,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* GOD STORIES — Ultra-Premium Sanctuary Testimony Showcase       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="stories" className="relative py-24 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="stories" className="perf-section relative py-24 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.28),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.28),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
@@ -1266,21 +1267,22 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* SHARE TESTIMONY — Ultra-Luxury Sanctuary Encounter Banner       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="testimony" className="relative py-20 md:py-28 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="testimony" className="perf-section relative py-20 md:py-28 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Holy Spirit Violet & Flame Ember Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
                     {/* Outer Glass Sanctuary Container Card */}
-                    <div className="relative rounded-3xl sm:rounded-[2.5rem] border border-[#F4EDE2]/15 bg-gradient-to-b from-[#0D0B12] via-[#07060A]/95 to-[#07060A] backdrop-blur-sm p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
+                    <div className="relative rounded-3xl sm:rounded-[2.5rem] border border-[#F4EDE2]/15 bg-gradient-to-b from-[#0D0B12] via-[#07060A]/95 to-[#07060A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
                     
                     {/* Background Sanctuary Worshipper with Warm Hue */}
                     <div className="absolute inset-0 z-0">
                         <img
                             src="/images/testimony-bg.jpg"
                             alt="Worship and Prayer"
+                            loading="lazy"
                             className="gsap-curtain-img w-full h-full object-cover"
                             style={{ filter: 'brightness(0.22) saturate(0.85)' }}
                         />
@@ -1289,8 +1291,8 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Ambient Ember & Spirit Halo Glows */}
-                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FF5A2E]/[0.12] rounded-full blur-[120px] pointer-events-none" />
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#6E5BFF]/[0.10] rounded-full blur-[120px] pointer-events-none" />
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FF5A2E]/[0.12] rounded-full blur-[60px] pointer-events-none transform-gpu" />
+                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#6E5BFF]/[0.10] rounded-full blur-[60px] pointer-events-none transform-gpu" />
                     
                     {/* Multi-Color Celestial Top Accent Line */}
                     <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#E11D48] via-[#FF5A2E] to-transparent" />
@@ -1300,7 +1302,7 @@ export default function ExperienceOverlay({ initialData }: {
                         {/* Left: Typography, Impact, and Interactive CTAs */}
                         <div className="lg:col-span-7 space-y-6">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_25px_rgba(110,91,255,0.2)]">
-                                <Sparkles className="w-3.5 h-3.5 text-[#A78BFA] animate-pulse" />
+                                <Sparkles className="w-3.5 h-3.5 text-[#A78BFA]" />
                                 <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#C4B5FD]">Your Story Has Power</span>
                             </div>
 
@@ -1431,7 +1433,7 @@ export default function ExperienceOverlay({ initialData }: {
                                     return (
                                         <div
                                             key={i}
-                                            className={`group relative p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#0D0B12] border border-[#F4EDE2]/10 ${stat.theme.border} backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col justify-between`}
+                                            className={`group relative p-4.5 sm:p-5 rounded-2xl sm:rounded-3xl bg-[#0D0B12] border border-[#F4EDE2]/10 ${stat.theme.border} transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col justify-between`}
                                         >
                                             {/* Ambient Corner Flare */}
                                             <div className={`absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-bl ${stat.theme.glow} to-transparent rounded-full blur-2xl group-hover:scale-150 transition-all duration-500 pointer-events-none`} />
@@ -1466,10 +1468,10 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Pastoral Helpline / Prayer Support Card */}
-                            <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-[#6E5BFF]/15 via-[#0D0B12] to-[#FF5A2E]/10 border border-[#6E5BFF]/30 backdrop-blur-md flex items-center justify-between gap-3">
+                            <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-[#6E5BFF]/15 via-[#0D0B12] to-[#FF5A2E]/10 border border-[#6E5BFF]/30 flex items-center justify-between gap-3">
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#6E5BFF]/20 border border-[#6E5BFF]/30 flex items-center justify-center text-[#C4B5FD] flex-shrink-0">
-                                        <Phone className="w-4 h-4 text-[#C4B5FD] animate-pulse" />
+                                        <Phone className="w-4 h-4 text-[#C4B5FD]" />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-[#F4EDE2] tracking-wide">
@@ -1501,10 +1503,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* WORSHIP PORTAL CTA — Fraunces & Celestial Multi-Color Gradient */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="worship-cta" className="relative py-20 md:py-28 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="worship-cta" className="perf-section relative py-20 md:py-28 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.28),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.28),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.22),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
@@ -1512,7 +1514,7 @@ export default function ExperienceOverlay({ initialData }: {
                         {/* Multi-Color Ambient BG */}
                         <div className="absolute inset-0 bg-gradient-to-br from-[#6E5BFF]/15 via-[#07060A] to-[#FF5A2E]/15" />
                         <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-[#6E5BFF] via-[#FF5A2E] to-[#F59E0B]" />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#6E5BFF]/[0.08] rounded-full blur-[100px] pointer-events-none transform-gpu" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#6E5BFF]/[0.08] rounded-full blur-[50px] pointer-events-none transform-gpu" />
 
                         <div className="relative z-10 p-8 md:p-14 grid grid-cols-1 md:grid-cols-5 gap-10 items-center">
                             {/* Left (3 cols) */}
@@ -1564,10 +1566,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* AUDIO PODCASTS                                                */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="podcasts" className="relative py-28 px-6 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="podcasts" className="perf-section relative py-28 px-6 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.24),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.20),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.24),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.20),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
@@ -1604,10 +1606,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* SOCIAL MEDIA                                                  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="social" className="relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="social" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.25),transparent_70%)] blur-[60px] md:blur-[85px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.20),transparent_70%)] blur-[60px] md:blur-[85px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.25),transparent_70%)] blur-[40px] md:blur-[55px] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.20),transparent_70%)] blur-[40px] md:blur-[55px] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-10">
@@ -1652,9 +1654,9 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* NEWSLETTER                                                    */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="newsletter" className="relative py-20 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="newsletter" className="perf-section relative py-20 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Ambient Core Convergence Glow matching Our Vision */}
-                <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.20)_0%,rgba(255,90,46,0.16)_50%,transparent_70%)] blur-[60px] md:blur-[85px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 transform-gpu" />
+                <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.20)_0%,rgba(255,90,46,0.16)_50%,transparent_70%)] blur-[40px] md:blur-[55px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 transform-gpu" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
@@ -1699,7 +1701,7 @@ export default function ExperienceOverlay({ initialData }: {
             <footer className="relative border-t border-[#F4EDE2]/10 pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-12 bg-[#07060A] text-[#F4EDE2] overflow-hidden">
                 {/* Celestial Top Glow Line */}
                 <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#E11D48] via-[#FF5A2E] to-transparent" />
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-gradient-to-r from-[#6E5BFF]/[0.12] via-[#FF5A2E]/[0.12] to-[#F59E0B]/[0.12] rounded-full blur-[70px] pointer-events-none transform-gpu" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-gradient-to-r from-[#6E5BFF]/[0.12] via-[#FF5A2E]/[0.12] to-[#F59E0B]/[0.12] rounded-full blur-[40px] pointer-events-none transform-gpu" />
                 <div className="starfield opacity-25 pointer-events-none z-0" />
 
                 <div className="max-w-7xl mx-auto">

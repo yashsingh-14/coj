@@ -151,56 +151,35 @@
   }
 }
 
+/* Lightweight static starfield — uses a tiny radial-gradient dot pattern
+   instead of expensive box-shadow animations that repaint every frame. */
 .starfield {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 340px 150px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 550px 60px, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1px 1px at 780px 200px, rgba(255,255,255,0.15), transparent),
+    radial-gradient(1px 1px at 950px 100px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 200px 300px, rgba(255,255,255,0.25), transparent),
+    radial-gradient(1px 1px at 450px 350px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 700px 320px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 150px 450px, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 600px 500px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 80px 220px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 480px 180px, rgba(255,255,255,0.15), transparent),
+    radial-gradient(1px 1px at 880px 160px, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1px 1px at 380px 420px, rgba(255,255,255,0.25), transparent),
+    radial-gradient(1px 1px at 820px 480px, rgba(255,255,255,0.15), transparent);
 }
 
-.starfield::before,
-.starfield::after {
-  content: '';
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  animation: twinkle 4s ease-in-out infinite;
-}
-
-.starfield::before {
-  box-shadow:
-    120px 80px 0 0 rgba(255, 255, 255, 0.3),
-    340px 150px 0 0 rgba(255, 255, 255, 0.2),
-    550px 60px 0 0 rgba(255, 255, 255, 0.4),
-    780px 200px 0 0 rgba(255, 255, 255, 0.15),
-    950px 100px 0 0 rgba(255, 255, 255, 0.3),
-    1100px 250px 0 0 rgba(255, 255, 255, 0.2),
-    200px 300px 0 0 rgba(255, 255, 255, 0.25),
-    450px 350px 0 0 rgba(255, 255, 255, 0.35),
-    700px 320px 0 0 rgba(255, 255, 255, 0.2),
-    900px 380px 0 0 rgba(255, 255, 255, 0.15),
-    150px 450px 0 0 rgba(255, 255, 255, 0.3),
-    600px 500px 0 0 rgba(255, 255, 255, 0.2),
-    1050px 470px 0 0 rgba(255, 255, 255, 0.25);
-  animation-delay: 0s;
-}
-
-.starfield::after {
-  box-shadow:
-    80px 120px 0 0 rgba(255, 255, 255, 0.2),
-    280px 220px 0 0 rgba(255, 255, 255, 0.35),
-    480px 180px 0 0 rgba(255, 255, 255, 0.15),
-    680px 280px 0 0 rgba(255, 255, 255, 0.3),
-    880px 160px 0 0 rgba(255, 255, 255, 0.2),
-    1020px 320px 0 0 rgba(255, 255, 255, 0.25),
-    160px 380px 0 0 rgba(255, 255, 255, 0.15),
-    380px 420px 0 0 rgba(255, 255, 255, 0.3),
-    580px 460px 0 0 rgba(255, 255, 255, 0.2),
-    820px 500px 0 0 rgba(255, 255, 255, 0.15),
-    1000px 550px 0 0 rgba(255, 255, 255, 0.25),
-    250px 560px 0 0 rgba(255, 255, 255, 0.2);
-  animation-delay: 2s;
+/* ═══════════ PERFORMANCE: OFF-SCREEN PAINT CONTAINMENT ═══════════ */
+.perf-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 /* ═══════════ SCROLL REVEAL ANIMATION ═══════════ */
