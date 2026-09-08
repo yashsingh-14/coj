@@ -186,33 +186,38 @@ function HeroSection() {
     const video2Ref = useRef<HTMLVideoElement>(null);
     const heroBoxRef = useRef<HTMLDivElement>(null);
 
-    // Mobile 3-Split Cinematic Hero Intro (Ankit Sajwan Style)
+    // Mobile 3-Split Cinematic Hero Intro (Ankit Sajwan Style — Opaque, Distinct Slots)
     const [isMobileSplitExpanded, setIsMobileSplitExpanded] = useState(false);
     const topVideoRef = useRef<HTMLVideoElement>(null);
+    const mobileMiddleVidRef = useRef<HTMLVideoElement>(null);
     const bottomVideoRef = useRef<HTMLVideoElement>(null);
 
     // Mobile 3-Split Cinematic Hero Intro Timer
     useEffect(() => {
-        // Guarantee muted autoplay on mobile devices with staggered start
+        // Guarantee muted autoplay on mobile devices
         if (topVideoRef.current) {
             topVideoRef.current.muted = true;
-            topVideoRef.current.currentTime = 1;
+            topVideoRef.current.currentTime = 2;
             topVideoRef.current.play().catch(() => {});
+        }
+        if (mobileMiddleVidRef.current) {
+            mobileMiddleVidRef.current.muted = true;
+            mobileMiddleVidRef.current.play().catch(() => {});
         }
         if (bottomVideoRef.current) {
             bottomVideoRef.current.muted = true;
-            bottomVideoRef.current.currentTime = 10;
+            bottomVideoRef.current.currentTime = 14;
             bottomVideoRef.current.play().catch(() => {});
         }
 
-        // Keep 3-split playing for 8s so users can fully enjoy the multi-cam worship, then expand smoothly
+        // Keep 3-split playing for 16s so users can fully soak in the multi-cam worship
         const expandTimer = setTimeout(() => {
             setIsMobileSplitExpanded(true);
             setTimeout(() => {
                 topVideoRef.current?.pause();
                 bottomVideoRef.current?.pause();
-            }, 1600);
-        }, 8000);
+            }, 1800);
+        }, 16000);
 
         return () => clearTimeout(expandTimer);
     }, []);
@@ -318,8 +323,8 @@ function HeroSection() {
 
     return (
         <section id="hero" className="relative w-full h-[100dvh] flex items-center justify-center text-center overflow-hidden">
-            {/* Background Video Slider */}
-            <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
+            {/* Desktop Background Video Slider */}
+            <div className="hidden md:block hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
                 <video
                     ref={video1Ref}
                     src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
@@ -347,52 +352,76 @@ function HeroSection() {
                 <div className="absolute bottom-0 inset-x-0 h-40 sm:h-56 md:h-72 bg-gradient-to-t from-[#07060A] via-[#07060A]/85 via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
-            {/* Mobile 3-Split Cinematic Panels (Ankit Sajwan Style — Seamless, Zero Borders) */}
+            {/* Mobile 3-Split Cinematic Film Strips (< md — 100% Opaque, Zero Double-Exposure) */}
             <div
                 onClick={() => setIsMobileSplitExpanded(true)}
-                style={{ zIndex: 8 }}
-                className="block md:hidden absolute inset-0 overflow-hidden select-none pointer-events-none"
+                className="md:hidden absolute inset-0 z-0 flex flex-col w-full h-full overflow-hidden bg-black select-none"
             >
-                {/* Top Panel (Video 1 - Stage / Choir) */}
+                {/* Top Slot (Anniversary Celebration Stage & Lights) */}
                 <div
                     style={{
-                        height: '35%',
-                        transform: isMobileSplitExpanded ? 'translate3d(0, -100%, 0)' : 'translate3d(0, 0, 0)',
+                        height: isMobileSplitExpanded ? '0%' : '33.333%',
                         opacity: isMobileSplitExpanded ? 0 : 1,
-                        transition: 'transform 1400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 1400ms cubic-bezier(0.22, 1, 0.36, 1)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
-                        maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)'
+                        transition: 'height 1400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out'
                     }}
-                    className="absolute top-0 inset-x-0 overflow-hidden"
+                    className="relative w-full overflow-hidden shrink-0 bg-black"
                 >
                     <video
                         ref={topVideoRef}
+                        src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        className="w-full h-full object-cover object-[center_15%]"
+                    />
+                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                </div>
+
+                {/* Middle Slot (Pastor Preaching & Praise — Expands to 100% Full Screen) */}
+                <div
+                    style={{
+                        height: isMobileSplitExpanded ? '100%' : '33.334%',
+                        transition: 'height 1400ms cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}
+                    className="relative w-full flex-1 overflow-hidden bg-black"
+                >
+                    <video
+                        ref={mobileMiddleVidRef}
                         src="/videos/coj%20video.mp4"
                         autoPlay
                         muted
                         loop
                         playsInline
                         preload="auto"
-                        className="w-full h-full object-cover object-[center_20%]"
+                        className="w-full h-full object-cover object-center"
                     />
-                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/25 pointer-events-none" />
+                    {/* Seam shadows when in 3-split mode */}
+                    <div
+                        style={{ opacity: isMobileSplitExpanded ? 0 : 1, transition: 'opacity 800ms ease-out' }}
+                        className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"
+                    />
+                    <div
+                        style={{ opacity: isMobileSplitExpanded ? 0 : 1, transition: 'opacity 800ms ease-out' }}
+                        className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"
+                    />
                 </div>
 
-                {/* Bottom Panel (Video 3 - Congregation / Worship) */}
+                {/* Bottom Slot (Congregation & Worship) */}
                 <div
                     style={{
-                        height: '35%',
-                        transform: isMobileSplitExpanded ? 'translate3d(0, 100%, 0)' : 'translate3d(0, 0, 0)',
+                        height: isMobileSplitExpanded ? '0%' : '33.333%',
                         opacity: isMobileSplitExpanded ? 0 : 1,
-                        transition: 'transform 1400ms cubic-bezier(0.22, 1, 0.36, 1), opacity 1400ms cubic-bezier(0.22, 1, 0.36, 1)',
-                        WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
-                        maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)'
+                        transition: 'height 1400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out'
                     }}
-                    className="absolute bottom-0 inset-x-0 overflow-hidden"
+                    className="relative w-full overflow-hidden shrink-0 bg-black"
                 >
                     <video
                         ref={bottomVideoRef}
-                        src="/videos/coj%20video.mp4"
+                        src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
                         autoPlay
                         muted
                         loop
@@ -401,7 +430,11 @@ function HeroSection() {
                         className="w-full h-full object-cover object-[center_85%]"
                     />
                     <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
                 </div>
+
+                {/* Bottom fade into the page */}
+                <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/85 via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
             {/* Hero Content */}
