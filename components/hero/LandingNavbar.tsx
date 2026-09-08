@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Logo from '../ui/Logo';
-import { ChevronDown, Menu, X, Heart, Sparkles, MapPin, Music, Radio, BookOpen, UserCheck, Flame, Clock, ArrowRight, ExternalLink } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X, Heart, Sparkles, MapPin, Music, Radio, BookOpen, UserCheck, Flame, Clock, ArrowRight, ExternalLink } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function LandingNavbar() {
