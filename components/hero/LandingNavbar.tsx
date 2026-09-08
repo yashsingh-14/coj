@@ -58,9 +58,9 @@ export default function LandingNavbar() {
                         setMode('EXPERIENCE');
                         setMobileMenuOpen(false);
                     }}
-                    className="flex items-center group focus:outline-none translate-y-3 sm:translate-y-3.5 md:translate-y-4"
+                    className="flex items-center group focus:outline-none translate-y-1.5 sm:translate-y-2 md:translate-y-3.5"
                 >
-                    <Logo className="h-36 sm:h-40 md:h-44 w-auto" />
+                    <Logo className="h-20 sm:h-28 md:h-36 lg:h-40 w-auto" />
                 </Link>
 
                 {/* Desktop Navigation Links (>= lg) */}

@@ -210,9 +210,9 @@ export const CircularTestimonials = ({
       <div className="testimonial-grid grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center">
         
         {/* 3D Image Carousel Perspective Stack */}
-        <div className="relative flex justify-center items-center py-6 sm:py-8">
+        <div className="relative flex justify-center items-center py-4 sm:py-8">
           <div
-            className="image-container relative w-[80%] max-w-[280px] sm:max-w-[340px] md:max-w-[380px] h-72 sm:h-80 md:h-96"
+            className="image-container relative w-[75%] max-w-[220px] sm:max-w-[340px] md:max-w-[380px] h-56 sm:h-80 md:h-96"
             ref={imageContainerRef}
             style={{ perspective: "1000px" }}
           >
@@ -244,7 +244,7 @@ export const CircularTestimonials = ({
         </div>
 
         {/* Content & Typography */}
-        <div className="testimonial-content flex flex-col justify-between space-y-6 md:pl-2">
+        <div className="testimonial-content flex flex-col justify-between space-y-4 sm:space-y-6 md:pl-2">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
@@ -253,18 +253,18 @@ export const CircularTestimonials = ({
               animate="animate"
               exit="exit"
               transition={{ duration: 0.35, ease: "easeInOut" }}
-              className="space-y-4"
+              className="space-y-3 sm:space-y-4"
             >
               <div>
                 <span
-                  className="inline-block font-mono text-xs sm:text-sm font-semibold tracking-widest uppercase mb-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20"
+                  className="inline-block font-mono text-[10px] sm:text-xs md:text-sm font-semibold tracking-widest uppercase mb-1 sm:mb-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-amber-500/10 border border-amber-500/20"
                   style={{ color: colorDesignation, fontSize: fontSizeDesignation }}
                 >
                   {activeTestimonial.designation}
                 </span>
 
                 <h3
-                  className="font-playfair font-bold text-white text-2xl sm:text-3xl md:text-4xl tracking-tight mt-2"
+                  className="font-playfair font-bold text-white text-xl sm:text-3xl md:text-4xl tracking-tight mt-1.5 sm:mt-2"
                   style={{ color: colorName, fontSize: fontSizeName }}
                 >
                   {activeTestimonial.name}
@@ -272,7 +272,7 @@ export const CircularTestimonials = ({
               </div>
 
               <p
-                className="font-sans leading-relaxed text-sm sm:text-base md:text-lg text-neutral-300 font-light italic"
+                className="font-sans leading-relaxed text-xs sm:text-base md:text-lg text-neutral-300 font-light italic"
                 style={{ color: colorTestimony, fontSize: fontSizeQuote }}
               >
                 &ldquo;{activeTestimonial.quote}&rdquo;

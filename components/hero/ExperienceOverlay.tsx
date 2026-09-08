@@ -317,23 +317,23 @@ function HeroSection() {
             </div>
 
             {/* Hero Content */}
-            <div ref={heroBoxRef} className="hero-content-box relative z-10 flex flex-col items-center px-6 will-change-transform">
+            <div ref={heroBoxRef} className="hero-content-box relative z-10 flex flex-col items-center px-4 sm:px-6 will-change-transform">
                 <div className="hero-fade-in flex flex-col items-center" style={{ animationDelay: '0.4s' }}>
-                    <p className="text-xs md:text-sm font-bold tracking-[0.35em] text-amber-400/90 uppercase mb-2 md:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                    <p className="text-[10px] sm:text-xs md:text-sm font-bold tracking-[0.25em] sm:tracking-[0.35em] text-amber-400/90 uppercase mb-2 md:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] text-center">
                         Call of Jesus Ministries
                     </p>
 
                     <h1 className="flex flex-col items-center select-none">
                         <span
-                            className="block text-5xl sm:text-7xl md:text-8xl lg:text-[110px] font-black tracking-tighter text-[#F4EDE2] drop-shadow-2xl leading-[1.05]"
+                            className="block text-3xl sm:text-5xl md:text-7xl lg:text-[100px] font-black tracking-tighter text-[#F4EDE2] drop-shadow-2xl leading-[1.08] text-center"
                         >
                             Where Heaven
                         </span>
 
-                        <div className="relative text-5xl sm:text-7xl md:text-8xl lg:text-[110px] h-[1.25em] w-full max-w-4xl overflow-hidden flex items-center justify-center select-none mt-1">
+                        <div className="relative text-3xl sm:text-5xl md:text-7xl lg:text-[100px] h-[1.3em] w-full max-w-4xl overflow-hidden flex items-center justify-center select-none mt-0.5 sm:mt-1">
                             <span
                                 key={`kinetic-curr-${kineticIndex}`}
-                                className={`block font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.1] whitespace-nowrap drop-shadow-2xl ${isKineticSwapping ? 'kinetic-phrase-in' : ''}`}
+                                className={`block font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.15] whitespace-nowrap drop-shadow-2xl ${isKineticSwapping ? 'kinetic-phrase-in' : ''}`}
                             >
                                 {KINETIC_PHRASES[kineticIndex].text}
                             </span>
@@ -341,7 +341,7 @@ function HeroSection() {
                             {isKineticSwapping && prevKineticIndex !== null && (
                                 <span
                                     key={`kinetic-prev-${prevKineticIndex}`}
-                                    className={`absolute font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.1] whitespace-nowrap kinetic-phrase-out drop-shadow-2xl`}
+                                    className={`absolute font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.15] whitespace-nowrap kinetic-phrase-out drop-shadow-2xl`}
                                 >
                                     {KINETIC_PHRASES[prevKineticIndex].text}
                                 </span>
@@ -527,18 +527,18 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* INFINITE MARQUEE BANNER — Seamless Ambient Horizon             */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <div className="relative py-8 overflow-hidden bg-gradient-to-b from-[#07060A] via-[#0D0B12] to-[#07060A]">
+            <div className="relative py-4 sm:py-6 md:py-8 overflow-hidden bg-gradient-to-b from-[#07060A] via-[#0D0B12] to-[#07060A]">
                 {/* Luminous Top & Bottom Seam Fades */}
                 <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5A2E]/20 via-[#FFB37A]/25 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFB37A]/25 via-[#FF5A2E]/20 to-transparent pointer-events-none" />
 
                 {/* Left & Right Edge Vignette Fades */}
-                <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-[#07060A] to-transparent z-10 pointer-events-none" />
-                <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-[#07060A] to-transparent z-10 pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 w-16 sm:w-24 md:w-48 bg-gradient-to-r from-[#07060A] to-transparent z-10 pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-16 sm:w-24 md:w-48 bg-gradient-to-l from-[#07060A] to-transparent z-10 pointer-events-none" />
 
                 <div className="animate-marquee flex whitespace-nowrap will-change-transform">
                     {Array.from({ length: 2 }).map((_, setIdx) => (
-                        <div key={setIdx} className="flex items-center gap-8 px-4">
+                        <div key={setIdx} className="flex items-center gap-5 sm:gap-8 px-2 sm:px-4">
                             {[
                                 { word: 'Jesus is Lord', symbol: '✦', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
                                 { word: 'Holy Spirit', symbol: '🕊️', color: 'text-[#FFB37A]', glow: 'drop-shadow-[0_0_10px_rgba(255,179,122,0.4)]' },
@@ -548,9 +548,9 @@ export default function ExperienceOverlay({ initialData }: {
                                 { word: 'Glory to God', symbol: '👑', color: 'text-[#FBBF24]', glow: 'drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]' },
                                 { word: 'Emmanuel', symbol: '✦', color: 'text-[#F59E0B]', glow: 'drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]' }
                             ].map((item, i) => (
-                                <span key={i} className="flex items-center gap-8">
-                                    <span className="text-lg md:text-2xl font-light tracking-[0.2em] uppercase text-[#F4EDE2]/60 font-space hover:text-[#F4EDE2] transition-colors">{item.word}</span>
-                                    <span className={`${item.color} text-sm ${item.glow}`}>{item.symbol}</span>
+                                <span key={i} className="flex items-center gap-5 sm:gap-8">
+                                    <span className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#F4EDE2]/60 font-space hover:text-[#F4EDE2] transition-colors">{item.word}</span>
+                                    <span className={`${item.color} text-xs sm:text-sm ${item.glow}`}>{item.symbol}</span>
                                 </span>
                             ))}
                         </div>
@@ -563,10 +563,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* VERSE OF THE DAY — Large Luxury Sanctuary Showcase Card        */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="verse" className="perf-section relative py-28 md:py-44 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2]">
+            <section id="verse" className="perf-section relative py-14 sm:py-24 md:py-36 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2]">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
 
                 {/* Ambient Ember & Golden Fire Glows matching Logo Palette (Zero Blur Shaders) */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,90,46,0.22)_0%,rgba(255,90,46,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0" />
@@ -583,18 +583,18 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-6xl mx-auto">
                     {/* Section Top Header */}
-                    <div className="text-center mb-10 sm:mb-14 reveal-on-scroll">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70 mb-4">
+                    <div className="text-center mb-8 sm:mb-14 reveal-on-scroll">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70 mb-3 sm:mb-4">
                             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                             <span>Verse of the Day</span>
                         </div>
-                        <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                        <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                             DAILY <span className="text-amber-500">PROMISE</span>
                         </h2>
                     </div>
 
                     {/* Grand Sanctuary Showcase Card (Obsidian Luxury Glass) */}
-                    <div className="reveal-on-scroll relative rounded-[2.5rem] md:rounded-[3.5rem] p-8 sm:p-14 md:p-20 bg-[#0A0A0A] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(245,158,11,0.06)] overflow-hidden group hover:border-amber-500/30 transition-all duration-500">
+                    <div className="reveal-on-scroll relative rounded-2xl sm:rounded-[2.5rem] md:rounded-[3.5rem] p-5 sm:p-10 md:p-16 bg-[#0A0A0A] border border-white/10 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(245,158,11,0.06)] overflow-hidden group hover:border-amber-500/30 transition-all duration-500">
 
                         {/* Top Accent Line */}
                         <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 via-[#FF5A2E] to-transparent" />
@@ -602,38 +602,38 @@ export default function ExperienceOverlay({ initialData }: {
                         {/* Ambient Halo Behind Scripture Quote */}
                         <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/15 via-red-600/10 to-amber-500/15 blur-2xl opacity-60 rounded-full pointer-events-none" />
 
-                        <div className="relative z-10 space-y-8 md:space-y-10 text-center">
+                        <div className="relative z-10 space-y-5 sm:space-y-8 md:space-y-10 text-center">
 
                             {/* Scripture Reference Tag */}
-                            <div className="inline-flex items-center gap-2 text-xs md:text-sm font-medium text-neutral-300 bg-white/[0.04] px-4 py-1.5 rounded-full border border-white/10">
-                                <BookOpen className="w-4 h-4 text-amber-500" />
+                            <div className="inline-flex items-center gap-2 text-[11px] sm:text-xs md:text-sm font-medium text-neutral-300 bg-white/[0.04] px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full border border-white/10">
+                                <BookOpen className="w-3.5 h-3.5 text-amber-500" />
                                 <span>Daily Bread</span>
                             </div>
 
                             {/* Grand Holy Scripture Quote matching our-mission */}
-                            <div className="relative max-w-5xl mx-auto px-2 sm:px-6 py-2 sm:py-6">
-                                <span className="text-amber-500 font-serif text-5xl sm:text-7xl md:text-9xl absolute -top-8 sm:-top-10 left-0 md:-left-6 opacity-40 select-none pointer-events-none">&ldquo;</span>
+                            <div className="relative max-w-5xl mx-auto px-1 sm:px-6 py-1 sm:py-6">
+                                <span className="text-amber-500 font-serif text-3xl sm:text-6xl md:text-9xl absolute -top-5 sm:-top-10 left-0 md:-left-6 opacity-40 select-none pointer-events-none">&ldquo;</span>
                                 
-                                <blockquote className="text-2xl sm:text-4xl md:text-5xl lg:text-[54px] font-normal text-white leading-[1.35] font-serif italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)] max-w-4xl mx-auto tracking-tight">
+                                <blockquote className="text-base sm:text-2xl md:text-4xl lg:text-[48px] font-normal text-white leading-relaxed sm:leading-[1.35] font-serif italic drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)] max-w-4xl mx-auto tracking-tight">
                                     {verse?.text || "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."}
                                 </blockquote>
 
-                                <span className="text-amber-500 font-serif text-5xl sm:text-7xl md:text-9xl absolute -bottom-10 sm:-bottom-12 right-0 md:-right-6 opacity-40 select-none pointer-events-none">&rdquo;</span>
+                                <span className="text-amber-500 font-serif text-3xl sm:text-6xl md:text-9xl absolute -bottom-6 sm:-bottom-12 right-0 md:-right-6 opacity-40 select-none pointer-events-none">&rdquo;</span>
                             </div>
 
                             {/* Glowing Horizon Pill Divider */}
-                            <div className="w-28 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-4 rounded-full opacity-60 pointer-events-none" />
+                            <div className="w-20 sm:w-28 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-2 sm:mt-4 rounded-full opacity-60 pointer-events-none" />
 
                             {/* Reference & Pastor Samson Wilson Attribution Block */}
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 pt-2">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-6 pt-1 sm:pt-2">
                                 {/* Scripture Reference Badge */}
-                                <div className="inline-flex items-center gap-2.5 px-6 py-2 rounded-full bg-white/[0.06] border border-amber-500/30 text-amber-400 font-bold tracking-[0.2em] uppercase text-xs sm:text-sm shadow-inner">
+                                <div className="inline-flex items-center gap-2 px-4 py-1.5 sm:px-6 sm:py-2 rounded-full bg-white/[0.06] border border-amber-500/30 text-amber-400 font-bold tracking-[0.2em] uppercase text-[11px] sm:text-sm shadow-inner">
                                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                                     <span>{verse?.reference || "John 3:16"}</span>
                                 </div>
 
                                 {/* Ps. Samson Wilson Pill */}
-                                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/[0.04] border border-white/10 text-xs sm:text-sm font-medium text-white/90">
+                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full bg-white/[0.04] border border-white/10 text-[11px] sm:text-sm font-medium text-white/90">
                                     <span className="w-2 h-2 rounded-full bg-amber-500" />
                                     <span className="text-white/60">Delivered by</span>
                                     <strong className="font-bold text-amber-400 font-serif italic tracking-wide">Ps. Samson Wilson</strong>
@@ -642,16 +642,16 @@ export default function ExperienceOverlay({ initialData }: {
 
                             {/* Reflection / Prayer Expandable Accordion */}
                             {verse?.reflection && showDevotional && (
-                                <div className="p-8 rounded-3xl bg-[#07060A]/95 border border-[#FF5A2E]/25 text-left space-y-4 animate-fade-in-down max-w-4xl mx-auto shadow-2xl">
-                                    <p className="text-xs uppercase tracking-widest text-[#FFB37A] font-bold flex items-center gap-2">
+                                <div className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl bg-[#07060A]/95 border border-[#FF5A2E]/25 text-left space-y-3 sm:space-y-4 animate-fade-in-down max-w-4xl mx-auto shadow-2xl">
+                                    <p className="text-[11px] sm:text-xs uppercase tracking-widest text-[#FFB37A] font-bold flex items-center gap-2">
                                         <Heart className="w-4 h-4 text-[#FF5A2E]" /> Daily Reflection • Ps. Samson Wilson
                                     </p>
-                                    <p className="text-sm md:text-base text-[#C9C3D4] leading-relaxed font-light font-space">
+                                    <p className="text-xs sm:text-base text-[#C9C3D4] leading-relaxed font-light font-space">
                                         {verse.reflection}
                                     </p>
                                     {verse.prayer && (
                                         <div className="pt-3 border-t border-white/10">
-                                            <p className="text-xs md:text-sm text-[#F4EDE2] font-fraunces italic">
+                                            <p className="text-xs sm:text-sm text-[#F4EDE2] font-fraunces italic">
                                                 <span className="font-bold text-[#FFB37A] not-italic">Prayer: </span>
                                                 {verse.prayer}
                                             </p>
@@ -661,7 +661,7 @@ export default function ExperienceOverlay({ initialData }: {
                             )}
 
                             {/* Interactive Action Buttons */}
-                            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                            <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 pt-2 sm:pt-4">
                                 <LiquidButton
                                     onClick={handleCopyVerse}
                                     size="sm"
@@ -703,27 +703,27 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* WEEKLY GATHERINGS & CHURCH LOCATION                           */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="gatherings" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="gatherings" className="perf-section relative py-14 sm:py-24 md:py-32 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
 
                 {/* Ambient Flame Orange & Amber Gold Fire Glows matching Logo Palette (Zero Blur Shaders) */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,90,46,0.20)_0%,rgba(255,90,46,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.18)_0%,rgba(245,158,11,0.05)_45%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
-                <div className="relative z-10 max-w-7xl mx-auto space-y-12">
-                <div className="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div className="space-y-4">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70">
+                <div className="relative z-10 max-w-7xl mx-auto space-y-8 sm:space-y-12">
+                <div className="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+                    <div className="space-y-3 sm:space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
                             <Calendar className="w-3.5 h-3.5 text-amber-500" />
                             <span>Weekly Gatherings</span>
                         </div>
-                        <h2 className="text-4xl sm:text-6xl md:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                        <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                             JOIN US <span className="text-amber-500">OFFLINE</span>
                         </h2>
-                        <p className="text-sm md:text-base text-white/60 font-light max-w-2xl leading-relaxed">
+                        <p className="text-xs sm:text-sm md:text-base text-white/60 font-light max-w-2xl leading-relaxed">
                             Experience the presence of God together. Come as you are. • <span className="font-serif italic text-amber-400">परमेश्वर की उपस्थिति का अनुभव करें।</span>
                         </p>
                     </div>
@@ -736,14 +736,14 @@ export default function ExperienceOverlay({ initialData }: {
                         variant="amber"
                         icon={<ArrowRight className="w-4 h-4" />}
                         iconPosition="right"
-                        className="self-start md:self-auto"
+                        className="self-start md:self-auto !py-2.5 !px-5 text-xs sm:!py-3 sm:!px-6 sm:text-sm"
                     >
                         Get Directions to Church
                     </LiquidButton>
                 </div>
 
                 {/* Event Cards Grid in Obsidian Luxury Glass matching our-mission */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     {eventsList.map((event: any, i: number) => {
                         const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
                         const delayClass = i === 0 ? "reveal-delay-1" : i === 1 ? "reveal-delay-2" : "reveal-delay-3";
@@ -751,31 +751,31 @@ export default function ExperienceOverlay({ initialData }: {
                         return (
                             <div
                                 key={event.id || i}
-                                className={`reveal-on-scroll ${delayClass} group relative rounded-2xl sm:rounded-3xl p-7 sm:p-8 flex flex-col justify-between bg-[#0A0A0A] border border-white/10 hover:border-amber-500/40 transition-all duration-500 hover:scale-[1.02] shadow-xl overflow-hidden`}
+                                className={`reveal-on-scroll ${delayClass} group relative rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 flex flex-col justify-between bg-[#0A0A0A] border border-white/10 hover:border-amber-500/40 transition-all duration-500 hover:scale-[1.02] shadow-xl overflow-hidden`}
                             >
                                 <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-                                <div className="space-y-5 relative z-10">
+                                <div className="space-y-4 sm:space-y-5 relative z-10">
                                     <div className="flex items-center justify-between">
-                                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                                            <IconComponent className="w-7 h-7" />
+                                        <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                                            <IconComponent className="w-5 h-5 sm:w-7 sm:h-7" />
                                         </div>
-                                        <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 border border-white/10 text-amber-400">
+                                        <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/5 border border-white/10 text-amber-400">
                                             Weekly
                                         </span>
                                     </div>
 
                                     {/* English Details */}
-                                    <div className="space-y-2">
-                                        <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors">
+                                    <div className="space-y-1.5 sm:space-y-2">
+                                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors">
                                             {event.title_en || event.titleEn}
                                         </h3>
                                         <div className="flex items-start gap-2 text-xs sm:text-sm text-white/60">
-                                            <Clock className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                                            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 mt-0.5 shrink-0" />
                                             <span>{event.time_en || event.timeEn}</span>
                                         </div>
                                         {(event.desc_en || event.descEn) && (
-                                            <p className="text-xs sm:text-sm text-white/50 pt-1 font-light leading-relaxed">
+                                            <p className="text-xs sm:text-sm text-white/50 pt-0.5 font-light leading-relaxed">
                                                 {event.desc_en || event.descEn}
                                             </p>
                                         )}
@@ -785,23 +785,23 @@ export default function ExperienceOverlay({ initialData }: {
                                     <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
                                     {/* Hindi Details */}
-                                    <div className="space-y-1.5">
-                                        <h4 className="text-lg font-bold text-white/90 font-serif">
+                                    <div className="space-y-1">
+                                        <h4 className="text-base sm:text-lg font-bold text-white/90 font-serif">
                                             {event.title_hi || event.titleHi}
                                         </h4>
-                                        <div className="flex items-start gap-2 text-xs text-white/50 font-serif">
-                                            <Clock className="w-3.5 h-3.5 text-amber-500/80 mt-0.5 shrink-0" />
+                                        <div className="flex items-start gap-2 text-[11px] sm:text-xs text-white/50 font-serif">
+                                            <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500/80 mt-0.5 shrink-0" />
                                             <span>{event.time_hi || event.timeHi}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="pt-6 relative z-10">
+                                <div className="pt-4 sm:pt-6 relative z-10">
                                     <a
                                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-400 hover:text-amber-300 transition-colors"
+                                        className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-amber-400 hover:text-amber-300 transition-colors"
                                     >
                                         <span>Church Location</span>
                                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -813,16 +813,16 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
 
                 {/* Main Church Arena Location Banner */}
-                <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl p-8 md:p-10 bg-[#0A0A0A] border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden group hover:border-amber-500/30 transition-all duration-500">
+                <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 bg-[#0A0A0A] border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 overflow-hidden group hover:border-amber-500/30 transition-all duration-500">
                     {/* Top Accent Line */}
                     <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 via-[#FF5A2E] to-transparent" />
 
-                    <div className="space-y-3 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
-                            <MapPin className="w-4 h-4 text-amber-500" />
+                    <div className="space-y-2.5 sm:space-y-3 text-center md:text-left">
+                        <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+                            <MapPin className="w-3.5 h-3.5 text-amber-500" />
                             <span className="text-amber-400 font-bold tracking-wider">Call of Jesus Ministries Church</span>
                         </div>
-                        <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
+                        <h3 className="text-xl sm:text-2xl md:text-4xl font-black text-white tracking-tight">
                             Visit Us in <span className="text-amber-500">Person</span>
                         </h3>
                         <p className="text-white/60 text-xs sm:text-sm font-light max-w-xl leading-relaxed">
@@ -834,7 +834,7 @@ export default function ExperienceOverlay({ initialData }: {
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-3 px-8 py-4 bg-white hover:bg-amber-400 text-black font-bold text-xs sm:text-sm uppercase tracking-wider rounded-full shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 transition-all duration-300 flex-shrink-0"
+                        className="group inline-flex items-center justify-center gap-2 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white hover:bg-amber-400 text-black font-bold text-xs sm:text-sm uppercase tracking-wider rounded-full shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 transition-all duration-300 flex-shrink-0"
                     >
                         <Navigation className="w-4 h-4 text-black" />
                         <span>Get Google Maps Directions</span>
@@ -849,10 +849,10 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* OUR MISSION & VISION — Exact Match with /our-mission            */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="vision" className="perf-section relative py-28 md:py-36 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-white font-space">
+            <section id="vision" className="perf-section relative py-14 sm:py-24 md:py-36 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-white font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
-                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
 
                 {/* Background Ambience */}
                 <div className="absolute inset-0 pointer-events-none">
@@ -863,7 +863,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="max-w-7xl mx-auto relative z-10">
                     {/* Mission Header */}
-                    <div className="text-center mb-12 sm:mb-20 relative reveal-on-scroll">
+                    <div className="text-center mb-8 sm:mb-16 relative reveal-on-scroll">
                         {/* Floating Elements */}
                         <div className="absolute top-0 left-1/4 animate-float-slow opacity-30 pointer-events-none hidden sm:block">
                             <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-amber-500" />
@@ -872,24 +872,24 @@ export default function ExperienceOverlay({ initialData }: {
                             <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
                         </div>
 
-                        <h2 className="text-4xl sm:text-6xl md:text-[90px] lg:text-[110px] font-black leading-none mb-4 sm:mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                        <h2 className="text-3xl sm:text-5xl md:text-[80px] lg:text-[100px] font-black leading-none mb-3 sm:mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                             OUR <span className="text-amber-500">MISSION</span>
                         </h2>
 
                         <div className="relative max-w-5xl mx-auto">
                             <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-red-600/20 blur-xl opacity-50 rounded-full pointer-events-none" />
-                            <h3 className="relative text-xl sm:text-3xl md:text-5xl lg:text-6xl font-serif font-medium italic leading-tight text-white drop-shadow-xl px-2 sm:px-4 py-4 sm:py-8">
-                                <span className="text-amber-500 font-serif text-4xl sm:text-6xl md:text-8xl absolute -top-4 left-0 md:-left-8 opacity-40 select-none">&ldquo;</span>
+                            <h3 className="relative text-base sm:text-2xl md:text-4xl lg:text-5xl font-serif font-medium italic leading-relaxed sm:leading-tight text-white drop-shadow-xl px-1 sm:px-4 py-2 sm:py-6">
+                                <span className="text-amber-500 font-serif text-2xl sm:text-5xl md:text-7xl absolute -top-3 sm:-top-4 left-0 md:-left-8 opacity-40 select-none">&ldquo;</span>
                                 To prepare people across the world for the <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-red-500 font-bold not-italic">second coming</span> of Jesus Christ.
-                                <span className="text-amber-500 font-serif text-4xl sm:text-6xl md:text-8xl absolute -bottom-8 right-0 md:-right-8 opacity-40 select-none">&rdquo;</span>
+                                <span className="text-amber-500 font-serif text-2xl sm:text-5xl md:text-7xl absolute -bottom-5 sm:-bottom-8 right-0 md:-right-8 opacity-40 select-none">&rdquo;</span>
                             </h3>
                         </div>
 
-                        <div className="w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-6 sm:mt-10 rounded-full opacity-50 pointer-events-none" />
+                        <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-4 sm:mt-8 rounded-full opacity-50 pointer-events-none" />
                     </div>
 
                     {/* Core Pillars with TiltCard */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 px-0 sm:px-4 reveal-on-scroll reveal-delay-1">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-8 px-0 sm:px-4 reveal-on-scroll reveal-delay-1">
                         {[
                             {
                                 icon: Globe,
@@ -914,15 +914,15 @@ export default function ExperienceOverlay({ initialData }: {
                             }
                         ].map((item, i) => (
                             <TiltCard key={i} className="w-full" max={5} scale={1.02}>
-                                <div className="h-full bg-[#0A0A0A] border border-white/5 rounded-2xl sm:rounded-3xl p-6 sm:p-8 relative overflow-hidden group hover:border-white/20 transition-all duration-500 shadow-xl">
+                                <div className="h-full bg-[#0A0A0A] border border-white/5 rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 relative overflow-hidden group hover:border-white/20 transition-all duration-500 shadow-xl">
                                     {/* Gradient Background */}
                                     <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`} />
 
                                     <div className="relative z-10 flex flex-col items-center text-center">
-                                        <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)] ${item.color}`}>
-                                            <item.icon className="w-7 h-7 sm:w-8 sm:h-8" />
+                                        <div className={`w-11 h-11 sm:w-14 sm:h-16 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 sm:mb-6 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_30px_rgba(0,0,0,0.5)] ${item.color}`}>
+                                            <item.icon className="w-5 h-5 sm:w-7 sm:h-8" />
                                         </div>
-                                        <h4 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-4 group-hover:tracking-wider transition-all duration-300">{item.title}</h4>
+                                        <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1.5 sm:mb-4 group-hover:tracking-wider transition-all duration-300">{item.title}</h4>
                                         <p className="text-white/50 leading-relaxed text-xs sm:text-sm group-hover:text-white/80 transition-colors">
                                             {item.desc}
                                         </p>
@@ -933,9 +933,9 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Call to Action */}
-                    <div className="mt-12 sm:mt-20 text-center reveal-on-scroll reveal-delay-2">
-                        <p className="text-white/40 uppercase tracking-[0.2em] text-xs font-bold mb-4 sm:mb-6">Join the Movement</p>
-                        <Link href="/contact" className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black rounded-full font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)] text-xs sm:text-sm uppercase tracking-wider">
+                    <div className="mt-8 sm:mt-16 text-center reveal-on-scroll reveal-delay-2">
+                        <p className="text-white/40 uppercase tracking-[0.2em] text-[10px] sm:text-xs font-bold mb-3 sm:mb-6">Join the Movement</p>
+                        <Link href="/contact" className="inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-full font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)] text-xs sm:text-sm uppercase tracking-wider">
                             <span>Partner With Us</span>
                             <ChevronRight className="w-4 h-4" />
                         </Link>
@@ -949,7 +949,7 @@ export default function ExperienceOverlay({ initialData }: {
             {trending.length > 0 && (
                 <>
                     <SectionSeam />
-                    <section id="trending" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+                    <section id="trending" className="perf-section relative py-12 sm:py-20 md:py-32 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                         {/* Seamless Section Top & Bottom Fade Overlays */}
                         <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                         <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -960,14 +960,14 @@ export default function ExperienceOverlay({ initialData }: {
                         <div className="starfield opacity-30 pointer-events-none z-0" />
 
 
-                    <div className="relative z-10 max-w-7xl mx-auto space-y-8">
+                    <div className="relative z-10 max-w-7xl mx-auto space-y-6 sm:space-y-8">
                         <div className="flex items-end justify-between gap-4 reveal-on-scroll">
-                            <div className="space-y-3">
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70">
+                            <div className="space-y-2 sm:space-y-3">
+                                <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
                                     <Music className="w-3.5 h-3.5 text-amber-500" />
                                     <span>Now Trending</span>
                                 </div>
-                                <h2 className="text-4xl sm:text-6xl md:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                                <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                                     TRENDING <span className="text-amber-500">WORSHIP</span>
                                 </h2>
                             </div>
@@ -984,7 +984,7 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
 
                         {/* Horizontal Scroll Songs (desktop) / Grid (mobile) */}
-                        <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-4 md:gap-5 pb-4 scroll-smooth reveal-on-scroll reveal-delay-1">
+                        <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-3.5 md:gap-5 pb-3 sm:pb-4 scroll-smooth reveal-on-scroll reveal-delay-1">
                             {trending.slice(0, 8).map((song, i) => {
                                 const rankBadgeStyle = i === 0
                                     ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/30 text-[10px] px-3 py-1'
@@ -998,7 +998,7 @@ export default function ExperienceOverlay({ initialData }: {
                                     <Link
                                         key={i}
                                         href={`/songs/${generateSlug(song.title)}`}
-                                        className={`group relative rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col justify-end border border-white/10 hover:border-amber-500/50 transition-all duration-300 flex-shrink-0 bg-[#0A0A0A] ${i === 0 ? 'w-[85vw] md:w-[420px] min-h-[300px] md:min-h-[420px]' : 'w-[42vw] md:w-[280px] min-h-[220px] md:min-h-[320px]'
+                                        className={`group relative rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col justify-end border border-white/10 hover:border-amber-500/50 transition-all duration-300 flex-shrink-0 bg-[#0A0A0A] ${i === 0 ? 'w-[75vw] sm:w-[320px] md:w-[420px] min-h-[220px] sm:min-h-[300px] md:min-h-[420px]' : 'w-[52vw] sm:w-[240px] md:w-[280px] min-h-[170px] sm:min-h-[220px] md:min-h-[320px]'
                                             }`}
                                     >
                                         <img
@@ -1011,14 +1011,14 @@ export default function ExperienceOverlay({ initialData }: {
                                         {/* Bottom vignette for crisp title legibility while keeping artwork vibrant */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-transparent to-transparent" />
 
-                                        <div className="relative z-10 p-4 md:p-6 space-y-1.5">
+                                        <div className="relative z-10 p-3.5 sm:p-4 md:p-6 space-y-1 sm:space-y-1.5">
                                             <span className={`font-black uppercase tracking-widest rounded-full inline-block ${rankBadgeStyle}`}>
                                                 #{i + 1}
                                             </span>
-                                            <h3 className={`font-bold text-white leading-tight truncate group-hover:text-amber-400 transition-colors ${i === 0 ? 'text-lg md:text-2xl' : 'text-sm md:text-base'}`}>
+                                            <h3 className={`font-bold text-white leading-tight truncate group-hover:text-amber-400 transition-colors ${i === 0 ? 'text-base sm:text-lg md:text-2xl' : 'text-xs sm:text-sm md:text-base'}`}>
                                                 {song.title}
                                             </h3>
-                                            <p className={`text-white/60 truncate ${i === 0 ? 'text-sm' : 'text-[11px]'}`}>{song.artist}</p>
+                                            <p className={`text-white/60 truncate ${i === 0 ? 'text-xs sm:text-sm' : 'text-[10px] sm:text-[11px]'}`}>{song.artist}</p>
                                         </div>
                                     </Link>
                                 );
@@ -1034,7 +1034,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* GOD STORIES — Ultra-Premium Sanctuary Testimony Showcase       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="stories" className="perf-section relative py-24 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="stories" className="perf-section relative py-12 sm:py-20 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -1052,18 +1052,18 @@ export default function ExperienceOverlay({ initialData }: {
                     <Flame className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
                 </div>
 
-                <div className="relative z-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
+                <div className="relative z-10 max-w-7xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
                     {/* Section Header */}
-                    <div id="stories-header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-on-scroll">
-                        <div className="space-y-3">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70">
+                    <div id="stories-header" className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-on-scroll">
+                        <div className="space-y-2 sm:space-y-3">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
                                 <Heart className="w-3.5 h-3.5 text-amber-500 fill-amber-500/30" />
                                 <span>Testimonies of Faith</span>
                             </div>
-                            <h2 className="text-4xl sm:text-6xl md:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                            <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                                 GOD <span className="text-amber-500">STORIES</span>
                             </h2>
-                            <p className="text-sm md:text-base text-white/60 font-light max-w-xl leading-relaxed">
+                            <p className="text-xs sm:text-sm md:text-base text-white/60 font-light max-w-xl leading-relaxed">
                                 Supernatural healings, broken addictions, and miraculous encounters. Documented evidence that Jesus Christ is alive and moving with power today.
                             </p>
                         </div>
@@ -1114,7 +1114,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* SHARE TESTIMONY — Ultra-Luxury Sanctuary Encounter Banner       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="testimony" className="perf-section relative py-20 md:py-28 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="testimony" className="perf-section relative py-12 sm:py-20 md:py-28 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -1126,7 +1126,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-7xl mx-auto">
                     {/* Outer Glass Sanctuary Container Card */}
-                    <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0A0A0A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] group hover:border-amber-500/30 transition-all duration-500">
+                    <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0A0A0A] p-5 sm:p-8 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] group hover:border-amber-500/30 transition-all duration-500">
                     
                     {/* Background Sanctuary Worshipper with Clear Visibility */}
                     <div className="absolute inset-0 z-0 overflow-hidden">
@@ -1151,16 +1151,16 @@ export default function ExperienceOverlay({ initialData }: {
                     {/* Top Accent Line */}
                     <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 via-[#FF5A2E] to-transparent" />
 
-                    <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+                    <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
                         
                         {/* Left: Typography, Impact, and Interactive CTAs */}
-                        <div className="lg:col-span-7 space-y-6">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70">
+                        <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
                                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                                 <span>Your Story Has Power</span>
                             </div>
 
-                            <h2 className="text-4xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                            <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                                 SHARE YOUR{' '}
                                 <br />
                                 <span className="text-amber-500">
@@ -1168,13 +1168,13 @@ export default function ExperienceOverlay({ initialData }: {
                                 </span>
                             </h2>
 
-                            <p className="text-sm md:text-base text-white/60 font-light leading-relaxed max-w-xl">
+                            <p className="text-xs sm:text-sm md:text-base text-white/60 font-light leading-relaxed max-w-xl">
                                 &ldquo;They triumphed over him by the blood of the Lamb and by the word of their testimony.&rdquo; (Rev 12:11).
                                 Your breakthrough is living proof that Jesus Christ is moving with power today. Speak of His goodness and ignite someone else&apos;s faith.
                             </p>
 
                             {/* Trust & Impact Highlights with Multi-Color Icons */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 pt-1">
                                 <div className="flex items-center gap-2 text-xs text-white/70 font-light">
                                     <div className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-2.5 h-2.5" />
@@ -1196,17 +1196,17 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
                                 <Link
                                     href="/share-testimony"
-                                    className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black rounded-full font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)] text-xs sm:text-sm uppercase tracking-wider text-center"
+                                    className="inline-flex items-center justify-center gap-2 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-full font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)] text-xs sm:text-sm uppercase tracking-wider text-center"
                                 >
                                     <span>Submit Your Testimony</span>
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
                                 <Link
                                     href="/god-stories"
-                                    className="inline-flex items-center justify-center gap-2 sm:gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-white/10 hover:bg-white/20 text-white rounded-full font-bold transition-all hover:scale-105 active:scale-95 duration-300 text-xs sm:text-sm uppercase tracking-wider border border-white/10 text-center"
+                                    className="inline-flex items-center justify-center gap-2 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white/10 hover:bg-white/20 text-white rounded-full font-bold transition-all hover:scale-105 active:scale-95 duration-300 text-xs sm:text-sm uppercase tracking-wider border border-white/10 text-center"
                                 >
                                     <span>Read God Stories</span>
                                     <ArrowRight className="w-4 h-4" />
@@ -1215,8 +1215,8 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
 
                         {/* Right: Glassmorphism Miracle Counters & Helpline */}
-                        <div className="lg:col-span-5 space-y-4">
-                            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                        <div className="lg:col-span-5 space-y-3 sm:space-y-4">
+                            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
                                 {[
                                     {
                                         num: '500+',
@@ -1255,15 +1255,15 @@ export default function ExperienceOverlay({ initialData }: {
                                     return (
                                         <div
                                             key={i}
-                                            className="group relative p-5 rounded-2xl sm:rounded-3xl bg-[#0A0A0A] border border-white/10 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden flex flex-col justify-between shadow-lg"
+                                            className="group relative p-3.5 sm:p-5 rounded-xl sm:rounded-3xl bg-[#0A0A0A] border border-white/10 hover:border-amber-500/40 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden flex flex-col justify-between shadow-lg"
                                         >
                                             {/* Ambient Corner Flare */}
                                             <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-bl from-amber-500/15 to-transparent rounded-full opacity-60 group-hover:scale-125 transition-all duration-300 pointer-events-none" />
                                             
                                             {/* Top Icon & Dot */}
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all duration-300 shadow-sm">
-                                                    <IconComp className="w-4 h-4 text-inherit" />
+                                            <div className="flex items-center justify-between mb-2 sm:mb-3">
+                                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all duration-300 shadow-sm">
+                                                    <IconComp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-inherit" />
                                                 </div>
                                                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500 opacity-60 group-hover:opacity-100 transition-opacity" />
                                             </div>
@@ -1271,16 +1271,16 @@ export default function ExperienceOverlay({ initialData }: {
                                             {/* Stat Number & Descriptions */}
                                             <div>
                                                 <p
-                                                    className={`text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight group-hover:text-amber-400 transition-colors ${stat.count ? 'stat-counter-number' : ''}`}
+                                                    className={`text-xl sm:text-2xl md:text-4xl font-bold text-white tracking-tight group-hover:text-amber-400 transition-colors ${stat.count ? 'stat-counter-number' : ''}`}
                                                     data-count={stat.count || undefined}
                                                     data-suffix={stat.suffix || undefined}
                                                 >
                                                     {stat.num}
                                                 </p>
-                                                <p className="text-[11px] font-bold tracking-wider uppercase text-white/90 mt-1">
+                                                <p className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-white/90 mt-0.5 sm:mt-1">
                                                     {stat.label}
                                                 </p>
-                                                <p className="text-[10px] text-white/50 font-light mt-0.5">
+                                                <p className="text-[9px] sm:text-[10px] text-white/50 font-light mt-0.5">
                                                     {stat.sub}
                                                 </p>
                                             </div>
@@ -1290,10 +1290,10 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Pastoral Helpline / Prayer Support Card */}
-                            <div className="p-4 sm:p-5 rounded-2xl bg-[#0A0A0A] border border-white/10 hover:border-amber-500/30 flex items-center justify-between gap-3 transition-all">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 flex-shrink-0">
-                                        <Phone className="w-4 h-4 text-amber-500" />
+                            <div className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0A0A0A] border border-white/10 hover:border-amber-500/30 flex items-center justify-between gap-3 transition-all">
+                                <div className="flex items-center gap-2.5 sm:gap-3">
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 flex-shrink-0">
+                                        <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-white tracking-wide">
@@ -1310,7 +1310,7 @@ export default function ExperienceOverlay({ initialData }: {
                                     variant="amber"
                                     icon={<ArrowRight className="w-3 h-3" />}
                                     iconPosition="right"
-                                    className="flex-shrink-0 !py-1.5 !px-3 text-[11px]"
+                                    className="flex-shrink-0 !py-1.5 !px-3 text-[10px] sm:text-[11px]"
                                 >
                                     Connect
                                 </LiquidButton>
@@ -1326,7 +1326,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* WORSHIP PORTAL CTA — Fraunces & Celestial Multi-Color Gradient */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="worship-cta" className="perf-section relative py-20 md:py-28 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="worship-cta" className="perf-section relative py-12 sm:py-20 md:py-28 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -1337,25 +1337,25 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
-                    <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#0A0A0A] shadow-2xl p-8 md:p-14 group hover:border-amber-500/30 transition-all duration-500">
+                    <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#0A0A0A] shadow-2xl p-5 sm:p-8 md:p-14 group hover:border-amber-500/30 transition-all duration-500">
                         {/* Top Accent Line */}
                         <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 via-[#FF5A2E] to-transparent" />
 
-                        <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-10 items-center">
+                        <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6 sm:gap-10 items-center">
                             {/* Left (3 cols) */}
-                            <div className="md:col-span-3 space-y-5">
-                                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 shadow-[0_0_30px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500">
-                                    <Music className="w-7 h-7 text-inherit" />
+                            <div className="md:col-span-3 space-y-3.5 sm:space-y-5">
+                                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 shadow-[0_0_30px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500">
+                                    <Music className="w-5 h-5 sm:w-7 sm:h-7 text-inherit" />
                                 </div>
-                                <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                                <h2 className="text-2xl sm:text-4xl md:text-6xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                                     WORSHIP <span className="text-amber-500">PORTAL</span>
                                 </h2>
-                                <p className="text-sm md:text-base text-white/60 font-light max-w-xl leading-relaxed">
+                                <p className="text-xs sm:text-sm md:text-base text-white/60 font-light max-w-xl leading-relaxed">
                                     Access hundreds of worship songs with guitar chords, lyrics, and key transposer — in Hindi & English. Built for worship leaders, musicians, and singers.
                                 </p>
                                 <button
                                     onClick={() => setMode('UTILITY')}
-                                    className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)] text-xs sm:text-sm uppercase tracking-wider"
+                                    className="inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-full font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 shadow-[0_0_40px_rgba(255,255,255,0.1)] text-xs sm:text-sm uppercase tracking-wider"
                                 >
                                     <span>Enter Worship Portal</span>
                                     <ArrowRight className="w-4 h-4" />
@@ -1363,7 +1363,7 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Right (2 cols) — Feature list with Multi-Color Dots */}
-                            <div className="md:col-span-2 space-y-3">
+                            <div className="md:col-span-2 space-y-2 sm:space-y-3">
                                 {[
                                     { text: 'Guitar Chords & Tabs', color: 'bg-amber-500' },
                                     { text: 'Key Transposer', color: 'bg-red-500' },
@@ -1373,7 +1373,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 ].map((f, i) => (
                                     <div
                                         key={i}
-                                        className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10"
+                                        className="flex items-center gap-2.5 sm:gap-3 px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-white/5 border border-white/10"
                                     >
                                         <div className={`w-1.5 h-1.5 rounded-full ${f.color}`} />
                                         <span className="text-xs font-medium text-white/80">{f.text}</span>
@@ -1390,7 +1390,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* AUDIO PODCASTS                                                */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="podcasts" className="perf-section relative py-28 px-6 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="podcasts" className="perf-section relative py-14 sm:py-24 md:py-28 px-4 sm:px-6 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -1400,18 +1400,18 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.14)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
-                    <div className="reveal-on-scroll space-y-4">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70">
+                <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
+                    <div className="reveal-on-scroll space-y-2 sm:space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
                             <Headphones className="w-3.5 h-3.5 text-amber-500" />
                             <span>Listen Anywhere</span>
                         </div>
-                        <h2 className="text-4xl sm:text-6xl md:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                        <h2 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                             AUDIO <span className="text-amber-500">PODCASTS</span>
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4 reveal-on-scroll reveal-delay-1">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 max-w-3xl mx-auto pt-2 sm:pt-4 reveal-on-scroll reveal-delay-1">
                         {[
                             { top: 'Listen on', name: 'Spotify', icon: '🎵', hoverBorder: 'hover:border-[#1DB954]/50 group-hover:text-[#1DB954]' },
                             { top: 'Listen on', name: 'Apple Music', icon: '🎧', hoverBorder: 'hover:border-[#FC3C44]/50 group-hover:text-[#FC3C44]' },
@@ -1421,11 +1421,11 @@ export default function ExperienceOverlay({ initialData }: {
                             <a
                                 key={i}
                                 href="#"
-                                className={`group flex flex-col items-center justify-center gap-2 px-4 py-6 bg-[#0A0A0A] border border-white/10 rounded-2xl ${p.hoverBorder} hover:bg-white/[0.03] transition-all duration-300 shadow-md`}
+                                className={`group flex flex-col items-center justify-center gap-1.5 sm:gap-2 px-3 py-4 sm:px-4 sm:py-6 bg-[#0A0A0A] border border-white/10 rounded-xl sm:rounded-2xl ${p.hoverBorder} hover:bg-white/[0.03] transition-all duration-300 shadow-md`}
                             >
-                                <span className="text-2xl mb-1">{p.icon}</span>
+                                <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1">{p.icon}</span>
                                 <p className="text-[9px] text-white/50 uppercase tracking-widest">{p.top}</p>
-                                <p className="text-sm font-bold text-white transition-colors">{p.name}</p>
+                                <p className="text-xs sm:text-sm font-bold text-white transition-colors">{p.name}</p>
                             </a>
                         ))}
                     </div>
@@ -1437,7 +1437,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* SOCIAL MEDIA                                                  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="social" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="social" className="perf-section relative py-12 sm:py-20 md:py-32 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -1447,18 +1447,18 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
-                <div className="relative z-10 max-w-7xl mx-auto space-y-10">
-                    <div className="space-y-3 reveal-on-scroll">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-xs font-bold tracking-widest uppercase text-white/70">
+                <div className="relative z-10 max-w-7xl mx-auto space-y-6 sm:space-y-10">
+                    <div className="space-y-2 sm:space-y-3 reveal-on-scroll">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-500/40 backdrop-blur-md transition-all text-[10px] sm:text-xs font-bold tracking-widest uppercase text-white/70">
                             <Instagram className="w-3.5 h-3.5 text-amber-500" />
                             <span>Stay Connected</span>
                         </div>
-                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                        <h2 className="text-2xl sm:text-4xl md:text-6xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                             FOLLOW US <span className="text-amber-500">ONLINE</span>
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 reveal-on-scroll reveal-delay-1">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 reveal-on-scroll reveal-delay-1">
                         {[
                             { name: 'WhatsApp', sub: 'Join Channel', icon: MessageCircle, href: 'https://whatsapp.com/channel/0029VaBFUhk9Guw4VxXqHI0m', accent: '#25D366', gradient: 'from-green-600/15', borderHover: 'hover:border-[#25D366]/40' },
                             { name: 'Facebook', sub: '10K+ Followers', icon: Facebook, href: 'https://www.facebook.com/callofjesusministries', accent: '#1877F2', gradient: 'from-blue-600/15', borderHover: 'hover:border-[#1877F2]/40' },
@@ -1470,14 +1470,14 @@ export default function ExperienceOverlay({ initialData }: {
                                 href={social.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`group relative rounded-2xl p-6 min-h-[200px] flex flex-col justify-between bg-gradient-to-br ${social.gradient} to-transparent bg-[#0A0A0A] border border-white/10 ${social.borderHover} transition-all duration-300 hover:scale-[1.02] overflow-hidden shadow-lg`}
+                                className={`group relative rounded-2xl p-4 sm:p-6 min-h-[140px] sm:min-h-[200px] flex flex-col justify-between bg-gradient-to-br ${social.gradient} to-transparent bg-[#0A0A0A] border border-white/10 ${social.borderHover} transition-all duration-300 hover:scale-[1.02] overflow-hidden shadow-lg`}
                             >
                                 <div className="absolute bottom-0 left-0 w-full h-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: `radial-gradient(ellipse at bottom, ${social.accent}08, transparent)` }} />
 
-                                <social.icon className="w-7 h-7 text-white/40 group-hover:text-white/70 transition-colors relative z-10" />
+                                <social.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white/40 group-hover:text-white/70 transition-colors relative z-10" />
                                 <div className="relative z-10">
-                                    <p className="text-lg font-bold text-white">{social.name}</p>
-                                    <p className="text-[10px] font-medium text-white/50 mt-0.5">{social.sub}</p>
+                                    <p className="text-base sm:text-lg font-bold text-white">{social.name}</p>
+                                    <p className="text-[9px] sm:text-[10px] font-medium text-white/50 mt-0.5">{social.sub}</p>
                                 </div>
                             </a>
                         ))}
@@ -1490,7 +1490,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* NEWSLETTER                                                    */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <section id="newsletter" className="perf-section relative py-20 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+            <section id="newsletter" className="perf-section relative py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
                 {/* Seamless Section Top & Bottom Fade Overlays */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
                 <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
@@ -1499,8 +1499,8 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,rgba(245,158,11,0.12)_50%,transparent_70%)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 reveal-on-scroll">
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
+                <div className="relative z-10 max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 reveal-on-scroll">
+                    <h3 className="text-xl sm:text-3xl md:text-5xl font-black leading-tight tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white/80 to-white/20 drop-shadow-2xl select-none">
                         JOIN THE <span className="text-amber-500">MOVEMENT</span>
                     </h3>
                     <p className="text-xs sm:text-sm text-white/50 max-w-md mx-auto">
@@ -1519,12 +1519,12 @@ export default function ExperienceOverlay({ initialData }: {
                                 else { toast.success("Subscribed successfully! 🎉"); (form.elements.namedItem('email') as HTMLInputElement).value = ''; }
                             } catch { toast.error("Failed to subscribe."); }
                         }}
-                        className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+                        className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 max-w-md mx-auto"
                     >
-                        <input name="email" type="email" placeholder="Enter your email" className="flex-1 px-5 py-3.5 rounded-full bg-[#0A0A0A] border border-white/15 text-sm text-white placeholder-white/40 focus:outline-none focus:border-amber-500 transition-all" />
+                        <input name="email" type="email" placeholder="Enter your email" className="flex-1 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full bg-[#0A0A0A] border border-white/15 text-xs sm:text-sm text-white placeholder-white/40 focus:outline-none focus:border-amber-500 transition-all" />
                         <button
                             type="submit"
-                            className="px-8 py-3.5 rounded-full bg-white text-black font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 text-xs sm:text-sm uppercase tracking-wider flex-shrink-0 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+                            className="px-6 py-3 sm:px-8 sm:py-3.5 rounded-full bg-white text-black font-bold hover:bg-amber-400 transition-colors hover:scale-105 active:scale-95 duration-300 text-xs sm:text-sm uppercase tracking-wider flex-shrink-0 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
                         >
                             Subscribe
                         </button>
@@ -1537,7 +1537,7 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* FOOTER — Ultra-Luxury Architectural Footer                    */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <footer className="relative pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-12 bg-[#07060A] text-[#F4EDE2] overflow-hidden">
+            <footer className="relative pt-12 sm:pt-20 pb-10 sm:pb-12 px-4 sm:px-6 md:px-12 bg-[#07060A] text-[#F4EDE2] overflow-hidden">
                 {/* Seamless Footer Top Fade Overlay */}
                 <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
 
@@ -1549,23 +1549,23 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-20 max-w-7xl mx-auto">
                     {/* Top Section: Brand Block + Links Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pb-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pb-8 sm:pb-12">
                         {/* Brand Column */}
-                        <div className="lg:col-span-4 space-y-4">
-                            <div className="flex items-center gap-3.5">
-                                <div className="w-12 h-12 rounded-2xl bg-[#0D0B12] border border-white/15 p-1.5 flex items-center justify-center shadow-[0_0_25px_rgba(255,90,46,0.22)]">
+                        <div className="lg:col-span-4 space-y-3.5 sm:space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#0D0B12] border border-white/15 p-1.5 flex items-center justify-center shadow-[0_0_25px_rgba(255,90,46,0.22)]">
                                     <BlackRemoverImage src="/images/logo-footer-final.png" alt="COJ Logo" threshold={80} className="w-full h-full object-contain" />
                                 </div>
                                 <div>
-                                    <h4 className="text-base font-black tracking-wider text-white uppercase font-sans">CALL OF JESUS</h4>
-                                    <p className="text-[10px] font-bold bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent tracking-[0.35em] uppercase">MINISTRIES</p>
+                                    <h4 className="text-sm sm:text-base font-black tracking-wider text-white uppercase font-sans">CALL OF JESUS</h4>
+                                    <p className="text-[9px] sm:text-[10px] font-bold bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent tracking-[0.35em] uppercase">MINISTRIES</p>
                                 </div>
                             </div>
                             <p className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-sm">
                                 A spiritual home for every believer. Proclaiming the New Covenant Gospel of Grace, supernatural breakthrough, and raising radical lovers of Jesus worldwide.
                             </p>
                             {/* Social Buttons */}
-                            <div className="flex items-center gap-2.5 pt-1">
+                            <div className="flex items-center gap-2 pt-0.5 sm:pt-1">
                                 {[
                                     { icon: Facebook, href: 'https://www.facebook.com/callofjesusministries', label: 'Facebook' },
                                     { icon: Instagram, href: 'https://www.instagram.com/callofjesusministries', label: 'Instagram' },
@@ -1642,17 +1642,17 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Middle Section: 3 Luxury Info & Gathering Cards */}
-                    <div className="border-t border-white/15 pt-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="border-t border-white/15 pt-6 pb-6 sm:pt-8 sm:pb-8 grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-4">
                         {/* Card 1: Email */}
                         <a
                             href="mailto:contact@callofjesus.in"
-                            className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] hover:bg-white/[0.04] border border-white/15 hover:border-amber-500/50 flex items-center gap-3.5 transition-all group shadow-sm"
+                            className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0D0B12] hover:bg-white/[0.04] border border-white/15 hover:border-amber-500/50 flex items-center gap-3 transition-all group shadow-sm"
                         >
-                            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
+                            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
                                 <Mail className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Direct Inquiries</p>
+                                <p className="text-[9px] sm:text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Direct Inquiries</p>
                                 <p className="text-xs sm:text-sm text-white font-medium group-hover:text-amber-300 transition-colors">contact@callofjesus.in</p>
                             </div>
                         </a>
@@ -1662,13 +1662,13 @@ export default function ExperienceOverlay({ initialData }: {
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] hover:bg-white/[0.04] border border-white/15 hover:border-amber-500/50 flex items-center gap-3.5 transition-all group shadow-sm"
+                            className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0D0B12] hover:bg-white/[0.04] border border-white/15 hover:border-amber-500/50 flex items-center gap-3 transition-all group shadow-sm"
                         >
-                            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
+                            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
                                 <MapPin className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Church Arena</p>
+                                <p className="text-[9px] sm:text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Church Arena</p>
                                 <p className="text-xs sm:text-sm text-white font-medium flex items-center gap-1.5 group-hover:text-amber-300 transition-colors">
                                     <span>Get Maps Directions</span>
                                     <Navigation className="w-3 h-3 text-amber-400" />
@@ -1677,12 +1677,12 @@ export default function ExperienceOverlay({ initialData }: {
                         </a>
 
                         {/* Card 3: Gatherings */}
-                        <div className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] border border-white/15 flex items-center gap-3.5 shadow-sm">
-                            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0">
+                        <div className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-[#0D0B12] border border-white/15 flex items-center gap-3 shadow-sm">
+                            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0">
                                 <Clock className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Weekly Gatherings</p>
+                                <p className="text-[9px] sm:text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Weekly Gatherings</p>
                                 <p className="text-xs sm:text-sm text-white font-medium">Sun 10:30 AM IST • Fri 7:00 PM IST</p>
                             </div>
                         </div>
