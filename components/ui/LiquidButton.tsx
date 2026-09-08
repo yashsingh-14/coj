@@ -44,36 +44,38 @@ export const LiquidButton: React.FC<LiquidButtonProps> = ({
     glass:
       "border-[#F4EDE2]/25 hover:border-[#FF5A2E]/80 bg-[#F4EDE2]/[0.05] text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.35)]",
     amber:
-      "border-[#FF5A2E]/40 hover:border-[#FF5A2E] bg-[#FF5A2E]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.4)]",
+      "border-[#F59E0B]/40 hover:border-[#FFB37A] bg-[#F59E0B]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(245,158,11,0.4)]",
     flame:
       "border-[#FF5A2E]/40 hover:border-[#FF5A2E] bg-[#FF5A2E]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.4)]",
     spirit:
-      "border-[#6E5BFF]/40 hover:border-[#6E5BFF] bg-[#6E5BFF]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(110,91,255,0.4)]",
+      "border-[#FFB37A]/40 hover:border-[#FFB37A] bg-[#FFB37A]/10 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,179,122,0.4)]",
     celestial:
-      "border-[#6E5BFF]/30 hover:border-[#FF5A2E] bg-gradient-to-r from-[#6E5BFF]/15 via-[#E11D48]/15 to-[#FF5A2E]/15 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.35)]",
+      "border-[#FF5A2E]/35 hover:border-[#FFB37A] bg-gradient-to-r from-[#FFB37A]/15 via-[#FF5A2E]/15 to-[#C2361A]/15 text-[#F4EDE2] hover:shadow-[0_0_35px_rgba(255,90,46,0.35)]",
   }[variant];
 
   const baseClasses = `liquid-btn group relative inline-flex items-center justify-center gap-2.5 sm:gap-3 rounded-full border font-semibold tracking-wide shadow-[0_4px_20px_rgba(0,0,0,0.45)] transition-all duration-300 active:scale-95 ${sizeClasses} ${variantClasses} ${className}`;
 
   const waveGradientClass =
     variant === "spirit"
-      ? "bg-gradient-to-t from-[#4936E0] via-[#6E5BFF] to-[#A78BFA] text-[#6E5BFF]"
+      ? "bg-gradient-to-t from-[#F59E0B] via-[#FFB37A] to-[#FFD700] text-[#F59E0B]"
       : variant === "celestial"
-      ? "bg-gradient-to-t from-[#6E5BFF] via-[#E11D48] to-[#FFB37A] text-[#E11D48]"
+      ? "bg-gradient-to-t from-[#C2361A] via-[#FF5A2E] to-[#FFB37A] text-[#FF5A2E]"
+      : variant === "amber"
+      ? "bg-gradient-to-t from-[#D97706] via-[#F59E0B] to-[#FDE047] text-[#F59E0B]"
       : "bg-gradient-to-t from-[#C2361A] via-[#FF5A2E] to-[#FFB37A] text-[#FF5A2E]";
 
   const waveAccentColor =
     variant === "spirit"
-      ? "text-[#C4B5FD]"
-      : variant === "celestial"
-      ? "text-[#FFB37A]"
+      ? "text-[#FFD700]"
+      : variant === "amber"
+      ? "text-[#FDE047]"
       : "text-[#FFB37A]";
 
   const iconAccentColor =
     variant === "spirit"
-      ? "text-[#A78BFA]"
-      : variant === "celestial"
       ? "text-[#FFB37A]"
+      : variant === "amber"
+      ? "text-[#FCD34D]"
       : "text-[#FF5A2E]";
 
   const waveElement = (

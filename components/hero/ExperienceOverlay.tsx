@@ -137,6 +137,18 @@ function BackToTopButton() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
+// SECTION SEAM — Ultra-Soft Luminous Aurora Horizon (Seamless Transition)
+// ══════════════════════════════════════════════════════════════════════
+function SectionSeam() {
+    return (
+        <div className="relative w-full flex items-center justify-center pointer-events-none z-20 py-1 overflow-hidden bg-[#07060A]">
+            <div className="w-full max-w-5xl h-[1px] bg-gradient-to-r from-transparent via-[#FF5A2E]/25 via-[#FFB37A]/30 to-transparent" />
+            <div className="absolute w-[460px] h-12 -top-6 bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.12)_0%,rgba(245,158,11,0.06)_45%,transparent_75%)] pointer-events-none" />
+        </div>
+    );
+}
+
+// ══════════════════════════════════════════════════════════════════════
 // HERO SECTION — Fully Isolated State & Timers (Zero Below-Fold Re-renders)
 // ══════════════════════════════════════════════════════════════════════
 const HERO_VIDEOS = [
@@ -158,8 +170,8 @@ const HERO_VIDEOS = [
 
 const KINETIC_PHRASES = [
     { text: "Meets Earth", gradient: "from-[#FFB37A] via-[#FF5A2E] to-[#C2361A]" },
-    { text: "Heals Hearts", gradient: "from-[#C4B5FD] via-[#6E5BFF] to-[#FF5A2E]" },
-    { text: "Transforms Lives", gradient: "from-[#A78BFA] via-[#EC4899] to-[#FF5A2E]" },
+    { text: "Heals Hearts", gradient: "from-[#FFD700] via-[#FF8C68] to-[#C2361A]" },
+    { text: "Transforms Lives", gradient: "from-[#F59E0B] via-[#FF5A2E] to-[#981C01]" },
     { text: "Ignites Revival", gradient: "from-[#FDE047] via-[#FF5A2E] to-[#C2361A]" }
 ];
 
@@ -299,7 +311,7 @@ function HeroSection() {
                     }`}
                 />
                 <div className="absolute inset-0 bg-black/25" />
-                <div className="absolute bottom-0 inset-x-0 h-16 md:h-24 bg-gradient-to-t from-[#07060A] to-transparent pointer-events-none z-[4]" />
+                <div className="absolute bottom-0 inset-x-0 h-40 sm:h-56 md:h-72 bg-gradient-to-t from-[#07060A] via-[#07060A]/85 via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
             {/* Hero Content */}
@@ -345,7 +357,7 @@ function HeroSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         size="lg"
-                        variant="celestial"
+                        variant="amber"
                         icon={<ArrowRight className="w-4 h-4 text-[#FFB37A] group-hover:text-neutral-950 group-hover:translate-x-1.5 transition-all duration-300" />}
                         iconPosition="right"
                     >
@@ -355,7 +367,7 @@ function HeroSection() {
 
                 <Link
                     href="/worship"
-                    className="hero-fade-in text-[#F4EDE2]/60 hover:text-[#C4B5FD] text-xs tracking-[0.15em] uppercase font-medium transition-colors duration-300 mt-5 md:mt-6"
+                    className="hero-fade-in text-[#F4EDE2]/60 hover:text-[#FFB37A] text-xs tracking-[0.15em] uppercase font-medium transition-colors duration-300 mt-5 md:mt-6"
                     style={{ animationDelay: '1.1s' }}
                 >
                     Explore Worship Songs →
@@ -514,20 +526,28 @@ export default function ExperienceOverlay({ initialData }: {
             <HeroSection />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* INFINITE MARQUEE BANNER — Pure CSS Compositor Animation       */}
+            {/* INFINITE MARQUEE BANNER — Seamless Ambient Horizon             */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <div className="relative py-6 overflow-hidden bg-[#07060A] border-y border-[#F4EDE2]/5">
+            <div className="relative py-8 overflow-hidden bg-gradient-to-b from-[#07060A] via-[#0D0B12] to-[#07060A]">
+                {/* Luminous Top & Bottom Seam Fades */}
+                <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5A2E]/20 via-[#FFB37A]/25 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFB37A]/25 via-[#FF5A2E]/20 to-transparent pointer-events-none" />
+
+                {/* Left & Right Edge Vignette Fades */}
+                <div className="absolute inset-y-0 left-0 w-24 md:w-48 bg-gradient-to-r from-[#07060A] to-transparent z-10 pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-24 md:w-48 bg-gradient-to-l from-[#07060A] to-transparent z-10 pointer-events-none" />
+
                 <div className="animate-marquee flex whitespace-nowrap will-change-transform">
                     {Array.from({ length: 2 }).map((_, setIdx) => (
                         <div key={setIdx} className="flex items-center gap-8 px-4">
                             {[
                                 { word: 'Jesus is Lord', symbol: '✦', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
-                                { word: 'Holy Spirit', symbol: '🕊️', color: 'text-[#A78BFA]', glow: 'drop-shadow-[0_0_10px_rgba(110,91,255,0.4)]' },
+                                { word: 'Holy Spirit', symbol: '🕊️', color: 'text-[#FFB37A]', glow: 'drop-shadow-[0_0_10px_rgba(255,179,122,0.4)]' },
                                 { word: 'Supernatural Freedom', symbol: '⚡', color: 'text-[#FDE047]', glow: 'drop-shadow-[0_0_10px_rgba(253,224,71,0.4)]' },
-                                { word: 'Divine Healing', symbol: '✦', color: 'text-[#FB7185]', glow: 'drop-shadow-[0_0_10px_rgba(251,113,133,0.4)]' },
+                                { word: 'Divine Healing', symbol: '✦', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
                                 { word: 'Praise the Lord', symbol: '🔥', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
                                 { word: 'Glory to God', symbol: '👑', color: 'text-[#FBBF24]', glow: 'drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]' },
-                                { word: 'Emmanuel', symbol: '✦', color: 'text-[#C4B5FD]', glow: 'drop-shadow-[0_0_10px_rgba(196,181,253,0.4)]' }
+                                { word: 'Emmanuel', symbol: '✦', color: 'text-[#F59E0B]', glow: 'drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]' }
                             ].map((item, i) => (
                                 <span key={i} className="flex items-center gap-8">
                                     <span className="text-lg md:text-2xl font-light tracking-[0.2em] uppercase text-[#F4EDE2]/60 font-space hover:text-[#F4EDE2] transition-colors">{item.word}</span>
@@ -539,25 +559,30 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </div>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* VERSE OF THE DAY — Large Luxury Sanctuary Showcase Card        */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="verse" className="perf-section relative py-28 md:py-44 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2]">
-                {/* Ambient Ember & Spirit Fire Glows matching Our Vision (Zero Blur Shaders) */}
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Ember & Golden Fire Glows matching Logo Palette (Zero Blur Shaders) */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,90,46,0.22)_0%,rgba(255,90,46,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0" />
-                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle_at_center,rgba(110,91,255,0.18)_0%,rgba(110,91,255,0.05)_45%,transparent_70%)] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0" />
+                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.18)_0%,rgba(245,158,11,0.05)_45%,transparent_70%)] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-6xl mx-auto">
                     {/* Grand Sanctuary Showcase Card (Large Paper Layout) */}
-                    <div className="reveal-on-scroll relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 sm:p-14 md:p-20 bg-[#0D0B12] border border-[#F4EDE2]/15 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(110,91,255,0.08)] overflow-hidden group">
+                    <div className="reveal-on-scroll relative rounded-[2.5rem] md:rounded-[3.5rem] p-10 sm:p-14 md:p-20 bg-[#0D0B12] border border-[#F4EDE2]/15 shadow-[0_30px_100px_rgba(0,0,0,0.95),0_0_80px_rgba(255,90,46,0.08)] overflow-hidden group">
 
-                        {/* Multi-Color Celestial Top Edge Accent Glow */}
-                        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#FB7185] to-transparent" />
+                        {/* Multi-Color Logo Flame Top Edge Accent Glow */}
+                        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#FFB37A] via-[#FF5A2E] to-[#C2361A] to-transparent" />
 
                         {/* Decorative Giant Watermark Quote Mark */}
-                        <div className="absolute -top-6 left-8 md:-top-4 md:left-14 text-[#6E5BFF]/[0.08] text-9xl md:text-[160px] font-fraunces select-none pointer-events-none -scale-x-100">
+                        <div className="absolute -top-6 left-8 md:-top-4 md:left-14 text-[#FF5A2E]/[0.08] text-9xl md:text-[160px] font-fraunces select-none pointer-events-none -scale-x-100">
                             &ldquo;
                         </div>
 
@@ -565,9 +590,9 @@ export default function ExperienceOverlay({ initialData }: {
 
                             {/* Card Top Header: Badge, Today's Date, and Ps. Samson Wilson tag */}
                             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/[0.08] pb-8">
-                                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#6E5BFF]/40 bg-[#6E5BFF]/15 shadow-lg shadow-[#6E5BFF]/15">
-                                    <Sparkles className="w-4 h-4 text-[#A78BFA]" />
-                                    <span className="text-xs font-black tracking-[0.25em] uppercase text-[#C4B5FD]">
+                                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#FF5A2E]/40 bg-[#FF5A2E]/15 shadow-lg shadow-[#FF5A2E]/15">
+                                    <Sparkles className="w-4 h-4 text-[#FFB37A]" />
+                                    <span className="text-xs font-black tracking-[0.25em] uppercase text-[#FFB37A]">
                                         Verse of the Day
                                     </span>
                                 </div>
@@ -588,12 +613,12 @@ export default function ExperienceOverlay({ initialData }: {
 
                             {/* Reference & Pastor Samson Wilson Attribution Block */}
                             <div className="flex flex-col items-center gap-5">
-                                <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-[#6E5BFF]/60 via-[#FF5A2E]/60 to-transparent" />
+                                <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-[#FFB37A]/60 via-[#FF5A2E]/60 to-[#C2361A]/60 to-transparent" />
 
                                 <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
                                     {/* Scripture Reference Badge */}
-                                    <div className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-white/[0.06] border border-[#6E5BFF]/30 shadow-inner">
-                                        <span className="text-[#A78BFA] text-sm">✦</span>
+                                    <div className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-white/[0.06] border border-[#FF5A2E]/30 shadow-inner">
+                                        <span className="text-[#FFB37A] text-sm">✦</span>
                                         <span className="text-sm md:text-base font-bold tracking-[0.25em] uppercase text-[#F4EDE2]">
                                             {verse?.reference || "John 3:16"}
                                         </span>
@@ -601,18 +626,18 @@ export default function ExperienceOverlay({ initialData }: {
                                     </div>
 
                                     {/* Ps. Samson Wilson Pill with Dual Gradient */}
-                                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#6E5BFF]/15 to-[#FF5A2E]/15 border border-[#6E5BFF]/30 text-xs md:text-sm font-medium text-[#F4EDE2] shadow-md">
+                                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#FF5A2E]/15 to-[#F59E0B]/15 border border-[#FF5A2E]/30 text-xs md:text-sm font-medium text-[#F4EDE2] shadow-md">
                                         <span className="w-2 h-2 rounded-full bg-[#FF5A2E]" />
-                                        <strong className="font-bold bg-gradient-to-r from-[#C4B5FD] to-[#FFB37A] bg-clip-text text-transparent font-fraunces italic text-sm md:text-base tracking-wide">Ps. Samson Wilson</strong>
+                                        <strong className="font-bold bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent font-fraunces italic text-sm md:text-base tracking-wide">Ps. Samson Wilson</strong>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Reflection / Prayer Expandable Accordion */}
                             {verse?.reflection && showDevotional && (
-                                <div className="p-8 rounded-3xl bg-[#07060A]/95 border border-[#6E5BFF]/25 text-left space-y-4 animate-fade-in-down max-w-4xl mx-auto shadow-2xl">
-                                    <p className="text-xs uppercase tracking-widest text-[#C4B5FD] font-bold flex items-center gap-2">
-                                        <Heart className="w-4 h-4 text-[#FB7185]" /> Daily Reflection • Ps. Samson Wilson
+                                <div className="p-8 rounded-3xl bg-[#07060A]/95 border border-[#FF5A2E]/25 text-left space-y-4 animate-fade-in-down max-w-4xl mx-auto shadow-2xl">
+                                    <p className="text-xs uppercase tracking-widest text-[#FFB37A] font-bold flex items-center gap-2">
+                                        <Heart className="w-4 h-4 text-[#FF5A2E]" /> Daily Reflection • Ps. Samson Wilson
                                     </p>
                                     <p className="text-sm md:text-base text-[#C9C3D4] leading-relaxed font-light font-space">
                                         {verse.reflection}
@@ -652,7 +677,7 @@ export default function ExperienceOverlay({ initialData }: {
                                     <LiquidButton
                                         onClick={() => setShowDevotional(!showDevotional)}
                                         size="sm"
-                                        variant="spirit"
+                                        variant="amber"
                                         icon={<BookOpen className="w-3.5 h-3.5" />}
                                         iconPosition="left"
                                     >
@@ -666,13 +691,18 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* WEEKLY GATHERINGS & CHURCH LOCATION                           */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="gatherings" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision (Zero Blur Shaders) */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(110,91,255,0.20)_0%,rgba(110,91,255,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Flame Orange & Amber Gold Fire Glows matching Logo Palette (Zero Blur Shaders) */}
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,90,46,0.20)_0%,rgba(255,90,46,0.06)_45%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.18)_0%,rgba(245,158,11,0.05)_45%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
@@ -684,7 +714,7 @@ export default function ExperienceOverlay({ initialData }: {
                             <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#FCD34D]">Weekly Gatherings</span>
                         </div>
                         <h2 className="font-fraunces font-medium text-3xl sm:text-5xl md:text-6xl text-[#F4EDE2] tracking-tight">
-                            Join Us <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FDE047] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Offline</span>
+                            Join Us <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Offline</span>
                         </h2>
                         <p className="text-sm text-[#C9C3D4] font-light max-w-2xl">
                             Experience the presence of God together. Come as you are. • <span className="font-fraunces italic text-[#FFB37A]">परमेश्वर की उपस्थिति का अनुभव करें।</span>
@@ -696,7 +726,7 @@ export default function ExperienceOverlay({ initialData }: {
                         target="_blank"
                         rel="noopener noreferrer"
                         size="md"
-                        variant="celestial"
+                        variant="amber"
                         icon={<ArrowRight className="w-4 h-4" />}
                         iconPosition="right"
                         className="self-start md:self-auto"
@@ -705,38 +735,38 @@ export default function ExperienceOverlay({ initialData }: {
                     </LiquidButton>
                 </div>
 
-                {/* Event Cards Grid with Individual Themed Palettes */}
+                {/* Event Cards Grid with Individual Themed Palettes (Flame, Amber Gold, Crimson) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {eventsList.map((event: any, i: number) => {
                         const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
                         const cardTheme = i === 0
                             ? {
-                                glow: "from-[#6E5BFF]/20",
-                                borderHover: "hover:border-[#6E5BFF]/50",
-                                iconBox: "bg-[#6E5BFF]/15 border-[#6E5BFF]/30 text-[#A78BFA] group-hover:bg-[#6E5BFF]/25 group-hover:border-[#6E5BFF]/50",
-                                titleHover: "group-hover:text-[#C4B5FD]",
-                                clock: "text-[#A78BFA]",
-                                link: "text-[#A78BFA] hover:text-[#C4B5FD]",
-                                badge: "text-[#A78BFA] border-[#6E5BFF]/20"
-                            }
-                            : i === 1
-                            ? {
                                 glow: "from-[#FF5A2E]/20",
                                 borderHover: "hover:border-[#FF5A2E]/50",
                                 iconBox: "bg-[#FF5A2E]/15 border-[#FF5A2E]/30 text-[#FF5A2E] group-hover:bg-[#FF5A2E]/25 group-hover:border-[#FF5A2E]/50",
                                 titleHover: "group-hover:text-[#FFB37A]",
-                                clock: "text-[#FF5A2E]",
+                                clock: "text-[#FFB37A]",
                                 link: "text-[#FF5A2E] hover:text-[#FFB37A]",
                                 badge: "text-[#FF5A2E] border-[#FF5A2E]/20"
                             }
+                            : i === 1
+                            ? {
+                                glow: "from-[#F59E0B]/20",
+                                borderHover: "hover:border-[#F59E0B]/50",
+                                iconBox: "bg-[#F59E0B]/15 border-[#F59E0B]/30 text-[#F59E0B] group-hover:bg-[#F59E0B]/25 group-hover:border-[#F59E0B]/50",
+                                titleHover: "group-hover:text-[#FDE047]",
+                                clock: "text-[#FDE047]",
+                                link: "text-[#F59E0B] hover:text-[#FDE047]",
+                                badge: "text-[#F59E0B] border-[#F59E0B]/20"
+                            }
                             : {
-                                glow: "from-[#E11D48]/20",
-                                borderHover: "hover:border-[#E11D48]/50",
-                                iconBox: "bg-[#E11D48]/15 border-[#E11D48]/30 text-[#FB7185] group-hover:bg-[#E11D48]/25 group-hover:border-[#E11D48]/50",
-                                titleHover: "group-hover:text-[#FDA4AF]",
-                                clock: "text-[#FB7185]",
-                                link: "text-[#FB7185] hover:text-[#FDA4AF]",
-                                badge: "text-[#FB7185] border-[#E11D48]/20"
+                                glow: "from-[#C2361A]/20",
+                                borderHover: "hover:border-[#C2361A]/50",
+                                iconBox: "bg-[#C2361A]/15 border-[#C2361A]/30 text-[#FF5A2E] group-hover:bg-[#C2361A]/25 group-hover:border-[#FF5A2E]/50",
+                                titleHover: "group-hover:text-[#FFB37A]",
+                                clock: "text-[#FF8C68]",
+                                link: "text-[#FF5A2E] hover:text-[#FFB37A]",
+                                badge: "text-[#FF8C68] border-[#C2361A]/20"
                             };
 
                         const delayClass = i === 0 ? "reveal-delay-1" : i === 1 ? "reveal-delay-2" : "reveal-delay-3";
@@ -808,15 +838,15 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Main Church Arena Location Banner */}
                 <div className="reveal-on-scroll relative rounded-3xl p-8 md:p-10 bg-gradient-to-r from-[#0D0B12] via-[#07060A] to-[#0D0B12] border border-[#F4EDE2]/15 shadow-2xl shadow-black/60 flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden">
                     {/* Top Accent Line */}
-                    <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-[#6E5BFF] via-[#FF5A2E] to-[#F59E0B]" />
+                    <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFB37A] via-[#FF5A2E] to-[#C2361A] to-transparent" />
 
                     <div className="space-y-3 text-center md:text-left">
                         <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
                             <MapPin className="w-4 h-4 text-[#FF5A2E]" />
-                            <span className="bg-gradient-to-r from-[#FF5A2E] to-[#6E5BFF] bg-clip-text text-transparent">Call of Jesus Ministries Church</span>
+                            <span className="bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent font-bold">Call of Jesus Ministries Church</span>
                         </div>
                         <h3 className="font-fraunces font-medium text-2xl md:text-3xl text-[#F4EDE2]">
-                            Visit Us in <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#E11D48] to-[#6E5BFF] bg-clip-text text-transparent">Person</span>
+                            Visit Us in <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Person</span>
                         </h3>
                         <p className="text-[#C9C3D4] text-xs md:text-sm font-light max-w-xl">
                             Join us live every Sunday at 10:30 AM & Friday at 7:00 PM for life-changing worship, prophetic teaching, and healing.
@@ -827,24 +857,29 @@ export default function ExperienceOverlay({ initialData }: {
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#FF5A2E] via-[#C2361A] to-[#6E5BFF] hover:opacity-95 text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-2xl shadow-[#6E5BFF]/25 hover:scale-105 active:scale-95 transition-all flex-shrink-0"
+                        className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] hover:opacity-95 text-neutral-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-2xl shadow-[#FF5A2E]/25 hover:scale-105 active:scale-95 transition-all flex-shrink-0"
                     >
-                        <Navigation className="w-4 h-4" />
+                        <Navigation className="w-4 h-4 text-neutral-950" />
                         <span>Get Google Maps Directions</span>
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-neutral-950" />
                     </a>
                 </div>
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* OUR VISION — Redesigned Sequential Rail & Ember Glow Sanctuary */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="vision" className="perf-section relative py-28 md:py-36 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space selection:bg-[#FF5A2E]/30 selection:text-white">
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-32 md:h-44 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
                 {/* Ambient Ember & Spirit Fire Glows */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.22)_0%,transparent_70%)] -top-28 md:-top-36 -right-24 md:-right-36 pointer-events-none z-0" />
-                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0" />
+                <div className="absolute w-[300px] sm:w-[400px] md:w-[480px] h-[300px] sm:h-[400px] md:h-[480px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none" />
 
                 <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -898,7 +933,7 @@ export default function ExperienceOverlay({ initialData }: {
                     <div className="lg:col-span-7 relative">
                         <div className="relative pt-2">
                             {/* Sequential Vertical Gradient Rail */}
-                            <div className="absolute left-[23px] top-[14px] bottom-[14px] w-[1px] bg-gradient-to-b from-[#FF5A2E] via-[#FF5A2E]/75 to-[#6E5BFF]/60 pointer-events-none" />
+                            <div className="absolute left-[23px] top-[14px] bottom-[14px] w-[1px] bg-gradient-to-b from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] pointer-events-none" />
 
                             {/* Pillar 01 — Set the Captives Free */}
                             <div className="relative pl-16 pb-14 last:pb-0 group reveal-on-scroll reveal-delay-1">
@@ -932,7 +967,7 @@ export default function ExperienceOverlay({ initialData }: {
                             {/* Pillar 02 — Reign and Equip */}
                             <div className="relative pl-16 pb-0 group reveal-on-scroll reveal-delay-2">
                                 {/* Pillar Index Badge (02) */}
-                                <div className="absolute left-0 top-0 w-[47px] h-[47px] rounded-full flex items-center justify-center font-fraunces text-base italic bg-[#0D0B12] border border-[#F4EDE2]/15 text-[#6E5BFF] z-10 shadow-[0_0_15px_rgba(110,91,255,0.15)] group-hover:border-[#6E5BFF]/60 group-hover:shadow-[0_0_25px_rgba(110,91,255,0.35)] transition-all duration-300">
+                                <div className="absolute left-0 top-0 w-[47px] h-[47px] rounded-full flex items-center justify-center font-fraunces text-base italic bg-[#0D0B12] border border-[#F4EDE2]/15 text-[#F59E0B] z-10 shadow-[0_0_15px_rgba(245,158,11,0.15)] group-hover:border-[#F59E0B]/60 group-hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] transition-all duration-300">
                                     02
                                 </div>
 
@@ -941,7 +976,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 </div>
 
                                 <h3 className="font-fraunces font-medium text-2xl sm:text-3xl lg:text-[29px] leading-[1.15] text-[#F4EDE2] mb-3.5 tracking-tight">
-                                    To <span className="font-fraunces italic text-[#6E5BFF] font-medium">reign and equip</span>
+                                    To <span className="font-fraunces italic text-[#F59E0B] font-medium">reign and equip</span>
                                 </h3>
 
                                 <p className="text-[15px] sm:text-[16px] leading-[1.65] text-[#B7B1C2] max-w-[42ch] mb-4 font-light">
@@ -962,32 +997,38 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
-
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* TRENDING WORSHIP — Bento Grid                                  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             {trending.length > 0 && (
-                <section id="trending" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                    {/* Ambient Holy Spirit Violet & Flame Ember Glows matching Our Vision */}
-                    <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
-                    <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
-                    <div className="starfield opacity-30 pointer-events-none z-0" />
+                <>
+                    <SectionSeam />
+                    <section id="trending" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
+                        {/* Seamless Section Top & Bottom Fade Overlays */}
+                        <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                        <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                        {/* Ambient Amber Gold & Flame Ember Glows matching Logo Palette */}
+                        <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
+                        <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
+                        <div className="starfield opacity-30 pointer-events-none z-0" />
+
 
                     <div className="relative z-10 max-w-7xl mx-auto space-y-8">
                         <div className="flex items-end justify-between gap-4 reveal-on-scroll">
                             <div className="space-y-2">
-                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_20px_rgba(110,91,255,0.15)]">
-                                    <Music className="w-3.5 h-3.5 text-[#A78BFA]" />
-                                    <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#C4B5FD]">Now Trending</span>
+                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#FF5A2E]/30 bg-[#FF5A2E]/10 shadow-[0_0_20px_rgba(255,90,46,0.15)]">
+                                    <Music className="w-3.5 h-3.5 text-[#FFB37A]" />
+                                    <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#FFB37A]">Now Trending</span>
                                 </div>
                                 <h2 className="font-fraunces font-medium text-3xl sm:text-5xl md:text-6xl text-[#F4EDE2] tracking-tight">
-                                    Worship <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#EC4899] to-[#FF5A2E] bg-clip-text text-transparent">Songs</span>
+                                    Worship <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Songs</span>
                                 </h2>
                             </div>
                             <LiquidButton
                                 onClick={() => setMode('UTILITY')}
                                 size="sm"
-                                variant="spirit"
+                                variant="amber"
                                 icon={<ArrowRight className="w-3.5 h-3.5" />}
                                 iconPosition="right"
                                 className="hidden md:inline-flex"
@@ -1000,20 +1041,20 @@ export default function ExperienceOverlay({ initialData }: {
                         <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-4 md:gap-5 pb-4 scroll-smooth reveal-on-scroll reveal-delay-1">
                             {trending.slice(0, 8).map((song, i) => {
                                 const rankBadgeStyle = i === 0
-                                    ? 'bg-gradient-to-r from-[#F59E0B] via-[#FF5A2E] to-[#C2361A] text-white shadow-lg shadow-[#FF5A2E]/30 text-[10px] px-3 py-1'
+                                    ? 'bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] text-white shadow-lg shadow-[#FF5A2E]/30 text-[10px] px-3 py-1'
                                     : i === 1
-                                    ? 'bg-gradient-to-r from-[#6E5BFF] to-[#A78BFA] text-white shadow-lg shadow-[#6E5BFF]/30 text-[9px] px-2.5 py-0.5'
-                                    : i === 2
-                                    ? 'bg-gradient-to-r from-[#E11D48] to-[#FB7185] text-white shadow-lg shadow-[#E11D48]/30 text-[9px] px-2.5 py-0.5'
-                                    : i === 3
                                     ? 'bg-gradient-to-r from-[#F59E0B] to-[#FDE047] text-neutral-950 font-bold shadow-lg shadow-[#F59E0B]/30 text-[9px] px-2.5 py-0.5'
-                                    : 'bg-[#0D0B12] border border-[#6E5BFF]/40 text-[#C4B5FD] text-[9px] px-2.5 py-0.5';
+                                    : i === 2
+                                    ? 'bg-gradient-to-r from-[#FF8C68] to-[#FF5A2E] text-white shadow-lg shadow-[#FF5A2E]/30 text-[9px] px-2.5 py-0.5'
+                                    : i === 3
+                                    ? 'bg-gradient-to-r from-[#FFB37A] to-[#F59E0B] text-neutral-950 font-bold shadow-lg shadow-[#F59E0B]/30 text-[9px] px-2.5 py-0.5'
+                                    : 'bg-[#0D0B12] border border-[#FF5A2E]/30 text-[#FFB37A] text-[9px] px-2.5 py-0.5';
 
                                 return (
                                     <Link
                                         key={i}
                                         href={`/songs/${generateSlug(song.title)}`}
-                                        className={`group relative rounded-2xl overflow-hidden flex flex-col justify-end border border-[#F4EDE2]/10 hover:border-[#6E5BFF]/50 transition-all duration-300 flex-shrink-0 ${i === 0 ? 'w-[85vw] md:w-[420px] min-h-[300px] md:min-h-[420px]' : 'w-[42vw] md:w-[280px] min-h-[220px] md:min-h-[320px]'
+                                        className={`group relative rounded-2xl overflow-hidden flex flex-col justify-end border border-[#F4EDE2]/10 hover:border-[#FF5A2E]/50 transition-all duration-300 flex-shrink-0 ${i === 0 ? 'w-[85vw] md:w-[420px] min-h-[300px] md:min-h-[420px]' : 'w-[42vw] md:w-[280px] min-h-[220px] md:min-h-[320px]'
                                             }`}
                                     >
                                         <img
@@ -1040,28 +1081,34 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
                     </div>
                 </section>
-            )}
+            </>
+        )}
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* GOD STORIES — Ultra-Premium Sanctuary Testimony Showcase       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="stories" className="perf-section relative py-24 md:py-32 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Flame Ember & Amber Gold Glows matching Logo Palette */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.20)_0%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
                     {/* Section Header */}
                     <div id="stories-header" className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-on-scroll">
                         <div className="space-y-3">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#FB7185]/30 bg-[#FB7185]/10 shadow-[0_0_20px_rgba(251,113,133,0.15)]">
-                                <Heart className="w-3.5 h-3.5 text-[#FB7185] fill-[#FB7185]/40" />
-                                <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#FB7185]">Testimonies of Faith</span>
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#FF5A2E]/30 bg-[#FF5A2E]/10 shadow-[0_0_20px_rgba(255,90,46,0.15)]">
+                                <Heart className="w-3.5 h-3.5 text-[#FF5A2E] fill-[#FF5A2E]/40" />
+                                <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#FFB37A]">Testimonies of Faith</span>
                             </div>
                             <h2 className="font-fraunces font-medium text-4xl sm:text-5xl md:text-6xl text-[#F4EDE2] tracking-tight leading-[1.08]">
-                                God <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#E11D48] to-[#6E5BFF] bg-clip-text text-transparent">Stories</span>
+                                God <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Stories</span>
                             </h2>
                             <p className="text-sm md:text-base text-[#C9C3D4] font-light max-w-xl leading-relaxed">
                                 Supernatural healings, broken addictions, and miraculous encounters. Documented evidence that Jesus Christ is alive and moving with power today.
@@ -1082,7 +1129,7 @@ export default function ExperienceOverlay({ initialData }: {
                             <LiquidButton
                                 href="/god-stories"
                                 size="sm"
-                                variant="spirit"
+                                variant="flame"
                                 icon={<ArrowRight className="w-3.5 h-3.5" />}
                                 iconPosition="right"
                             >
@@ -1098,30 +1145,35 @@ export default function ExperienceOverlay({ initialData }: {
                             autoplay={true}
                             colors={{
                                 name: "#F4EDE2",
-                                designation: "#A78BFA",
+                                designation: "#F59E0B",
                                 testimony: "#C9C3D4",
                                 arrowBackground: "#0D0B12",
                                 arrowForeground: "#F4EDE2",
-                                arrowHoverBackground: "#6E5BFF"
+                                arrowHoverBackground: "#FF5A2E"
                             }}
                         />
                     </div>
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* SHARE TESTIMONY — Ultra-Luxury Sanctuary Encounter Banner       */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="testimony" className="perf-section relative py-20 md:py-28 px-4 sm:px-6 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Holy Spirit Violet & Flame Ember Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Amber Gold & Flame Ember Glows matching Logo Palette */}
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
                 <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
                     {/* Outer Glass Sanctuary Container Card */}
-                    <div className="relative rounded-3xl sm:rounded-[2.5rem] border border-[#F4EDE2]/15 bg-gradient-to-b from-[#0D0B12] via-[#07060A]/95 to-[#07060A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] reveal-on-scroll">
+                    <div className="reveal-on-scroll relative rounded-3xl sm:rounded-[2.5rem] border border-[#F4EDE2]/15 bg-gradient-to-b from-[#0D0B12] via-[#07060A]/95 to-[#07060A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
                     
                     {/* Background Sanctuary Worshipper with Warm Hue */}
                     <div className="absolute inset-0 z-0">
@@ -1136,26 +1188,26 @@ export default function ExperienceOverlay({ initialData }: {
                         <div className="absolute inset-0 bg-gradient-to-t from-[#07060A] via-transparent to-transparent" />
                     </div>
 
-                    {/* Ambient Ember & Spirit Halo Glows */}
+                    {/* Ambient Ember & Golden Halo Glows */}
                     <div className="absolute -top-24 -right-24 w-96 h-96 bg-[radial-gradient(circle,rgba(255,90,46,0.14)_0%,transparent_70%)] rounded-full pointer-events-none" />
-                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[radial-gradient(circle,rgba(110,91,255,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                    <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[radial-gradient(circle,rgba(245,158,11,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
                     
-                    {/* Multi-Color Celestial Top Accent Line */}
-                    <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#E11D48] via-[#FF5A2E] to-transparent" />
+                    {/* Multi-Color Logo Flame Top Accent Line */}
+                    <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFB37A] via-[#FF5A2E] to-[#C2361A] to-transparent" />
 
                     <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
                         
                         {/* Left: Typography, Impact, and Interactive CTAs */}
                         <div className="lg:col-span-7 space-y-6">
-                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_25px_rgba(110,91,255,0.2)]">
-                                <Sparkles className="w-3.5 h-3.5 text-[#A78BFA]" />
-                                <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#C4B5FD]">Your Story Has Power</span>
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#FF5A2E]/30 bg-[#FF5A2E]/10 shadow-[0_0_25px_rgba(255,90,46,0.2)]">
+                                <Sparkles className="w-3.5 h-3.5 text-[#FFB37A]" />
+                                <span className="text-xs font-bold tracking-[0.25em] uppercase text-[#FFB37A]">Your Story Has Power</span>
                             </div>
 
                             <h2 className="font-fraunces font-medium text-3xl sm:text-5xl md:text-6xl text-[#F4EDE2] tracking-tight leading-[1.08]">
                                 Share Your{' '}
                                 <br />
-                                <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#6E5BFF] bg-clip-text text-transparent">
+                                <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">
                                     Miracle & Faith
                                 </span>
                             </h2>
@@ -1168,19 +1220,19 @@ export default function ExperienceOverlay({ initialData }: {
                             {/* Trust & Impact Highlights with Multi-Color Icons */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                                 <div className="flex items-center gap-2 text-xs text-[#C9C3D4] font-light">
-                                    <div className="w-4 h-4 rounded-full bg-[#6E5BFF]/20 text-[#C4B5FD] flex items-center justify-center flex-shrink-0">
+                                    <div className="w-4 h-4 rounded-full bg-[#FF5A2E]/20 text-[#FFB37A] flex items-center justify-center flex-shrink-0">
                                         <Check className="w-2.5 h-2.5" />
                                     </div>
                                     <span>Pastoral Verification</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-[#C9C3D4] font-light">
-                                    <div className="w-4 h-4 rounded-full bg-[#FF5A2E]/20 text-[#FFB37A] flex items-center justify-center flex-shrink-0">
+                                    <div className="w-4 h-4 rounded-full bg-[#F59E0B]/20 text-[#FDE047] flex items-center justify-center flex-shrink-0">
                                         <Check className="w-2.5 h-2.5" />
                                     </div>
                                     <span>Global Inspiration</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-[#C9C3D4] font-light">
-                                    <div className="w-4 h-4 rounded-full bg-[#FB7185]/20 text-[#FB7185] flex items-center justify-center flex-shrink-0">
+                                    <div className="w-4 h-4 rounded-full bg-[#C2361A]/20 text-[#FF8C68] flex items-center justify-center flex-shrink-0">
                                         <Check className="w-2.5 h-2.5" />
                                     </div>
                                     <span>100% Confidential</span>
@@ -1192,7 +1244,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 <LiquidButton
                                     href="/share-testimony"
                                     size="lg"
-                                    variant="celestial"
+                                    variant="amber"
                                     icon={<ArrowRight className="w-4 h-4" />}
                                     iconPosition="right"
                                 >
@@ -1201,7 +1253,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 <LiquidButton
                                     href="/god-stories"
                                     size="lg"
-                                    variant="spirit"
+                                    variant="flame"
                                     icon={<ArrowRight className="w-4 h-4" />}
                                     iconPosition="right"
                                 >
@@ -1237,11 +1289,11 @@ export default function ExperienceOverlay({ initialData }: {
                                         sub: 'Across 6+ Nations',
                                         icon: MapPin,
                                         theme: {
-                                            glow: 'from-[#6E5BFF]/15',
-                                            border: 'hover:border-[#6E5BFF]/50 hover:shadow-[0_12px_35px_rgba(110,91,255,0.2)]',
-                                            iconBox: 'bg-[#6E5BFF]/10 border-[#6E5BFF]/20 text-[#A78BFA]',
-                                            dot: 'bg-[#6E5BFF]',
-                                            hoverText: 'group-hover:text-[#C4B5FD]'
+                                            glow: 'from-[#F59E0B]/15',
+                                            border: 'hover:border-[#F59E0B]/50 hover:shadow-[0_12px_35px_rgba(245,158,11,0.2)]',
+                                            iconBox: 'bg-[#F59E0B]/10 border-[#F59E0B]/20 text-[#F59E0B]',
+                                            dot: 'bg-[#F59E0B]',
+                                            hoverText: 'group-hover:text-[#FDE047]'
                                         }
                                     },
                                     {
@@ -1252,11 +1304,11 @@ export default function ExperienceOverlay({ initialData }: {
                                         sub: 'Supernatural Grace',
                                         icon: Heart,
                                         theme: {
-                                            glow: 'from-[#E11D48]/15',
-                                            border: 'hover:border-[#E11D48]/50 hover:shadow-[0_12px_35px_rgba(225,29,72,0.2)]',
-                                            iconBox: 'bg-[#E11D48]/10 border-[#E11D48]/20 text-[#FB7185]',
-                                            dot: 'bg-[#E11D48]',
-                                            hoverText: 'group-hover:text-[#FDA4AF]'
+                                            glow: 'from-[#C2361A]/15',
+                                            border: 'hover:border-[#C2361A]/50 hover:shadow-[0_12px_35px_rgba(194,54,26,0.2)]',
+                                            iconBox: 'bg-[#C2361A]/10 border-[#C2361A]/20 text-[#FF5A2E]',
+                                            dot: 'bg-[#C2361A]',
+                                            hoverText: 'group-hover:text-[#FF8C68]'
                                         }
                                     },
                                     {
@@ -1267,11 +1319,11 @@ export default function ExperienceOverlay({ initialData }: {
                                         sub: 'Unbroken Glory',
                                         icon: Flame,
                                         theme: {
-                                            glow: 'from-[#F59E0B]/15',
-                                            border: 'hover:border-[#F59E0B]/50 hover:shadow-[0_12px_35px_rgba(245,158,11,0.2)]',
-                                            iconBox: 'bg-[#F59E0B]/10 border-[#F59E0B]/20 text-[#FCD34D]',
-                                            dot: 'bg-[#F59E0B]',
-                                            hoverText: 'group-hover:text-[#FDE047]'
+                                            glow: 'from-[#FFB37A]/15',
+                                            border: 'hover:border-[#FFB37A]/50 hover:shadow-[0_12px_35px_rgba(255,179,122,0.2)]',
+                                            iconBox: 'bg-[#FFB37A]/10 border-[#FFB37A]/20 text-[#FFB37A]',
+                                            dot: 'bg-[#FFB37A]',
+                                            hoverText: 'group-hover:text-[#FFD700]'
                                         }
                                     },
                                 ].map((stat, i) => {
@@ -1314,10 +1366,10 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Pastoral Helpline / Prayer Support Card */}
-                            <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-[#6E5BFF]/15 via-[#0D0B12] to-[#FF5A2E]/10 border border-[#6E5BFF]/30 flex items-center justify-between gap-3">
+                            <div className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-[#FF5A2E]/15 via-[#0D0B12] to-[#F59E0B]/10 border border-[#FF5A2E]/30 flex items-center justify-between gap-3">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#6E5BFF]/20 border border-[#6E5BFF]/30 flex items-center justify-center text-[#C4B5FD] flex-shrink-0">
-                                        <Phone className="w-4 h-4 text-[#C4B5FD]" />
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#FF5A2E]/20 border border-[#FF5A2E]/30 flex items-center justify-center text-[#FFB37A] flex-shrink-0">
+                                        <Phone className="w-4 h-4 text-[#FFB37A]" />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-[#F4EDE2] tracking-wide">
@@ -1331,7 +1383,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 <LiquidButton
                                     href="/contact"
                                     size="sm"
-                                    variant="spirit"
+                                    variant="amber"
                                     icon={<ArrowRight className="w-3 h-3" />}
                                     iconPosition="right"
                                     className="flex-shrink-0 !py-1.5 !px-3 text-[11px]"
@@ -1345,31 +1397,36 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* WORSHIP PORTAL CTA — Fraunces & Celestial Multi-Color Gradient */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="worship-cta" className="perf-section relative py-20 md:py-28 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Flame Ember & Amber Gold Glows matching Logo Palette */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.20)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.18)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto">
-                    <div className="relative rounded-[24px] overflow-hidden border border-[#F4EDE2]/15 shadow-2xl reveal-on-scroll">
+                    <div className="reveal-on-scroll relative rounded-[24px] overflow-hidden border border-[#F4EDE2]/15 shadow-2xl">
                         {/* Multi-Color Ambient BG */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#6E5BFF]/15 via-[#07060A] to-[#FF5A2E]/15" />
-                        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-[#6E5BFF] via-[#FF5A2E] to-[#F59E0B]" />
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[radial-gradient(circle,rgba(110,91,255,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#FF5A2E]/15 via-[#07060A] to-[#F59E0B]/15" />
+                        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#FFB37A] via-[#FF5A2E] to-[#C2361A] to-transparent" />
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[radial-gradient(circle,rgba(255,90,46,0.12)_0%,transparent_70%)] rounded-full pointer-events-none" />
 
                         <div className="relative z-10 p-8 md:p-14 grid grid-cols-1 md:grid-cols-5 gap-10 items-center">
                             {/* Left (3 cols) */}
                             <div className="md:col-span-3 space-y-5">
-                                <div className="w-12 h-12 rounded-2xl bg-[#6E5BFF]/15 border border-[#6E5BFF]/30 flex items-center justify-center text-[#C4B5FD] shadow-lg">
+                                <div className="w-12 h-12 rounded-2xl bg-[#FF5A2E]/15 border border-[#FF5A2E]/30 flex items-center justify-center text-[#FFB37A] shadow-lg">
                                     <Music className="w-6 h-6 text-inherit" />
                                 </div>
                                 <h2 className="font-fraunces font-medium text-3xl sm:text-4xl md:text-5xl text-[#F4EDE2] tracking-tight">
-                                    Worship <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#FF5A2E] to-[#FFB37A] bg-clip-text text-transparent">Chords & Lyrics</span>
+                                    Worship <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Chords & Lyrics</span>
                                 </h2>
                                 <p className="text-sm text-[#C9C3D4] font-light max-w-xl leading-relaxed">
                                     Access hundreds of worship songs with guitar chords, lyrics, and key transposer — in Hindi & English. Built for worship leaders, musicians, and singers.
@@ -1377,7 +1434,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 <LiquidButton
                                     onClick={() => setMode('UTILITY')}
                                     size="lg"
-                                    variant="celestial"
+                                    variant="amber"
                                     icon={<ArrowRight className="w-4 h-4" />}
                                     iconPosition="right"
                                 >
@@ -1388,11 +1445,11 @@ export default function ExperienceOverlay({ initialData }: {
                             {/* Right (2 cols) — Feature list with Multi-Color Dots */}
                             <div className="md:col-span-2 space-y-3">
                                 {[
-                                    { text: 'Guitar Chords & Tabs', color: 'bg-[#6E5BFF]' },
-                                    { text: 'Key Transposer', color: 'bg-[#FF5A2E]' },
-                                    { text: 'Hindi & English Lyrics', color: 'bg-[#F59E0B]' },
-                                    { text: 'Chord Diagrams', color: 'bg-[#FB7185]' },
-                                    { text: 'Dark & Light Mode', color: 'bg-[#C4B5FD]' }
+                                    { text: 'Guitar Chords & Tabs', color: 'bg-[#FF5A2E]' },
+                                    { text: 'Key Transposer', color: 'bg-[#F59E0B]' },
+                                    { text: 'Hindi & English Lyrics', color: 'bg-[#FFB37A]' },
+                                    { text: 'Chord Diagrams', color: 'bg-[#C2361A]' },
+                                    { text: 'Dark & Light Mode', color: 'bg-[#FDE047]' }
                                 ].map((f, i) => (
                                     <div
                                         key={i}
@@ -1408,24 +1465,29 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* AUDIO PODCASTS                                                */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="podcasts" className="perf-section relative py-28 px-6 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Spirit Violet & Amber Gold Fire Glows matching Our Vision */}
-                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Flame Ember & Amber Gold Fire Glows matching Logo Palette */}
+                <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -left-20 md:-left-28 pointer-events-none z-0" />
                 <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.14)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -right-24 md:-right-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-8">
                     <div className="reveal-on-scroll space-y-3">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#6E5BFF]/30 bg-[#6E5BFF]/10 shadow-[0_0_20px_rgba(110,91,255,0.15)]">
-                            <Headphones className="w-3.5 h-3.5 text-[#C4B5FD]" />
-                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#C4B5FD]">Listen Anywhere</span>
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#FF5A2E]/30 bg-[#FF5A2E]/10 shadow-[0_0_20px_rgba(255,90,46,0.15)]">
+                            <Headphones className="w-3.5 h-3.5 text-[#FFB37A]" />
+                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#FFB37A]">Listen Anywhere</span>
                         </div>
                         <h2 className="font-fraunces font-medium text-4xl sm:text-6xl md:text-8xl text-[#F4EDE2] tracking-tight">
-                            Audio <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#6E5BFF] to-[#38BDF8] bg-clip-text text-transparent">Podcasts</span>
+                            Audio <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Podcasts</span>
                         </h2>
                     </div>
 
@@ -1433,8 +1495,8 @@ export default function ExperienceOverlay({ initialData }: {
                         {[
                             { top: 'Listen on', name: 'Spotify', icon: '🎵', hoverBorder: 'hover:border-[#1DB954]/50 group-hover:text-[#1DB954]' },
                             { top: 'Listen on', name: 'Apple Music', icon: '🎧', hoverBorder: 'hover:border-[#FC3C44]/50 group-hover:text-[#FC3C44]' },
-                            { top: 'Listen on', name: 'Amazon', icon: '📻', hoverBorder: 'hover:border-[#00A8E1]/50 group-hover:text-[#00A8E1]' },
-                            { top: 'COJ', name: 'Podcasts', icon: '🎙️', hoverBorder: 'hover:border-[#6E5BFF]/50 group-hover:text-[#A78BFA]' },
+                            { top: 'Listen on', name: 'Amazon', icon: '📻', hoverBorder: 'hover:border-[#F59E0B]/50 group-hover:text-[#FDE047]' },
+                            { top: 'COJ', name: 'Podcasts', icon: '🎙️', hoverBorder: 'hover:border-[#FF5A2E]/50 group-hover:text-[#FFB37A]' },
                         ].map((p, i) => (
                             <a
                                 key={i}
@@ -1450,24 +1512,29 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* SOCIAL MEDIA                                                  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="social" className="perf-section relative py-24 md:py-32 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Flame Ember & Spirit Violet Glows matching Our Vision */}
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Flame Ember & Amber Gold Glows matching Logo Palette */}
                 <div className="absolute w-[360px] sm:w-[480px] md:w-[560px] h-[360px] sm:h-[480px] md:h-[560px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.18)_0%,transparent_70%)] -top-28 md:-top-36 -right-20 md:-right-28 pointer-events-none z-0" />
-                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
+                <div className="absolute w-[320px] sm:w-[420px] md:w-[500px] h-[320px] sm:h-[420px] md:h-[500px] rounded-full bg-[radial-gradient(circle,rgba(245,158,11,0.16)_0%,transparent_70%)] -bottom-24 md:-bottom-32 -left-24 md:-left-36 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-7xl mx-auto space-y-10">
                     <div className="space-y-2 reveal-on-scroll">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#FB7185]/30 bg-[#FB7185]/10 shadow-[0_0_20px_rgba(251,113,133,0.15)]">
-                            <Instagram className="w-3.5 h-3.5 text-[#FB7185]" />
-                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#FB7185]">Stay Connected</span>
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#FF5A2E]/30 bg-[#FF5A2E]/10 shadow-[0_0_20px_rgba(255,90,46,0.15)]">
+                            <Instagram className="w-3.5 h-3.5 text-[#FF5A2E]" />
+                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-[#FFB37A]">Stay Connected</span>
                         </div>
                         <h2 className="font-fraunces font-medium text-3xl sm:text-5xl md:text-6xl text-[#F4EDE2] tracking-tight">
-                            Follow Us On <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#EC4899] to-[#8B5CF6] bg-clip-text text-transparent">Social Media</span>
+                            Follow Us On <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">Social Media</span>
                         </h2>
                     </div>
 
@@ -1498,18 +1565,23 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* NEWSLETTER                                                    */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <section id="newsletter" className="perf-section relative py-20 px-6 sm:px-8 md:px-12 overflow-hidden bg-[#07060A] text-[#F4EDE2] font-space">
-                {/* Ambient Core Convergence Glow matching Our Vision */}
-                <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(110,91,255,0.16)_0%,rgba(255,90,46,0.12)_50%,transparent_70%)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
+                {/* Seamless Section Top & Bottom Fade Overlays */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-28 md:h-40 bg-gradient-to-t from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Ambient Core Convergence Glow matching Logo Palette */}
+                <div className="absolute w-[420px] sm:w-[540px] h-[320px] sm:h-[400px] rounded-full bg-[radial-gradient(circle,rgba(255,90,46,0.16)_0%,rgba(245,158,11,0.12)_50%,transparent_70%)] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0" />
                 <div className="starfield opacity-30 pointer-events-none z-0" />
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6 reveal-on-scroll">
                     <h3 className="font-fraunces font-medium text-2xl sm:text-3xl text-[#F4EDE2]">
-                        Stay Updated with <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#C4B5FD] via-[#FF5A2E] to-[#FFB37A] bg-clip-text text-transparent">COJ</span>
+                        Stay Updated with <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent">COJ</span>
                     </h3>
                     <p className="text-xs text-[#8A8496] max-w-md mx-auto">
                         Get weekly devotionals, worship updates, and event announcements directly in your inbox.
@@ -1529,11 +1601,11 @@ export default function ExperienceOverlay({ initialData }: {
                         }}
                         className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
                     >
-                        <input name="email" type="email" placeholder="Enter your email" className="flex-1 px-5 py-3.5 rounded-full bg-[#0D0B12] border border-[#F4EDE2]/15 text-sm text-[#F4EDE2] placeholder-[#8A8496] focus:outline-none focus:border-[#6E5BFF]/60 focus:bg-[#0D0B12] transition-all" />
+                        <input name="email" type="email" placeholder="Enter your email" className="flex-1 px-5 py-3.5 rounded-full bg-[#0D0B12] border border-[#F4EDE2]/15 text-sm text-[#F4EDE2] placeholder-[#8A8496] focus:outline-none focus:border-[#FF5A2E]/60 focus:bg-[#0D0B12] transition-all" />
                         <LiquidButton
                             type="submit"
                             size="md"
-                            variant="celestial"
+                            variant="amber"
                             className="flex-shrink-0"
                         >
                             Subscribe
@@ -1542,14 +1614,18 @@ export default function ExperienceOverlay({ initialData }: {
                 </div>
             </section>
 
+            <SectionSeam />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* FOOTER — Ultra-Luxury Architectural Footer                    */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <footer className="relative border-t border-[#F4EDE2]/10 pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-12 bg-[#07060A] text-[#F4EDE2] overflow-hidden">
-                {/* Celestial Top Glow Line */}
-                <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#6E5BFF] via-[#E11D48] via-[#FF5A2E] to-transparent" />
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-[radial-gradient(ellipse_at_center,rgba(110,91,255,0.12)_0%,rgba(255,90,46,0.08)_40%,transparent_70%)] rounded-full pointer-events-none" />
+            <footer className="relative pt-16 sm:pt-20 pb-12 px-4 sm:px-6 md:px-12 bg-[#07060A] text-[#F4EDE2] overflow-hidden">
+                {/* Seamless Footer Top Fade Overlay */}
+                <div className="pointer-events-none absolute top-0 inset-x-0 h-28 md:h-40 bg-gradient-to-b from-[#07060A] via-[#07060A]/70 to-transparent z-10" />
+
+                {/* Logo Flame Top Glow Line */}
+                <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFB37A] via-[#FF5A2E] to-[#C2361A] to-transparent" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.14)_0%,rgba(245,158,11,0.08)_40%,transparent_70%)] rounded-full pointer-events-none" />
                 <div className="starfield opacity-25 pointer-events-none z-0" />
 
                 <div className="max-w-7xl mx-auto">
@@ -1558,12 +1634,12 @@ export default function ExperienceOverlay({ initialData }: {
                         {/* Brand Column */}
                         <div className="lg:col-span-4 space-y-4">
                             <div className="flex items-center gap-3.5">
-                                <div className="w-12 h-12 rounded-2xl bg-[#0D0B12] border border-[#F4EDE2]/10 p-1.5 flex items-center justify-center shadow-[0_0_20px_rgba(110,91,255,0.18)]">
+                                <div className="w-12 h-12 rounded-2xl bg-[#0D0B12] border border-[#F4EDE2]/10 p-1.5 flex items-center justify-center shadow-[0_0_20px_rgba(255,90,46,0.18)]">
                                     <BlackRemoverImage src="/images/logo-footer-final.png" alt="COJ Logo" threshold={80} className="w-full h-full object-contain" />
                                 </div>
                                 <div>
                                     <h4 className="text-base font-black tracking-wider text-[#F4EDE2] uppercase font-sans">CALL OF JESUS</h4>
-                                    <p className="text-[10px] font-bold bg-gradient-to-r from-[#FF5A2E] to-[#6E5BFF] bg-clip-text text-transparent tracking-[0.35em] uppercase">MINISTRIES</p>
+                                    <p className="text-[10px] font-bold bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent tracking-[0.35em] uppercase">MINISTRIES</p>
                                 </div>
                             </div>
                             <p className="text-xs sm:text-sm text-[#8A8496] leading-relaxed max-w-sm">
@@ -1582,7 +1658,7 @@ export default function ExperienceOverlay({ initialData }: {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label={s.label}
-                                        className="w-9 h-9 rounded-xl bg-[#0D0B12] border border-[#F4EDE2]/10 flex items-center justify-center text-[#8A8496] hover:text-[#C4B5FD] hover:border-[#6E5BFF]/40 hover:bg-[#6E5BFF]/10 active:scale-95 transition-all duration-300 shadow-sm"
+                                        className="w-9 h-9 rounded-xl bg-[#0D0B12] border border-[#F4EDE2]/10 flex items-center justify-center text-[#8A8496] hover:text-[#FFB37A] hover:border-[#FF5A2E]/40 hover:bg-[#FF5A2E]/10 active:scale-95 transition-all duration-300 shadow-sm"
                                     >
                                         <s.icon className="w-4 h-4" />
                                     </a>
@@ -1590,7 +1666,7 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
                         </div>
 
-                        {/* Navigation Columns (Each Column has its distinctive color from Our Vision) */}
+                        {/* Navigation Columns (Each Column has its distinctive warm color from Logo Palette) */}
                         <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                             {/* Kingdom — Ember Flame */}
                             <div className="space-y-3.5">
@@ -1605,9 +1681,9 @@ export default function ExperienceOverlay({ initialData }: {
                                 </ul>
                             </div>
 
-                            {/* Grow — Holy Spirit Violet */}
+                            {/* Grow — Warm Radiant Peach Gold */}
                             <div className="space-y-3.5">
-                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#A78BFA] flex items-center gap-1.5">
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#FFB37A] flex items-center gap-1.5">
                                     <span>Grow</span>
                                 </h4>
                                 <ul className="space-y-2 text-xs sm:text-sm text-[#8A8496]">
@@ -1631,9 +1707,9 @@ export default function ExperienceOverlay({ initialData }: {
                                 </ul>
                             </div>
 
-                            {/* Worship Resources — Covenant Rose */}
+                            {/* Worship Resources — Radiant Sunset Ember */}
                             <div className="space-y-3.5">
-                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#FB7185] flex items-center gap-1.5">
+                                <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#FF8C68] flex items-center gap-1.5">
                                     <span>Worship</span>
                                 </h4>
                                 <ul className="space-y-2 text-xs sm:text-sm text-[#8A8496]">
@@ -1646,44 +1722,44 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
                     </div>
 
-                    {/* Middle Section: 3 Luxury Info & Gathering Cards (Spirit Violet, Flame Ember, Heavenly Gold) */}
+                    {/* Middle Section: 3 Luxury Info & Gathering Cards (Logo Palette: Flame Ember, Heavenly Amber Gold, Deep Crimson) */}
                     <div className="border-t border-[#F4EDE2]/10 pt-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-                        {/* Card 1: Email — Holy Spirit Violet */}
+                        {/* Card 1: Email — Flame Ember */}
                         <a
                             href="mailto:contact@callofjesus.in"
-                            className="p-4 rounded-2xl bg-[#0D0B12] hover:bg-[#0D0B12]/80 border border-[#F4EDE2]/10 hover:border-[#6E5BFF]/40 flex items-center gap-3.5 transition-all group shadow-sm"
+                            className="p-4 rounded-2xl bg-[#0D0B12] hover:bg-[#0D0B12]/80 border border-[#F4EDE2]/10 hover:border-[#FF5A2E]/40 flex items-center gap-3.5 transition-all group shadow-sm"
                         >
-                            <div className="w-10 h-10 rounded-xl bg-[#6E5BFF]/10 border border-[#6E5BFF]/20 flex items-center justify-center text-[#A78BFA] shrink-0 group-hover:scale-105 transition-transform">
+                            <div className="w-10 h-10 rounded-xl bg-[#FF5A2E]/10 border border-[#FF5A2E]/20 flex items-center justify-center text-[#FF5A2E] shrink-0 group-hover:scale-105 transition-transform">
                                 <Mail className="w-4 h-4" />
                             </div>
                             <div>
                                 <p className="text-[10px] text-[#8A8496] uppercase tracking-widest font-bold">Direct Inquiries</p>
-                                <p className="text-xs sm:text-sm text-[#F4EDE2] font-medium group-hover:text-[#C4B5FD] transition-colors">contact@callofjesus.in</p>
+                                <p className="text-xs sm:text-sm text-[#F4EDE2] font-medium group-hover:text-[#FFB37A] transition-colors">contact@callofjesus.in</p>
                             </div>
                         </a>
 
-                        {/* Card 2: Church Location — Flame Ember */}
+                        {/* Card 2: Church Location — Radiant Amber */}
                         <a
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-4 rounded-2xl bg-[#0D0B12] hover:bg-[#0D0B12]/80 border border-[#F4EDE2]/10 hover:border-[#FF5A2E]/40 flex items-center gap-3.5 transition-all group shadow-sm"
+                            className="p-4 rounded-2xl bg-[#0D0B12] hover:bg-[#0D0B12]/80 border border-[#F4EDE2]/10 hover:border-[#F59E0B]/40 flex items-center gap-3.5 transition-all group shadow-sm"
                         >
-                            <div className="w-10 h-10 rounded-xl bg-[#FF5A2E]/10 border border-[#FF5A2E]/20 flex items-center justify-center text-[#FF5A2E] shrink-0 group-hover:scale-105 transition-transform">
+                            <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/20 flex items-center justify-center text-[#F59E0B] shrink-0 group-hover:scale-105 transition-transform">
                                 <MapPin className="w-4 h-4" />
                             </div>
                             <div>
                                 <p className="text-[10px] text-[#8A8496] uppercase tracking-widest font-bold">Church Arena</p>
-                                <p className="text-xs sm:text-sm text-[#F4EDE2] font-medium flex items-center gap-1.5 group-hover:text-[#FFB37A] transition-colors">
+                                <p className="text-xs sm:text-sm text-[#F4EDE2] font-medium flex items-center gap-1.5 group-hover:text-[#FDE047] transition-colors">
                                     <span>Get Maps Directions</span>
-                                    <Navigation className="w-3 h-3 text-[#FF5A2E]" />
+                                    <Navigation className="w-3 h-3 text-[#F59E0B]" />
                                 </p>
                             </div>
                         </a>
 
-                        {/* Card 3: Gatherings — Heavenly Gold */}
+                        {/* Card 3: Gatherings — Crimson Fire */}
                         <div className="p-4 rounded-2xl bg-[#0D0B12] border border-[#F4EDE2]/10 flex items-center gap-3.5 shadow-sm">
-                            <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/20 flex items-center justify-center text-[#FCD34D] shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-[#C2361A]/10 border border-[#C2361A]/20 flex items-center justify-center text-[#FF5A2E] shrink-0">
                                 <Clock className="w-4 h-4" />
                             </div>
                             <div>
