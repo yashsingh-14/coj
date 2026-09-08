@@ -350,8 +350,8 @@ function HeroSection() {
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'
                         }`}
                 />
-                <div className="absolute inset-0 bg-black/25" />
-                <div className="absolute bottom-0 inset-x-0 h-40 sm:h-56 md:h-72 bg-gradient-to-t from-[#07060A] via-[#07060A]/85 via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute bottom-0 inset-x-0 h-20 md:h-28 bg-gradient-to-t from-[#07060A] via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
             {/* Mobile 3-Split Cinematic Film Strips (< md — 100% Opaque, Zero Double-Exposure) */}
