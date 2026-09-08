@@ -1006,9 +1006,10 @@ export default function ExperienceOverlay({ initialData }: {
                                             alt={song.title}
                                             loading="lazy"
                                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            style={{ filter: 'brightness(0.40) saturate(0.9)' }}
+                                            style={{ filter: 'brightness(0.85) contrast(1.04) saturate(1.05)' }}
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
+                                        {/* Bottom vignette for crisp title legibility while keeping artwork vibrant */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-transparent to-transparent" />
 
                                         <div className="relative z-10 p-4 md:p-6 space-y-1.5">
                                             <span className={`font-black uppercase tracking-widest rounded-full inline-block ${rankBadgeStyle}`}>
@@ -1127,17 +1128,20 @@ export default function ExperienceOverlay({ initialData }: {
                     {/* Outer Glass Sanctuary Container Card */}
                     <div className="reveal-on-scroll relative rounded-2xl sm:rounded-3xl border border-white/10 bg-[#0A0A0A] p-6 sm:p-10 md:p-14 overflow-hidden shadow-[0_30px_100px_rgba(0,0,0,0.8)] group hover:border-amber-500/30 transition-all duration-500">
                     
-                    {/* Background Sanctuary Worshipper with Warm Hue */}
-                    <div className="absolute inset-0 z-0">
+                    {/* Background Sanctuary Worshipper with Clear Visibility */}
+                    <div className="absolute inset-0 z-0 overflow-hidden">
                         <img
                             src="/images/testimony-bg.jpg"
                             alt="Worship and Prayer"
                             loading="lazy"
-                            className="w-full h-full object-cover"
-                            style={{ filter: 'brightness(0.20) saturate(0.85)' }}
+                            className="w-full h-full object-cover object-right md:object-center group-hover:scale-105 transition-transform duration-700 opacity-80 sm:opacity-90"
+                            style={{ filter: 'brightness(0.75) saturate(1.15) contrast(1.05)' }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/90 to-[#0A0A0A]/60" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+                        {/* Directional gradient: Dark on the left for text legibility, transparent on the right to reveal the worshipper */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/80 via-[#0A0A0A]/35 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/70 via-transparent to-transparent" />
+                        {/* Atmospheric golden radiant aura */}
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(255,90,46,0.18)_0%,rgba(245,158,11,0.10)_45%,transparent_70%)] pointer-events-none" />
                     </div>
 
                     {/* Ambient Ember & Golden Halo Glows */}
@@ -1539,24 +1543,25 @@ export default function ExperienceOverlay({ initialData }: {
 
                 {/* Logo Flame Top Glow Line */}
                 <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FFB37A] via-[#FF5A2E] to-[#C2361A] to-transparent" />
-                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[160px] bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.14)_0%,rgba(245,158,11,0.08)_40%,transparent_70%)] rounded-full pointer-events-none" />
-                <div className="starfield opacity-25 pointer-events-none z-0" />
+                <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[200px] bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.18)_0%,rgba(245,158,11,0.10)_40%,transparent_70%)] rounded-full pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.06)_0%,transparent_70%)] rounded-full pointer-events-none" />
+                <div className="starfield opacity-30 pointer-events-none z-0" />
 
-                <div className="max-w-7xl mx-auto">
+                <div className="relative z-20 max-w-7xl mx-auto">
                     {/* Top Section: Brand Block + Links Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 pb-12">
                         {/* Brand Column */}
                         <div className="lg:col-span-4 space-y-4">
                             <div className="flex items-center gap-3.5">
-                                <div className="w-12 h-12 rounded-2xl bg-[#0D0B12] border border-[#F4EDE2]/10 p-1.5 flex items-center justify-center shadow-[0_0_20px_rgba(255,90,46,0.18)]">
+                                <div className="w-12 h-12 rounded-2xl bg-[#0D0B12] border border-white/15 p-1.5 flex items-center justify-center shadow-[0_0_25px_rgba(255,90,46,0.22)]">
                                     <BlackRemoverImage src="/images/logo-footer-final.png" alt="COJ Logo" threshold={80} className="w-full h-full object-contain" />
                                 </div>
                                 <div>
-                                    <h4 className="text-base font-black tracking-wider text-[#F4EDE2] uppercase font-sans">CALL OF JESUS</h4>
+                                    <h4 className="text-base font-black tracking-wider text-white uppercase font-sans">CALL OF JESUS</h4>
                                     <p className="text-[10px] font-bold bg-gradient-to-r from-[#FFB37A] via-[#FF5A2E] to-[#C2361A] bg-clip-text text-transparent tracking-[0.35em] uppercase">MINISTRIES</p>
                                 </div>
                             </div>
-                            <p className="text-xs sm:text-sm text-[#8A8496] leading-relaxed max-w-sm">
+                            <p className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-sm">
                                 A spiritual home for every believer. Proclaiming the New Covenant Gospel of Grace, supernatural breakthrough, and raising radical lovers of Jesus worldwide.
                             </p>
                             {/* Social Buttons */}
@@ -1572,7 +1577,7 @@ export default function ExperienceOverlay({ initialData }: {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label={s.label}
-                                        className="w-9 h-9 rounded-xl bg-[#0D0B12] border border-[#F4EDE2]/10 flex items-center justify-center text-[#8A8496] hover:text-[#FFB37A] hover:border-[#FF5A2E]/40 hover:bg-[#FF5A2E]/10 active:scale-95 transition-all duration-300 shadow-sm"
+                                        className="w-9 h-9 rounded-xl bg-white/5 border border-white/15 flex items-center justify-center text-white/70 hover:text-amber-400 hover:border-amber-500/40 hover:bg-amber-500/10 active:scale-95 transition-all duration-300 shadow-sm"
                                     >
                                         <s.icon className="w-4 h-4" />
                                     </a>
@@ -1580,75 +1585,75 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
                         </div>
 
-                        {/* Navigation Columns (Each Column has its distinctive warm color from Logo Palette) */}
+                        {/* Navigation Columns */}
                         <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-                            {/* Kingdom — Ember Flame */}
+                            {/* Kingdom */}
                             <div className="space-y-3.5">
                                 <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#FF5A2E] flex items-center gap-1.5">
                                     <span>Kingdom</span>
                                 </h4>
-                                <ul className="space-y-2 text-xs sm:text-sm text-[#8A8496]">
-                                    <li><Link href="/give" className="hover:text-[#F4EDE2] transition-colors">Give / Partner</Link></li>
-                                    <li><Link href="/share-testimony" className="hover:text-[#F4EDE2] transition-colors">Share Testimony</Link></li>
-                                    <li><Link href="/contact" className="hover:text-[#F4EDE2] transition-colors">Connect with Us</Link></li>
-                                    <li><Link href="/events" className="hover:text-[#F4EDE2] transition-colors">Special Services</Link></li>
+                                <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
+                                    <li><Link href="/give" className="hover:text-amber-400 transition-colors">Give / Partner</Link></li>
+                                    <li><Link href="/share-testimony" className="hover:text-amber-400 transition-colors">Share Testimony</Link></li>
+                                    <li><Link href="/contact" className="hover:text-amber-400 transition-colors">Connect with Us</Link></li>
+                                    <li><Link href="/events" className="hover:text-amber-400 transition-colors">Special Services</Link></li>
                                 </ul>
                             </div>
 
-                            {/* Grow — Warm Radiant Peach Gold */}
+                            {/* Grow */}
                             <div className="space-y-3.5">
                                 <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#FFB37A] flex items-center gap-1.5">
                                     <span>Grow</span>
                                 </h4>
-                                <ul className="space-y-2 text-xs sm:text-sm text-[#8A8496]">
-                                    <li><Link href="/sermons" className="hover:text-[#F4EDE2] transition-colors">Sermons Archive</Link></li>
-                                    <li><Link href="/god-stories" className="hover:text-[#F4EDE2] transition-colors">Miracle Stories</Link></li>
-                                    <li><Link href="/devotional" className="hover:text-[#F4EDE2] transition-colors">Daily Devotionals</Link></li>
-                                    <li><Link href="/podcasts" className="hover:text-[#F4EDE2] transition-colors">Audio Teachings</Link></li>
+                                <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
+                                    <li><Link href="/sermons" className="hover:text-amber-400 transition-colors">Sermons Archive</Link></li>
+                                    <li><Link href="/god-stories" className="hover:text-amber-400 transition-colors">Miracle Stories</Link></li>
+                                    <li><Link href="/devotional" className="hover:text-amber-400 transition-colors">Daily Devotionals</Link></li>
+                                    <li><Link href="/podcasts" className="hover:text-amber-400 transition-colors">Audio Teachings</Link></li>
                                 </ul>
                             </div>
 
-                            {/* About — Heavenly Amber Gold */}
+                            {/* About */}
                             <div className="space-y-3.5">
                                 <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#F59E0B] flex items-center gap-1.5">
                                     <span>About Us</span>
                                 </h4>
-                                <ul className="space-y-2 text-xs sm:text-sm text-[#8A8496]">
-                                    <li><Link href="/our-journey" className="hover:text-[#F4EDE2] transition-colors">Our Journey</Link></li>
-                                    <li><Link href="/our-vision-and-mission" className="hover:text-[#F4EDE2] transition-colors">Vision & Mission</Link></li>
-                                    <li><Link href="/our-leaders" className="hover:text-[#F4EDE2] transition-colors">Our Leaders</Link></li>
-                                    <li><Link href="/our-branches" className="hover:text-[#F4EDE2] transition-colors">Our Branches</Link></li>
+                                <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
+                                    <li><Link href="/our-journey" className="hover:text-amber-400 transition-colors">Our Journey</Link></li>
+                                    <li><Link href="/our-vision-and-mission" className="hover:text-amber-400 transition-colors">Vision & Mission</Link></li>
+                                    <li><Link href="/our-leaders" className="hover:text-amber-400 transition-colors">Our Leaders</Link></li>
+                                    <li><Link href="/our-branches" className="hover:text-amber-400 transition-colors">Our Branches</Link></li>
                                 </ul>
                             </div>
 
-                            {/* Worship Resources — Radiant Sunset Ember */}
+                            {/* Worship Resources */}
                             <div className="space-y-3.5">
                                 <h4 className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#FF8C68] flex items-center gap-1.5">
                                     <span>Worship</span>
                                 </h4>
-                                <ul className="space-y-2 text-xs sm:text-sm text-[#8A8496]">
-                                    <li><button onClick={() => setMode('UTILITY')} className="hover:text-[#F4EDE2] transition-colors text-left">Worship Portal</button></li>
-                                    <li><Link href="/songs" className="hover:text-[#F4EDE2] transition-colors">Songs Catalog</Link></li>
-                                    <li><Link href="/tools/tuner" className="hover:text-[#F4EDE2] transition-colors">Guitar Tuner</Link></li>
-                                    <li><Link href="/tools/pad" className="hover:text-[#F4EDE2] transition-colors">Worship Pads</Link></li>
+                                <ul className="space-y-2.5 text-xs sm:text-sm text-white/70">
+                                    <li><button onClick={() => setMode('UTILITY')} className="hover:text-amber-400 transition-colors text-left">Worship Portal</button></li>
+                                    <li><Link href="/songs" className="hover:text-amber-400 transition-colors">Songs Catalog</Link></li>
+                                    <li><Link href="/tools/tuner" className="hover:text-amber-400 transition-colors">Guitar Tuner</Link></li>
+                                    <li><Link href="/tools/pad" className="hover:text-amber-400 transition-colors">Worship Pads</Link></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
                     {/* Middle Section: 3 Luxury Info & Gathering Cards */}
-                    <div className="border-t border-white/10 pt-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="border-t border-white/15 pt-8 pb-8 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                         {/* Card 1: Email */}
                         <a
                             href="mailto:contact@callofjesus.in"
-                            className="p-4 sm:p-5 rounded-2xl bg-[#0A0A0A] hover:bg-white/[0.03] border border-white/10 hover:border-amber-500/40 flex items-center gap-3.5 transition-all group shadow-sm"
+                            className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] hover:bg-white/[0.04] border border-white/15 hover:border-amber-500/50 flex items-center gap-3.5 transition-all group shadow-sm"
                         >
-                            <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 shrink-0 group-hover:scale-105 transition-transform">
+                            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
                                 <Mail className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Direct Inquiries</p>
-                                <p className="text-xs sm:text-sm text-white font-medium group-hover:text-amber-400 transition-colors">contact@callofjesus.in</p>
+                                <p className="text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Direct Inquiries</p>
+                                <p className="text-xs sm:text-sm text-white font-medium group-hover:text-amber-300 transition-colors">contact@callofjesus.in</p>
                             </div>
                         </a>
 
@@ -1657,41 +1662,41 @@ export default function ExperienceOverlay({ initialData }: {
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-4 sm:p-5 rounded-2xl bg-[#0A0A0A] hover:bg-white/[0.03] border border-white/10 hover:border-amber-500/40 flex items-center gap-3.5 transition-all group shadow-sm"
+                            className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] hover:bg-white/[0.04] border border-white/15 hover:border-amber-500/50 flex items-center gap-3.5 transition-all group shadow-sm"
                         >
-                            <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 shrink-0 group-hover:scale-105 transition-transform">
+                            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0 group-hover:scale-105 transition-transform">
                                 <MapPin className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Church Arena</p>
-                                <p className="text-xs sm:text-sm text-white font-medium flex items-center gap-1.5 group-hover:text-amber-400 transition-colors">
+                                <p className="text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Church Arena</p>
+                                <p className="text-xs sm:text-sm text-white font-medium flex items-center gap-1.5 group-hover:text-amber-300 transition-colors">
                                     <span>Get Maps Directions</span>
-                                    <Navigation className="w-3 h-3 text-amber-500" />
+                                    <Navigation className="w-3 h-3 text-amber-400" />
                                 </p>
                             </div>
                         </a>
 
                         {/* Card 3: Gatherings */}
-                        <div className="p-4 sm:p-5 rounded-2xl bg-[#0A0A0A] border border-white/10 flex items-center gap-3.5 shadow-sm">
-                            <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-500 shrink-0">
+                        <div className="p-4 sm:p-5 rounded-2xl bg-[#0D0B12] border border-white/15 flex items-center gap-3.5 shadow-sm">
+                            <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0">
                                 <Clock className="w-4 h-4" />
                             </div>
                             <div>
-                                <p className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Weekly Gatherings</p>
+                                <p className="text-[10px] text-amber-400/90 uppercase tracking-widest font-bold">Weekly Gatherings</p>
                                 <p className="text-xs sm:text-sm text-white font-medium">Sun 10:30 AM IST • Fri 7:00 PM IST</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Bottom Legal & Copyright Bar */}
-                    <div className="border-t border-[#F4EDE2]/10 pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#8A8496] gap-3">
+                    <div className="border-t border-white/15 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-3">
                         <p>© {new Date().getFullYear()} Call of Jesus Ministries. All rights reserved.</p>
                         <div className="flex items-center gap-4">
-                            <Link href="/terms" className="hover:text-[#F4EDE2] transition-colors">Terms of Service</Link>
-                            <span className="w-1 h-1 rounded-full bg-[#F4EDE2]/20" />
-                            <Link href="/privacy" className="hover:text-[#F4EDE2] transition-colors">Privacy Policy</Link>
-                            <span className="w-1 h-1 rounded-full bg-[#F4EDE2]/20" />
-                            <Link href="/contact" className="hover:text-[#F4EDE2] transition-colors">Contact</Link>
+                            <Link href="/terms" className="hover:text-amber-400 text-white/60 transition-colors">Terms of Service</Link>
+                            <span className="w-1 h-1 rounded-full bg-white/20" />
+                            <Link href="/privacy" className="hover:text-amber-400 text-white/60 transition-colors">Privacy Policy</Link>
+                            <span className="w-1 h-1 rounded-full bg-white/20" />
+                            <Link href="/contact" className="hover:text-amber-400 text-white/60 transition-colors">Contact</Link>
                         </div>
                     </div>
                 </div>
