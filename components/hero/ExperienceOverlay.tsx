@@ -22,6 +22,7 @@ import CircularTestimonials from "@/components/ui/CircularTestimonials";
 import LiquidButton from "@/components/ui/LiquidButton";
 import KineticMarquee from "./KineticMarquee";
 import MinistryAccordion from "@/components/home/MinistryAccordion";
+import KingdomStats from "@/components/home/KingdomStats";
 import GoldenSparkleReveal from "@/components/ui/GoldenSparkleReveal";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -941,6 +942,13 @@ export default function ExperienceOverlay({ initialData }: {
             {/* MINISTRIES ACCORDION — 5 Expanding Pillars of Fire & Grace      */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <MinistryAccordion />
+
+            <SectionSeam />
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* KINGDOM STATS & TESTIMONY — Interactive Animated Counters      */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <KingdomStats />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* TRENDING WORSHIP — Editorial Atmospheric Showcase              */}

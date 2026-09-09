@@ -763,3 +763,21 @@ body {
   filter: drop-shadow(0 0 12px rgba(255, 90, 46, 0.55)) drop-shadow(0 0 24px rgba(245, 158, 11, 0.35)) brightness(1.22);
   z-index: 20;
 }
+
+/* ═══════════ SVG GLOWING LOGO TRACE UTILITIES ═══════════ */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+.logo-trace-stroke {
+  will-change: stroke-dashoffset;
+}

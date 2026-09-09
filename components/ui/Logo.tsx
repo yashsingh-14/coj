@@ -1,4 +1,18 @@
-export default function Logo({ className = "w-12" }: { className?: string }) {
+'use client';
+
+import GlowingLogoTrace from './GlowingLogoTrace';
+
+export default function Logo({
+    className = "w-12",
+    showTrace = true
+}: {
+    className?: string;
+    showTrace?: boolean;
+}) {
+    if (showTrace) {
+        return <GlowingLogoTrace className={className} />;
+    }
+
     return (
         <div className={`relative flex items-center justify-center transform-style-3d ${className}`}>
             <div className="relative w-full h-full animate-fire-pulse-logo flex items-center justify-center">
