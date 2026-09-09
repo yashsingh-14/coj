@@ -1,13 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Share2, Youtube, Check, Calendar, Play } from 'lucide-react';
+import { ArrowLeft, Share2, Youtube, Check, Calendar, Play, RefreshCw } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { fetchSermons, YouTubeVideo } from '@/lib/youtube';
 
 import { useAppStore } from '@/store/useAppStore';
+
+// Local storage cache key
+const CACHE_KEY = 'coj_sermons_cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+function getCachedSermons(): YouTubeVideo[] | null {
+    try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const { data, timestamp } = JSON.parse(raw);
+        if (Date.now() - timestamp < CACHE_DURATION) {
+            return data;
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+function setCachedSermons(data: YouTubeVideo[]) {
+    try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch { }
+}
 
 export default function SermonsPage() {
     const [sermons, setSermons] = useState<YouTubeVideo[]>([]);
@@ -15,19 +39,33 @@ export default function SermonsPage() {
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const { preferences } = useAppStore();
 
-    useEffect(() => {
-        const loadSermons = async () => {
-            try {
-                const data = await fetchSermons();
+    const loadSermons = useCallback(async (showLoader = true) => {
+        // Show cached data instantly
+        const cached = getCachedSermons();
+        if (cached && cached.length > 0) {
+            setSermons(cached);
+            setLoading(false);
+        } else if (showLoader) {
+            setLoading(true);
+        }
+
+        // Fetch fresh data in background
+        try {
+            const data = await fetchSermons();
+            if (data.length > 0) {
                 setSermons(data);
-            } catch (error) {
-                console.error("Failed to load sermons:", error);
-            } finally {
-                setLoading(false);
+                setCachedSermons(data);
             }
-        };
-        loadSermons();
+        } catch (error) {
+            console.error("Failed to load sermons:", error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        loadSermons();
+    }, [loadSermons]);
 
     const handleShare = async (video: YouTubeVideo) => {
         const url = `https://www.youtube.com/watch?v=${video.id}`;
@@ -76,25 +114,33 @@ export default function SermonsPage() {
                     </p>
                 </div>
 
-                {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {loading && sermons.length === 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="aspect-video bg-white/5 rounded-[2rem] animate-pulse"></div>
+                            <div key={i} className="bg-white/5 rounded-[2rem] overflow-hidden animate-pulse">
+                                <div className="aspect-video bg-white/10"></div>
+                                <div className="p-5 space-y-3">
+                                    <div className="h-3 w-20 bg-white/10 rounded"></div>
+                                    <div className="h-5 w-full bg-white/10 rounded"></div>
+                                    <div className="h-5 w-3/4 bg-white/10 rounded"></div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 ) : sermons.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-                        {sermons.map((video) => (
+                        {sermons.map((video, index) => (
                             <TiltCard key={video.id} className="w-full" max={5} scale={1.02}>
                                 <div className="group relative h-full flex flex-col bg-black/40 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden hover:border-red-500/50 hover:shadow-[0_0_40px_-10px_rgba(220,38,38,0.3)] transition-all duration-500">
-                                    {/* Video Thumbnail with Cinematic Overlay */}
+                                    {/* Video Thumbnail — native img for instant load */}
                                     <div className="relative aspect-video w-full overflow-hidden">
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
-                                        <Image
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
                                             src={video.thumbnail}
                                             alt={video.title}
-                                            width={640}
-                                            height={360}
+                                            loading={index < 3 ? 'eager' : 'lazy'}
+                                            decoding="async"
                                             className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out"
                                         />
 
