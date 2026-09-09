@@ -21,7 +21,6 @@ import { toast } from 'sonner';
 import CircularTestimonials from "@/components/ui/CircularTestimonials";
 import LiquidButton from "@/components/ui/LiquidButton";
 import KineticMarquee from "./KineticMarquee";
-import MaskedVideoReveal from "./MaskedVideoReveal";
 
 const ICON_MAP: Record<string, any> = {
     BookOpen,
@@ -661,11 +660,6 @@ export default function ExperienceOverlay({ initialData }: {
             {/* DUAL-DIRECTION KINETIC MARQUEE — Scroll-Driven Ambient Horizon  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <KineticMarquee />
-
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* MASKED VIDEO REVEAL — Scroll-Driven Cinematic Sacred Reveal    */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            <MaskedVideoReveal />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* 1. DAILY PROMISE — Intimate Scripture Sanctuary                */}
