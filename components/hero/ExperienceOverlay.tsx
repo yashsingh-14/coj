@@ -602,74 +602,51 @@ export default function ExperienceOverlay({ initialData }: {
         }
     };
 
-    // Hardware-Accelerated GSAP ScrollTrigger Alternating Reveal Engine
+    // Hardware-Accelerated Alternating Directional Scroll Reveal Engine
     useEffect(() => {
-        const ctx = gsap.context(() => {
-            const timer = setTimeout(() => {
-                // Left-gliding reveal elements
-                ScrollTrigger.batch('.reveal-from-left', {
-                    start: 'top 88%',
-                    once: true,
-                    onEnter: (batch) => {
-                        gsap.to(batch, {
-                            opacity: 1,
-                            x: 0,
-                            duration: 0.85,
-                            stagger: 0.12,
-                            ease: 'power3.out',
-                            overwrite: 'auto',
-                            onComplete: () => {
-                                batch.forEach((el) => el.classList.add('is-revealed'));
-                            },
-                        });
-                    },
-                });
+        // Collect all directional reveal elements
+        const elements = Array.from(
+            document.querySelectorAll<HTMLElement>('.reveal-from-left, .reveal-from-right, .reveal-on-scroll')
+        );
 
-                // Right-gliding reveal elements
-                ScrollTrigger.batch('.reveal-from-right', {
-                    start: 'top 88%',
-                    once: true,
-                    onEnter: (batch) => {
-                        gsap.to(batch, {
-                            opacity: 1,
-                            x: 0,
-                            duration: 0.85,
-                            stagger: 0.12,
-                            ease: 'power3.out',
-                            overwrite: 'auto',
-                            onComplete: () => {
-                                batch.forEach((el) => el.classList.add('is-revealed'));
-                            },
-                        });
-                    },
-                });
+        const checkReveals = () => {
+            const triggerPoint = window.innerHeight * 0.90;
+            for (let i = elements.length - 1; i >= 0; i--) {
+                const el = elements[i];
+                if (!el) continue;
+                const rect = el.getBoundingClientRect();
+                // When element top enters bottom 90% of screen AND hasn't scrolled far off above
+                if (rect.top <= triggerPoint && rect.bottom >= -80) {
+                    el.classList.add('is-revealed');
+                    elements.splice(i, 1);
+                }
+            }
+        };
 
-                // Vertical reveal fallback
-                ScrollTrigger.batch('.reveal-on-scroll', {
-                    start: 'top 88%',
-                    once: true,
-                    onEnter: (batch) => {
-                        gsap.to(batch, {
-                            opacity: 1,
-                            y: 0,
-                            duration: 0.85,
-                            stagger: 0.12,
-                            ease: 'power3.out',
-                            overwrite: 'auto',
-                            onComplete: () => {
-                                batch.forEach((el) => el.classList.add('is-revealed'));
-                            },
-                        });
-                    },
-                });
+        // Check immediately on mount for top-fold elements
+        checkReveals();
 
-                ScrollTrigger.refresh();
-            }, 120);
+        // Check after initial layout / image loading
+        const t1 = setTimeout(checkReveals, 150);
+        const t2 = setTimeout(checkReveals, 500);
 
-            return () => clearTimeout(timer);
-        });
+        // Native window scroll listener
+        window.addEventListener('scroll', checkReveals, { passive: true });
 
-        return () => ctx.revert();
+        // Lenis virtual scroll listener
+        const lenis = (window as any).lenis;
+        if (lenis) {
+            lenis.on('scroll', checkReveals);
+        }
+
+        return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+            window.removeEventListener('scroll', checkReveals);
+            if (lenis) {
+                lenis.off('scroll', checkReveals);
+            }
+        };
     }, []);
 
     return (
@@ -715,7 +692,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </h2>
 
                     {/* Scripture Quote — Centered Editorial Masterpiece */}
-                    <div className="max-w-3xl mx-auto py-2 sm:py-4 reveal-from-left">
+                    <div className="max-w-3xl mx-auto py-2 sm:py-4 reveal-from-left reveal-delay-1">
                         <blockquote className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light italic leading-relaxed sm:leading-snug text-white/95 tracking-tight">
                             &ldquo;{verse?.text || "God is our refuge and strength, a very present help in trouble."}&rdquo;
                         </blockquote>
@@ -733,7 +710,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Understated Action Buttons */}
-                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2 reveal-from-left">
+                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2 reveal-from-left reveal-delay-2">
                         <button
                             onClick={handleCopyVerse}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300 text-xs tracking-wider transition-all duration-300 active:scale-95"
@@ -822,7 +799,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Editorial Service Schedule List — Sleek, Unified, Professional */}
-                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08] reveal-from-right">
+                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08] reveal-from-right reveal-delay-1">
                         {eventsList.map((event: any, i: number) => {
                             const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
 
@@ -868,7 +845,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Directions CTA Button */}
-                    <div className="text-center pt-2 reveal-from-right">
+                    <div className="text-center pt-2 reveal-from-right reveal-delay-2">
                         <a
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
