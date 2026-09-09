@@ -190,46 +190,52 @@
   /* Do not use contain: paint layout — it breaks 3D perspective stacks and causes GPU repaint stalls during scroll */
 }
 
-/* ═══════════ HARDWARE-ACCELERATED DIRECTIONAL SCROLL REVEAL ═══════════ */
+/* ═══════════ HARDWARE-ACCELERATED DIRECTIONAL SCROLL REVEAL (MAKKHAN LEHER EFFECT) ═══════════ */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translate3d(0, 40px, 0);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translate3d(0, 48px, 0);
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
   will-change: opacity, transform;
 }
 
 .reveal-from-left {
   opacity: 0;
-  transform: translate3d(-70px, 0, 0);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translate3d(-90px, 18px, 0) rotate(-1.5deg);
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
   will-change: opacity, transform;
 }
 
 .reveal-from-right {
   opacity: 0;
-  transform: translate3d(70px, 0, 0);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translate3d(90px, 18px, 0) rotate(1.5deg);
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
   will-change: opacity, transform;
 }
 
+/* Luxurious Buttery Wave Entrance ("Makkhan Jaisa Leher") */
 .reveal-on-scroll.is-revealed,
 .reveal-from-left.is-revealed,
 .reveal-from-right.is-revealed {
   opacity: 1 !important;
-  transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) rotate(0deg) !important;
+  transition: opacity 1.25s cubic-bezier(0.16, 1, 0.3, 1), transform 1.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Elegant Stagger Delays */
-.reveal-delay-1 {
-  transition-delay: 0.14s;
+/* Luxurious Buttery Wave Stagger Delays ("Leher") */
+.reveal-delay-1.is-revealed {
+  transition-delay: 0.16s !important;
 }
 
-.reveal-delay-2 {
-  transition-delay: 0.28s;
+.reveal-delay-2.is-revealed {
+  transition-delay: 0.32s !important;
 }
 
-.reveal-delay-3 {
-  transition-delay: 0.42s;
+.reveal-delay-3.is-revealed {
+  transition-delay: 0.48s !important;
+}
+
+.reveal-delay-4.is-revealed {
+  transition-delay: 0.64s !important;
 }
 
 /* ═══════════ SCROLL REVEAL ANIMATION ═══════════ */

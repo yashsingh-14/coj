@@ -614,13 +614,16 @@ export default function ExperienceOverlay({ initialData }: {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-revealed');
+                    } else {
+                        // Reset when leaving viewport so re-scrolling up or down always triggers the wave animation
+                        entry.target.classList.remove('is-revealed');
                     }
                 });
             },
             {
                 root: null,
-                rootMargin: '0px 0px -50px 0px',
-                threshold: 0.08,
+                rootMargin: '-20px 0px -40px 0px',
+                threshold: 0.05,
             }
         );
 
@@ -911,14 +914,14 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay for heavenly depth */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8 reveal-from-left">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
                     {/* Minimalist Editorial Title: Our Mission */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-from-left">
                         Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
                     </h2>
 
                     {/* COJ Original Mission Statement with Shimmering Italic Accents */}
-                    <div className="flex justify-center max-w-3xl mx-auto">
+                    <div className="flex justify-center max-w-3xl mx-auto reveal-from-left reveal-delay-1">
                         <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center">
                             To <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">prepare people</span> across the world for the <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">second coming</span> of Jesus Christ.
                         </p>
@@ -1251,18 +1254,18 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-from-right">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8">
                     {/* Editorial Title */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-from-right">
                         Stay <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Connected</span>
                     </h2>
 
-                    <p className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight leading-relaxed text-white/80 max-w-2xl mx-auto">
+                    <p className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight leading-relaxed text-white/80 max-w-2xl mx-auto reveal-from-right reveal-delay-1">
                         Receive weekly spirit-filled devotionals, fresh worship releases, and prophetic updates directly in your inbox.
                     </p>
 
                     {/* Clean Centered Email Subscription */}
-                    <div className="max-w-lg mx-auto pt-4">
+                    <div className="max-w-lg mx-auto pt-4 reveal-from-right reveal-delay-2">
                         <form
                             onSubmit={async (e) => {
                                 e.preventDefault();
