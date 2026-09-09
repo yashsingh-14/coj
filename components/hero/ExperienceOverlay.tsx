@@ -1310,48 +1310,6 @@ export default function ExperienceOverlay({ initialData }: {
                             No spam ever. Unsubscribe with one click anytime.
                         </p>
 
-                        {/* Real-time Connect Channels */}
-                        <div className="pt-8 border-t border-white/10 mt-8">
-                            <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-white/50 mb-4">
-                                Instant Real-Time Connect
-                            </p>
-                            <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-                                <a
-                                    href="https://wa.me/918928394853?text=Praise%20the%20Lord%2C%20I%20want%20to%20connect%20with%20Call%20of%20Jesus%20Ministries"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 hover:border-emerald-400 text-emerald-300 text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 hover:bg-emerald-500/25"
-                                >
-                                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                                    <span>WhatsApp</span>
-                                </a>
-                                <a
-                                    href="https://www.instagram.com/callofjesusministries"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-pink-500/15 border border-pink-500/30 hover:border-pink-400 text-pink-300 text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 hover:bg-pink-500/25"
-                                >
-                                    <Instagram className="w-3.5 h-3.5 text-pink-400" />
-                                    <span>Instagram</span>
-                                </a>
-                                <a
-                                    href="https://www.youtube.com/@callofjesusministries"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-red-500/15 border border-red-500/30 hover:border-red-400 text-red-300 text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 hover:bg-red-500/25"
-                                >
-                                    <Youtube className="w-3.5 h-3.5 text-red-400" />
-                                    <span>YouTube</span>
-                                </a>
-                                <a
-                                    href="tel:+918928394853"
-                                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-amber-500/15 border border-amber-500/30 hover:border-amber-400 text-amber-300 text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 hover:bg-amber-500/25"
-                                >
-                                    <Phone className="w-3.5 h-3.5 text-amber-400" />
-                                    <span>Prayer Line</span>
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -1389,47 +1347,6 @@ export default function ExperienceOverlay({ initialData }: {
                             <p className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-sm">
                                 A spiritual home for every believer. Proclaiming the New Covenant Gospel of Grace, supernatural breakthrough, and raising radical lovers of Jesus worldwide.
                             </p>
-                            <div className="pt-1 space-y-1 text-xs text-white/60">
-                                <p className="flex items-start gap-2">
-                                    <MapPin className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
-                                    <span>Kalyan East, Malangad Road, Maharashtra - 421306</span>
-                                </p>
-                                <p className="flex items-center gap-2">
-                                    <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                    <a href="tel:+918928394853" className="hover:text-amber-400 transition-colors">
-                                        Prayer Line: +91 89283 94853
-                                    </a>
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-2.5 pt-1">
-                                <a
-                                    href="https://wa.me/918928394853?text=Praise%20the%20Lord%2C%20I%20want%20to%20connect%20with%20Call%20of%20Jesus%20Ministries"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/10 flex items-center justify-center text-white/70 hover:text-emerald-400 transition-all"
-                                    title="WhatsApp"
-                                >
-                                    <MessageCircle className="w-4 h-4" />
-                                </a>
-                                <a
-                                    href="https://www.instagram.com/callofjesusministries"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-pink-500/50 hover:bg-pink-500/10 flex items-center justify-center text-white/70 hover:text-pink-400 transition-all"
-                                    title="Instagram"
-                                >
-                                    <Instagram className="w-4 h-4" />
-                                </a>
-                                <a
-                                    href="https://www.youtube.com/@callofjesusministries"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-red-500/50 hover:bg-red-500/10 flex items-center justify-center text-white/70 hover:text-red-400 transition-all"
-                                    title="YouTube"
-                                >
-                                    <Youtube className="w-4 h-4" />
-                                </a>
-                            </div>
                         </div>
 
                         {/* Navigation Columns */}

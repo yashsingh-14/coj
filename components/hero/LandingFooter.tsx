@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import BlackRemoverImage from "@/components/ui/BlackRemoverImage";
 import GoldenSparkleReveal from "@/components/ui/GoldenSparkleReveal";
-import { MapPin, Phone, Instagram, Youtube, MessageCircle } from 'lucide-react';
+
 
 interface LandingFooterProps {
     onOpenUtility?: () => void;
@@ -38,47 +38,7 @@ export default function LandingFooter({ onOpenUtility }: LandingFooterProps) {
                         <p className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-sm">
                             A spiritual home for every believer. Proclaiming the New Covenant Gospel of Grace, supernatural breakthrough, and raising radical lovers of Jesus worldwide.
                         </p>
-                        <div className="pt-1 space-y-1 text-xs text-white/60">
-                            <p className="flex items-start gap-2">
-                                <MapPin className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
-                                <span>Kalyan East, Malangad Road, Maharashtra - 421306</span>
-                            </p>
-                            <p className="flex items-center gap-2">
-                                <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                <a href="tel:+918928394853" className="hover:text-amber-400 transition-colors">
-                                    Prayer Line: +91 89283 94853
-                                </a>
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-2.5 pt-1">
-                            <a
-                                href="https://wa.me/918928394853?text=Praise%20the%20Lord%2C%20I%20want%20to%20connect%20with%20Call%20of%20Jesus%20Ministries"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/10 flex items-center justify-center text-white/70 hover:text-emerald-400 transition-all"
-                                title="WhatsApp"
-                            >
-                                <MessageCircle className="w-4 h-4" />
-                            </a>
-                            <a
-                                href="https://www.instagram.com/callofjesusministries"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-pink-500/50 hover:bg-pink-500/10 flex items-center justify-center text-white/70 hover:text-pink-400 transition-all"
-                                title="Instagram"
-                            >
-                                <Instagram className="w-4 h-4" />
-                            </a>
-                            <a
-                                href="https://www.youtube.com/@callofjesusministries"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:border-red-500/50 hover:bg-red-500/10 flex items-center justify-center text-white/70 hover:text-red-400 transition-all"
-                                title="YouTube"
-                            >
-                                <Youtube className="w-4 h-4" />
-                            </a>
-                        </div>
+
                     </div>
 
                     {/* Navigation Columns */}
