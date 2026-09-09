@@ -22,6 +22,7 @@ import CircularTestimonials from "@/components/ui/CircularTestimonials";
 import LiquidButton from "@/components/ui/LiquidButton";
 import KineticMarquee from "./KineticMarquee";
 import MinistryAccordion from "@/components/home/MinistryAccordion";
+import GoldenSparkleReveal from "@/components/ui/GoldenSparkleReveal";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -918,21 +919,19 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[850px] h-[350px] sm:h-[480px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.18)_0%,rgba(255,90,46,0.08)_40%,transparent_70%)] blur-3xl transform-gpu pointer-events-none" />
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
-                    {/* Minimalist Editorial Title: Our Mission with Cinematic Sparkling Reveal */}
-                    <div className="reveal-cinematic-sparkle">
+                    {/* Minimalist Editorial Title: Our Mission with Golden Glitter Particle Sweep */}
+                    <GoldenSparkleReveal duration={1800} delay={100}>
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
-                            <span className="sparkle-text">
-                                Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
-                            </span>
+                            Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
                         </h2>
-                    </div>
+                    </GoldenSparkleReveal>
 
-                    {/* COJ Original Mission Statement with Sparkling Wave Reveal */}
-                    <div className="flex justify-center max-w-3xl mx-auto reveal-cinematic-sparkle reveal-delay-1">
-                        <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center sparkle-text drop-shadow-[0_4px_30px_rgba(245,158,11,0.25)]">
+                    {/* COJ Original Mission Statement with Golden Glitter Particle Sweep */}
+                    <GoldenSparkleReveal duration={2400} delay={450} className="flex justify-center max-w-3xl mx-auto">
+                        <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center drop-shadow-[0_4px_30px_rgba(245,158,11,0.25)]">
                             To <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">prepare people</span> across the world for the <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">second coming</span> of Jesus Christ.
                         </p>
-                    </div>
+                    </GoldenSparkleReveal>
                 </div>
             </section>
 
