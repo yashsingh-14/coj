@@ -39,40 +39,81 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [isDevLoggingIn, setIsDevLoggingIn] = useState(false);
 
+    const verifyAdminUser = async (user: any): Promise<boolean> => {
+        const userEmail = (user.email || '').toLowerCase().trim();
+        const ADMIN_EMAILS = ['ys181544@gmail.com', 'callofjesus2015@gmail.com'];
+
+        if (userEmail && ADMIN_EMAILS.includes(userEmail)) {
+            setIsAdmin(true);
+            setIsLoading(false);
+            try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
+            return true;
+        }
+
+        // Verify with server action
+        const result = await checkIsAdmin(user.id, userEmail);
+        if (result.isAdmin) {
+            setIsAdmin(true);
+            setIsLoading(false);
+            try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
+            return true;
+        } else {
+            setIsAdmin(false);
+            setIsLoading(false);
+            try { sessionStorage.removeItem('coj_admin_auth'); } catch {}
+            toast.error("Access Denied: Your account is not an Admin");
+            return false;
+        }
+    };
+
     const verifyAdmin = async () => {
         try {
-            // Check session first (0ms local storage check)
+            // Clean up URL hash if returned from OAuth redirect
+            if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+                const { data: { session: urlSession } } = await supabase.auth.getSession();
+                window.history.replaceState(null, '', window.location.pathname);
+                if (urlSession?.user) {
+                    return await verifyAdminUser(urlSession.user);
+                }
+            }
+
             const { data: { session } } = await supabase.auth.getSession();
 
             if (!session?.user) {
+                // If this tab was already verified, give a grace period before revoking
+                if (typeof window !== 'undefined' && sessionStorage.getItem('coj_admin_auth') === 'true') {
+                    await new Promise(r => setTimeout(r, 400));
+                    const { data: { session: retrySession } } = await supabase.auth.getSession();
+                    if (retrySession?.user) {
+                        return await verifyAdminUser(retrySession.user);
+                    }
+                    sessionStorage.removeItem('coj_admin_auth');
+                }
                 setIsLoading(false);
                 setIsAdmin(false);
                 return;
             }
 
-            if (session.user.email === 'ys181544@gmail.com' || session.user.email === 'callofjesus2015@gmail.com') {
-                setIsAdmin(true);
-                setIsLoading(false);
-                return;
-            }
-
-            // Verify with server action
-            const result = await checkIsAdmin(session.user.id);
-            if (result.isAdmin) {
+            await verifyAdminUser(session.user);
+        } catch (err) {
+            console.error('[Admin] Verify error:', err);
+            if (typeof window !== 'undefined' && sessionStorage.getItem('coj_admin_auth') === 'true') {
                 setIsAdmin(true);
             } else {
                 setIsAdmin(false);
-                toast.error("Access Denied: Your account is not an Admin");
             }
-        } catch (err) {
-            console.error('[Admin] Verify error:', err);
-            setIsAdmin(false);
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
+        // Fast local check for zero-flicker UI on subroute navigation
+        if (typeof window !== 'undefined' && sessionStorage.getItem('coj_admin_auth') === 'true') {
+            setIsAdmin(true);
+            setIsLoading(false);
+        }
+
         // Safety timeout so it NEVER hangs
         const timer = setTimeout(() => {
             setIsLoading(false);
@@ -80,11 +121,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         verifyAdmin();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-            if (session?.user) {
-                verifyAdmin();
-            } else {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_OUT') {
+                try { sessionStorage.removeItem('coj_admin_auth'); } catch {}
                 setIsAdmin(false);
+                setIsLoading(false);
+                return;
+            }
+
+            if (session?.user) {
+                await verifyAdminUser(session.user);
             }
         });
 
@@ -108,7 +154,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 toast.error(error.message);
             } else if (data.user) {
                 toast.success("Signed in successfully!");
-                await verifyAdmin();
+                await verifyAdminUser(data.user);
             }
         } catch (err: any) {
             toast.error(err.message || "Failed to sign in");
@@ -138,7 +184,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             toast.success("Welcome, Yash Singh (Admin)! 🚀");
             setIsAdmin(true);
-            await verifyAdmin();
+            try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
+            if (data.user) {
+                await verifyAdminUser(data.user);
+            }
         } catch (err: any) {
             console.error("Dev login error:", err);
             toast.error("Dev login failed: " + err.message);
@@ -151,9 +200,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: `${window.location.origin}/admin`
+                redirectTo: `${window.location.origin}/admin`,
+                queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                },
             }
         });
+    };
+
+    const handleSignOut = async () => {
+        try {
+            try { sessionStorage.removeItem('coj_admin_auth'); } catch {}
+            await supabase.auth.signOut();
+            setIsAdmin(false);
+            toast.success("Signed out successfully");
+            router.push('/admin');
+        } catch (err) {
+            console.error('Sign out error:', err);
+        }
     };
 
     // 1. LOADING STATE
@@ -323,10 +388,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/settings" icon={Settings} label="Global Settings" /></div>
                 </nav>
 
-                <div className="p-4 border-t border-white/5">
-                    <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">
-                        <LogOut className="w-4 h-4" /> Exit to App
+                <div className="p-4 border-t border-white/5 space-y-1">
+                    <Link href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">
+                        <Home className="w-4 h-4" /> Exit to App
                     </Link>
+                    <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-colors text-sm font-medium text-left"
+                    >
+                        <LogOut className="w-4 h-4" /> Sign Out
+                    </button>
                 </div>
             </aside>
 
@@ -355,10 +426,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
 function AdminNavLink({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
     const pathname = usePathname();
-    // Improved active state checking that handles sub-routes
-    // e.g. /admin/songs/new should keep /admin/songs active? 
-    // Ideally exact match for dashboard, partial for others if nested.
-    // Simplifying: if pathname starts with href (and href is not just /admin unless it is exactly /admin)
 
     let active = false;
     if (href === '/admin') {

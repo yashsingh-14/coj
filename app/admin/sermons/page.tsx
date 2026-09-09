@@ -24,17 +24,22 @@ export default function AdminSermonsPage() {
 
     const fetchConfig = async () => {
         setIsLoading(true);
-        const { data } = await supabase.from('site_settings').select('*').eq('key', 'youtube_config').single();
-        if (data && data.value) {
-            setConfig({
-                channelId: data.value.channelId || '',
-                channelHandle: data.value.channelHandle || '',
-                isLiveOverride: data.value.isLiveOverride || false,
-                liveVideoId: data.value.liveVideoId || '',
-                liveTitle: data.value.liveTitle || ''
-            });
+        try {
+            const { data } = await supabase.from('site_settings').select('*').eq('key', 'youtube_config').single();
+            if (data && data.value) {
+                setConfig({
+                    channelId: data.value.channelId || '',
+                    channelHandle: data.value.channelHandle || '',
+                    isLiveOverride: data.value.isLiveOverride || false,
+                    liveVideoId: data.value.liveVideoId || '',
+                    liveTitle: data.value.liveTitle || ''
+                });
+            }
+        } catch (err) {
+            console.error("Error fetching sermons config:", err);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     const handleSave = async (e: React.FormEvent) => {

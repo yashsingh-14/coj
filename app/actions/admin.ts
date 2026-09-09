@@ -150,21 +150,42 @@ export async function updateUserRoleAdmin(userId: string, newRole: string) {
     return { success: true };
 }
 
-export async function checkIsAdmin(userId: string): Promise<{ isAdmin: boolean; error?: string }> {
+export async function checkIsAdmin(userId: string, userEmail?: string): Promise<{ isAdmin: boolean; error?: string }> {
     if (!adminDb) return { isAdmin: false, error: "Admin Key Context Missing" };
+
+    const normalizedEmail = (userEmail || '').toLowerCase().trim();
+    const ADMIN_EMAILS = ['ys181544@gmail.com', 'callofjesus2015@gmail.com'];
+
+    if (normalizedEmail && ADMIN_EMAILS.includes(normalizedEmail)) {
+        return { isAdmin: true };
+    }
 
     const { data: profile, error } = await adminDb
         .from('profiles')
-        .select('role')
+        .select('role, email')
         .eq('id', userId)
         .single();
 
-    if (error) {
-        console.error("Admin Check Error:", error);
-        return { isAdmin: false, error: error.message };
+    if (!error && profile) {
+        if (profile.role === 'admin') return { isAdmin: true };
+        if (profile.email && ADMIN_EMAILS.includes(profile.email.toLowerCase().trim())) {
+            return { isAdmin: true };
+        }
     }
 
-    return { isAdmin: profile?.role === 'admin' };
+    if (normalizedEmail) {
+        const { data: profileByEmail } = await adminDb
+            .from('profiles')
+            .select('role')
+            .eq('email', normalizedEmail)
+            .single();
+
+        if (profileByEmail && profileByEmail.role === 'admin') {
+            return { isAdmin: true };
+        }
+    }
+
+    return { isAdmin: false };
 }
 
 export async function getContactMessagesAdmin() {
