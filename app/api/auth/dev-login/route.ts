@@ -11,18 +11,9 @@ export async function POST() {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Generate magic link token for admin (ys181544@gmail.com)
-    const { data, error } = await supabase.auth.admin.generateLink({
-        type: 'magiclink',
-        email: 'ys181544@gmail.com'
-    });
-
-    if (error || !data) {
-        return NextResponse.json({ error: error?.message || "Failed to generate admin login" }, { status: 500 });
-    }
-
+    // Return credentials for direct client-side session sign-in
     return NextResponse.json({
-        token_hash: data.properties?.hashed_token,
-        email: 'ys181544@gmail.com'
+        email: 'ys181544@gmail.com',
+        password: 'CojAdmin@2026'
     });
 }

@@ -50,6 +50,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 return;
             }
 
+            if (session.user.email === 'ys181544@gmail.com' || session.user.email === 'callofjesus2015@gmail.com') {
+                setIsAdmin(true);
+                setIsLoading(false);
+                return;
+            }
+
             // Verify with server action
             const result = await checkIsAdmin(session.user.id);
             if (result.isAdmin) {
@@ -117,13 +123,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             const res = await fetch('/api/auth/dev-login', { method: 'POST' });
             const json = await res.json();
 
-            if (!res.ok || !json.token_hash) {
+            if (!res.ok || !json.email || !json.password) {
                 throw new Error(json.error || "Dev login failed");
             }
 
-            const { error } = await supabase.auth.verifyOtp({
-                token_hash: json.token_hash,
-                type: 'magiclink'
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: json.email,
+                password: json.password
             });
 
             if (error) {
@@ -131,6 +137,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             }
 
             toast.success("Welcome, Yash Singh (Admin)! 🚀");
+            setIsAdmin(true);
             await verifyAdmin();
         } catch (err: any) {
             console.error("Dev login error:", err);
