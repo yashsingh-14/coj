@@ -170,17 +170,17 @@ function SectionSeam({ variant = 'amber' }: { variant?: 'amber' | 'rose' | 'purp
 // ══════════════════════════════════════════════════════════════════════
 const HERO_VIDEOS = [
     {
+        id: 'intro',
+        src: '/videos/coj intro video.mp4',
+        title: 'Call of Jesus Ministries',
+        tag: 'Worship Experience',
+        label: '01'
+    },
+    {
         id: 'anniversary',
         src: '/videos/coj video for hero annivercery.mp4',
         title: '12th Anniversary Celebration',
         tag: 'Anniversary Special',
-        label: '01'
-    },
-    {
-        id: 'worship',
-        src: '/videos/coj video.mp4',
-        title: 'Call of Jesus Ministries',
-        tag: 'Worship Experience',
         label: '02'
     }
 ];
@@ -340,7 +340,7 @@ function HeroSection() {
             <div className="hidden md:block hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
                 <video
                     ref={video1Ref}
-                    src="/videos/coj%20video%20for%20hero%20annivercery.mp4"
+                    src="/videos/coj%20intro%20video.mp4"
                     autoPlay
                     muted={isVideoMuted}
                     playsInline
@@ -402,7 +402,7 @@ function HeroSection() {
                 >
                     <video
                         ref={mobileMiddleVidRef}
-                        src="/videos/hero-mobile-middle.mp4"
+                        src="/videos/coj%20intro%20video.mp4"
                         poster="/videos/hero-poster-middle.jpg"
                         autoPlay
                         muted
