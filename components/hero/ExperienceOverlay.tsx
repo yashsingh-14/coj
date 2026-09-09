@@ -628,7 +628,7 @@ export default function ExperienceOverlay({ initialData }: {
         );
 
         const registerElements = () => {
-            const elements = document.querySelectorAll('.reveal-from-left, .reveal-from-right, .reveal-on-scroll');
+            const elements = document.querySelectorAll('.reveal-from-left, .reveal-from-right, .reveal-on-scroll, .reveal-smoky-wave');
             elements.forEach((el) => {
                 observer.observe(el);
             });
@@ -644,7 +644,7 @@ export default function ExperienceOverlay({ initialData }: {
         // so re-scrolling downward plays the luxury entrance animations again
         const handleResetAtTop = () => {
             if (window.scrollY < 80) {
-                const elements = document.querySelectorAll('.reveal-from-left, .reveal-from-right, .reveal-on-scroll');
+                const elements = document.querySelectorAll('.reveal-from-left, .reveal-from-right, .reveal-on-scroll, .reveal-smoky-wave');
                 elements.forEach((el) => {
                     el.classList.remove('is-revealed');
                 });
@@ -914,17 +914,36 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay for heavenly depth */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
-                    {/* Minimalist Editorial Title: Our Mission */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-from-left">
-                        Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
-                    </h2>
+                {/* Central Cinematic Smoky Veil Aura */}
+                <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] sm:w-[850px] h-[350px] sm:h-[480px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.18)_0%,rgba(255,90,46,0.08)_40%,transparent_70%)] blur-3xl transform-gpu pointer-events-none" />
 
-                    {/* COJ Original Mission Statement with Shimmering Italic Accents */}
-                    <div className="flex justify-center max-w-3xl mx-auto reveal-from-left reveal-delay-1">
-                        <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
+                    {/* Minimalist Editorial Title: Our Mission with Smoky Wave Reveal */}
+                    <div className="reveal-smoky-wave">
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/25 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-amber-300 mb-4">
+                            <span>✦ The Eternal Mandate ✦</span>
+                        </div>
+                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
+                            Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
+                        </h2>
+                    </div>
+
+                    {/* COJ Original Mission Statement with Smoky Wave Reveal */}
+                    <div className="flex justify-center max-w-3xl mx-auto reveal-smoky-wave reveal-delay-1">
+                        <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center drop-shadow-[0_4px_30px_rgba(245,158,11,0.18)]">
                             To <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">prepare people</span> across the world for the <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">second coming</span> of Jesus Christ.
                         </p>
+                    </div>
+
+                    {/* Sacred Scripture Anchor Quote */}
+                    <div className="flex items-center justify-center gap-3 pt-2 reveal-smoky-wave reveal-delay-2">
+                        <span className="text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase text-amber-400/90 font-space">
+                            Revelation 22:20
+                        </span>
+                        <span className="text-white/30">•</span>
+                        <span className="text-xs sm:text-sm font-serif italic text-white/60">
+                            &ldquo;Surely I am coming quickly.&rdquo;
+                        </span>
                     </div>
                 </div>
             </section>
