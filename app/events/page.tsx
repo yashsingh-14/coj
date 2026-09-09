@@ -17,9 +17,39 @@ const ICON_MAP: Record<string, any> = {
     Sparkles
 };
 
+const DEFAULT_EVENTS = [
+    {
+        icon: Sun,
+        color: 'text-amber-400',
+        gradient: 'from-amber-500/20 to-orange-500/10',
+        titleEn: 'Sunday Worship Service',
+        timeEn: 'Every Sunday · 10:30 AM – 1:30 PM IST',
+        titleHi: 'रविवार की आराधना सभा',
+        timeHi: 'हर रविवार · सुबह 10:30 से दोपहर 1:30 बजे',
+    },
+    {
+        icon: BookOpen,
+        color: 'text-blue-400',
+        gradient: 'from-blue-500/20 to-indigo-500/10',
+        titleEn: 'Friday Bible Study',
+        timeEn: 'Every Friday · 7:00 PM – 9:00 PM IST',
+        titleHi: 'शुक्रवार बाइबल अध्ययन',
+        timeHi: 'हर शुक्रवार · शाम 7:00 से रात 9:00 बजे',
+    },
+    {
+        icon: Sparkles,
+        color: 'text-purple-400',
+        gradient: 'from-purple-500/20 to-pink-500/10',
+        titleEn: 'Prayer Line & Healing Ministry',
+        timeEn: 'Helpline: +91 89283 94853 (Call / WhatsApp)',
+        titleHi: 'प्रार्थना हेल्पलाइन एवं चंगाई सेवा',
+        timeHi: 'हेल्पलाइन: +91 89283 94853 (कॉल / व्हाट्सएप)',
+    }
+];
+
 export default function EventsPage() {
-    const [events, setEvents] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [events, setEvents] = useState<any[]>(DEFAULT_EVENTS);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchEvents() {
@@ -29,26 +59,21 @@ export default function EventsPage() {
                     .select('*')
                     .order('sort_order', { ascending: true });
 
-                if (error) throw error;
-
-                // Transform data to match UI expectations
-                const formattedEvents = (data || []).map(event => ({
-                    ...event,
-                    icon: ICON_MAP[event.icon_name] || Calendar, // Fallback icon
-                    titleEn: event.title_en,
-                    titleHi: event.title_hi,
-                    timeEn: event.time_en,
-                    timeHi: event.time_hi,
-                    descEn: event.desc_en,
-                    descHi: event.desc_hi
-                }));
-
-                setEvents(formattedEvents);
+                if (!error && data && data.length > 0) {
+                    const formattedEvents = data.map(event => ({
+                        ...event,
+                        icon: ICON_MAP[event.icon_name] || Calendar,
+                        titleEn: event.title_en,
+                        titleHi: event.title_hi,
+                        timeEn: event.time_en,
+                        timeHi: event.time_hi,
+                        descEn: event.desc_en,
+                        descHi: event.desc_hi
+                    }));
+                    setEvents(formattedEvents);
+                }
             } catch (err) {
-                console.error('Error fetching events:', err);
-                // Fallback or empty state could go here
-            } finally {
-                setLoading(false);
+                console.error('Error fetching events, using default events:', err);
             }
         }
         fetchEvents();
@@ -135,7 +160,11 @@ export default function EventsPage() {
                     </div>
                 )}
 
-                <div className="mt-16 text-center">
+                <div className="mt-16 text-center space-y-4">
+                    <p className="text-white/60 text-sm max-w-md mx-auto">
+                        📍 <span className="font-semibold text-white">Call of Jesus Ministries Church Hall</span><br />
+                        Near Adivali Talab, Namashkar Dhaba, Malangad Road, Kalyan East - 421306
+                    </p>
                     <a
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"
