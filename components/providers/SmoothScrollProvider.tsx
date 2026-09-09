@@ -4,6 +4,12 @@ import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import { usePathname } from 'next/navigation';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function SmoothScrollProvider({
     children,
@@ -29,22 +35,15 @@ export default function SmoothScrollProvider({
         lenisRef.current = lenis;
         (window as any).lenis = lenis;
 
-        // Continuous requestAnimationFrame loop
-        let rafId: number;
-        function raf(time: number) {
-            lenis.raf(time);
-            rafId = requestAnimationFrame(raf);
-        }
-        rafId = requestAnimationFrame(raf);
+        // Sync Lenis scroll events with ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
 
-        // Sync with GSAP ScrollTrigger if available
-        try {
-            import('gsap/ScrollTrigger')
-                .then(({ ScrollTrigger }) => {
-                    lenis.on('scroll', () => ScrollTrigger.update());
-                })
-                .catch(() => {});
-        } catch (_) {}
+        // Drive Lenis directly via GSAP ticker for 100% frame-perfect pin synchronization
+        const updateLenis = (time: number) => {
+            lenis.raf(time * 1000);
+        };
+        gsap.ticker.add(updateLenis);
+        gsap.ticker.lagSmoothing(0);
 
         // Handle smooth internal hash/anchor links (#vision, #gatherings, etc.)
         const handleAnchorClick = (e: MouseEvent) => {
@@ -64,7 +63,7 @@ export default function SmoothScrollProvider({
 
         return () => {
             document.removeEventListener('click', handleAnchorClick);
-            cancelAnimationFrame(rafId);
+            gsap.ticker.remove(updateLenis);
             lenis.destroy();
             lenisRef.current = null;
             if ((window as any).lenis === lenis) {
