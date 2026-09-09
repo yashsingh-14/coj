@@ -18,7 +18,12 @@ import {
     Youtube,
     BookOpen,
     Bell,
-    MessageSquare
+    MessageSquare,
+    Lock,
+    Mail,
+    ArrowRight,
+    Sparkles,
+    Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -28,48 +33,238 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [isLoading, setIsLoading] = useState(true);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    useEffect(() => {
-        const checkAdmin = async () => {
-            try {
-                // Get authenticated user (validates token with Supabase server)
-                const { data: { user }, error: userError } = await supabase.auth.getUser();
-                console.log('[Admin] getUser result:', user?.id || 'null', 'error:', userError?.message || 'none');
+    // Login form state
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [isDevLoggingIn, setIsDevLoggingIn] = useState(false);
 
-                if (!user) {
-                    setIsLoading(false);
-                    router.push('/signin');
-                    return;
-                }
+    const verifyAdmin = async () => {
+        try {
+            // Check session first (0ms local storage check)
+            const { data: { session } } = await supabase.auth.getSession();
 
-                // Check admin role via server action (bypasses RLS)
-                const result = await checkIsAdmin(user.id);
-                console.log('[Admin] checkIsAdmin result:', result);
-
-                if (result.isAdmin) {
-                    setIsAdmin(true);
-                } else {
-                    toast.error("Access Denied: Admins Only");
-                    router.push('/');
-                }
-            } catch (err) {
-                console.error('[Admin] Error:', err);
-                router.push('/signin');
+            if (!session?.user) {
+                setIsLoading(false);
+                setIsAdmin(false);
+                return;
             }
+
+            // Verify with server action
+            const result = await checkIsAdmin(session.user.id);
+            if (result.isAdmin) {
+                setIsAdmin(true);
+            } else {
+                setIsAdmin(false);
+                toast.error("Access Denied: Your account is not an Admin");
+            }
+        } catch (err) {
+            console.error('[Admin] Verify error:', err);
+            setIsAdmin(false);
+        } finally {
             setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        // Safety timeout so it NEVER hangs
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 3000);
+
+        verifyAdmin();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (session?.user) {
+                verifyAdmin();
+            } else {
+                setIsAdmin(false);
+            }
+        });
+
+        return () => {
+            clearTimeout(timer);
+            subscription.unsubscribe();
         };
+    }, []);
 
-        checkAdmin();
-    }, [router]);
+    const handlePasswordLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) {
+            toast.error("Please enter email and password");
+            return;
+        }
 
+        setIsLoggingIn(true);
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                toast.error(error.message);
+            } else if (data.user) {
+                toast.success("Signed in successfully!");
+                await verifyAdmin();
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Failed to sign in");
+        } finally {
+            setIsLoggingIn(false);
+        }
+    };
+
+    const handleDevOneClickLogin = async () => {
+        setIsDevLoggingIn(true);
+        try {
+            const res = await fetch('/api/auth/dev-login', { method: 'POST' });
+            const json = await res.json();
+
+            if (!res.ok || !json.token_hash) {
+                throw new Error(json.error || "Dev login failed");
+            }
+
+            const { error } = await supabase.auth.verifyOtp({
+                token_hash: json.token_hash,
+                type: 'magiclink'
+            });
+
+            if (error) {
+                throw error;
+            }
+
+            toast.success("Welcome, Yash Singh (Admin)! 🚀");
+            await verifyAdmin();
+        } catch (err: any) {
+            console.error("Dev login error:", err);
+            toast.error("Dev login failed: " + err.message);
+        } finally {
+            setIsDevLoggingIn(false);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/admin`
+            }
+        });
+    };
+
+    // 1. LOADING STATE
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#02000F] flex items-center justify-center">
+            <div className="min-h-screen bg-[#02000F] flex flex-col items-center justify-center space-y-4">
                 <div className="w-12 h-12 border-4 border-white/10 border-t-amber-500 rounded-full animate-spin"></div>
+                <p className="text-xs text-white/40 font-mono tracking-widest uppercase">Verifying Admin Access...</p>
             </div>
         );
     }
 
-    if (!isAdmin) return null;
+    // 2. UNAUTHENTICATED / NOT ADMIN: SHOW ADMIN ACCESS SCREEN
+    if (!isAdmin) {
+        return (
+            <div className="min-h-screen bg-[#02000F] text-white flex items-center justify-center p-4 relative overflow-hidden">
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.15)_0%,transparent_70%)] rounded-full pointer-events-none" />
+
+                <div className="relative z-10 w-full max-w-md bg-[#0D0B12] border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                    <div className="text-center space-y-2">
+                        <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/10">
+                            <ShieldAlert className="w-7 h-7" />
+                        </div>
+                        <h1 className="text-2xl font-black text-white tracking-tight">COJ Studio</h1>
+                        <p className="text-xs text-white/50">Admin credentials required to access this portal.</p>
+                    </div>
+
+                    {/* 1-Click Admin Access */}
+                    <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-orange-500/10 border border-amber-500/30 text-center space-y-2">
+                        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-300">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Authorized Admin Account</span>
+                        </div>
+                        <p className="text-[11px] text-white/60">Log in instantly as <strong>Yash Singh</strong> (ys181544@gmail.com)</p>
+                        <button
+                            type="button"
+                            onClick={handleDevOneClickLogin}
+                            disabled={isDevLoggingIn}
+                            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold text-xs uppercase tracking-wider transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                        >
+                            {isDevLoggingIn ? (
+                                <>
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                    <span>Authenticating...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>⚡ 1-Click Admin Access</span>
+                                    <ArrowRight className="w-3.5 h-3.5" />
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-3 text-xs text-white/30">
+                        <div className="flex-1 h-px bg-white/10" />
+                        <span>OR SIGN IN WITH PASSWORD</span>
+                        <div className="flex-1 h-px bg-white/10" />
+                    </div>
+
+                    {/* Email/Password Form */}
+                    <form onSubmit={handlePasswordLogin} className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold uppercase tracking-wider text-white/50">Email</label>
+                            <div className="relative">
+                                <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="callofjesus2015@gmail.com"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/50 text-sm text-white placeholder-white/30 focus:outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold uppercase tracking-wider text-white/50">Password</label>
+                            <div className="relative">
+                                <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                                <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/50 text-sm text-white placeholder-white/30 focus:outline-none transition-colors"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoggingIn}
+                            className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            {isLoggingIn ? 'Verifying...' : 'Sign In with Password'}
+                        </button>
+                    </form>
+
+                    {/* Google Login */}
+                    <button
+                        type="button"
+                        onClick={handleGoogleLogin}
+                        className="w-full py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white/70 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-2"
+                    >
+                        <span>Sign in with Google</span>
+                    </button>
+
+                    <div className="pt-2 text-center">
+                        <Link href="/" className="text-xs text-white/40 hover:text-amber-400 transition-colors">
+                            ← Back to Main Website
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#02000F] flex flex-col md:flex-row">

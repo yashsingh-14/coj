@@ -1,13 +1,7 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-    // Only allow in development
-    if (process.env.NODE_ENV !== 'development' && !process.env.NEXT_PUBLIC_ALLOW_DEV_LOGIN) {
-        // Optional safety catch, though we'll allow it for now on localhost
-    }
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -17,21 +11,18 @@ export async function POST() {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Get the first user
-    const { data: { users }, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
+    // Generate magic link token for admin (ys181544@gmail.com)
+    const { data, error } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: 'ys181544@gmail.com'
+    });
 
-    if (error || !users || users.length === 0) {
-        return NextResponse.json({ error: "No users found in database" }, { status: 404 });
+    if (error || !data) {
+        return NextResponse.json({ error: error?.message || "Failed to generate admin login" }, { status: 500 });
     }
 
-    const user = users[0];
-
     return NextResponse.json({
-        user: {
-            id: user.id,
-            email: user.email,
-            name: user.user_metadata?.full_name || user.email?.split('@')[0] || "Dev User",
-            avatar: user.user_metadata?.avatar_url
-        }
+        token_hash: data.properties?.hashed_token,
+        email: 'ys181544@gmail.com'
     });
 }
