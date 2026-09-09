@@ -1,53 +1,42 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, HeartHandshake } from 'lucide-react';
+import { Sparkles, HeartHandshake, ArrowRight, BookOpen } from 'lucide-react';
 import LandingNavbar from '@/components/hero/LandingNavbar';
 
 export const metadata = {
     title: "God Stories & Testimonies | Call of Jesus Ministries",
-    description: "Read supernatural healing, deliverance, and miracle testimonies of how Lord Jesus Christ is transforming lives daily at Call of Jesus Ministries."
+    description: "Read supernatural healing, deliverance, and miracle testimonies of how Lord Jesus Christ is transforming lives at Call of Jesus Ministries, Kalyan East."
 };
 
 const storiesData = [
     {
         id: 1,
-        title: "Brother Rajesh - Cancer Healed at the Altar",
+        title: "Cancer Healed — A Medical Miracle at the Altar",
         category: "Miracle Healing",
-        image: "/images/stories/story-1.webp",
-        snippet: "Diagnosed with stage 3 cancer, faith moved mountains. Post-service PET scans showed zero cancer cells remaining!",
-        fullText: "Diagnosed with stage 3 cancer, Brother Rajesh came to the Call of Jesus Ministries healing service with faith that moved mountains. After anointed prayer at the altar, repeated diagnostic screenings and post-service PET scans showed zero cancer cells remaining in his body! By His stripes, he is completely healed and alive to praise the Lord Jesus Christ."
+        snippet: "Diagnosed with stage 3 cancer, faith moved mountains. After anointed prayer at the altar, post-service PET scans showed zero cancer cells remaining. By His stripes, completely healed!",
     },
     {
         id: 2,
-        title: "Youth Revival - Overcomers Conference Breakthrough",
+        title: "Youth Revival — Overcomers Conference Breakthrough",
         category: "Deliverance & Revival",
-        image: "/images/stories/story-2.webp",
-        snippet: "Hundreds of young lives delivered from addiction and depression as Holy Spirit swept the auditorium.",
-        fullText: "During the Overcomers Youth Conference, hundreds of young lives were delivered from substance abuse, chronic depression, and suicidal ideation in a single anointed night. The tangible power of the Holy Spirit moved through the auditorium, restoring purpose, purity, and passion for God."
+        snippet: "Hundreds of young lives were delivered from substance abuse, chronic depression, and suicidal ideation in a single anointed night. The tangible power of the Holy Spirit moved through the auditorium, restoring purpose and passion for God.",
     },
     {
         id: 3,
-        title: "Sister Priya & Worship Team - Delivered from Panic & Depression",
+        title: "8 Years of Panic Attacks — Shattered by Worship",
         category: "Inner Healing & Freedom",
-        image: "/images/stories/story-3.webp",
-        snippet: "Eight years of chronic panic attacks, sleepless nights, and fear shattered during prophetic corporate worship.",
-        fullText: "For over eight years, Sister Priya battled debilitating panic attacks, sleepless night terrors, and severe anxiety. Stepping into corporate prophetic worship at Call of Jesus Ministries, every chain shattered. Jesus filled her soul with divine supernatural peace that surpasses all human understanding."
+        snippet: "For over eight years of debilitating panic attacks, sleepless night terrors, and severe anxiety. Stepping into corporate prophetic worship at Call of Jesus Ministries, every chain shattered. Jesus filled the soul with divine supernatural peace.",
     },
     {
         id: 4,
-        title: "Sisters Fellowship - Barren Wombs Blessed & Marriages Restored",
+        title: "Barren Wombs Blessed — Marriages Restored",
         category: "Prophetic Restoration",
-        image: "/images/stories/story-4.webp",
-        snippet: "Covenant prayer bringing breakthrough in barrenness, broken families, and terminal medical verdicts.",
-        fullText: "During the annual Sisters Fellowship conference, God moved mightily among the daughters of the King. Barren sisters testified of healthy pregnancies, broken families received supernatural reconciliation, and reactive medical diagnoses were miraculously overturned."
+        snippet: "During the Sisters Fellowship conference, God moved mightily. Barren sisters testified of healthy pregnancies, broken families received supernatural reconciliation, and terminal medical diagnoses were miraculously overturned.",
     },
     {
         id: 5,
-        title: "Brother Samuel - Supernatural Debt Clearance & Provision",
+        title: "Supernatural Debt Clearance & Financial Provision",
         category: "Financial Miracle",
-        image: "/images/stories/story-5.webp",
-        snippet: "Facing imminent bankruptcy and crippling debts, obedience and prayer opened supernatural financial doors.",
-        fullText: "Standing on the absolute verge of total business bankruptcy with mounting debts, Brother Samuel anchored his soul on God's covenant promises. Within 90 days, unexpected supernatural contracts were signed and complete debt clearance took place. God supplied every single need exceedingly!"
+        snippet: "Standing on the verge of total business bankruptcy with mounting debts, faith in God's covenant promises brought breakthrough. Within 90 days, unexpected contracts were signed and complete debt clearance took place!",
     }
 ];
 
@@ -56,7 +45,7 @@ export default function GodStoriesPage() {
         <main className="min-h-screen bg-black text-white py-16 sm:py-24 px-4 sm:px-6 md:px-12">
             <LandingNavbar />
             <div className="max-w-7xl mx-auto space-y-10 sm:space-y-16 pt-8 sm:pt-12">
-                
+
                 <div className="text-center space-y-4 max-w-3xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold uppercase tracking-wider">
                         <Sparkles className="w-4 h-4 text-amber-400" />
@@ -76,15 +65,9 @@ export default function GodStoriesPage() {
                             key={story.id}
                             className="rounded-2xl sm:rounded-3xl bg-neutral-900/80 border border-white/15 overflow-hidden flex flex-col justify-between hover:border-amber-400/40 transition-all shadow-2xl"
                         >
-                            <div className="relative h-52 sm:h-64 w-full">
-                                <Image
-                                    src={story.image}
-                                    alt={story.title}
-                                    fill
-                                    unoptimized
-                                    className="object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-transparent" />
+                            {/* Icon Header instead of fake images */}
+                            <div className="relative h-28 sm:h-36 w-full bg-gradient-to-br from-amber-900/30 via-neutral-900 to-neutral-900 flex items-center justify-center">
+                                <BookOpen className="w-12 h-12 sm:w-16 sm:h-16 text-amber-500/40" />
                                 <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-amber-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
                                     {story.category}
                                 </span>
@@ -92,11 +75,11 @@ export default function GodStoriesPage() {
 
                             <div className="p-5 sm:p-8 space-y-4 flex-1 flex flex-col justify-between">
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 leading-tight">
+                                    <h2 className="text-xl sm:text-2xl font-bold text-white mb-3 leading-tight">
                                         {story.title}
                                     </h2>
                                     <p className="text-neutral-300 text-sm leading-relaxed">
-                                        {story.fullText}
+                                        {story.snippet}
                                     </p>
                                 </div>
 

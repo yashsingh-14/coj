@@ -30,16 +30,16 @@ export default function OurJourneyPage() {
                         <span className="text-xs font-mono text-amber-400 font-bold uppercase">The Inception</span>
                         <h2 className="text-2xl font-bold text-white">Humble Beginnings in Prayer</h2>
                         <p className="text-neutral-300 text-sm leading-relaxed">
-                            Call of Jesus Ministries began with a passionate hunger for the presence of God. Starting in a living room prayer meeting, believers gathered weekly to seek the Holy Spirit and enter deep worship.
+                            Call of Jesus Ministries began with a passionate hunger for the presence of God. Under the leadership of Ps. Samson Wilson, believers gathered weekly to seek the Holy Spirit and enter deep worship, starting from small prayer meetings.
                         </p>
                     </div>
 
                     <div className="relative space-y-2">
                         <div className="absolute -left-[31px] md:-left-[47px] top-1.5 w-4 h-4 rounded-full bg-amber-400 border-4 border-black" />
                         <span className="text-xs font-mono text-amber-400 font-bold uppercase">Worship & Chords Movement</span>
-                        <h2 className="text-2xl font-bold text-white">Empowering Musicians & Worshipers Globally</h2>
+                        <h2 className="text-2xl font-bold text-white">Empowering Musicians & Worshipers</h2>
                         <p className="text-neutral-300 text-sm leading-relaxed">
-                            Recognizing the need for anointed Hindi and English worship resources, COJ launched its online chords and lyrics platform, equipping worship leaders across India and worldwide.
+                            Recognizing the need for anointed Hindi and English worship resources, COJ launched its online chords and lyrics platform, equipping worship leaders across India with free, high-quality worship content.
                         </p>
                     </div>
 
@@ -48,7 +48,7 @@ export default function OurJourneyPage() {
                         <span className="text-xs font-mono text-amber-400 font-bold uppercase">Today & Beyond</span>
                         <h2 className="text-2xl font-bold text-white">Raising Radical Lovers of Jesus</h2>
                         <p className="text-neutral-300 text-sm leading-relaxed">
-                            Today, COJ Ministries continues to grow with weekly gatherings, healing services, media broadcasts, and thousands of monthly active worshipers on the digital portal.
+                            Today, COJ Ministries is established at Kalyan East (Near Adivali Talab, Malangad Road) with weekly Sunday Worship (10:30 AM) and Friday Bible Study (7:00 PM). Through live services, healing meetings, media broadcasts, and a growing digital presence, COJ continues to impact thousands of lives for the Kingdom.
                         </p>
                     </div>
                 </div>

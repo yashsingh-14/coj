@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { HeartHandshake, Send, CheckCircle2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import LandingNavbar from '@/components/hero/LandingNavbar';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function ShareTestimonyPage() {
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         fullName: '',
         phone: '',
@@ -17,14 +19,37 @@ export default function ShareTestimonyPage() {
         hasMedicalReport: 'No',
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.fullName || !formData.phone || !formData.testimony) {
             toast.error("Please fill in your name, phone number, and testimony details.");
             return;
         }
-        setSubmitted(true);
-        toast.success("Thank you! Your testimony has been submitted successfully.");
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('testimonies').insert([{
+                full_name: formData.fullName,
+                phone: formData.phone,
+                email: formData.email || null,
+                city: formData.city || null,
+                category: formData.category,
+                testimony: formData.testimony,
+                has_medical_report: formData.hasMedicalReport === 'Yes',
+            }]);
+
+            if (error) {
+                console.error('Testimony submit error:', error);
+            }
+
+            setSubmitted(true);
+            toast.success("Thank you! Your testimony has been submitted successfully.");
+        } catch (err) {
+            console.error('Testimony error:', err);
+            toast.error("Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -165,10 +190,15 @@ export default function ShareTestimonyPage() {
 
                         <button
                             type="submit"
-                            className="w-full py-4 rounded-2xl bg-white text-black font-bold text-base hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 shadow-xl"
+                            disabled={loading}
+                            className="w-full py-4 rounded-2xl bg-white text-black font-bold text-base hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 shadow-xl disabled:opacity-50"
                         >
-                            <Send className="w-5 h-5 text-black" />
-                            <span>Submit Testimony</span>
+                            {loading ? 'Submitting...' : (
+                                <>
+                                    <Send className="w-5 h-5 text-black" />
+                                    <span>Submit Testimony</span>
+                                </>
+                            )}
                         </button>
                     </form>
                 )}

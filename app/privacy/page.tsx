@@ -27,7 +27,7 @@ export default function PrivacyPage() {
                     </section>
                     <section>
                         <h2 className="text-lg sm:text-2xl font-semibold text-white mb-2 sm:mb-4">4. Contact Us</h2>
-                        <p>If you have any questions about this Privacy Policy, please contact us at support@callofjesus.com.</p>
+                        <p>If you have any questions about this Privacy Policy, please contact us via our Prayer Line at +91 89283 94853 or reach out on Instagram @callofjesusministries.</p>
                     </section>
                 </div>
             </div>

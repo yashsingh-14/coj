@@ -1,36 +1,23 @@
-import { MapPin, Calendar, Clock, Phone, Mail, Navigation } from 'lucide-react';
+import { MapPin, Calendar, Clock, Phone, Navigation } from 'lucide-react';
 import LandingNavbar from '@/components/hero/LandingNavbar';
 
 export const metadata = {
     title: "Our Branches & Service Timings | Call of Jesus Ministries",
-    description: "Find church location, service timings, and Google Maps directions for Call of Jesus Ministries Main Church Arena & extension locations."
+    description: "Find church location, service timings, and Google Maps directions for Call of Jesus Ministries Church Hall, Kalyan East."
 };
 
 const branchesData = [
     {
         id: 1,
-        name: "Call of Jesus Ministries Main Church Arena",
-        city: "New Delhi",
-        address: "Faith Arena, Near Chhatarpur / Mehrauli Express Highway, New Delhi, 110074, India",
+        name: "Call of Jesus Ministries Church Hall",
+        city: "Kalyan East",
+        address: "Near Adivali Talab, Namashkar Dhaba, Malangad Road, Kalyan East - 421306, Maharashtra, India",
         timings: [
-            { day: "Sunday Main Worship Service", time: "10:00 AM - 1:00 PM IST" },
-            { day: "Friday Prophetic & Healing Service", time: "6:30 PM - 9:00 PM IST" }
+            { day: "Sunday Worship Service", time: "10:30 AM - 1:30 PM IST" },
+            { day: "Friday Bible Study", time: "7:00 PM - 9:00 PM IST" }
         ],
-        phone: "+91 98765 43210",
-        email: "contact@callofjesus.in",
-        mapUrl: "https://maps.google.com/?q=Chhatarpur+Delhi"
-    },
-    {
-        id: 2,
-        name: "Call of Jesus Ministries Extension Branch",
-        city: "Mumbai",
-        address: "Grace Center Auditorium, Bandra West, Mumbai, Maharashtra, 400050, India",
-        timings: [
-            { day: "Sunday Evening Worship", time: "5:00 PM - 7:30 PM IST" }
-        ],
-        phone: "+91 98765 43211",
-        email: "mumbai@callofjesus.in",
-        mapUrl: "https://maps.google.com/?q=Bandra+Mumbai"
+        phone: "+91 89283 94853",
+        mapUrl: "https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
     }
 ];
 
@@ -39,21 +26,21 @@ export default function OurBranchesPage() {
         <main className="min-h-screen bg-black text-white py-16 sm:py-24 px-4 sm:px-6 md:px-12">
             <LandingNavbar />
             <div className="max-w-7xl mx-auto space-y-10 sm:space-y-16 pt-8 sm:pt-12">
-                
+
                 <div className="text-center space-y-4 max-w-3xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold uppercase tracking-wider">
                         <MapPin className="w-4 h-4 text-amber-400" />
-                        Church Locations & Gathering
+                        Church Location & Gathering
                     </div>
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight">
-                        Our <span className="font-serif italic font-normal text-amber-300">Branches</span>
+                        Our <span className="font-serif italic font-normal text-amber-300">Branch</span>
                     </h1>
                     <p className="text-neutral-300 text-base sm:text-lg md:text-xl font-light">
-                        Join us live in person or connect online to experience the transforming presence of God.
+                        Join us live in person to experience the transforming presence of God.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                <div className="max-w-2xl mx-auto">
                     {branchesData.map((branch) => (
                         <div
                             key={branch.id}
@@ -61,7 +48,7 @@ export default function OurBranchesPage() {
                         >
                             <div className="space-y-4">
                                 <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider inline-block">
-                                    {branch.city} Branch
+                                    {branch.city} — Main Branch
                                 </span>
                                 <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">
                                     {branch.name}
@@ -88,14 +75,10 @@ export default function OurBranchesPage() {
                                 </div>
 
                                 <div className="pt-2 text-xs text-neutral-400 space-y-1">
-                                    <p className="flex items-center gap-2">
+                                    <a href="tel:+918928394853" className="flex items-center gap-2 hover:text-amber-400 transition-colors">
                                         <Phone className="w-3.5 h-3.5 text-amber-400" />
-                                        <span>{branch.phone}</span>
-                                    </p>
-                                    <p className="flex items-center gap-2">
-                                        <Mail className="w-3.5 h-3.5 text-amber-400" />
-                                        <span>{branch.email}</span>
-                                    </p>
+                                        <span>Prayer Line: {branch.phone}</span>
+                                    </a>
                                 </div>
                             </div>
 
@@ -110,6 +93,11 @@ export default function OurBranchesPage() {
                             </a>
                         </div>
                     ))}
+                </div>
+
+                {/* More Branches Coming Soon */}
+                <div className="text-center pt-4">
+                    <p className="text-sm text-white/30 italic">More branches coming soon. Stay tuned!</p>
                 </div>
 
             </div>
