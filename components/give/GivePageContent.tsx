@@ -57,12 +57,109 @@ export default function GivePageContent() {
         }
     };
 
-    // ─── Open UPI App ───
-    const handleLaunchUpi = (url: string, name: string) => {
-        toast.info(`Opening ${name}...`, {
-            description: 'Paying to Call of Jesus Ministries',
-        });
-        window.location.href = url;
+    // ─── Direct UPI App Launchers ───
+    const handleGooglePay = () => {
+        if (typeof window === 'undefined') return;
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isAndroid) {
+            toast.info('Opening Google Pay...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            // Direct Google Pay Android package intent to payment screen
+            const gpayIntent = `intent://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+            window.location.href = gpayIntent;
+        } else if (isIOS) {
+            toast.info('Opening Google Pay...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            window.location.href = `gpay://upi/pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
+            setTimeout(() => {
+                window.location.href = UPI_DEEP_LINK;
+            }, 600);
+        } else {
+            // Desktop / Laptop: copy UPI ID and guide user
+            handleCopy(UPI_ID, 'UPI ID');
+            toast.success(`Google Pay UPI ID (${UPI_ID}) Copied!`, {
+                description: 'On computer, scan the QR code above with Google Pay on your phone, or paste this UPI ID.',
+                duration: 5000,
+            });
+        }
+    };
+
+    const handlePhonePe = () => {
+        if (typeof window === 'undefined') return;
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isAndroid) {
+            toast.info('Opening PhonePe...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            const phonepeIntent = `intent://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}#Intent;scheme=upi;package=com.phonepe.app;end`;
+            window.location.href = phonepeIntent;
+        } else if (isIOS) {
+            toast.info('Opening PhonePe...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            window.location.href = `phonepe://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
+            setTimeout(() => {
+                window.location.href = UPI_DEEP_LINK;
+            }, 600);
+        } else {
+            handleCopy(UPI_ID, 'UPI ID');
+            toast.success(`PhonePe UPI ID (${UPI_ID}) Copied!`, {
+                description: 'On computer, scan the QR code above with PhonePe on your phone, or paste this UPI ID.',
+                duration: 5000,
+            });
+        }
+    };
+
+    const handlePaytm = () => {
+        if (typeof window === 'undefined') return;
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isAndroid) {
+            toast.info('Opening Paytm...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            const paytmIntent = `intent://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}#Intent;scheme=upi;package=net.one97.paytm;end`;
+            window.location.href = paytmIntent;
+        } else if (isIOS) {
+            toast.info('Opening Paytm...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            window.location.href = `paytmmp://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
+            setTimeout(() => {
+                window.location.href = UPI_DEEP_LINK;
+            }, 600);
+        } else {
+            handleCopy(UPI_ID, 'UPI ID');
+            toast.success(`Paytm UPI ID (${UPI_ID}) Copied!`, {
+                description: 'On computer, scan the QR code above with Paytm on your phone, or paste this UPI ID.',
+                duration: 5000,
+            });
+        }
+    };
+
+    const handleAnyUpi = () => {
+        if (typeof window === 'undefined') return;
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        if (isMobile) {
+            toast.info('Opening UPI App...', {
+                description: 'Paying to Call of Jesus Ministries',
+            });
+            window.location.href = UPI_DEEP_LINK;
+        } else {
+            handleCopy(UPI_ID, 'UPI ID');
+            toast.success(`UPI ID (${UPI_ID}) Copied!`, {
+                description: 'On computer, scan the QR code above with any UPI app on your phone, or paste this UPI ID.',
+                duration: 5000,
+            });
+        }
     };
 
     // ─── GSAP Scroll Animations ───
@@ -248,7 +345,7 @@ export default function GivePageContent() {
 
                                 {/* Primary Open UPI App */}
                                 <button
-                                    onClick={() => handleLaunchUpi(UPI_DEEP_LINK, 'UPI App')}
+                                    onClick={handleAnyUpi}
                                     className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(245,158,11,0.25)] hover:shadow-[0_0_35px_rgba(245,158,11,0.4)] transition-all active:scale-[0.99]"
                                 >
                                     <Smartphone className="w-4 h-4" />
@@ -259,20 +356,20 @@ export default function GivePageContent() {
                                 {/* App Shortcuts */}
                                 <div className="grid grid-cols-3 gap-2">
                                     <button
-                                        onClick={() => handleLaunchUpi(GPAY_LINK, 'Google Pay')}
-                                        className="py-2.5 px-2 rounded-lg bg-white/[0.04] border border-white/10 hover:border-amber-400/40 text-xs font-bold text-white/80 hover:text-white transition-all text-center"
+                                        onClick={handleGooglePay}
+                                        className="py-2.5 px-2 rounded-lg bg-white/[0.04] border border-white/10 hover:border-amber-400/40 text-xs font-bold text-white/80 hover:text-white transition-all text-center hover:bg-white/[0.08]"
                                     >
                                         Google Pay
                                     </button>
                                     <button
-                                        onClick={() => handleLaunchUpi(PHONEPE_LINK, 'PhonePe')}
-                                        className="py-2.5 px-2 rounded-lg bg-white/[0.04] border border-white/10 hover:border-amber-400/40 text-xs font-bold text-white/80 hover:text-white transition-all text-center"
+                                        onClick={handlePhonePe}
+                                        className="py-2.5 px-2 rounded-lg bg-white/[0.04] border border-white/10 hover:border-amber-400/40 text-xs font-bold text-white/80 hover:text-white transition-all text-center hover:bg-white/[0.08]"
                                     >
                                         PhonePe
                                     </button>
                                     <button
-                                        onClick={() => handleLaunchUpi(PAYTM_LINK, 'Paytm')}
-                                        className="py-2.5 px-2 rounded-lg bg-white/[0.04] border border-white/10 hover:border-amber-400/40 text-xs font-bold text-white/80 hover:text-white transition-all text-center"
+                                        onClick={handlePaytm}
+                                        className="py-2.5 px-2 rounded-lg bg-white/[0.04] border border-white/10 hover:border-amber-400/40 text-xs font-bold text-white/80 hover:text-white transition-all text-center hover:bg-white/[0.08]"
                                     >
                                         Paytm
                                     </button>

@@ -71,11 +71,26 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         }
     }, [theme]);
 
-    // Show BottomNav if:
-    // 1. We are NOT on home page (utility pages always need nav)
-    // 2. OR We are on home page AND mode is UTILITY
-    // 3. AND App is initialized (isReady)
-    const showNav = isReady && (pathname !== '/' || mode === 'UTILITY');
+    // Show BottomNav ONLY on utility routes (songs, search, favourites, profile, sets, worship)
+    // or on home page when mode is UTILITY. Never show on landing pages like /give.
+    const isUtilityRoute = pathname === '/songs' || pathname?.startsWith('/songs/') ||
+        pathname === '/search' || pathname?.startsWith('/search/') ||
+        pathname === '/favourites' || pathname?.startsWith('/favourites/') ||
+        pathname === '/profile' || pathname?.startsWith('/profile/') ||
+        pathname === '/sets' || pathname?.startsWith('/sets/') ||
+        pathname === '/worship' || pathname?.startsWith('/worship/') ||
+        pathname === '/tools' || pathname?.startsWith('/tools/') ||
+        pathname === '/categories' || pathname?.startsWith('/categories/') ||
+        pathname === '/artists' || pathname?.startsWith('/artists/') ||
+        pathname === '/trending' || pathname?.startsWith('/trending/');
+
+    const isLandingOrPublic = pathname === '/give' || pathname?.startsWith('/give/') ||
+        pathname === '/contact' || pathname?.startsWith('/contact/') ||
+        pathname === '/events' || pathname?.startsWith('/events/') ||
+        pathname === '/about' || pathname?.startsWith('/about/') ||
+        pathname?.startsWith('/our-');
+
+    const showNav = isReady && !isLandingOrPublic && (isUtilityRoute || (pathname === '/' && mode === 'UTILITY'));
 
     return (
         <>
