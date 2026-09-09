@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
     Heart, QrCode, Building2, ShieldCheck, Copy, Check,
-    Smartphone, ArrowRight, ExternalLink
+    Smartphone, ArrowRight, ExternalLink, Share2, Download, MessageSquare
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -51,6 +51,81 @@ export default function GivePageContent() {
             setTimeout(() => setCopiedField(null), 2500);
         } catch {
             toast.error('Failed to copy');
+        }
+    };
+
+    // ─── Share QR Code ───
+    const handleShareQR = async () => {
+        const shareText = `*Call of Jesus Ministries Trust — Online Offerings*\n\n` +
+            `Support the ministry and sow your seed:\n` +
+            `🔹 *UPI ID:* ${UPI_ID}\n` +
+            `🔹 *Account Name:* ${BENEFICIARY_NAME}\n` +
+            `🔹 *Bank:* ${BANK_NAME}\n` +
+            `🔹 *Account No:* ${ACCOUNT_NUMBER}\n` +
+            `🔹 *IFSC:* ${IFSC_CODE}\n\n` +
+            `Give Online: https://callofjesus.in/give`;
+
+        if (typeof navigator !== 'undefined' && navigator.share) {
+            try {
+                // Try fetching QR blob to share actual image file
+                try {
+                    const response = await fetch(QR_IMAGE_URL);
+                    const blob = await response.blob();
+                    const file = new File([blob], 'CallOfJesus_Offering_QR.png', { type: 'image/png' });
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: 'Call of Jesus Ministries - Offering QR',
+                            text: shareText,
+                            files: [file],
+                        });
+                        toast.success('QR Code shared successfully!');
+                        return;
+                    }
+                } catch {
+                    // Fall back to text share
+                }
+
+                await navigator.share({
+                    title: 'Call of Jesus Ministries - Offering QR',
+                    text: shareText,
+                    url: 'https://callofjesus.in/give',
+                });
+                toast.success('Shared successfully!');
+            } catch (err: any) {
+                if (err?.name !== 'AbortError') {
+                    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+                    window.open(waUrl, '_blank');
+                }
+            }
+        } else {
+            // Direct WhatsApp fallback on desktop
+            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+            window.open(waUrl, '_blank');
+        }
+    };
+
+    // ─── Download QR Image ───
+    const handleDownloadQR = async () => {
+        try {
+            toast.info('Downloading QR Code image...');
+            const response = await fetch(QR_IMAGE_URL);
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = 'CallOfJesus_Offering_QR.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+            toast.success('QR Code downloaded!');
+        } catch {
+            const link = document.createElement('a');
+            link.href = QR_IMAGE_URL;
+            link.target = '_blank';
+            link.download = 'CallOfJesus_Offering_QR.png';
+            link.click();
+            toast.success('Opening QR Code image');
         }
     };
 
@@ -307,7 +382,47 @@ export default function GivePageContent() {
                                         </span>
                                     </div>
                                 </div>
-                                <p className="text-[11px] text-white/40 mt-3">Scan with any UPI app camera to pay directly</p>
+                                <p className="text-[11px] text-white/40 mt-3 mb-3">Scan with any UPI app camera to pay directly</p>
+
+                                {/* QR Action Buttons: Share & Download */}
+                                <div className="flex items-center justify-center gap-2 w-full max-w-xs">
+                                    <button
+                                        onClick={handleShareQR}
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500/15 to-orange-500/15 border border-amber-400/30 hover:border-amber-400/60 text-amber-200 text-xs font-bold transition-all hover:bg-amber-500/25 active:scale-95"
+                                        title="Share QR Code"
+                                    >
+                                        <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                                        <span>Share QR</span>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            const shareText = `*Call of Jesus Ministries Trust — Online Offerings*\n\n` +
+                                                `Support the ministry and sow your seed:\n` +
+                                                `🔹 *UPI ID:* ${UPI_ID}\n` +
+                                                `🔹 *Account Name:* ${BENEFICIARY_NAME}\n` +
+                                                `🔹 *Bank:* ${BANK_NAME}\n` +
+                                                `🔹 *Account No:* ${ACCOUNT_NUMBER}\n` +
+                                                `🔹 *IFSC:* ${IFSC_CODE}\n\n` +
+                                                `Give Online: https://callofjesus.in/give`;
+                                            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+                                        }}
+                                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-400/30 hover:border-emerald-400/60 text-emerald-300 text-xs font-bold transition-all hover:bg-emerald-500/25 active:scale-95"
+                                        title="Share on WhatsApp"
+                                    >
+                                        <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                                        <span>WhatsApp</span>
+                                    </button>
+
+                                    <button
+                                        onClick={handleDownloadQR}
+                                        className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 hover:border-white/30 text-white/70 hover:text-white text-xs font-bold transition-all hover:bg-white/[0.08] active:scale-95"
+                                        title="Download QR Image"
+                                    >
+                                        <Download className="w-3.5 h-3.5" />
+                                        <span>Save</span>
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Copy UPI ID */}

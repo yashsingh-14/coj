@@ -1,63 +1,94 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, BellOff, X } from 'lucide-react';
+import { Bell, Radio, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function NotificationPrompt() {
     const [status, setStatus] = useState<NotificationPermission | 'unsupported'>('default');
     const [showPrompt, setShowPrompt] = useState(false);
+    const [isSubscribing, setIsSubscribing] = useState(false);
 
     useEffect(() => {
-        if (!('Notification' in window)) {
+        if (typeof window === 'undefined' || !('Notification' in window)) {
             setStatus('unsupported');
             return;
         }
         setStatus(Notification.permission);
 
-        // Show prompt if permission is default and we haven't shown it this session
-        const hasPrompted = sessionStorage.getItem('notificationPrompted');
-        if (Notification.permission === 'default' && !hasPrompted) {
-            const timer = setTimeout(() => setShowPrompt(true), 5000); // Show after 5 seconds
+        // Show prompt if permission is default and we haven't dismissed it this session
+        const hasDismissed = sessionStorage.getItem('coj_notification_dismissed');
+        if (Notification.permission === 'default' && !hasDismissed) {
+            const timer = setTimeout(() => setShowPrompt(true), 6000); // 6 seconds after load
             return () => clearTimeout(timer);
         }
     }, []);
 
     const requestPermission = async () => {
-        if (status === 'unsupported') return;
+        if (status === 'unsupported') {
+            toast.error('Push notifications are not supported on this browser.');
+            return;
+        }
+
+        setIsSubscribing(true);
 
         try {
             const permission = await Notification.requestPermission();
             setStatus(permission);
-            sessionStorage.setItem('notificationPrompted', 'true');
-            setShowPrompt(false);
+            sessionStorage.setItem('coj_notification_dismissed', 'true');
 
             if (permission === 'granted') {
-                // 1. Register Service Worker
-                await navigator.serviceWorker.register('/sw.js');
+                setShowPrompt(false);
 
-                // 2. Wait for SW to be fully active before subscribing
-                const registration = await navigator.serviceWorker.ready;
+                // 1. Ensure service worker is registered
+                let registration = await navigator.serviceWorker.getRegistration();
+                if (!registration) {
+                    registration = await navigator.serviceWorker.register('/sw.js');
+                }
+                await navigator.serviceWorker.ready;
 
-                // 3. Subscribe to Push Manager
+                // 2. Subscribe to Push Manager using VAPID key
+                const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+                if (!vapidPublicKey) {
+                    console.error('VAPID public key missing');
+                    return;
+                }
+
                 const subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
-                    applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!)
+                    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
                 });
 
-                // 4. Send to Server
-                await fetch('/api/notifications/subscribe', {
+                // 3. Save subscription to server
+                await fetch('/api/notifications/save-subscription', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(subscription)
                 });
 
-                new Notification('Notifications Enabled! 🎉', {
-                    body: 'You will now receive updates from COJ.',
-                    icon: '/icon-192x192.png'
+                toast.success('Live Notifications Activated! 🔔', {
+                    description: "You'll receive alerts when we go Live on YouTube, Facebook, or post updates.",
+                    duration: 5000,
+                });
+
+                // Trigger sample notification
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification('Call of Jesus Ministries 🔔', {
+                        body: 'Notifications enabled! You will be alerted the second we go Live.',
+                        icon: '/images/logo-footer-final.png'
+                    });
+                }
+            } else {
+                setShowPrompt(false);
+                toast.info('Notifications not enabled', {
+                    description: 'You can enable notifications later in your browser settings.'
                 });
             }
         } catch (err) {
             console.error('Permission request failed', err);
+            toast.error('Could not activate notifications.');
+        } finally {
+            setIsSubscribing(false);
         }
     };
 
@@ -79,38 +110,51 @@ export default function NotificationPrompt() {
     if (!showPrompt) return null;
 
     return (
-        <div className="fixed bottom-24 right-6 left-6 md:left-auto md:w-96 z-[100] animate-in fade-in slide-in-from-bottom-5 duration-500">
-            <div className="bg-amber-500/10 backdrop-blur-2xl border border-amber-500/20 rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+        <div className="fixed bottom-6 right-4 sm:right-6 left-4 sm:left-auto sm:max-w-md z-[100] animate-in fade-in slide-in-from-bottom-5 duration-500">
+            <div className="bg-[#0E0C15]/95 backdrop-blur-2xl border border-amber-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_30px_rgba(245,158,11,0.12)] relative overflow-hidden group">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-red-500 via-amber-500 to-orange-500"></div>
 
                 <button
-                    onClick={() => setShowPrompt(false)}
-                    className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
+                    onClick={() => {
+                        setShowPrompt(false);
+                        sessionStorage.setItem('coj_notification_dismissed', 'true');
+                    }}
+                    className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors p-1"
+                    title="Dismiss"
                 >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                 </button>
 
-                <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center flex-shrink-0 animate-bounce-slow">
-                        <Bell className="w-6 h-6 text-amber-500" />
+                <div className="flex items-start gap-4 pr-4">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/15 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-amber-400">
+                        <Radio className="w-5 h-5 animate-pulse" />
                     </div>
-                    <div>
-                        <h3 className="text-lg font-bold text-white mb-1">Daily Encouragement</h3>
-                        <p className="text-white/60 text-sm leading-relaxed mb-4">
-                            Stay inspired with a new Bible verse and devotional prayer every morning.
+                    <div className="space-y-1.5 flex-1">
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                            <h3 className="text-sm sm:text-base font-black text-white tracking-tight">
+                                Never Miss a Live Stream!
+                            </h3>
+                        </div>
+                        <p className="text-white/60 text-xs leading-relaxed">
+                            Get instant alerts on your device when we go Live on <strong>YouTube</strong>, <strong>Facebook</strong>, or post on <strong>Instagram</strong>.
                         </p>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2.5 pt-2">
                             <button
                                 onClick={requestPermission}
-                                className="px-5 py-2.5 bg-amber-500 text-[#02000F] font-bold rounded-xl text-sm hover:scale-105 active:scale-95 transition-all"
+                                disabled={isSubscribing}
+                                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black text-xs uppercase tracking-wider hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] active:scale-95 transition-all disabled:opacity-50"
                             >
-                                Enable Notifications
+                                {isSubscribing ? 'Enabling...' : 'Enable Alerts'}
                             </button>
                             <button
-                                onClick={() => setShowPrompt(false)}
-                                className="px-5 py-2.5 bg-white/5 text-white/60 font-bold rounded-xl text-sm hover:bg-white/10 transition-all"
+                                onClick={() => {
+                                    setShowPrompt(false);
+                                    sessionStorage.setItem('coj_notification_dismissed', 'true');
+                                }}
+                                className="px-3 py-2 text-white/40 hover:text-white text-xs font-semibold transition-colors"
                             >
-                                Not now
+                                Later
                             </button>
                         </div>
                     </div>

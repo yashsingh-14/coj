@@ -85,6 +85,7 @@ export const metadata: Metadata = {
 import AppShell from "@/components/AppShell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import InstallPrompt from "@/components/InstallPrompt";
+import NotificationPrompt from "@/components/ui/NotificationPrompt";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 
 export default function RootLayout({
@@ -102,6 +103,7 @@ export default function RootLayout({
             <AppShell>
               <ServiceWorkerRegister />
               <InstallPrompt />
+              <NotificationPrompt />
               {children}
             </AppShell>
             <Toaster position="bottom-right" theme="dark" richColors />
