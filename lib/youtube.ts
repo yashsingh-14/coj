@@ -7,10 +7,22 @@ export interface YouTubeVideo {
     isLive: boolean;
 }
 
-export async function fetchSermons(): Promise<YouTubeVideo[]> {
+export interface LiveStream {
+    videoId: string;
+    title: string;
+    isLive: boolean;
+}
+
+export interface SermonsResponse {
+    videos: YouTubeVideo[];
+    liveStream: LiveStream | null;
+    isLive: boolean;
+}
+
+export async function fetchSermons(): Promise<SermonsResponse> {
     try {
         const res = await fetch('/api/sermons', {
-            next: { revalidate: 300 },
+            next: { revalidate: 60 },
         });
 
         if (!res.ok) {
@@ -18,9 +30,13 @@ export async function fetchSermons(): Promise<YouTubeVideo[]> {
         }
 
         const json = await res.json();
-        return json.videos || [];
+        return {
+            videos: json.videos || [],
+            liveStream: json.liveStream || null,
+            isLive: json.isLive || false
+        };
     } catch (error) {
         console.error('Failed to fetch sermons:', error);
-        return [];
+        return { videos: [], liveStream: null, isLive: false };
     }
 }

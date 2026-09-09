@@ -11,6 +11,7 @@ import { generateSlug } from '@/lib/seoUtils';
 import React, { useState, useEffect, TouchEvent } from 'react';
 import Sidebar from '../ui/Sidebar';
 import TiltCard from '../ui/TiltCard';
+import LiveSermonBanner from './LiveSermonBanner';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { supabase } from '@/lib/supabaseClient';
@@ -183,6 +184,9 @@ export default function HomeUtilityContent({
                     </div>
                 </div>
             )}
+
+            {/* LIVE SERMON BANNER - shows only when a live stream is active */}
+            <LiveSermonBanner />
 
             {/* HERO CAROUSEL */}
             <section className="px-5 mb-10 mt-4 animate-slide-up">

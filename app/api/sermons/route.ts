@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 interface CachedData {
     data: any[];
@@ -11,6 +12,27 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 const DEFAULT_CHANNEL_ID = 'UCU65-FwxF6QkrOmZVsxTrWQ';
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+
+// Server-side supabase for reading site_settings
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServerClient = supabaseUrl && supabaseAnonKey
+    ? createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } })
+    : null;
+
+async function getLiveConfig() {
+    if (!supabaseServerClient) return null;
+    try {
+        const { data } = await supabaseServerClient
+            .from('site_settings')
+            .select('value')
+            .eq('key', 'youtube_config')
+            .single();
+        return data?.value || null;
+    } catch {
+        return null;
+    }
+}
 
 async function fetchYouTubeData() {
     if (!API_KEY) {
@@ -85,19 +107,44 @@ async function fetchYouTubeData() {
 
 export async function GET() {
     try {
-        const videos = await fetchYouTubeData();
+        const [videos, liveConfig] = await Promise.all([
+            fetchYouTubeData(),
+            getLiveConfig()
+        ]);
+
+        // Build live stream info from admin config
+        let liveStream = null;
+        if (liveConfig?.isLiveOverride && liveConfig?.liveVideoId) {
+            liveStream = {
+                videoId: liveConfig.liveVideoId,
+                title: liveConfig.liveTitle || 'Live Sermon',
+                isLive: true
+            };
+
+            // Mark the matching video as live if it exists in the list
+            for (const v of videos) {
+                if (v.id === liveConfig.liveVideoId) {
+                    v.isLive = true;
+                }
+            }
+        }
+
         return NextResponse.json(
-            { videos },
+            {
+                videos,
+                liveStream,
+                isLive: liveConfig?.isLiveOverride || false
+            },
             {
                 headers: {
-                    'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+                    'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
                 },
             }
         );
     } catch (error: any) {
         console.error('Sermons API error:', error);
         return NextResponse.json(
-            { videos: [], error: error.message || 'Failed to fetch sermons' },
+            { videos: [], liveStream: null, isLive: false, error: error.message || 'Failed to fetch sermons' },
             { status: 500 }
         );
     }
