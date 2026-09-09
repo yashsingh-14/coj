@@ -28,18 +28,15 @@ export default function ShareTestimonyPage() {
 
         setLoading(true);
         try {
-            const { error } = await supabase.from('testimonies').insert([{
-                full_name: formData.fullName,
-                phone: formData.phone,
-                email: formData.email || null,
-                city: formData.city || null,
-                category: formData.category,
-                testimony: formData.testimony,
-                has_medical_report: formData.hasMedicalReport === 'Yes',
-            }]);
+            const res = await fetch('/api/testimonies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
 
-            if (error) {
-                console.error('Testimony submit error:', error);
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(errJson.error || 'Failed to submit testimony');
             }
 
             setSubmitted(true);

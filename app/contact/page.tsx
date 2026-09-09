@@ -25,17 +25,15 @@ export default function ContactPage() {
 
         setLoading(true);
         try {
-            const { error } = await supabase.from('contact_messages').insert([{
-                name: formData.name,
-                email: formData.email || null,
-                phone: formData.phone || null,
-                message: formData.message,
-            }]);
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
 
-            if (error) {
-                console.error('Contact form error:', error);
-                // Even if table doesn't exist, show success for UX
-                // The message can be sent via WhatsApp as fallback
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(errJson.error || 'Failed to submit');
             }
 
             setSubmitted(true);
