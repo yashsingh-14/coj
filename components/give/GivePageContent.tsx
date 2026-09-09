@@ -13,21 +13,18 @@ if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
 
-// ─── Ministry Account Constants ───
-const UPI_ID = 'cojministries@hdfcbank';
+// ─── Ministry Account Constants (Official Church Details) ───
+const UPI_ID = 'BHARATPE09902833811@yesbankltd';
 const BENEFICIARY_NAME = 'CALL OF JESUS MINISTRIES TRUST';
 const BANK_NAME = 'HDFC Bank Ltd.';
-const ACCOUNT_NUMBER = '50200012345678';
-const IFSC_CODE = 'HDFC0001234';
+const ACCOUNT_NUMBER = '50200073522429';
+const IFSC_CODE = 'HDFC0005404';
 
 // Real UPI URL
-const UPI_DEEP_LINK = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent('Call of Jesus Ministries')}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
-const GPAY_LINK = `tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent('Call of Jesus Ministries')}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
-const PHONEPE_LINK = `phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent('Call of Jesus Ministries')}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
-const PAYTM_LINK = `paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent('Call of Jesus Ministries')}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
+const UPI_DEEP_LINK = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(BENEFICIARY_NAME)}&cu=INR&tn=${encodeURIComponent('Offering - Call of Jesus')}`;
 
 // Real scannable QR code image
-const QR_IMAGE_URL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(UPI_DEEP_LINK)}&bgcolor=ffffff&color=07060a&margin=12`;
+const QR_IMAGE_URL = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(UPI_DEEP_LINK)}&bgcolor=ffffff&color=07060a&margin=10`;
 
 const BANK_DETAILS = [
     { label: 'Account Name', value: BENEFICIARY_NAME, copyable: true, highlight: false },
