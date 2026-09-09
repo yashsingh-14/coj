@@ -920,12 +920,10 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
                     {/* Minimalist Editorial Title: Our Mission with Cinematic Sparkling Reveal */}
                     <div className="reveal-cinematic-sparkle">
-                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none inline-flex items-center justify-center gap-2.5 sm:gap-3">
-                            <span className="text-amber-400/80 text-sm sm:text-xl sparkle-star select-none">✦</span>
+                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             <span className="sparkle-text">
                                 Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
                             </span>
-                            <span className="text-amber-400/80 text-sm sm:text-xl sparkle-star select-none" style={{ animationDelay: '1.5s' }}>✦</span>
                         </h2>
                     </div>
 
