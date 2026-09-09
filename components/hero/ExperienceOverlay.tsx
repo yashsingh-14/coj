@@ -717,14 +717,14 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8">
                     {/* Minimalist Editorial Title: Daily Promise with Golden Glitter Particle Sweep */}
-                    <GoldenSparkleReveal duration={1800} delay={100}>
+                    <GoldenSparkleReveal duration={1300} delay={60}>
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             Daily <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Promise</span>
                         </h2>
                     </GoldenSparkleReveal>
 
                     {/* Scripture Quote — Centered Editorial Masterpiece with Golden Glitter Particle Sweep */}
-                    <GoldenSparkleReveal duration={2400} delay={450} className="max-w-3xl mx-auto py-2 sm:py-4">
+                    <GoldenSparkleReveal duration={1750} delay={280} className="max-w-3xl mx-auto py-2 sm:py-4">
                         <blockquote className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light italic leading-relaxed sm:leading-snug text-white/95 tracking-tight">
                             &ldquo;{verse?.text || "God is our refuge and strength, a very present help in trouble."}&rdquo;
                         </blockquote>
@@ -922,14 +922,14 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
                     {/* Minimalist Editorial Title: Our Mission with Golden Glitter Particle Sweep */}
-                    <GoldenSparkleReveal duration={1800} delay={100}>
+                    <GoldenSparkleReveal duration={1300} delay={60}>
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
                         </h2>
                     </GoldenSparkleReveal>
 
                     {/* COJ Original Mission Statement with Golden Glitter Particle Sweep */}
-                    <GoldenSparkleReveal duration={2400} delay={450} className="flex justify-center max-w-3xl mx-auto">
+                    <GoldenSparkleReveal duration={1750} delay={280} className="flex justify-center max-w-3xl mx-auto">
                         <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center drop-shadow-[0_4px_30px_rgba(245,158,11,0.25)]">
                             To <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">prepare people</span> across the world for the <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">second coming</span> of Jesus Christ.
                         </p>

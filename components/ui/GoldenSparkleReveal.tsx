@@ -37,8 +37,8 @@ const GOLD_PALETTE = [
 export default function GoldenSparkleReveal({
     children,
     className = '',
-    duration = 2200,
-    delay = 100,
+    duration = 1750,
+    delay = 60,
 }: GoldenSparkleRevealProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
