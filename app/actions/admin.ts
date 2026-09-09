@@ -166,3 +166,61 @@ export async function checkIsAdmin(userId: string): Promise<{ isAdmin: boolean; 
 
     return { isAdmin: profile?.role === 'admin' };
 }
+
+export async function getContactMessagesAdmin() {
+    if (!adminDb) return { success: false, data: [] };
+    const { data, error } = await adminDb
+        .from('contact_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching contact messages:", error);
+        return { success: false, data: [] };
+    }
+    return { success: true, data: data || [] };
+}
+
+export async function deleteContactMessageAdmin(id: string) {
+    if (!adminDb) return { success: false };
+    const { error } = await adminDb
+        .from('contact_messages')
+        .delete()
+        .eq('id', id);
+
+    return { success: !error };
+}
+
+export async function getTestimoniesAdmin() {
+    if (!adminDb) return { success: false, data: [] };
+    const { data, error } = await adminDb
+        .from('testimonies')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error fetching testimonies:", error);
+        return { success: false, data: [] };
+    }
+    return { success: true, data: data || [] };
+}
+
+export async function toggleApproveTestimonyAdmin(id: string, currentStatus: boolean) {
+    if (!adminDb) return { success: false };
+    const { error } = await adminDb
+        .from('testimonies')
+        .update({ is_approved: !currentStatus })
+        .eq('id', id);
+
+    return { success: !error };
+}
+
+export async function deleteTestimonyAdmin(id: string) {
+    if (!adminDb) return { success: false };
+    const { error } = await adminDb
+        .from('testimonies')
+        .delete()
+        .eq('id', id);
+
+    return { success: !error };
+}

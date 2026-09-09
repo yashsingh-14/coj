@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Plus, Music, Users, ArrowRight, Activity, Mic2, Calendar, BookOpen, Settings } from 'lucide-react';
+import { Plus, Music, Users, ArrowRight, Activity, Mic2, Calendar, BookOpen, Settings, Mail, HeartHandshake } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import RecentActivityList from '@/components/admin/RecentActivityList';
@@ -12,7 +12,9 @@ export default function AdminDashboard() {
         users: 0,
         sets: 0,
         artists: 0,
-        events: 0
+        events: 0,
+        messages: 0,
+        testimonies: 0
     });
 
     useEffect(() => {
@@ -22,13 +24,17 @@ export default function AdminDashboard() {
             const { count: setsCount } = await supabase.from('sets').select('*', { count: 'exact', head: true });
             const { count: artistsCount } = await supabase.from('artists').select('*', { count: 'exact', head: true });
             const { count: eventsCount } = await supabase.from('events').select('*', { count: 'exact', head: true });
+            const { count: msgCount } = await supabase.from('contact_messages').select('*', { count: 'exact', head: true });
+            const { count: testCount } = await supabase.from('testimonies').select('*', { count: 'exact', head: true });
 
             setStats({
                 songs: songsCount || 0,
                 users: usersCount || 0,
                 sets: setsCount || 0,
                 artists: artistsCount || 0,
-                events: eventsCount || 0
+                events: eventsCount || 0,
+                messages: msgCount || 0,
+                testimonies: testCount || 0
             });
         };
         fetchStats();
@@ -42,11 +48,13 @@ export default function AdminDashboard() {
             </header>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
                 <StatCard label="Songs" value={stats.songs} icon={Music} trend="Library" />
                 <StatCard label="Artists" value={stats.artists} icon={Mic2} trend="Verified" />
                 <StatCard label="Users" value={stats.users} icon={Users} trend="Active" />
                 <StatCard label="Events" value={stats.events} icon={Calendar} trend="Plans" />
+                <StatCard label="Inquiries" value={stats.messages} icon={Mail} trend="Contact" href="/admin/messages" />
+                <StatCard label="Stories" value={stats.testimonies} icon={HeartHandshake} trend="Testimonies" href="/admin/messages" />
             </div>
 
             {/* Quick Actions Modules */}
@@ -126,9 +134,9 @@ export default function AdminDashboard() {
     );
 }
 
-function StatCard({ label, value, icon: Icon, trend }: any) {
-    return (
-        <div className="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-[#0F0F16] border border-white/5 relative overflow-hidden group">
+function StatCard({ label, value, icon: Icon, trend, href }: any) {
+    const content = (
+        <div className="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-[#0F0F16] border border-white/5 hover:border-amber-500/30 transition-all relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-3 md:p-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Icon className="w-8 h-8 md:w-16 md:h-16 text-white" />
             </div>
@@ -141,4 +149,6 @@ function StatCard({ label, value, icon: Icon, trend }: any) {
             </div>
         </div>
     );
+
+    return href ? <Link href={href}>{content}</Link> : content;
 }

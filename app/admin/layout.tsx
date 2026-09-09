@@ -17,7 +17,8 @@ import {
     Home,
     Youtube,
     BookOpen,
-    Bell
+    Bell,
+    MessageSquare
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -104,6 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto no-scrollbar pt-20 md:pt-4">
                     <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-2">Core</p>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin" icon={LayoutDashboard} label="Dashboard" /></div>
+                    <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/messages" icon={MessageSquare} label="Submissions" /></div>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/users" icon={Users} label="User Management" /></div>
 
                     <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-6">Content</p>
