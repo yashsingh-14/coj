@@ -602,10 +602,49 @@ export default function ExperienceOverlay({ initialData }: {
         }
     };
 
-    // Hardware-Accelerated GSAP ScrollTrigger Reveal Engine
+    // Hardware-Accelerated GSAP ScrollTrigger Alternating Reveal Engine
     useEffect(() => {
         const ctx = gsap.context(() => {
             const timer = setTimeout(() => {
+                // Left-gliding reveal elements
+                ScrollTrigger.batch('.reveal-from-left', {
+                    start: 'top 88%',
+                    once: true,
+                    onEnter: (batch) => {
+                        gsap.to(batch, {
+                            opacity: 1,
+                            x: 0,
+                            duration: 0.85,
+                            stagger: 0.12,
+                            ease: 'power3.out',
+                            overwrite: 'auto',
+                            onComplete: () => {
+                                batch.forEach((el) => el.classList.add('is-revealed'));
+                            },
+                        });
+                    },
+                });
+
+                // Right-gliding reveal elements
+                ScrollTrigger.batch('.reveal-from-right', {
+                    start: 'top 88%',
+                    once: true,
+                    onEnter: (batch) => {
+                        gsap.to(batch, {
+                            opacity: 1,
+                            x: 0,
+                            duration: 0.85,
+                            stagger: 0.12,
+                            ease: 'power3.out',
+                            overwrite: 'auto',
+                            onComplete: () => {
+                                batch.forEach((el) => el.classList.add('is-revealed'));
+                            },
+                        });
+                    },
+                });
+
+                // Vertical reveal fallback
                 ScrollTrigger.batch('.reveal-on-scroll', {
                     start: 'top 88%',
                     once: true,
@@ -623,6 +662,7 @@ export default function ExperienceOverlay({ initialData }: {
                         });
                     },
                 });
+
                 ScrollTrigger.refresh();
             }, 120);
 
@@ -670,12 +710,12 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8">
                     {/* Minimalist Editorial Title: Daily Promise */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-on-scroll">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-from-left">
                         Daily <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Promise</span>
                     </h2>
 
                     {/* Scripture Quote — Centered Editorial Masterpiece */}
-                    <div className="max-w-3xl mx-auto py-2 sm:py-4 reveal-on-scroll">
+                    <div className="max-w-3xl mx-auto py-2 sm:py-4 reveal-from-left">
                         <blockquote className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light italic leading-relaxed sm:leading-snug text-white/95 tracking-tight">
                             &ldquo;{verse?.text || "God is our refuge and strength, a very present help in trouble."}&rdquo;
                         </blockquote>
@@ -693,7 +733,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Understated Action Buttons */}
-                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2 reveal-on-scroll">
+                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2 reveal-from-left">
                         <button
                             onClick={handleCopyVerse}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300 text-xs tracking-wider transition-all duration-300 active:scale-95"
@@ -772,7 +812,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 space-y-8 sm:space-y-10">
                     {/* Minimalist Editorial Title: Weekly Gatherings */}
-                    <div className="text-center space-y-3 reveal-on-scroll">
+                    <div className="text-center space-y-3 reveal-from-right">
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             Weekly <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-rose-300 to-amber-200">Gatherings</span>
                         </h2>
@@ -782,7 +822,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Editorial Service Schedule List — Sleek, Unified, Professional */}
-                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08] reveal-on-scroll">
+                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08] reveal-from-right">
                         {eventsList.map((event: any, i: number) => {
                             const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
 
@@ -828,7 +868,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Directions CTA Button */}
-                    <div className="text-center pt-2 reveal-on-scroll">
+                    <div className="text-center pt-2 reveal-from-right">
                         <a
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
@@ -868,7 +908,7 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay for heavenly depth */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8 reveal-on-scroll">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8 reveal-from-left">
                     {/* Minimalist Editorial Title: Our Mission */}
                     <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                         Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
@@ -913,7 +953,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                         <div className="relative z-10 max-w-7xl mx-auto w-full space-y-8 sm:space-y-10">
                             {/* Editorial Title */}
-                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 reveal-on-scroll">
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 reveal-from-left">
                                 <div className="space-y-3">
                                     <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                                         Trending <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Worship</span>
@@ -935,7 +975,7 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Horizontal Scroll Songs */}
-                            <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-3.5 md:gap-5 pb-3 sm:pb-4 scroll-smooth reveal-on-scroll">
+                            <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-3.5 md:gap-5 pb-3 sm:pb-4 scroll-smooth reveal-from-left">
                                 {trending.slice(0, 8).map((song, i) => {
                                     const rankBadgeStyle = i === 0
                                         ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/30 text-[10px] px-3 py-1'
@@ -1003,7 +1043,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-5xl mx-auto w-full space-y-8 sm:space-y-10">
                     {/* Section Header */}
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-on-scroll">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-from-right">
                         <div className="space-y-3">
                             <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                                 God <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-orange-200 to-white">Stories</span>
@@ -1036,7 +1076,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Circular Testimonial Carousel — Isolated without parent translateY for silky smooth scroll */}
-                    <div className="relative pt-2 pb-2 reveal-on-scroll">
+                    <div className="relative pt-2 pb-2 reveal-from-right">
                         <CircularTestimonials
                             testimonials={TESTIMONIALS_DATA}
                             autoplay={false}
@@ -1076,7 +1116,7 @@ export default function ExperienceOverlay({ initialData }: {
                 <div className="starfield opacity-30 pointer-events-none" />
 
                 <div className="relative z-10 max-w-4xl mx-auto w-full space-y-8 sm:space-y-10">
-                    <div className="text-center space-y-3 reveal-on-scroll">
+                    <div className="text-center space-y-3 reveal-from-left">
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             Connect <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-purple-200 via-amber-100 to-white">With Us</span>
                         </h2>
@@ -1086,7 +1126,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Dark Smoked Glassmorphic Cards Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 reveal-on-scroll">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 reveal-from-left">
                         {[
                             {
                                 name: 'WhatsApp',
@@ -1208,7 +1248,7 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-on-scroll">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-from-right">
                     {/* Editorial Title */}
                     <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                         Stay <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Connected</span>

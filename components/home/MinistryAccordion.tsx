@@ -146,7 +146,7 @@ export default function MinistryAccordion() {
             <div className="relative z-10 max-w-7xl mx-auto">
                 <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
                     {/* Left Column: Editorial Heading & Context */}
-                    <div className="w-full lg:w-5/12 text-center lg:text-left space-y-5 reveal-on-scroll">
+                    <div className="w-full lg:w-5/12 text-center lg:text-left space-y-5 reveal-from-right">
                         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/25 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.3em] text-amber-300">
                             <span>✦ Sacred Pillars ✦</span>
                         </div>
@@ -174,7 +174,7 @@ export default function MinistryAccordion() {
                     </div>
 
                     {/* Right Column: Interactive Expanding Strips */}
-                    <div className="w-full lg:w-7/12 flex justify-center lg:justify-end reveal-on-scroll">
+                    <div className="w-full lg:w-7/12 flex justify-center lg:justify-end reveal-from-right">
                         <div className="flex flex-row items-center gap-2 sm:gap-3 overflow-x-auto p-2 sm:p-3 hide-scrollbar max-w-full">
                             {MINISTRIES.map((item, index) => (
                                 <AccordionStrip

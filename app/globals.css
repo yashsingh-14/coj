@@ -197,13 +197,29 @@
   will-change: opacity, transform;
 }
 
-.reveal-on-scroll.is-revealed {
+.reveal-from-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  will-change: opacity, transform;
+}
+
+.reveal-from-right {
+  opacity: 0;
+  transform: translateX(40px);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed,
+.reveal-from-left.is-revealed,
+.reveal-from-right.is-revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(0, 0);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-on-scroll {
+  .reveal-on-scroll,
+  .reveal-from-left,
+  .reveal-from-right {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
