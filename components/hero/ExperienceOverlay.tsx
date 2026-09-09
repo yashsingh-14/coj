@@ -193,53 +193,30 @@ const KINETIC_PHRASES = [
 ];
 
 function HeroSection() {
-    const [activeVideoIndex, setActiveVideoIndex] = useState(0);
-    const [isVideoMuted] = useState(true);
     const [isVideoPlaying] = useState(true);
     const [isHeroVisible, setIsHeroVisible] = useState(true);
-    const video1Ref = useRef<HTMLVideoElement>(null);
-    const video2Ref = useRef<HTMLVideoElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
     const heroBoxRef = useRef<HTMLDivElement>(null);
-
-    // Mobile 3-Split Cinematic Hero Intro (Ankit Sajwan Style — Opaque, Distinct Slots)
-    const [isMobileSplitExpanded, setIsMobileSplitExpanded] = useState(false);
-    const topVideoRef = useRef<HTMLVideoElement>(null);
-    const mobileMiddleVidRef = useRef<HTMLVideoElement>(null);
-    const bottomVideoRef = useRef<HTMLVideoElement>(null);
-
-    // Mobile 3-Split Cinematic Hero Intro Timer
-    useEffect(() => {
-        // Guarantee muted autoplay and synchronous start on mobile devices
-        if (topVideoRef.current) {
-            topVideoRef.current.muted = true;
-            topVideoRef.current.play().catch(() => { });
-        }
-        if (mobileMiddleVidRef.current) {
-            mobileMiddleVidRef.current.muted = true;
-            mobileMiddleVidRef.current.play().catch(() => { });
-        }
-        if (bottomVideoRef.current) {
-            bottomVideoRef.current.muted = true;
-            bottomVideoRef.current.play().catch(() => { });
-        }
-
-        // Keep 3-split playing for 16s so users can fully soak in the multi-cam worship
-        const expandTimer = setTimeout(() => {
-            setIsMobileSplitExpanded(true);
-            setTimeout(() => {
-                topVideoRef.current?.pause();
-                bottomVideoRef.current?.pause();
-            }, 1800);
-        }, 16000);
-
-        return () => clearTimeout(expandTimer);
-    }, []);
 
     const [kineticIndex, setKineticIndex] = useState(0);
     const [prevKineticIndex, setPrevKineticIndex] = useState<number | null>(null);
     const [isKineticSwapping, setIsKineticSwapping] = useState(false);
 
-    // Auto-pause everything when hero scrolls out of view
+    // Guaranteed muted autoplay on mount across all platforms (Desktop, iOS Safari, Android Chrome)
+    useEffect(() => {
+        const vid = videoRef.current;
+        if (!vid) return;
+        vid.defaultMuted = true;
+        vid.muted = true;
+        const playPromise = vid.play();
+        if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+                console.warn('Hero video autoplay notice:', err);
+            });
+        }
+    }, []);
+
+    // Auto-pause video when hero scrolls out of view to preserve performance & GPU
     useEffect(() => {
         const heroEl = document.getElementById('hero');
         if (!heroEl) return;
@@ -248,14 +225,13 @@ function HeroSection() {
             (entries) => {
                 const isVisible = entries[0]?.isIntersecting ?? false;
                 setIsHeroVisible(isVisible);
-                const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
-                const otherVid = activeVideoIndex === 0 ? video2Ref.current : video1Ref.current;
+                const vid = videoRef.current;
+                if (!vid) return;
 
                 if (isVisible && isVideoPlaying) {
-                    currentVid?.play().catch(() => { });
+                    vid.play().catch(() => { });
                 } else {
-                    currentVid?.pause();
-                    otherVid?.pause();
+                    vid.pause();
                 }
             },
             { threshold: 0.05 }
@@ -263,7 +239,7 @@ function HeroSection() {
 
         observer.observe(heroEl);
         return () => observer.disconnect();
-    }, [activeVideoIndex, isVideoPlaying]);
+    }, [isVideoPlaying]);
 
     // Kinetic Typography Swap - ONLY runs when Hero is visible
     useEffect(() => {
@@ -283,32 +259,6 @@ function HeroSection() {
 
         return () => clearInterval(interval);
     }, [kineticIndex, isHeroVisible]);
-
-    // Video auto-slide - ONLY runs when Hero is visible & playing
-    useEffect(() => {
-        if (!isVideoPlaying || !isHeroVisible) return;
-        const autoSlideTimer = setInterval(() => {
-            setActiveVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
-        }, 8000);
-
-        return () => clearInterval(autoSlideTimer);
-    }, [activeVideoIndex, isVideoPlaying, isHeroVisible]);
-
-    // Video active switch
-    useEffect(() => {
-        const currentVid = activeVideoIndex === 0 ? video1Ref.current : video2Ref.current;
-        const otherVid = activeVideoIndex === 0 ? video2Ref.current : video1Ref.current;
-
-        if (currentVid) {
-            currentVid.currentTime = 0;
-            if (isVideoPlaying && isHeroVisible) {
-                currentVid.play().catch(() => { });
-            }
-        }
-        if (otherVid) {
-            otherVid.pause();
-        }
-    }, [activeVideoIndex, isVideoPlaying, isHeroVisible]);
 
     // Hero fade on scroll - native hardware-accelerated transform & opacity
     useEffect(() => {
@@ -330,125 +280,25 @@ function HeroSection() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleNextVideo = () => {
-        setActiveVideoIndex((prev) => (prev + 1) % HERO_VIDEOS.length);
-    };
-
     return (
         <section id="hero" className="relative w-full h-[100dvh] flex items-center justify-center text-center overflow-hidden">
-            {/* Desktop Background Video Slider */}
-            <div className="hidden md:block hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
+            {/* Background Video — Unified Fullscreen Experience on Desktop & Mobile */}
+            <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
                 <video
-                    ref={video1Ref}
+                    ref={videoRef}
                     src="/videos/coj%20intro%20video.mp4"
                     autoPlay
-                    muted={isVideoMuted}
+                    muted
+                    loop
                     playsInline
-                    preload="metadata"
-                    onEnded={handleNextVideo}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 0 ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                        }`}
-                />
-                <video
-                    ref={video2Ref}
-                    src="/videos/coj%20video.mp4"
-                    muted={isVideoMuted}
-                    playsInline
-                    preload="metadata"
-                    onEnded={handleNextVideo}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                        }`}
-                />
-                <div className="absolute inset-0 bg-black/30" />
-                <div className="absolute bottom-0 inset-x-0 h-20 md:h-28 bg-gradient-to-t from-[#07060A] via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
-            </div>
-
-            {/* Mobile 3-Split Cinematic Film Strips (< md — 100% Opaque, Zero Double-Exposure) */}
-            <div
-                onClick={() => setIsMobileSplitExpanded(true)}
-                className="md:hidden absolute inset-0 z-0 flex flex-col w-full h-full overflow-hidden bg-black select-none"
-            >
-                {/* Top Slot (Anniversary Celebration Stage & Lights) */}
-                <div
-                    style={{
-                        height: isMobileSplitExpanded ? '0%' : '33.333%',
-                        opacity: isMobileSplitExpanded ? 0 : 1,
-                        transition: 'height 1400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out'
-                    }}
-                    className="relative w-full overflow-hidden shrink-0 bg-black"
+                    preload="auto"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
                 >
-                    <video
-                        ref={topVideoRef}
-                        src="/videos/hero-mobile-top.mp4"
-                        poster="/videos/hero-poster-top.jpg"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="auto"
-                        className="w-full h-full object-cover object-[center_15%]"
-                    />
-                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-                    <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                </div>
-
-                {/* Middle Slot (Pastor Preaching & Praise — Expands to 100% Full Screen) */}
-                <div
-                    style={{
-                        height: isMobileSplitExpanded ? '100%' : '33.334%',
-                        transition: 'height 1400ms cubic-bezier(0.16, 1, 0.3, 1)'
-                    }}
-                    className="relative w-full flex-1 overflow-hidden bg-black"
-                >
-                    <video
-                        ref={mobileMiddleVidRef}
-                        src="/videos/coj%20intro%20video.mp4"
-                        poster="/videos/hero-poster-middle.jpg"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="auto"
-                        className="w-full h-full object-cover object-center"
-                    />
-                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-                    {/* Seam shadows when in 3-split mode */}
-                    <div
-                        style={{ opacity: isMobileSplitExpanded ? 0 : 1, transition: 'opacity 800ms ease-out' }}
-                        className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"
-                    />
-                    <div
-                        style={{ opacity: isMobileSplitExpanded ? 0 : 1, transition: 'opacity 800ms ease-out' }}
-                        className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"
-                    />
-                </div>
-
-                {/* Bottom Slot (Congregation & Worship) */}
-                <div
-                    style={{
-                        height: isMobileSplitExpanded ? '0%' : '33.333%',
-                        opacity: isMobileSplitExpanded ? 0 : 1,
-                        transition: 'height 1400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 900ms ease-out'
-                    }}
-                    className="relative w-full overflow-hidden shrink-0 bg-black"
-                >
-                    <video
-                        ref={bottomVideoRef}
-                        src="/videos/hero-mobile-bottom.mp4"
-                        poster="/videos/hero-poster-bottom.jpg"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="auto"
-                        className="w-full h-full object-cover object-[center_85%]"
-                    />
-                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-                    <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
-                </div>
-
-                {/* Subtle bottom blend into page background — keeps congregation bright and visible */}
-                <div className="absolute bottom-0 inset-x-0 h-16 sm:h-20 bg-gradient-to-t from-[#07060A] via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
+                    <source src="/videos/coj%20intro%20video.mp4" type="video/mp4" />
+                </video>
+                {/* Subtle cinematic gradient overlay — keeps video vivid while ensuring high text readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/60 pointer-events-none" />
+                <div className="absolute bottom-0 inset-x-0 h-24 md:h-32 bg-gradient-to-t from-[#07060A] via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
             {/* Hero Content */}
