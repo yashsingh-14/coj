@@ -21,6 +21,11 @@ function BottomNavComponent() {
         { name: 'Profile', href: '/profile', icon: null, isProfile: true },
     ];
 
+    // Completely hide BottomNav on give and public landing pages
+    if (!pathname || pathname === '/give' || pathname.startsWith('/give') || pathname === '/' || pathname.startsWith('/contact') || pathname.startsWith('/events') || pathname.startsWith('/about') || pathname.startsWith('/our-') || pathname.startsWith('/god-stories') || pathname.startsWith('/share-testimony')) {
+        return null;
+    }
+
     return (
         <div className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 pb-safe shadow-[0_-4px_25px_rgba(0,0,0,0.35)] bg-gradient-to-r from-[#FF6D00] to-[#FF3D00]">
             <div className="flex justify-around sm:justify-between items-center h-16 md:h-18 px-2 sm:px-6 md:px-10 max-w-md md:max-w-xl mx-auto">

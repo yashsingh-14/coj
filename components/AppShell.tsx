@@ -98,9 +98,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 {children}
             </div>
 
-            <div className={`transition-transform duration-500 ease-in-out ${showNav ? 'translate-y-0' : 'translate-y-full'}`}>
-                <BottomNav />
-            </div>
+            {showNav && (
+                <div className="transition-transform duration-500 ease-in-out translate-y-0">
+                    <BottomNav />
+                </div>
+            )}
         </>
     );
 }
