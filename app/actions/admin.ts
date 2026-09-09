@@ -224,3 +224,219 @@ export async function deleteTestimonyAdmin(id: string) {
 
     return { success: !error };
 }
+
+// ─── EVENTS ACTIONS ──────────────────────────────────────────────
+
+export async function createEventAdmin(payload: any) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { data, error } = await adminDb
+        .from('events')
+        .insert([payload])
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Admin Create Event Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true, data };
+}
+
+export async function updateEventAdmin(eventId: string, payload: any) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { data, error } = await adminDb
+        .from('events')
+        .update(payload)
+        .eq('id', eventId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Admin Update Event Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true, data };
+}
+
+export async function deleteEventAdmin(eventId: string) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { error } = await adminDb
+        .from('events')
+        .delete()
+        .eq('id', eventId);
+
+    if (error) {
+        console.error("Admin Delete Event Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true };
+}
+
+// ─── ARTISTS ACTIONS ─────────────────────────────────────────────
+
+export async function createArtistAdmin(payload: any) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { data, error } = await adminDb
+        .from('artists')
+        .insert([payload])
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Admin Create Artist Error:", error);
+        return { success: false, error: error.message, code: error.code };
+    }
+
+    await revalidateApp();
+    return { success: true, data };
+}
+
+export async function updateArtistAdmin(artistId: string, payload: any) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { data, error } = await adminDb
+        .from('artists')
+        .update(payload)
+        .eq('id', artistId)
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Admin Update Artist Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true, data };
+}
+
+export async function deleteArtistAdmin(artistId: string) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { error } = await adminDb
+        .from('artists')
+        .delete()
+        .eq('id', artistId);
+
+    if (error) {
+        console.error("Admin Delete Artist Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true };
+}
+
+// ─── SITE SETTINGS ACTIONS (HOME, SERMONS, FOOTER/GLOBAL) ────────
+
+export async function updateSiteSettingAdmin(key: string, value: any, description?: string) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { data, error } = await adminDb
+        .from('site_settings')
+        .upsert({
+            key,
+            value,
+            description: description || ''
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Admin Site Setting Upsert Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true, data };
+}
+
+// ─── DAILY CONTENT ACTIONS (VERSES & ANNOUNCEMENTS) ──────────────
+
+export async function saveDailyVerseAdmin(payload: { text: string; reference: string; image_url?: string }, dateStr?: string) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const date = dateStr || new Date().toISOString().split('T')[0];
+
+    const { data: existing } = await adminDb.from('daily_verses').select('id').eq('date', date).single();
+
+    let error;
+    if (existing) {
+        const res = await adminDb.from('daily_verses').update(payload).eq('id', existing.id);
+        error = res.error;
+    } else {
+        const res = await adminDb.from('daily_verses').insert([{ ...payload, date }]);
+        error = res.error;
+    }
+
+    if (error) {
+        console.error("Admin Save Daily Verse Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true };
+}
+
+export async function createAnnouncementAdmin(message: string, title: string = 'Notice') {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { data, error } = await adminDb
+        .from('announcements')
+        .insert([{ title, message, is_active: true }])
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Admin Create Announcement Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true, data };
+}
+
+export async function toggleAnnouncementAdmin(id: string, currentStatus: boolean) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { error } = await adminDb
+        .from('announcements')
+        .update({ is_active: !currentStatus })
+        .eq('id', id);
+
+    if (error) {
+        console.error("Admin Toggle Announcement Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true };
+}
+
+export async function deleteAnnouncementAdmin(id: string) {
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const { error } = await adminDb
+        .from('announcements')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error("Admin Delete Announcement Error:", error);
+        return { success: false, error: error.message };
+    }
+
+    await revalidateApp();
+    return { success: true };
+}
+

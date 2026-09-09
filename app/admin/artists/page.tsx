@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { Plus, Trash2, Edit, Mic2, Loader2, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { deleteArtistAdmin } from '@/app/actions/admin';
 
 export default function AdminArtistsPage() {
     const [artists, setArtists] = useState<any[]>([]);
@@ -34,11 +35,12 @@ export default function AdminArtistsPage() {
     const handleDelete = async (id: string) => {
         if (!confirm(`Are you sure you want to delete this artist? This can break songs linked to this ID: ${id}`)) return;
 
-        const { error } = await supabase.from('artists').delete().eq('id', id);
-        if (error) {
-            toast.error("Failed to delete artist");
+        const res = await deleteArtistAdmin(id);
+        if (!res.success) {
+            toast.error("Failed to delete artist: " + (res.error || ''));
         } else {
             toast.success("Artist deleted");
+            setArtists(prev => prev.filter(a => a.id !== id));
             fetchArtists();
         }
     };

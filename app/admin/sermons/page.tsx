@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Youtube, Save, Loader2, Radio, PlayCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { updateSiteSettingAdmin } from '@/app/actions/admin';
 
 export default function AdminSermonsPage() {
     const [config, setConfig] = useState({
@@ -31,13 +32,12 @@ export default function AdminSermonsPage() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
-        const { error } = await supabase.from('site_settings').upsert({
-            key: 'youtube_config',
-            value: config,
-            description: 'YouTube Channel & Live Settings'
-        });
-        if (error) toast.error("Failed to save config");
-        else toast.success("Sermon settings updated");
+        const res = await updateSiteSettingAdmin('youtube_config', config, 'YouTube Channel & Live Settings');
+        if (!res.success) {
+            toast.error("Failed to save config: " + (res.error || ''));
+        } else {
+            toast.success("Sermon settings updated");
+        }
         setIsSaving(false);
     };
 

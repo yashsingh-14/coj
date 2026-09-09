@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Settings, Save, Loader2, Globe, Youtube, Facebook, Twitter, Phone, Mail } from 'lucide-react';
 import { toast } from 'sonner';
+import { updateSiteSettingAdmin } from '@/app/actions/admin';
 
 export default function AdminSettingsPage() {
     const [socialLinks, setSocialLinks] = useState({
@@ -39,14 +40,10 @@ export default function AdminSettingsPage() {
         e.preventDefault();
         setIsSaving(true);
 
-        const { error } = await supabase.from('site_settings').upsert({
-            key: 'social_links',
-            value: socialLinks,
-            description: 'Footer Social and Contact Links'
-        });
+        const res = await updateSiteSettingAdmin('social_links', socialLinks, 'Footer Social and Contact Links');
 
-        if (error) {
-            toast.error("Failed to save settings");
+        if (!res.success) {
+            toast.error("Failed to save settings: " + (res.error || ''));
         } else {
             toast.success("Settings updated successfully");
         }

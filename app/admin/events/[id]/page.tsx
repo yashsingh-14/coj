@@ -7,18 +7,9 @@ import { ArrowLeft, Save, Loader2, Info } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
+import { createEventAdmin, updateEventAdmin } from '@/app/actions/admin';
+
 export default function EventFormPage({ params }: { params: any }) {
-    // Typescript nuance: params might be a Promise in newer Next.js. 
-    // We will unwrap it inside or use 'any' briefly to bypass if ensuring unwrap.
-    // However, for this file structure (new/page.tsx vs [id]/page.tsx), we need to handle both?
-    // wait, this code is for `app/admin/events/[id]/page.tsx` AND `app/admin/events/new/page.tsx`?
-    // No, I need two files or one component. 
-    // I will write this file to `app/admin/events/[id]/page.tsx` primarily, 
-    // and for `new`, I'll create a separate one that reuses a component or just duplicate safely for now to avoid complexity.
-    // Actually, I'll make this file robust enough for 'new' if I can.
-
-    // Let's stick to: This is `EditEventPage` for `[id]`.
-
     const [eventId, setEventId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -38,9 +29,9 @@ export default function EventFormPage({ params }: { params: any }) {
     });
 
     useEffect(() => {
-        // unwrapping params
+        // unwrapping params safely
         Promise.resolve(params).then((resolvedParams: any) => {
-            if (resolvedParams.id && resolvedParams.id !== 'new') {
+            if (resolvedParams?.id && resolvedParams.id !== 'new') {
                 setEventId(resolvedParams.id);
                 fetchEvent(resolvedParams.id);
             } else {
@@ -71,21 +62,21 @@ export default function EventFormPage({ params }: { params: any }) {
 
         try {
             if (eventId) {
-                // Update
-                const { error } = await supabase.from('events').update(formData).eq('id', eventId);
-                if (error) throw error;
+                // Update via Server Action
+                const res = await updateEventAdmin(eventId, formData);
+                if (!res.success) throw new Error(res.error);
                 toast.success("Event updated successfully");
             } else {
-                // Create
-                const { error } = await supabase.from('events').insert([formData]);
-                if (error) throw error;
+                // Create via Server Action
+                const res = await createEventAdmin(formData);
+                if (!res.success) throw new Error(res.error);
                 toast.success("Event created successfully");
             }
             router.push('/admin/events');
             router.refresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            toast.error("Failed to save event");
+            toast.error("Failed to save event: " + (error?.message || ''));
         } finally {
             setIsSaving(false);
         }

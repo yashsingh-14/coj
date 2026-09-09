@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { LayoutTemplate, Star, Save, Plus, Trash2, Loader2, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { updateSiteSettingAdmin, updateSongAdmin } from '@/app/actions/admin';
 
 export default function AdminHomePage() {
     return (
@@ -60,13 +61,12 @@ function HeroCarouselManager() {
 
     const handleSave = async () => {
         setIsSaving(true);
-        const { error } = await supabase.from('site_settings').upsert({
-            key: 'home_hero_slides',
-            value: slides,
-            description: 'Home Page Hero Carousel Slides'
-        });
-        if (error) toast.error("Failed to save slides");
-        else toast.success("Carousel updated");
+        const res = await updateSiteSettingAdmin('home_hero_slides', slides, 'Home Page Hero Carousel Slides');
+        if (!res.success) {
+            toast.error("Failed to save slides: " + (res.error || ''));
+        } else {
+            toast.success("Carousel updated");
+        }
         setIsSaving(false);
     };
 
@@ -185,10 +185,12 @@ function FeaturedSongsManager() {
         setSongs(prev => prev.map(s => s.id === id ? { ...s, is_featured: !current } : s));
         setFeaturedCount(prev => current ? prev - 1 : prev + 1);
 
-        const { error } = await supabase.from('songs').update({ is_featured: !current }).eq('id', id);
-        if (error) {
-            toast.error("Update failed");
+        const res = await updateSongAdmin(id, { is_featured: !current });
+        if (!res.success) {
+            toast.error("Update failed: " + (res.error || ''));
             fetchSongs(); // Revert
+        } else {
+            toast.success(!current ? "Song featured" : "Song unfeatured");
         }
     };
 

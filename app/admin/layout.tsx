@@ -313,6 +313,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/sermons" icon={Youtube} label="Sermons" /></div>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/utils" icon={BookOpen} label="Daily Content" /></div>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/notifications" icon={Bell} label="Broadcast" /></div>
+                    <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/settings" icon={Settings} label="Global Settings" /></div>
                 </nav>
 
                 <div className="p-4 border-t border-white/5">

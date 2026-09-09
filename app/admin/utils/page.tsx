@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { BookOpen, Megaphone, Save, Trash2, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+    saveDailyVerseAdmin,
+    createAnnouncementAdmin,
+    toggleAnnouncementAdmin,
+    deleteAnnouncementAdmin
+} from '@/app/actions/admin';
 
 export default function AdminUtilsPage() {
     const [activeTab, setActiveTab] = useState<'verse' | 'announcements'>('verse');
@@ -68,20 +74,9 @@ function VerseManager() {
         setIsSaving(true);
         const today = new Date().toISOString().split('T')[0];
 
-        // Check if exists
-        const { data: existing } = await supabase.from('daily_verses').select('id').eq('date', today).single();
-
-        let error;
-        if (existing) {
-            const res = await supabase.from('daily_verses').update(verse).eq('id', existing.id);
-            error = res.error;
-        } else {
-            const res = await supabase.from('daily_verses').insert([{ ...verse, date: today }]);
-            error = res.error;
-        }
-
-        if (error) {
-            toast.error("Failed to save verse");
+        const res = await saveDailyVerseAdmin(verse, today);
+        if (!res.success) {
+            toast.error("Failed to save verse: " + (res.error || ''));
         } else {
             toast.success("Verse of the day updated!");
         }
@@ -168,9 +163,9 @@ function AnnouncementsManager() {
         e.preventDefault();
         if (!newAnnouncement.trim()) return;
 
-        const { error } = await supabase.from('announcements').insert([{ title: 'Notice', message: newAnnouncement, is_active: true }]);
-        if (error) {
-            toast.error("Failed to add announcement");
+        const res = await createAnnouncementAdmin(newAnnouncement, 'Notice');
+        if (!res.success) {
+            toast.error("Failed to add announcement: " + (res.error || ''));
         } else {
             toast.success("Announcement added");
             setNewAnnouncement('');
@@ -179,15 +174,21 @@ function AnnouncementsManager() {
     };
 
     const handleDelete = async (id: string) => {
-        const { error } = await supabase.from('announcements').delete().eq('id', id);
-        if (error) toast.error("Failed to delete");
-        else fetchAnnouncements();
+        const res = await deleteAnnouncementAdmin(id);
+        if (!res.success) toast.error("Failed to delete: " + (res.error || ''));
+        else {
+            toast.success("Announcement deleted");
+            fetchAnnouncements();
+        }
     };
 
     const toggleActive = async (id: string, current: boolean) => {
-        const { error } = await supabase.from('announcements').update({ is_active: !current }).eq('id', id);
-        if (error) toast.error("Failed to update status");
-        else fetchAnnouncements();
+        const res = await toggleAnnouncementAdmin(id, current);
+        if (!res.success) toast.error("Failed to update status: " + (res.error || ''));
+        else {
+            toast.success(current ? "Announcement deactivated" : "Announcement activated");
+            fetchAnnouncements();
+        }
     };
 
     return (

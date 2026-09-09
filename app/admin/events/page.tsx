@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { Plus, Trash2, Edit, Calendar, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { deleteEventAdmin } from '@/app/actions/admin';
 
 export default function AdminEventsPage() {
     const [events, setEvents] = useState<any[]>([]);
@@ -32,11 +33,12 @@ export default function AdminEventsPage() {
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this event?")) return;
 
-        const { error } = await supabase.from('events').delete().eq('id', id);
-        if (error) {
-            toast.error("Failed to delete event");
+        const res = await deleteEventAdmin(id);
+        if (!res.success) {
+            toast.error("Failed to delete event: " + (res.error || ''));
         } else {
             toast.success("Event deleted");
+            setEvents(prev => prev.filter(e => e.id !== id));
             fetchEvents();
         }
     };

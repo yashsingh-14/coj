@@ -8,9 +8,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from 'sonner';
 
+import { createArtistAdmin, updateArtistAdmin } from '@/app/actions/admin';
+
 export default function ArtistFormPage({ params }: { params: any }) {
-    // Typescript nuance: params might be a Promise or object depending on Next.js version in this project.
-    // Handling as any for safety across version bumps in specific app dir setups.
     const [artistIdParam, setArtistIdParam] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -28,11 +28,9 @@ export default function ArtistFormPage({ params }: { params: any }) {
     const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
-        // unwrapping params
+        // unwrapping params safely
         Promise.resolve(params).then((resolvedParams: any) => {
-            if (resolvedParams.id && resolvedParams.id !== 'new') {
-                // Important: resolvedParams.id might be URL encoded (e.g. 'hillsong%20worship' -> 'hillsong worship')
-                // But since our IDs are slugs (kebab-case), typically fine.
+            if (resolvedParams?.id && resolvedParams.id !== 'new') {
                 const id = decodeURIComponent(resolvedParams.id);
                 setArtistIdParam(id);
                 setIsEditMode(true);
@@ -76,36 +74,35 @@ export default function ArtistFormPage({ params }: { params: any }) {
 
         try {
             if (isEditMode) {
-                // Update
-                const { error } = await supabase.from('artists').update({
+                // Update via Server Action
+                const res = await updateArtistAdmin(artistIdParam!, {
                     name: formData.name,
                     image: formData.image,
                     followers: formData.followers,
                     genre: formData.genre,
-                    songs_count: formData.songs_count // Usually calculated, but manual override permitted
-                }).eq('id', artistIdParam); // Use original ID to find record
+                    songs_count: formData.songs_count
+                });
 
-                if (error) throw error;
+                if (!res.success) throw new Error(res.error);
                 toast.success("Artist updated successfully");
             } else {
-                // Create
-                // Ensure ID is unique
-                const { error } = await supabase.from('artists').insert([formData]);
-                if (error) {
-                    if (error.code === '23505') { // Unique violation
+                // Create via Server Action
+                const res = await createArtistAdmin(formData);
+                if (!res.success) {
+                    if (res.code === '23505') {
                         toast.error("Artist ID already exists. Please choose a unique ID.");
                         setIsSaving(false);
                         return;
                     }
-                    throw error;
+                    throw new Error(res.error);
                 }
                 toast.success("Artist created successfully");
             }
             router.push('/admin/artists');
             router.refresh();
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            toast.error("Failed to save artist");
+            toast.error("Failed to save artist: " + (error?.message || ''));
         } finally {
             setIsSaving(false);
         }
