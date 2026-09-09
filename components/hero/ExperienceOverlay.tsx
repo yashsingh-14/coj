@@ -20,6 +20,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 import CircularTestimonials from "@/components/ui/CircularTestimonials";
 import LiquidButton from "@/components/ui/LiquidButton";
+import KineticMarquee from "./KineticMarquee";
 
 const ICON_MAP: Record<string, any> = {
     BookOpen,
@@ -177,10 +178,10 @@ const HERO_VIDEOS = [
 ];
 
 const KINETIC_PHRASES = [
-    { text: "Meets Earth", gradient: "from-[#FFB37A] via-[#FF5A2E] to-[#C2361A]" },
-    { text: "Heals Hearts", gradient: "from-[#FFD700] via-[#FF8C68] to-[#C2361A]" },
-    { text: "Transforms Lives", gradient: "from-[#F59E0B] via-[#FF5A2E] to-[#981C01]" },
-    { text: "Ignites Revival", gradient: "from-[#FDE047] via-[#FF5A2E] to-[#C2361A]" }
+    { text: "I Will Give You Rest", gradient: "from-[#FFB37A] via-[#FF5A2E] to-[#C2361A]" },
+    { text: "All Who Are Weary", gradient: "from-[#FFD700] via-[#FF8C68] to-[#C2361A]" },
+    { text: "All Heavy Laden", gradient: "from-[#F59E0B] via-[#FF5A2E] to-[#981C01]" },
+    { text: "Find Peace For Souls", gradient: "from-[#FDE047] via-[#FF5A2E] to-[#C2361A]" }
 ];
 
 function HeroSection() {
@@ -449,17 +450,17 @@ function HeroSection() {
                         Call of Jesus Ministries
                     </p>
 
-                    <h1 className="flex flex-col items-center select-none">
+                    <h1 className="flex flex-col items-center select-none w-full">
                         <span
-                            className="block text-3xl sm:text-5xl md:text-7xl lg:text-[100px] font-black tracking-tighter text-[#F4EDE2] drop-shadow-2xl leading-[1.08] text-center"
+                            className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter text-[#F4EDE2] drop-shadow-2xl leading-[1.08] text-center"
                         >
-                            Where Heaven
+                            Come To Me
                         </span>
 
-                        <div className="relative text-3xl sm:text-5xl md:text-7xl lg:text-[100px] h-[1.3em] w-full max-w-4xl overflow-hidden flex items-center justify-center select-none mt-0.5 sm:mt-1">
+                        <div className="relative text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl h-[1.5em] sm:h-[1.55em] md:h-[1.6em] w-full max-w-5xl overflow-hidden flex items-center justify-center select-none mt-0.5 sm:mt-1 px-3">
                             <span
                                 key={`kinetic-curr-${kineticIndex}`}
-                                className={`block font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.15] whitespace-nowrap drop-shadow-2xl ${isKineticSwapping ? 'kinetic-phrase-in' : ''}`}
+                                className={`block font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.25] pb-1 px-3 whitespace-nowrap drop-shadow-2xl ${isKineticSwapping ? 'kinetic-phrase-in' : ''}`}
                             >
                                 {KINETIC_PHRASES[kineticIndex].text}
                             </span>
@@ -467,13 +468,18 @@ function HeroSection() {
                             {isKineticSwapping && prevKineticIndex !== null && (
                                 <span
                                     key={`kinetic-prev-${prevKineticIndex}`}
-                                    className={`absolute font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.15] whitespace-nowrap kinetic-phrase-out drop-shadow-2xl`}
+                                    className={`absolute font-serif italic font-medium bg-gradient-to-r from-amber-400 via-[#FF5A2E] to-red-500 bg-clip-text text-transparent leading-[1.25] pb-1 px-3 whitespace-nowrap kinetic-phrase-out drop-shadow-2xl`}
                                 >
                                     {KINETIC_PHRASES[prevKineticIndex].text}
                                 </span>
                             )}
                         </div>
                     </h1>
+
+                    {/* Matthew 11:28 Reference directly above Get Directions button */}
+                    <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-semibold tracking-[0.25em] text-amber-400 uppercase text-center drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+                        Matthew 11:28
+                    </p>
                 </div>
 
                 <div className="hero-fade-in pt-4" style={{ animationDelay: '0.9s' }}>
@@ -600,10 +606,10 @@ export default function ExperienceOverlay({ initialData }: {
                     }
                 });
             },
-            { threshold: 0.05, rootMargin: '0px 0px -40px 0px' }
+            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
         );
 
-        document.querySelectorAll('.reveal-on-scroll, .reveal-blur, .reveal-scale, .reveal-stagger').forEach((el) => {
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
             revealObserver.observe(el);
         });
 
@@ -651,38 +657,9 @@ export default function ExperienceOverlay({ initialData }: {
             <HeroSection />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* INFINITE MARQUEE BANNER — Seamless Ambient Horizon             */}
+            {/* DUAL-DIRECTION KINETIC MARQUEE — Scroll-Driven Ambient Horizon  */}
             {/* ═══════════════════════════════════════════════════════════════ */}
-            <div className="relative py-4 sm:py-6 md:py-8 overflow-hidden bg-gradient-to-b from-[#07060A] via-[#0D0B12] to-[#07060A]">
-                {/* Luminous Top & Bottom Seam Fades */}
-                <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF5A2E]/20 via-[#FFB37A]/25 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#FFB37A]/25 via-[#FF5A2E]/20 to-transparent pointer-events-none" />
-
-                {/* Left & Right Edge Vignette Fades */}
-                <div className="absolute inset-y-0 left-0 w-16 sm:w-24 md:w-48 bg-gradient-to-r from-[#07060A] to-transparent z-10 pointer-events-none" />
-                <div className="absolute inset-y-0 right-0 w-16 sm:w-24 md:w-48 bg-gradient-to-l from-[#07060A] to-transparent z-10 pointer-events-none" />
-
-                <div className="animate-marquee flex whitespace-nowrap will-change-transform">
-                    {Array.from({ length: 2 }).map((_, setIdx) => (
-                        <div key={setIdx} className="flex items-center gap-5 sm:gap-8 px-2 sm:px-4">
-                            {[
-                                { word: 'Jesus is Lord', symbol: '✦', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
-                                { word: 'Holy Spirit', symbol: '🕊️', color: 'text-[#FFB37A]', glow: 'drop-shadow-[0_0_10px_rgba(255,179,122,0.4)]' },
-                                { word: 'Supernatural Freedom', symbol: '⚡', color: 'text-[#FDE047]', glow: 'drop-shadow-[0_0_10px_rgba(253,224,71,0.4)]' },
-                                { word: 'Divine Healing', symbol: '✦', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
-                                { word: 'Praise the Lord', symbol: '🔥', color: 'text-[#FF5A2E]', glow: 'drop-shadow-[0_0_10px_rgba(255,90,46,0.4)]' },
-                                { word: 'Glory to God', symbol: '👑', color: 'text-[#FBBF24]', glow: 'drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]' },
-                                { word: 'Emmanuel', symbol: '✦', color: 'text-[#F59E0B]', glow: 'drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]' }
-                            ].map((item, i) => (
-                                <span key={i} className="flex items-center gap-5 sm:gap-8">
-                                    <span className="text-sm sm:text-lg md:text-2xl font-light tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#F4EDE2]/60 font-space hover:text-[#F4EDE2] transition-colors">{item.word}</span>
-                                    <span className={`${item.color} text-xs sm:text-sm ${item.glow}`}>{item.symbol}</span>
-                                </span>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <KineticMarquee />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* 1. DAILY PROMISE — Intimate Scripture Sanctuary                */}
@@ -709,14 +686,14 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay for heavenly depth */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-on-scroll">
                     {/* Minimalist Editorial Title: Daily Promise */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-blur">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                         Daily <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Promise</span>
                     </h2>
 
                     {/* Scripture Quote — Centered Editorial Masterpiece */}
-                    <div className="max-w-3xl mx-auto py-2 sm:py-4 reveal-blur reveal-delay-2">
+                    <div className="max-w-3xl mx-auto py-2 sm:py-4">
                         <blockquote className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-light italic leading-relaxed sm:leading-snug text-white/95 tracking-tight">
                             &ldquo;{verse?.text || "God is our refuge and strength, a very present help in trouble."}&rdquo;
                         </blockquote>
@@ -734,7 +711,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Understated Action Buttons */}
-                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2 reveal-blur reveal-delay-3">
+                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 pt-2">
                         <button
                             onClick={handleCopyVerse}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300 text-xs tracking-wider transition-all duration-300 active:scale-95"
@@ -754,11 +731,10 @@ export default function ExperienceOverlay({ initialData }: {
                         {verse?.reflection && (
                             <button
                                 onClick={() => setShowDevotional(!showDevotional)}
-                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs tracking-wider transition-all duration-300 active:scale-95 ${
-                                    showDevotional
+                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs tracking-wider transition-all duration-300 active:scale-95 ${showDevotional
                                         ? 'border-amber-400/50 bg-amber-500/10 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]'
                                         : 'border-white/10 hover:border-amber-400/40 hover:bg-white/[0.04] text-white/70 hover:text-amber-300'
-                                }`}
+                                    }`}
                                 aria-label="Daily devotional reflection"
                             >
                                 <BookOpen className="w-3.5 h-3.5" />
@@ -812,9 +788,9 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay for heavenly depth */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 space-y-8 sm:space-y-10">
+                <div className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 space-y-8 sm:space-y-10 reveal-on-scroll">
                     {/* Minimalist Editorial Title: Weekly Gatherings */}
-                    <div className="text-center space-y-3 reveal-blur">
+                    <div className="text-center space-y-3">
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             Weekly <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-orange-300 via-rose-300 to-amber-200">Gatherings</span>
                         </h2>
@@ -824,14 +800,14 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Editorial Service Schedule List — Sleek, Unified, Professional */}
-                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08] reveal-stagger">
+                    <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08]">
                         {eventsList.map((event: any, i: number) => {
                             const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
 
                             return (
                                 <div
                                     key={event.id || i}
-                                    className="group py-5 sm:py-6 px-2 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors rounded-xl reveal-blur"
+                                    className="group py-5 sm:py-6 px-2 sm:px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors rounded-xl"
                                 >
                                     {/* Left: Clean Icon + Title + Hindi Badge + Desc */}
                                     <div className="flex items-start sm:items-center gap-4">
@@ -870,7 +846,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Directions CTA Button */}
-                    <div className="text-center pt-2 reveal-blur reveal-delay-3">
+                    <div className="text-center pt-2">
                         <a
                             href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                             target="_blank"
@@ -910,14 +886,14 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay for heavenly depth */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-5 sm:px-8 space-y-6 sm:space-y-8 reveal-on-scroll">
                     {/* Minimalist Editorial Title: Our Mission */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-blur">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                         Our <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Mission</span>
                     </h2>
 
                     {/* COJ Original Mission Statement with Shimmering Italic Accents */}
-                    <div className="flex justify-center max-w-3xl mx-auto reveal-blur reveal-delay-2">
+                    <div className="flex justify-center max-w-3xl mx-auto">
                         <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light tracking-tight leading-relaxed sm:leading-snug text-white/95 text-center">
                             To <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">prepare people</span> across the world for the <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-200 to-orange-300">second coming</span> of Jesus Christ.
                         </p>
@@ -948,9 +924,9 @@ export default function ExperienceOverlay({ initialData }: {
                         {/* Starfield overlay for depth */}
                         <div className="starfield opacity-30 pointer-events-none" />
 
-                        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-8 sm:space-y-10">
+                        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-8 sm:space-y-10 reveal-on-scroll">
                             {/* Editorial Title */}
-                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 reveal-blur">
+                            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6">
                                 <div className="space-y-3">
                                     <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                                         Trending <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Worship</span>
@@ -972,7 +948,7 @@ export default function ExperienceOverlay({ initialData }: {
                             </div>
 
                             {/* Horizontal Scroll Songs */}
-                            <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-3.5 md:gap-5 pb-3 sm:pb-4 scroll-smooth reveal-scale reveal-delay-2">
+                            <div className="gsap-songs-hscroll overflow-x-auto scrollbar-none flex gap-3.5 md:gap-5 pb-3 sm:pb-4 scroll-smooth reveal-on-scroll reveal-delay-1">
                                 {trending.slice(0, 8).map((song, i) => {
                                     const rankBadgeStyle = i === 0
                                         ? 'bg-amber-500 text-black font-bold shadow-lg shadow-amber-500/30 text-[10px] px-3 py-1'
@@ -1040,7 +1016,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-10 max-w-5xl mx-auto w-full space-y-8 sm:space-y-10">
                     {/* Section Header */}
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-blur">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 reveal-on-scroll">
                         <div className="space-y-3">
                             <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                                 God <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-orange-200 to-white">Stories</span>
@@ -1072,8 +1048,8 @@ export default function ExperienceOverlay({ initialData }: {
                         </div>
                     </div>
 
-                    {/* Circular Testimonial Carousel — Isolated with smooth scale reveal */}
-                    <div className="relative pt-2 pb-2 reveal-scale reveal-delay-2">
+                    {/* Circular Testimonial Carousel — Isolated without parent translateY for silky smooth scroll */}
+                    <div className="relative pt-2 pb-2">
                         <CircularTestimonials
                             testimonials={TESTIMONIALS_DATA}
                             autoplay={false}
@@ -1112,8 +1088,8 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto w-full space-y-8 sm:space-y-10">
-                    <div className="text-center space-y-3 reveal-blur">
+                <div className="relative z-10 max-w-4xl mx-auto w-full space-y-8 sm:space-y-10 reveal-on-scroll">
+                    <div className="text-center space-y-3">
                         <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                             Connect <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-purple-200 via-amber-100 to-white">With Us</span>
                         </h2>
@@ -1123,7 +1099,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Dark Smoked Glassmorphic Cards Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 reveal-stagger">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 reveal-on-scroll reveal-delay-1">
                         {[
                             {
                                 name: 'WhatsApp',
@@ -1167,7 +1143,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 href={social.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`group relative rounded-3xl p-6 sm:p-7 min-h-[190px] sm:min-h-[230px] flex flex-col justify-between backdrop-blur-2xl bg-white/[0.03] border ${social.hoverBorder} transition-all duration-500 hover:-translate-y-1.5 overflow-hidden shadow-2xl reveal-scale`}
+                                className={`group relative rounded-3xl p-6 sm:p-7 min-h-[190px] sm:min-h-[230px] flex flex-col justify-between backdrop-blur-2xl bg-white/[0.03] border ${social.hoverBorder} transition-all duration-500 hover:-translate-y-1.5 overflow-hidden shadow-2xl`}
                                 style={{ borderColor: `${social.accent}25` }}
                             >
                                 {/* Platform Colored Ambient Bloom */}
@@ -1245,18 +1221,18 @@ export default function ExperienceOverlay({ initialData }: {
                 {/* Starfield overlay */}
                 <div className="starfield opacity-30 pointer-events-none" />
 
-                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8">
+                <div className="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 space-y-6 sm:space-y-8 reveal-on-scroll">
                     {/* Editorial Title */}
-                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none reveal-blur">
+                    <h2 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-white select-none">
                         Stay <span className="font-serif italic font-normal text-transparent bg-clip-text bg-gradient-to-br from-amber-200 via-amber-100 to-white">Connected</span>
                     </h2>
 
-                    <p className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight leading-relaxed text-white/80 max-w-2xl mx-auto reveal-blur reveal-delay-1">
+                    <p className="text-xl sm:text-2xl md:text-3xl font-light tracking-tight leading-relaxed text-white/80 max-w-2xl mx-auto">
                         Receive weekly spirit-filled devotionals, fresh worship releases, and prophetic updates directly in your inbox.
                     </p>
 
                     {/* Clean Centered Email Subscription */}
-                    <div className="max-w-lg mx-auto pt-4 reveal-scale reveal-delay-2">
+                    <div className="max-w-lg mx-auto pt-4">
                         <form
                             onSubmit={async (e) => {
                                 e.preventDefault();
@@ -1314,7 +1290,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                 <div className="relative z-20 max-w-7xl mx-auto">
                     {/* Top Section: Brand Block + Links Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pb-8 sm:pb-12 reveal-blur">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pb-8 sm:pb-12">
                         {/* Brand Column */}
                         <div className="lg:col-span-4 space-y-3.5 sm:space-y-4">
                             <div className="flex items-center gap-3">
@@ -1387,7 +1363,7 @@ export default function ExperienceOverlay({ initialData }: {
                     {/* ═══════════════════════════════════════════════════════════════ */}
                     {/* GRAND FULL-WIDTH WORDMARK — Seamless Flow with Interactive Letter Blow Effect */}
                     {/* ═══════════════════════════════════════════════════════════════ */}
-                    <div className="relative pt-6 pb-6 sm:pt-10 sm:pb-8 md:pt-14 md:pb-10 overflow-visible select-none -mx-4 sm:-mx-6 md:-mx-12 px-3 sm:px-6 md:px-10 reveal-scale reveal-delay-2">
+                    <div className="relative pt-6 pb-6 sm:pt-10 sm:pb-8 md:pt-14 md:pb-10 overflow-visible select-none -mx-4 sm:-mx-6 md:-mx-12 px-3 sm:px-6 md:px-10">
                         {/* Ambient Celestial Flame Glow matching Logo Atmosphere */}
                         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                             <div className="w-full max-w-6xl h-28 sm:h-44 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,90,46,0.25)_0%,rgba(245,158,11,0.18)_40%,rgba(139,92,246,0.10)_75%,transparent_90%)] blur-3xl" />
@@ -1436,7 +1412,7 @@ export default function ExperienceOverlay({ initialData }: {
                     </div>
 
                     {/* Bottom Legal & Copyright Bar */}
-                    <div className="border-t border-white/15 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-3 reveal-blur reveal-delay-3">
+                    <div className="border-t border-white/15 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-white/50 gap-3">
                         <p>© {new Date().getFullYear()} Call of Jesus Ministries. All rights reserved.</p>
                         <div className="flex items-center gap-4">
                             <Link href="/terms" className="hover:text-amber-400 text-white/60 transition-colors">Terms of Service</Link>
