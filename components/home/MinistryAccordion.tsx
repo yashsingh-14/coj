@@ -174,7 +174,7 @@ export default function MinistryAccordion() {
                     </div>
 
                     {/* Right Column: Interactive Expanding Strips */}
-                    <div className="w-full lg:w-7/12 flex justify-center lg:justify-end reveal-from-right">
+                    <div className="w-full lg:w-7/12 flex justify-center lg:justify-end reveal-from-right reveal-delay-1">
                         <div className="flex flex-row items-center gap-2 sm:gap-3 overflow-x-auto p-2 sm:p-3 hide-scrollbar max-w-full">
                             {MINISTRIES.map((item, index) => (
                                 <AccordionStrip

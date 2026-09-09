@@ -604,47 +604,73 @@ export default function ExperienceOverlay({ initialData }: {
 
     // Hardware-Accelerated Alternating Directional Scroll Reveal Engine
     useEffect(() => {
-        // Collect all directional reveal elements
-        const elements = Array.from(
-            document.querySelectorAll<HTMLElement>('.reveal-from-left, .reveal-from-right, .reveal-on-scroll')
+        // Guarantee clean start at top upon refresh so animations always play from the top
+        if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                    }
+                });
+            },
+            {
+                root: null,
+                rootMargin: '0px 0px -50px 0px',
+                threshold: 0.08,
+            }
         );
 
-        const checkReveals = () => {
-            const triggerPoint = window.innerHeight * 0.90;
-            for (let i = elements.length - 1; i >= 0; i--) {
-                const el = elements[i];
-                if (!el) continue;
-                const rect = el.getBoundingClientRect();
-                // When element top enters bottom 90% of screen AND hasn't scrolled far off above
-                if (rect.top <= triggerPoint && rect.bottom >= -80) {
-                    el.classList.add('is-revealed');
-                    elements.splice(i, 1);
-                }
+        const registerElements = () => {
+            const elements = document.querySelectorAll('.reveal-from-left, .reveal-from-right, .reveal-on-scroll');
+            elements.forEach((el) => {
+                observer.observe(el);
+            });
+        };
+
+        registerElements();
+
+        // Re-scan after initial render and dynamic data hydration
+        const t1 = setTimeout(registerElements, 300);
+        const t2 = setTimeout(registerElements, 1000);
+
+        // Reset reveals when user scrolls back to the very top hero area (< 80px)
+        // so re-scrolling downward plays the luxury entrance animations again
+        const handleResetAtTop = () => {
+            if (window.scrollY < 80) {
+                const elements = document.querySelectorAll('.reveal-from-left, .reveal-from-right, .reveal-on-scroll');
+                elements.forEach((el) => {
+                    el.classList.remove('is-revealed');
+                });
             }
         };
 
-        // Check immediately on mount for top-fold elements
-        checkReveals();
+        window.addEventListener('scroll', handleResetAtTop, { passive: true });
 
-        // Check after initial layout / image loading
-        const t1 = setTimeout(checkReveals, 150);
-        const t2 = setTimeout(checkReveals, 500);
-
-        // Native window scroll listener
-        window.addEventListener('scroll', checkReveals, { passive: true });
-
-        // Lenis virtual scroll listener
-        const lenis = (window as any).lenis;
-        if (lenis) {
-            lenis.on('scroll', checkReveals);
-        }
+        // Connect with Lenis virtual scroll if active
+        let lenisPoll: NodeJS.Timeout;
+        const attachLenis = () => {
+            const lenis = (window as any).lenis;
+            if (lenis) {
+                lenis.on('scroll', handleResetAtTop);
+            } else {
+                lenisPoll = setTimeout(attachLenis, 250);
+            }
+        };
+        attachLenis();
 
         return () => {
             clearTimeout(t1);
             clearTimeout(t2);
-            window.removeEventListener('scroll', checkReveals);
+            clearTimeout(lenisPoll);
+            observer.disconnect();
+            window.removeEventListener('scroll', handleResetAtTop);
+            const lenis = (window as any).lenis;
             if (lenis) {
-                lenis.off('scroll', checkReveals);
+                lenis.off('scroll', handleResetAtTop);
             }
         };
     }, []);
