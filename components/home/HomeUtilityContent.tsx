@@ -10,15 +10,12 @@ import LandingFooter from '@/components/hero/LandingFooter';
 import { generateSlug } from '@/lib/seoUtils';
 import React, { useState, useEffect, TouchEvent } from 'react';
 import Sidebar from '../ui/Sidebar';
-import Logo from '../ui/Logo';
 import TiltCard from '../ui/TiltCard';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
-import { getVerseOfTheDay } from '@/lib/getVerseOfTheDay';
-import ShareButton from '@/components/ui/ShareButton';
-import NotificationPrompt from '@/components/ui/NotificationPrompt';
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -86,8 +83,7 @@ export default function HomeUtilityContent({
         }
     };
 
-    // Get today's verse (DB > Local Fallback)
-    const todaysVerse = dbVerse || getVerseOfTheDay();
+
 
 
 
@@ -288,80 +284,6 @@ export default function HomeUtilityContent({
                         );
                     })}
                 </div>
-            </section>
-
-            {/* VERSE OF THE DAY (New Cinematic Section) */}
-            {/* VERSE OF THE DAY - ULTIMATE PREMIUM (GOLD & GLASS) */}
-            <section className="mb-24 section-anim relative px-4 md:px-6 py-8 opacity-0 translate-y-8 transition-all duration-700 ease-out">
-                <TiltCard className="w-full" max={8} scale={1.02}>
-                    <div className="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden group border border-white/10 shadow-2xl shadow-black/50 pt-8 md:pt-12 pb-16 md:pb-24 px-4 md:px-6">
-                        {/* Parallax Background - Cinematic Slow Pan */}
-                        <div className="absolute inset-0 bg-cover bg-center scale-125 group-hover:scale-110 transition-transform duration-[30s] ease-linear" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507646870319-5bb8e411b742?q=80&w=2070&auto=format&fit=crop')" }}></div>
-
-                        {/* Divine Layers - INTENSIFIED GOLD */}
-                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-1000"></div>
-                        <div className="absolute inset-0 bg-gradient-to-tr from-amber-600/40 via-yellow-500/20 to-purple-900/30 mix-blend-overlay"></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/60"></div>
-
-                        {/* Gold Border Glow */}
-                        <div className="absolute inset-0 border-[1px] border-amber-500/30 rounded-[3rem] m-2 box-border"></div>
-                        <div className="absolute inset-0 border-[1px] border-[var(--chord)]/50 rounded-[3rem] m-3 opacity-60"></div>
-
-                        {/* Content Container - Floating Glass */}
-                        <div className="relative z-10 max-w-5xl mx-auto text-center transform-style-3d perspective-1000">
-
-                            {/* Corner Label */}
-                            <div className="absolute top-0 left-0 md:left-4 opacity-50">
-                                <span className="text-[10px] uppercase tracking-[0.2em] text-white font-sans font-bold border border-white/20 px-3 py-1 rounded-full">
-                                    Verse of the Day
-                                </span>
-                            </div>
-
-                            {/* CALL OF JESUS LOGO  */}
-                            <div className="flex flex-col items-center justify-center transform-style-3d animate-float-slow">
-                                <Logo className="w-40 md:w-60 h-auto" />
-                            </div>
-
-                            <h2 className="-mt-8 md:-mt-16 text-2xl md:text-4xl lg:text-6xl font-serif italic leading-tight mb-6 md:mb-10 drop-shadow-2xl px-2 md:px-4 relative verse-text-shine">
-                                <span className="absolute -top-4 md:-top-10 left-0 text-[40px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
-                                {todaysVerse.text}
-                                <span className="absolute -bottom-8 md:-bottom-20 right-0 text-[40px] md:text-[100px] opacity-10 font-serif text-[var(--chord)]">&quot;</span>
-                            </h2>
-
-                            <div className="flex flex-col items-center gap-4 md:gap-6 translate-z-10">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
-                                    <span className="text-[var(--chord)] font-bold tracking-[0.4em] uppercase text-sm">{todaysVerse.reference}</span>
-                                    <div className="h-[1px] w-12 bg-[var(--chord)]/50"></div>
-                                </div>
-
-                                {/* Ps. Samson Wilson — Prominent Attribution Badge */}
-                                <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-amber-500/15 border border-amber-400/30 backdrop-blur-md shadow-lg shadow-amber-500/10">
-                                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                                    <strong className="font-bold text-amber-300 font-serif italic text-sm md:text-base tracking-wide">Ps. Samson Wilson</strong>
-                                </div>
-
-                                <Link href="/devotional" className="group relative px-6 md:px-10 py-3 md:py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full overflow-hidden transition-all hover:bg-white/10 hover:border-[var(--chord)]/50 hover:shadow-[0_0_30px_rgba(255,193,7,0.2)] inline-block translate-z-10">
-                                    {/* Continuous Shine Layer */}
-                                    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full">
-                                        <div className="button-shine-overlay opacity-50"></div>
-                                    </div>
-                                    <span className="relative text-white font-bold tracking-widest text-sm flex items-center gap-3">
-                                        READ DEVOTIONAL <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                    </span>
-                                </Link>
-                                <NotificationPrompt />
-                            </div>
-                        </div>
-
-                        {/* Signature — Bottom Right */}
-                        <div className="absolute bottom-6 right-8 md:bottom-8 md:right-10">
-                            <p className="text-amber-300/50 text-[11px] md:text-xs font-serif italic tracking-[0.15em] text-right verse-text-shine">
-                                ✦ Ps. Samson Wilson
-                            </p>
-                        </div>
-                    </div>
-                </TiltCard>
             </section>
 
             {/* TRENDING WORSHIP - CINEMATIC CHARTS */}
