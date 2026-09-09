@@ -1147,7 +1147,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 sub: 'Daily Devotionals',
                                 action: 'Join Channel',
                                 icon: MessageCircle,
-                                href: 'https://whatsapp.com/channel/0029VaBFUhk9Guw4VxXqHI0m',
+                                href: 'https://whatsapp.com/channel/0029Vb5y3CxGJP8Bjv8eeT09',
                                 accent: '#25D366',
                                 hoverBorder: 'hover:border-[#25D366]/40 hover:shadow-[#25D366]/10'
                             },
@@ -1156,7 +1156,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 sub: 'Community Fellowship',
                                 action: 'Official Page',
                                 icon: Facebook,
-                                href: 'https://www.facebook.com/callofjesusministries',
+                                href: 'https://www.facebook.com/COJMinistries/',
                                 accent: '#1877F2',
                                 hoverBorder: 'hover:border-[#1877F2]/40 hover:shadow-[#1877F2]/10'
                             },
@@ -1174,7 +1174,7 @@ export default function ExperienceOverlay({ initialData }: {
                                 sub: 'Daily Inspiration',
                                 action: 'Moments & Reels',
                                 icon: Instagram,
-                                href: 'https://www.instagram.com/callofjesusministries',
+                                href: 'https://www.instagram.com/cojministries',
                                 accent: '#E4405F',
                                 hoverBorder: 'hover:border-[#E4405F]/40 hover:shadow-[#E4405F]/10'
                             },
