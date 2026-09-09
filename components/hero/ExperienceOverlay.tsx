@@ -22,7 +22,6 @@ import CircularTestimonials from "@/components/ui/CircularTestimonials";
 import LiquidButton from "@/components/ui/LiquidButton";
 import KineticMarquee from "./KineticMarquee";
 import MinistryAccordion from "@/components/home/MinistryAccordion";
-import KingdomStats from "@/components/home/KingdomStats";
 import GoldenSparkleReveal from "@/components/ui/GoldenSparkleReveal";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -360,7 +359,7 @@ function HeroSection() {
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideoIndex === 1 ? 'opacity-100' : 'opacity-0 pointer-events-none'
                         }`}
                 />
-                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 bg-black/30" />
                 <div className="absolute bottom-0 inset-x-0 h-20 md:h-28 bg-gradient-to-t from-[#07060A] via-[#07060A]/40 to-transparent pointer-events-none z-[4]" />
             </div>
 
@@ -389,7 +388,7 @@ function HeroSection() {
                         preload="auto"
                         className="w-full h-full object-cover object-[center_15%]"
                     />
-                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
                     <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
                 </div>
 
@@ -412,7 +411,7 @@ function HeroSection() {
                         preload="auto"
                         className="w-full h-full object-cover object-center"
                     />
-                    <div className="absolute inset-0 bg-black/25 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
                     {/* Seam shadows when in 3-split mode */}
                     <div
                         style={{ opacity: isMobileSplitExpanded ? 0 : 1, transition: 'opacity 800ms ease-out' }}
@@ -444,7 +443,7 @@ function HeroSection() {
                         preload="auto"
                         className="w-full h-full object-cover object-[center_85%]"
                     />
-                    <div className="absolute inset-0 bg-black/15 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
                     <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
                 </div>
 
@@ -943,13 +942,6 @@ export default function ExperienceOverlay({ initialData }: {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <MinistryAccordion />
 
-            <SectionSeam />
-
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* KINGDOM STATS & TESTIMONY — Interactive Animated Counters      */}
-            {/* ═══════════════════════════════════════════════════════════════ */}
-            <KingdomStats />
-
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* TRENDING WORSHIP — Editorial Atmospheric Showcase              */}
             {/* ═══════════════════════════════════════════════════════════════ */}
@@ -1420,7 +1412,8 @@ export default function ExperienceOverlay({ initialData }: {
 
                         {/* Full-Width Edge-to-Edge Logo-Styled Typography with Letter Blow Hover */}
                         <div className="relative z-10 w-full flex flex-col items-center overflow-visible">
-                            <div className="flex items-baseline justify-center gap-2 sm:gap-3 md:gap-5 lg:gap-6 select-none whitespace-nowrap overflow-visible">
+                            <GoldenSparkleReveal duration={1800} delay={100} className="w-full overflow-visible">
+                                <div className="flex items-baseline justify-center gap-2 sm:gap-3 md:gap-5 lg:gap-6 select-none whitespace-nowrap overflow-visible">
                                 {/* CALL */}
                                 <div className="flex items-baseline tracking-normal overflow-visible">
                                     {['C', 'A', 'L', 'L'].map((char, i) => (
@@ -1451,12 +1444,15 @@ export default function ExperienceOverlay({ initialData }: {
                                         </span>
                                     ))}
                                 </div>
-                            </div>
+                                </div>
+                            </GoldenSparkleReveal>
 
                             {/* Subtitle */}
-                            <p className="mt-2 sm:mt-3 md:mt-4 text-[10px] sm:text-xs md:text-sm font-bold tracking-[0.55em] sm:tracking-[0.8em] text-white/40 uppercase font-space text-center w-full">
-                                M I N I S T R I E S
-                            </p>
+                            <GoldenSparkleReveal duration={1750} delay={400}>
+                                <p className="mt-2 sm:mt-3 md:mt-4 text-[10px] sm:text-xs md:text-sm font-bold tracking-[0.55em] sm:tracking-[0.8em] text-white/40 uppercase font-space text-center w-full">
+                                    M I N I S T R I E S
+                                </p>
+                            </GoldenSparkleReveal>
                         </div>
                     </div>
 
