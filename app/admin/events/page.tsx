@@ -76,8 +76,20 @@ export default function AdminEventsPage() {
                                         <Calendar className={`w-6 h-6 md:w-8 md:h-8 ${event.color || 'text-white'}`} />
                                     </div>
                                     <div className="min-w-0">
-                                        <h3 className="text-lg md:text-xl font-bold text-white mb-1 truncate">{event.title_en}</h3>
+                                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                                            <h3 className="text-lg md:text-xl font-bold text-white truncate">{event.title_en}</h3>
+                                            {event.title_hi && (
+                                                <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-amber-400/80 font-serif">
+                                                    {event.title_hi}
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-xs md:text-sm text-white/40 mb-1">{event.time_en}</p>
+                                        {event.desc_en && (
+                                            <p className="text-xs text-amber-400/80 mb-2 font-medium line-clamp-1">
+                                                📝 {event.desc_en}
+                                            </p>
+                                        )}
                                         <span className="text-[10px] md:text-xs px-2 py-0.5 rounded bg-white/10 text-white/50 uppercase tracking-widest font-bold">
                                             Order: {event.sort_order}
                                         </span>

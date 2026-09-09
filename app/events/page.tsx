@@ -139,6 +139,11 @@ export default function EventsPage() {
                                                     <Clock className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
                                                     <span>{event.timeEn}</span>
                                                 </div>
+                                                {event.descEn && (
+                                                    <p className="text-xs md:text-sm text-white/60 leading-relaxed pt-1 font-light">
+                                                        {event.descEn}
+                                                    </p>
+                                                )}
                                             </div>
 
                                             {/* Divider */}
@@ -151,6 +156,11 @@ export default function EventsPage() {
                                                     <Clock className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
                                                     <span className="font-serif">{event.timeHi}</span>
                                                 </div>
+                                                {event.descHi && (
+                                                    <p className="text-xs md:text-sm text-white/60 leading-relaxed font-serif pt-1 font-light">
+                                                        {event.descHi}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
