@@ -24,12 +24,14 @@ export default function SocialAuthModal({ isOpen, onClose, provider, onSuccess }
 
     const handleRealOAuth = async () => {
         setIsRedirecting(true);
+        try {
+            const redirectParam = new URLSearchParams(window.location.search).get('redirect');
+            if (redirectParam) sessionStorage.setItem('auth_redirect', redirectParam);
+        } catch {}
         const { error } = await supabase.auth.signInWithOAuth({
             provider: provider.toLowerCase() as 'google' | 'apple',
             options: {
-                redirectTo: typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('redirect')
-                    ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(new URLSearchParams(window.location.search).get('redirect')!)}`
-                    : `${window.location.origin}/auth/callback`,
+                redirectTo: `${window.location.origin}/auth/callback`,
                 queryParams: {
                     access_type: 'offline',
                     prompt: 'consent',

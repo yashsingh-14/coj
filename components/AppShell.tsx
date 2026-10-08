@@ -31,9 +31,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
             return {
                 id: user.id,
-                name: user.user_metadata.name || user.user_metadata.full_name || user.email?.split('@')[0] || 'User',
+                name: user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
                 email: user.email || '',
-                avatar: user.user_metadata.avatar_url || user.user_metadata.picture,
+                avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
                 role
             };
         };
@@ -44,6 +44,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             if (session?.user) {
                 const userData = await getUserData(session.user);
                 login(userData);
+                try {
+                    const pendingRedirect = sessionStorage.getItem('auth_redirect');
+                    if (pendingRedirect) {
+                        sessionStorage.removeItem('auth_redirect');
+                        window.location.href = pendingRedirect;
+                        return;
+                    }
+                } catch {}
             }
             setIsReady(true);
         };
