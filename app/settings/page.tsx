@@ -25,6 +25,7 @@ function urlBase64ToUint8Array(base64String: string) {
 
 // Define the shape of a settings item
 interface SettingsItem {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon: any; // Using any for Lucide icon component simplicity
     label: string;
     sub: string;
@@ -114,9 +115,9 @@ export default function SettingsPage() {
                     toast("Notifications enabled locally (Sign in to sync across devices)");
                 }
 
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error("Push subscription error:", error);
-                toast.error("Failed: " + (error.message || "Unknown error"));
+                toast.error("Failed: " + ((error instanceof Error ? error.message : "Unknown error") || "Unknown error"));
                 return;
             }
         }

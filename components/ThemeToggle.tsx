@@ -10,7 +10,8 @@ export function ThemeToggle() {
 
     // Avoid hydration mismatch
     useEffect(() => {
-        setMounted(true);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        requestAnimationFrame(() => setMounted(true));
     }, []);
 
     if (!mounted) {

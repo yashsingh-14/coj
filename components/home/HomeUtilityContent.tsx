@@ -34,8 +34,11 @@ export default function HomeUtilityContent({
     trendingSongs: Song[];
     madeForYouSongs: Song[];
     featuredSongs: Song[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     heroSlides: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dbVerse: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     announcements: any[];
 }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -498,6 +501,7 @@ export default function HomeUtilityContent({
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function HeroCarousel({ slides: propSlides }: { slides?: any[] }) {
     const [currentSlide, setCurrentSlide] = useState(0);
 

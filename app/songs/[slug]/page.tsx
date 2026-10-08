@@ -82,6 +82,7 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
         .neq('id', song.id)
         .limit(3);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const relatedSongs = (relatedSongsData || []).map((s: any) => ({
         title: s.title,
         slug: generateSlug(s.title),

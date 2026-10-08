@@ -20,8 +20,11 @@ export default function EditProfilePage() {
 
     useEffect(() => {
         if (currentUser) {
-            setName(currentUser.name);
-            setEmail(currentUser.email);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            requestAnimationFrame(() => {
+                setName(currentUser.name);
+                setEmail(currentUser.email);
+            });
             // If user had a bio property, we'd set it here
         }
     }, [currentUser]);

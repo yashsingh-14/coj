@@ -95,6 +95,15 @@ export const CircularTestimonials = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Navigation handlers (Manual only - no auto-timer)
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % testimonialsLength);
+  }, [testimonialsLength]);
+
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + testimonialsLength) % testimonialsLength);
+  }, [testimonialsLength]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -104,16 +113,8 @@ export const CircularTestimonials = ({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
     // eslint-disable-next-line
-  }, [activeIndex, testimonialsLength]);
+  }, [activeIndex, testimonialsLength, handleNext, handlePrev]);
 
-  // Navigation handlers (Manual only - no auto-timer)
-  const handleNext = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % testimonialsLength);
-  }, [testimonialsLength]);
-
-  const handlePrev = useCallback(() => {
-    setActiveIndex((prev) => (prev - 1 + testimonialsLength) % testimonialsLength);
-  }, [testimonialsLength]);
 
   // Touch Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {

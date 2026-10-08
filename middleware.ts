@@ -54,7 +54,22 @@ export async function middleware(request: NextRequest) {
         }
     )
 
-    await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    const pathname = request.nextUrl.pathname;
+
+    // Protected Routes
+    const isProtectedRoute = 
+        pathname.startsWith('/profile') || 
+        pathname.startsWith('/admin') || 
+        pathname === '/sets/new';
+
+    if (isProtectedRoute && !user) {
+        // Redirect to sign in, with redirect parameter
+        const url = new URL('/signin', request.url);
+        url.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(url);
+    }
 
     return response
 }

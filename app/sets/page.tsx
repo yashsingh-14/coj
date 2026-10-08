@@ -32,7 +32,6 @@ export default function SetsPage() {
                     .order('event_date', { ascending: false });
 
                 if (error) throw error;
-                // @ts-ignore - Supabase type inference for foreign tables can be tricky
                 setSets(data || []);
             } catch (error) {
                 console.error('Error fetching sets:', error);
@@ -107,7 +106,6 @@ export default function SetsPage() {
                             const day = dateObj.getDate();
                             const time = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
                             const leaderName = set.profiles?.name || 'Unknown';
-                            // @ts-ignore - Supabase join returns array but we assume count
                             const songCount = set.set_songs?.[0]?.count || 0;
                             const isUpcoming = dateObj > new Date();
 

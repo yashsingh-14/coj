@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 interface CachedData {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any[];
     timestamp: number;
 }
@@ -81,6 +82,7 @@ async function fetchYouTubeData() {
             return [];
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const videos = data.items.map((item: any) => ({
             id: item.snippet.resourceId.videoId,
             title: item.snippet.title,
@@ -141,10 +143,10 @@ export async function GET() {
                 },
             }
         );
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Sermons API error:', error);
         return NextResponse.json(
-            { videos: [], liveStream: null, isLive: false, error: error.message || 'Failed to fetch sermons' },
+            { videos: [], liveStream: null, isLive: false, error: (error instanceof Error ? error.message : "Unknown error") || 'Failed to fetch sermons' },
             { status: 500 }
         );
     }

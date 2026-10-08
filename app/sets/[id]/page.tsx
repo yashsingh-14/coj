@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { addSongToSetServer, removeSongFromSetServer } from '@/app/actions/sets';
 import { notFound, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -81,31 +82,20 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
     }, [searchQuery]);
 
     const handleAddSongToSet = async (songId: string) => {
+        if (!currentUser?.id || currentUser.id !== set?.created_by) {
+            toast.error("You are not authorized to modify this set.");
+            return;
+        }
         try {
-            // Get current count
-            const { count } = await supabase
-                .from('set_songs')
-                .select('*', { count: 'exact', head: true })
-                .eq('set_id', id);
-
-            const nextOrder = (count || 0) + 1;
-
-            const { error } = await supabase
-                .from('set_songs')
-                .insert({
-                    set_id: id,
-                    song_id: songId,
-                    order_index: nextOrder
-                });
-
-            if (error) throw error;
+            const res = await addSongToSetServer(id, songId);
+            if (!res.success) throw new Error(res.error);
 
             toast.success("Song added!");
             setIsAddModalOpen(false);
             setSearchQuery('');
-            fetchSet(id); // Refresh list
-        } catch (error) {
-            toast.error("Failed to add song");
+            fetchSet(id);
+        } catch (error: unknown) {
+            toast.error((error instanceof Error ? error.message : null) || "Failed to add song");
         }
     };
 
@@ -142,7 +132,7 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                 .order('order_index', { ascending: true });
 
             if (songsError) throw songsError;
-            // @ts-ignore
+            // @ts-expect-error - Known Supabase join type mismatch
             setSetSongs(songsData || []);
 
         } catch (error) {
@@ -169,14 +159,18 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
     };
 
     const handleRemoveSong = async (junctionId: string) => {
+        if (!currentUser?.id || currentUser.id !== set?.created_by) {
+            toast.error("You are not authorized to modify this set.");
+            return;
+        }
         try {
-            const { error } = await supabase.from('set_songs').delete().eq('id', junctionId);
-            if (error) throw error;
+            const res = await removeSongFromSetServer(junctionId);
+            if (!res.success) throw new Error(res.error);
 
             setSetSongs(prev => prev.filter(s => s.id !== junctionId));
             toast.success("Song removed from set");
-        } catch (error) {
-            toast.error("Failed to remove song");
+        } catch (error: unknown) {
+            toast.error((error instanceof Error ? error.message : null) || "Failed to remove song");
         }
     };
 
@@ -263,20 +257,22 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                         </h2>
 
                         {/* Add Song Button */}
-                        <button
-                            onClick={() => setIsAddModalOpen(true)}
-                            className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors"
-                        >
-                            <Plus className="w-4 h-4" />
-                            Add Song
-                        </button>
+                        {currentUser?.id === set.created_by && (
+                            <button
+                                onClick={() => setIsAddModalOpen(true)}
+                                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Add Song
+                            </button>
+                        )}
                     </div>
 
                     {setSongs.length === 0 ? (
                         <div className="text-center py-16 border border-dashed border-white/10 rounded-2xl text-white/30">
                             <Music2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
                             <p>No songs in this set yet.</p>
-                            <p className="text-sm mt-2">Go to any song and click "Add to Set".</p>
+                            <p className="text-sm mt-2">Go to any song and click &quot;Add to Set&quot;.</p>
                         </div>
                     ) : (
                         <div className="space-y-2.5 sm:space-y-3">
@@ -302,13 +298,15 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                                         </div>
 
                                         <div className="flex items-center gap-1 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                                onClick={() => handleRemoveSong(item.id)}
-                                                className="p-1.5 sm:p-2 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-colors"
-                                                title="Remove from Set"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            {currentUser?.id === set.created_by && (
+                                                <button
+                                                    onClick={() => handleRemoveSong(item.id)}
+                                                    className="p-1.5 sm:p-2 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-colors"
+                                                    title="Remove from Set"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

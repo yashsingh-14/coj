@@ -1,11 +1,48 @@
-
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabaseClient';
 import { ALL_SONGS } from '@/data/songs';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { checkIsAdmin } from '@/app/actions/admin';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+async function verifyAdminAuthServer() {
+    try {
+        const cookieStore = await cookies();
+        const supabaseSSR = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+            {
+                cookies: {
+                    get(name) {
+                        return cookieStore.get(name)?.value;
+                    }
+                }
+            }
+        );
+
+        const { data: { user }, error } = await supabaseSSR.auth.getUser();
+        if (error || !user) return { isAuthenticated: false, isAdmin: false };
+
+        const { isAdmin } = await checkIsAdmin(user.id, user.email);
+        return { isAuthenticated: true, isAdmin };
+    } catch (e) {
+        return { isAuthenticated: false, isAdmin: false };
+    }
+}
+
+export async function POST() {
+    const authStatus = await verifyAdminAuthServer();
+    
+    if (!authStatus.isAuthenticated) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    if (!authStatus.isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const results = {
         total: ALL_SONGS.length,
         inserted: 0,

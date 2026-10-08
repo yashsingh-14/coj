@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 
 import { createArtistAdmin, updateArtistAdmin } from '@/app/actions/admin';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ArtistFormPage({ params }: { params: any }) {
     const [artistIdParam, setArtistIdParam] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -29,6 +30,7 @@ export default function ArtistFormPage({ params }: { params: any }) {
 
     useEffect(() => {
         // unwrapping params safely
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Promise.resolve(params).then((resolvedParams: any) => {
             if (resolvedParams?.id && resolvedParams.id !== 'new') {
                 const id = decodeURIComponent(resolvedParams.id);
@@ -100,9 +102,9 @@ export default function ArtistFormPage({ params }: { params: any }) {
             }
             router.push('/admin/artists');
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            toast.error("Failed to save artist: " + (error?.message || ''));
+            toast.error("Failed to save artist: " + (error instanceof Error ? error.message : ''));
         } finally {
             setIsSaving(false);
         }

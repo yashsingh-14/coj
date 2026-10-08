@@ -28,7 +28,7 @@ export default function SignInPage() {
         setIsLoading(true);
 
         // Real Supabase Login
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
         });
@@ -37,6 +37,24 @@ export default function SignInPage() {
             toast.error(error.message);
             setIsLoading(false);
             return;
+        }
+
+        if (data?.user) {
+            let role = 'user';
+            if (data.user.email === 'ys181544@gmail.com') role = 'admin';
+            else {
+                try {
+                    const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle();
+                    if (profile?.role) role = profile.role;
+                } catch(e) {}
+            }
+            login({
+                id: data.user.id,
+                name: data.user.user_metadata?.name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'User',
+                email: data.user.email || '',
+                avatar: data.user.user_metadata?.avatar_url || data.user.user_metadata?.picture,
+                role
+            });
         }
 
         toast.success(`Welcome back!`);
@@ -193,7 +211,7 @@ export default function SignInPage() {
 
                 {/* Footer Link */}
                 <p className="text-center mt-8 text-white/30 text-sm">
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                     <Link href="/signup" className="text-[var(--brand)] font-bold hover:text-[var(--accent)] hover:underline transition-all">
                         Join the Family
                     </Link>

@@ -12,7 +12,7 @@ export function useSearchHistory() {
         try {
             const saved = localStorage.getItem('searchHistory');
             if (saved) {
-                setHistory(JSON.parse(saved));
+                requestAnimationFrame(() => setHistory(JSON.parse(saved)));
             }
         } catch (error) {
             console.error('Failed to load search history:', error);

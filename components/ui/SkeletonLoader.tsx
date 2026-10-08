@@ -38,7 +38,7 @@ export function SongViewerSkeleton() {
             {/* Content */}
             <div className="space-y-2">
                 {[...Array(10)].map((_, i) => (
-                    <div key={i} className="h-4 bg-gray-700/50 rounded" style={{ width: `${Math.random() * 40 + 60}%` }}></div>
+                    <div key={i} className="h-4 bg-gray-700/50 rounded" style={{ width: `${(i % 3 === 0 ? 0.8 : i % 2 === 0 ? 0.6 : 0.9) * 100}%` }}></div>
                 ))}
             </div>
         </div>

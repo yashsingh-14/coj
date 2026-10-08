@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 import { createEventAdmin, updateEventAdmin } from '@/app/actions/admin';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function EventFormPage({ params }: { params: any }) {
     const [eventId, setEventId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -30,6 +31,7 @@ export default function EventFormPage({ params }: { params: any }) {
 
     useEffect(() => {
         // unwrapping params safely
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Promise.resolve(params).then((resolvedParams: any) => {
             if (resolvedParams?.id && resolvedParams.id !== 'new') {
                 setEventId(resolvedParams.id);
@@ -74,9 +76,9 @@ export default function EventFormPage({ params }: { params: any }) {
             }
             router.push('/admin/events');
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            toast.error("Failed to save event: " + (error?.message || ''));
+            toast.error("Failed to save event: " + (error instanceof Error ? error.message : ''));
         } finally {
             setIsSaving(false);
         }

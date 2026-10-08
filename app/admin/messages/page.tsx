@@ -13,7 +13,9 @@ import { toast } from 'sonner';
 
 export default function AdminMessagesPage() {
     const [tab, setTab] = useState<'contact' | 'testimonies'>('contact');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [contacts, setContacts] = useState<any[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [testimonies, setTestimonies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');

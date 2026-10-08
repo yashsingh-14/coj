@@ -91,8 +91,8 @@ export default function GivePageContent() {
                     url: 'https://callofjesus.in/give',
                 });
                 toast.success('Shared successfully!');
-            } catch (err: any) {
-                if (err?.name !== 'AbortError') {
+            } catch (err: unknown) {
+                if (err instanceof Error && err.name !== 'AbortError') {
                     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
                     window.open(waUrl, '_blank');
                 }

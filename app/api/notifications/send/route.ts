@@ -1,5 +1,34 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { checkIsAdmin } from '@/app/actions/admin';
+
+async function verifyAdminAuthServer() {
+    try {
+        const cookieStore = await cookies();
+        const supabaseSSR = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+            {
+                cookies: {
+                    get(name) {
+                        return cookieStore.get(name)?.value;
+                    }
+                }
+            }
+        );
+
+        const { data: { user }, error } = await supabaseSSR.auth.getUser();
+        if (error || !user) return false;
+
+        const { isAdmin } = await checkIsAdmin(user.id, user.email);
+        return isAdmin;
+    } catch (e) {
+        return false;
+    }
+}
+
 import webpush from 'web-push';
 
 // Initialize Supabase Admin client with Service Role Key
@@ -76,10 +105,10 @@ async function sendBroadcast(payload: NotificationPayload) {
             };
             await webpush.sendNotification(pushSub, stringifiedPayload);
             successCount++;
-        } catch (err: any) {
+        } catch (err: unknown) {
             failureCount++;
             // 410 Gone or 404 Not Found means device unregistered or uninstalled
-            if (err?.statusCode === 410 || err?.statusCode === 404) {
+            if ((err as { statusCode?: number })?.statusCode === 410 || (err as { statusCode?: number })?.statusCode === 404) {
                 if (sub.id) expiredIds.push(sub.id);
             }
         }
@@ -118,6 +147,9 @@ async function sendBroadcast(payload: NotificationPayload) {
 
 // ─── POST Handler (Admin UI & Webhooks) ───
 export async function POST(request: Request) {
+    if (!(await verifyAdminAuthServer())) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     try {
         const body = await request.json();
         const title = body.title || 'Call of Jesus Ministries';
@@ -133,10 +165,10 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Send POST error:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to send notifications' },
+            { error: (error instanceof Error ? error.message : "Unknown error") || 'Failed to send notifications' },
             { status: 500 }
         );
     }
@@ -144,6 +176,9 @@ export async function POST(request: Request) {
 
 // ─── GET Handler (Quick test or query params) ───
 export async function GET(request: Request) {
+    if (!(await verifyAdminAuthServer())) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     try {
         const { searchParams } = new URL(request.url);
         const title = searchParams.get('title') || 'Call of Jesus Ministries';
@@ -157,10 +192,10 @@ export async function GET(request: Request) {
         });
 
         return NextResponse.json(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Send GET error:', error);
         return NextResponse.json(
-            { error: error.message || 'Failed to send notifications' },
+            { error: (error instanceof Error ? error.message : "Unknown error") || 'Failed to send notifications' },
             { status: 500 }
         );
     }

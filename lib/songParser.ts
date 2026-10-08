@@ -36,7 +36,7 @@ function hasBracketedChords(line: string): boolean {
 
 // ... mergeLines function (unchanged) ...
 function mergeLines(chordLine: string, lyricLine: string): string {
-    let result = "";
+
     const chords: { chord: string, index: number }[] = [];
 
     // Map starting positions of chords

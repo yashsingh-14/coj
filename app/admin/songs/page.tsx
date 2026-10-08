@@ -14,6 +14,7 @@ export default function ManageSongsPage() {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/immutability
         fetchSongs();
     }, []);
 

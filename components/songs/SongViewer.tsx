@@ -2,7 +2,7 @@
 
 import { useState, Fragment, useEffect, useRef } from 'react';
 import { transposeChord } from '@/lib/music';
-import { ArrowLeft, Clock, Heart, Minus, Play, PlayCircle, Plus, Music2, Loader2, X, Pause } from 'lucide-react';
+import { ArrowLeft, Heart, Minus, Play, Plus, Loader2, X, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
@@ -32,8 +32,8 @@ interface SongViewerProps {
 export default function SongViewer({ songId, title, author, originalKey, lyrics, hindiLyrics, chords, youtubeId, category, tempo, relatedSongs, coverImage }: SongViewerProps) {
     const currentUser = useAppStore(state => state.currentUser);
     const [transpose, setTranspose] = useState(0);
-    const [fontSize, setFontSize] = useState(18);
-    const [useFlats, setUseFlats] = useState(false);
+    const [fontSize] = useState(18);
+    const [useFlats] = useState(false);
     const [isFavourite, setIsFavourite] = useState(false);
     const [showVideo, setShowVideo] = useState(false);
 
@@ -149,6 +149,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                 if (error) throw error;
                 toast.success("Added to favourites");
             }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Toggle favourite error:", error);
             toast.error(error?.message || "Action failed");
@@ -178,6 +179,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
             if (error) throw error;
             setMySets(data || []);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             toast.error("Failed to load your sets");
         } finally {
@@ -211,8 +213,8 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
             toast.success(`Added to ${setTitle}`);
             setIsAddToSetOpen(false);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
             toast.error("Failed to add song to set");
         }
     };
@@ -675,7 +677,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                         </button>
 
                         <h2 className="text-2xl font-bold mb-2">Add to Set</h2>
-                        <p className="text-white/40 mb-6">Choose a set to add <span className="text-white font-bold">"{title}"</span> to.</p>
+                        <p className="text-white/40 mb-6">Choose a set to add <span className="text-white font-bold">&quot;{title}&quot;</span> to.</p>
 
                         {isLoadingSets ? (
                             <div className="flex justify-center py-8">
@@ -683,7 +685,7 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
                             </div>
                         ) : mySets.length === 0 ? (
                             <div className="text-center py-8 bg-white/5 rounded-2xl border border-dashed border-white/10">
-                                <p className="text-white/50 mb-4">You haven't created any sets yet.</p>
+                                <p className="text-white/50 mb-4">You haven&apos;t created any sets yet.</p>
                                 <Link
                                     href="/sets/new"
                                     className="px-4 py-2 bg-amber-500 text-black font-bold rounded-lg hover:bg-amber-400 inline-block"

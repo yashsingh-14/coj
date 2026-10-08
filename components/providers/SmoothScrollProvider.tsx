@@ -27,7 +27,7 @@ export default function SmoothScrollProvider({
         });
 
         lenisRef.current = lenis;
-        (window as any).lenis = lenis;
+        (window as unknown as { lenis?: unknown }).lenis = lenis;
 
         // Continuous requestAnimationFrame loop
         let rafId: number;
@@ -67,8 +67,8 @@ export default function SmoothScrollProvider({
             cancelAnimationFrame(rafId);
             lenis.destroy();
             lenisRef.current = null;
-            if ((window as any).lenis === lenis) {
-                delete (window as any).lenis;
+            if ((window as unknown as { lenis?: unknown }).lenis === lenis) {
+                delete (window as unknown as { lenis?: unknown }).lenis;
             }
         };
     }, []);

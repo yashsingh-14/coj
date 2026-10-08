@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from 'sonner';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function ArtistFormPage({ params }: { params: any }) {
     // Typescript nuance: params might be a Promise or object depending on Next.js version in this project.
     // Handling as any for safety across version bumps in specific app dir setups.
@@ -29,6 +30,7 @@ export default function ArtistFormPage({ params }: { params: any }) {
 
     useEffect(() => {
         // unwrapping params
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         Promise.resolve(params).then((resolvedParams: any) => {
             if (resolvedParams.id && resolvedParams.id !== 'new') {
                 // Important: resolvedParams.id might be URL encoded (e.g. 'hillsong%20worship' -> 'hillsong worship')

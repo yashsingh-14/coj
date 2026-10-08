@@ -1,6 +1,7 @@
 
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '.env.local' });
+import {  createClient  } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -23,8 +24,8 @@ async function checkDuplicates() {
         return;
     }
 
-    const fs = require('fs');
-    const path = require('path');
+    import fs from 'fs';
+    import path from 'path';
 
     let output = `Total Songs: ${data.length}\n`;
     data.forEach(s => {

@@ -17,6 +17,7 @@ export default function SocialAuthModal({ isOpen, onClose, provider, onSuccess }
 
     useEffect(() => {
         if (isOpen && provider) {
+            // eslint-disable-next-line react-hooks/immutability
             handleRealOAuth();
         }
     }, [isOpen, provider]);

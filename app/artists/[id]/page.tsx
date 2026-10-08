@@ -182,7 +182,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                         <div className="flex-1 text-center md:text-left z-10">
                             <span className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest mb-3 sm:mb-4 text-amber-500">Featured Track</span>
                             <h3 className="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter mb-2 sm:mb-4">{displaySongs[0].title}</h3>
-                            <p className="text-white/60 max-w-xl mb-6 sm:mb-8 text-xs sm:text-base leading-relaxed">Experience the powerful sound of {artistName}. Listen to their latest featured track "{displaySongs[0].title}" now.</p>
+                            <p className="text-white/60 max-w-xl mb-6 sm:mb-8 text-xs sm:text-base leading-relaxed">Experience the powerful sound of {artistName}. Listen to their latest featured track &quot;{displaySongs[0].title}&quot; now.</p>
                             <div className="flex gap-4 justify-center md:justify-start">
                                 <Link
                                     href={`/songs/${generateSlug(displaySongs[0].title)}`}

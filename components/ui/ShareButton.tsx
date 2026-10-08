@@ -22,7 +22,7 @@ export default function ShareButton({ verse }: ShareButtonProps) {
                     title: 'Verse of the Day',
                     text: shareText,
                 });
-            } catch (err) {
+            } catch {
                 console.log('Share cancelled');
             }
         } else {
@@ -36,7 +36,7 @@ export default function ShareButton({ verse }: ShareButtonProps) {
             setCopied(true);
             toast.success('Copied to clipboard!');
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
+        } catch {
             toast.error('Failed to copy');
         }
     };

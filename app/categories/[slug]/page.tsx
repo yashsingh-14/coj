@@ -8,6 +8,7 @@ import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 import { Song } from '@/data/types';
 import { generateSlug } from '@/lib/seoUtils';
+import { ALL_SONGS } from '@/data/songs';
 
 export default function CategoryDetailPage() {
     const params = useParams();
@@ -55,8 +56,13 @@ export default function CategoryDetailPage() {
             // 1. Fetch ALL songs (lightweight metadata)
             const { data, error } = await supabase.from('songs').select('id, title, artist, category, img, is_featured, hindi_lyrics');
 
-            if (data) {
-                let filteredSongs = data;
+            let dbSongs = data;
+            if (error || !dbSongs || dbSongs.length === 0) {
+                if (error) console.error('Error fetching category songs from DB:', error);
+                dbSongs = ALL_SONGS as unknown as { id: string; title: string; artist: string; category: string; img: string; is_featured: boolean; hindi_lyrics: string | null; }[];
+            }
+            if (dbSongs) {
+                let filteredSongs = dbSongs;
 
                 // Determine Target Category & Language
                 let languageFilter: 'hindi' | 'english' | null = null;
@@ -68,7 +74,7 @@ export default function CategoryDetailPage() {
                     targetCategory = catParts.join('-');
                 }
 
-                console.log('Filtering:', { slug, targetCategory, languageFilter, total: data.length });
+                console.log('Filtering:', { slug, targetCategory, languageFilter, total: dbSongs.length });
 
                 // 2. Filter by Category (Soft Match - Bidirectional & Grouped)
                 if (targetCategory !== 'all') {
@@ -128,6 +134,7 @@ export default function CategoryDetailPage() {
     // Helper to resolve song image with fallbacks
     const getSongImage = (song: Song) => {
         // 1. YouTube Thumbnail Priority
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const yId = song.youtube_id || (song as any).youtubeId;
         if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
             return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;

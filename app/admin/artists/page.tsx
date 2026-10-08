@@ -9,13 +9,10 @@ import { toast } from 'sonner';
 import { deleteArtistAdmin } from '@/app/actions/admin';
 
 export default function AdminArtistsPage() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [artists, setArtists] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState('');
-
-    useEffect(() => {
-        fetchArtists();
-    }, []);
 
     const fetchArtists = async () => {
         setIsLoading(true);
@@ -31,6 +28,11 @@ export default function AdminArtistsPage() {
         }
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchArtists();
+    }, []);
 
     const handleDelete = async (id: string) => {
         if (!confirm(`Are you sure you want to delete this artist? This can break songs linked to this ID: ${id}`)) return;

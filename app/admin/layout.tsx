@@ -37,8 +37,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoggingIn, setIsLoggingIn] = useState(false);
-    const [isDevLoggingIn, setIsDevLoggingIn] = useState(false);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const verifyAdminUser = async (user: any): Promise<boolean> => {
         const userEmail = (user.email || '').toLowerCase().trim();
         const ADMIN_EMAILS = ['ys181544@gmail.com', 'callofjesus2015@gmail.com'];
@@ -156,43 +156,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 toast.success("Signed in successfully!");
                 await verifyAdminUser(data.user);
             }
-        } catch (err: any) {
-            toast.error(err.message || "Failed to sign in");
+        } catch (err: unknown) {
+            toast.error((err instanceof Error ? err.message : "Unknown error") || "Failed to sign in");
         } finally {
             setIsLoggingIn(false);
-        }
-    };
-
-    const handleDevOneClickLogin = async () => {
-        setIsDevLoggingIn(true);
-        try {
-            const res = await fetch('/api/auth/dev-login', { method: 'POST' });
-            const json = await res.json();
-
-            if (!res.ok || !json.email || !json.password) {
-                throw new Error(json.error || "Dev login failed");
-            }
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: json.email,
-                password: json.password
-            });
-
-            if (error) {
-                throw error;
-            }
-
-            toast.success("Welcome, Yash Singh (Admin)! 🚀");
-            setIsAdmin(true);
-            try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
-            if (data.user) {
-                await verifyAdminUser(data.user);
-            }
-        } catch (err: any) {
-            console.error("Dev login error:", err);
-            toast.error("Dev login failed: " + err.message);
-        } finally {
-            setIsDevLoggingIn(false);
         }
     };
 
@@ -244,40 +211,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         </div>
                         <h1 className="text-2xl font-black text-white tracking-tight">COJ Studio</h1>
                         <p className="text-xs text-white/50">Admin credentials required to access this portal.</p>
-                    </div>
-
-                    {/* 1-Click Admin Access */}
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-orange-500/10 border border-amber-500/30 text-center space-y-2">
-                        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-amber-300">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            <span>Authorized Admin Account</span>
-                        </div>
-                        <p className="text-[11px] text-white/60">Log in instantly as <strong>Yash Singh</strong> (ys181544@gmail.com)</p>
-                        <button
-                            type="button"
-                            onClick={handleDevOneClickLogin}
-                            disabled={isDevLoggingIn}
-                            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold text-xs uppercase tracking-wider transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 disabled:opacity-50"
-                        >
-                            {isDevLoggingIn ? (
-                                <>
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                    <span>Authenticating...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <span>⚡ 1-Click Admin Access</span>
-                                    <ArrowRight className="w-3.5 h-3.5" />
-                                </>
-                            )}
-                        </button>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="flex items-center gap-3 text-xs text-white/30">
-                        <div className="flex-1 h-px bg-white/10" />
-                        <span>OR SIGN IN WITH PASSWORD</span>
-                        <div className="flex-1 h-px bg-white/10" />
                     </div>
 
                     {/* Email/Password Form */}
@@ -424,6 +357,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AdminNavLink({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
     const pathname = usePathname();
 

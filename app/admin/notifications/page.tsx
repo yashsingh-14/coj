@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import {
     Send, Bell, Loader2, Video, Globe, MessageSquare,
-    Instagram, Radio, Sparkles, Copy, Check, ExternalLink
+    Instagram, Radio, Sparkles, ExternalLink
 } from 'lucide-react';
 
 const PRESETS = [
@@ -55,7 +55,6 @@ export default function NotificationsPage() {
     const [message, setMessage] = useState('');
     const [url, setUrl] = useState('/');
     const [loading, setLoading] = useState(false);
-    const [copiedWebhook, setCopiedWebhook] = useState(false);
 
     const applyPreset = (preset: typeof PRESETS[0]) => {
         setTitle(preset.title);
@@ -90,17 +89,6 @@ export default function NotificationsPage() {
         } finally {
             setLoading(false);
         }
-    };
-
-    const webhookUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/api/notifications/webhook`
-        : 'https://callofjesus.in/api/notifications/webhook';
-
-    const copyWebhook = async () => {
-        await navigator.clipboard.writeText(webhookUrl);
-        setCopiedWebhook(true);
-        toast.success('Webhook URL copied!');
-        setTimeout(() => setCopiedWebhook(false), 2000);
     };
 
     return (
@@ -235,35 +223,6 @@ export default function NotificationsPage() {
                                 <span>URL:</span>
                                 <span className="truncate text-white/40">{url || 'https://youtube.com/@cojministries/live'}</span>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Automated Webhook Integration Card */}
-                    <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border border-amber-500/25 rounded-3xl p-6 space-y-3">
-                        <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
-                                Automated Social Webhook
-                            </span>
-                            <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold">
-                                Zero-Touch
-                            </span>
-                        </div>
-
-                        <p className="text-xs text-white/60 leading-relaxed">
-                            Connect this webhook to <strong>Zapier</strong>, <strong>Make.com</strong>, or <strong>IFTTT</strong> with your YouTube/Facebook account so notifications send automatically the second you go live!
-                        </p>
-
-                        <div className="flex items-center gap-2 bg-black/60 border border-white/10 rounded-xl p-2.5">
-                            <span className="font-mono text-[11px] text-amber-200 truncate flex-1">
-                                {webhookUrl}
-                            </span>
-                            <button
-                                onClick={copyWebhook}
-                                className="p-2 rounded-lg bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 transition-colors flex-shrink-0"
-                                title="Copy Webhook URL"
-                            >
-                                {copiedWebhook ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                            </button>
                         </div>
                     </div>
 

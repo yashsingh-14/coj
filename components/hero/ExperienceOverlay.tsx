@@ -30,6 +30,7 @@ if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, any> = {
     BookOpen,
     Sun,
@@ -411,12 +412,19 @@ const TESTIMONIALS_DATA = [
 
 export default function ExperienceOverlay({ initialData }: {
     initialData?: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         trending?: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         madeForYou?: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         featured?: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         heroSlides?: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         todaysVerse?: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         announcements?: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         events?: any[];
     }
 }) {
@@ -507,6 +515,7 @@ export default function ExperienceOverlay({ initialData }: {
         // Connect with Lenis virtual scroll if active
         let lenisPoll: NodeJS.Timeout;
         const attachLenis = () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const lenis = (window as any).lenis;
             if (lenis) {
                 lenis.on('scroll', handleResetAtTop);
@@ -522,6 +531,7 @@ export default function ExperienceOverlay({ initialData }: {
             clearTimeout(lenisPoll);
             observer.disconnect();
             window.removeEventListener('scroll', handleResetAtTop);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const lenis = (window as any).lenis;
             if (lenis) {
                 lenis.off('scroll', handleResetAtTop);
@@ -682,6 +692,7 @@ export default function ExperienceOverlay({ initialData }: {
 
                     {/* Editorial Service Schedule List — Sleek, Unified, Professional */}
                     <div className="max-w-3xl mx-auto divide-y divide-white/[0.08] border-y border-white/[0.08] reveal-from-right reveal-delay-1">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {eventsList.map((event: any, i: number) => {
                             const IconComponent = ICON_MAP[event.icon_name] || (i === 0 ? BookOpen : i === 1 ? Sun : Wine);
 

@@ -54,9 +54,9 @@ export default function CreateSetPage() {
             toast.success("Set created successfully!");
             // Redirect to the new set page (to be created)
             router.push('/sets'); // Temporarily back to list, later to /sets/[id]
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error creating set:', error);
-            toast.error(error.message || "Failed to create set");
+            toast.error((error instanceof Error ? error.message : "Unknown error") || "Failed to create set");
         } finally {
             setIsLoading(false);
         }

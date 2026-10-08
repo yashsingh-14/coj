@@ -133,7 +133,7 @@ export default function GoldenSparkleReveal({
         progressRef.current = 0;
         startTimeRef.current = null;
 
-        let delayTimer: NodeJS.Timeout;
+
 
         const startSweep = () => {
             const animate = (timestamp: number) => {
@@ -236,7 +236,7 @@ export default function GoldenSparkleReveal({
             animRef.current = requestAnimationFrame(animate);
         };
 
-        delayTimer = setTimeout(startSweep, delay);
+        const delayTimer = setTimeout(startSweep, delay);
 
         return () => {
             clearTimeout(delayTimer);

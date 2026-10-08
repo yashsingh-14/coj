@@ -94,7 +94,7 @@ export default function OurVisionAndMissionPage() {
                                 To release anointed resources, equip music leaders, and train ministers who carry the presence and power of Jesus Christ with integrity and excellence.
                             </p>
                             <p>
-                                To herald revival in churches and college campuses, igniting an unshakeable passion for God's presence and His eternal Word.
+                                To herald revival in churches and college campuses, igniting an unshakeable passion for God&apos;s presence and His eternal Word.
                             </p>
                         </div>
                     </div>

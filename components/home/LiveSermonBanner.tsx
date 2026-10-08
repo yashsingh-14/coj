@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Radio, Youtube, ChevronRight } from 'lucide-react';
+import { Radio, ChevronRight } from 'lucide-react';
 
 interface LiveConfig {
     isLiveOverride: boolean;
@@ -27,7 +27,7 @@ export default function LiveSermonBanner() {
                         liveTitle: json.liveStream.title
                     });
                 }
-            } catch (err) {
+            } catch {
                 // Silently fail — banner just won't show
             }
         };

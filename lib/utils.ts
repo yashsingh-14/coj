@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export const getSongImage = (song: any) => {
+export const getSongImage = (song: { youtube_id?: string | null; youtubeId?: string | null; img?: string | null }) => {
     // 1. YouTube Thumbnail Priority
     const yId = song.youtube_id || song.youtubeId;
     if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {

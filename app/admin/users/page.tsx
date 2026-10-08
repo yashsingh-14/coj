@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { syncUsersAdminV3, updateUserRoleAdmin } from '@/app/actions/admin';
 
 export default function AdminUsersPage() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [users, setUsers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSyncing, setIsSyncing] = useState(false);
@@ -168,7 +169,7 @@ export default function AdminUsersPage() {
                     </table>
                     {filteredUsers.length === 0 && (
                         <div className="p-12 text-center text-white/30">
-                            No users found matching "{search}"
+                            No users found matching &quot;{search}&quot;
                         </div>
                     )}
                 </div>

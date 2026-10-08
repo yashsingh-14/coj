@@ -160,7 +160,7 @@ export default function SearchPage() {
                             !loading && (
                                 <div className="py-12 md:py-20 text-center">
                                     <p className="text-xl md:text-2xl font-bold text-white/20">No matching songs found.</p>
-                                    <p className="text-xs md:text-sm text-white/10 mt-2">Try searching for generic terms like "Worship" or "Praise"</p>
+                                    <p className="text-xs md:text-sm text-white/10 mt-2">Try searching for generic terms like &quot;Worship&quot; or &quot;Praise&quot;</p>
                                 </div>
                             )
                         )}

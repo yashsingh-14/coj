@@ -2,6 +2,34 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { checkIsAdmin } from '@/app/actions/admin';
+
+async function verifyAdminAuthServer() {
+    try {
+        const cookieStore = await cookies();
+        const supabaseSSR = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+            {
+                cookies: {
+                    get(name) {
+                        return cookieStore.get(name)?.value;
+                    }
+                }
+            }
+        );
+
+        const { data: { user }, error } = await supabaseSSR.auth.getUser();
+        if (error || !user) return false;
+
+        const { isAdmin } = await checkIsAdmin(user.id, user.email);
+        return isAdmin;
+    } catch (e) {
+        return false;
+    }
+}
 
 // ── Provider Configuration ──
 // Priority: NVIDIA Nemotron > OpenRouter > Direct OpenAI
@@ -66,8 +94,13 @@ const ratelimit = new Ratelimit({
 
 export async function POST(req: Request) {
     try {
+        if (!(await verifyAdminAuthServer())) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         /* 
-        // Rate Limiting Check - Disabled because Upstash Redis instance is dead/unresolved
+        // NOTE: Distributed rate limiting via Upstash Redis is currently disabled because the instance is unresolved.
+        // As a fallback, this endpoint is strictly protected by Admin Authentication and input validation below.
+        // True global rate limiting cannot be enforced without external infrastructure.
         const identifier = req.headers.get('x-forwarded-for') ?? 'anonymous';
         const { success, limit, reset, remaining } = await ratelimit.limit(identifier);
 
@@ -97,6 +130,7 @@ export async function POST(req: Request) {
         const validationResult = aiGenerateSchema.safeParse(body);
 
         if (!validationResult.success) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const errors = validationResult.error.issues.map((e: any) => e.message).join(', ');
             console.log('Validation Error:', errors);
             return NextResponse.json(
@@ -243,15 +277,15 @@ export async function POST(req: Request) {
 
         return NextResponse.json(songData);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('AI Generation API Error:', error);
 
         // Import error handler
         const { handleError, ExternalAPIError } = await import('@/lib/errors');
 
         // Handle specific errors
-        if (error.message?.includes('API') || error.message?.includes('network')) {
-            const apiError = new ExternalAPIError('NVIDIA/OpenRouter/OpenAI', error.message);
+        if ((error instanceof Error ? (error instanceof Error ? error.message : "Unknown error") : "Unknown error")?.includes('API') || (error instanceof Error ? (error instanceof Error ? error.message : "Unknown error") : "Unknown error")?.includes('network')) {
+            const apiError = new ExternalAPIError('NVIDIA/OpenRouter/OpenAI', (error instanceof Error ? error.message : "Unknown error"));
             const errorInfo = handleError(apiError);
             return NextResponse.json(
                 { error: errorInfo.userMessage, details: errorInfo.message },

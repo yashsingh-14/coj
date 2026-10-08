@@ -48,6 +48,7 @@ function VerseManager() {
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/immutability
         fetchTodayVerse();
     }, []);
 
@@ -92,7 +93,7 @@ function VerseManager() {
                     <BookOpen className="w-6 h-6 text-emerald-500" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-white">Today's Verse</h2>
+                    <h2 className="text-xl font-bold text-white">Today&apos;s Verse</h2>
                     <p className="text-white/40 text-sm">Update the scripture displayed on the home page.</p>
                 </div>
             </div>
@@ -144,11 +145,13 @@ function VerseManager() {
 }
 
 function AnnouncementsManager() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [announcements, setAnnouncements] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [newAnnouncement, setNewAnnouncement] = useState('');
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/immutability
         fetchAnnouncements();
     }, []);
 

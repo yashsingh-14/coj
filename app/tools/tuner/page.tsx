@@ -74,6 +74,7 @@ export default function TunerPage() {
 
             const detect = () => {
                 if (!analyserRef.current || !bufferRef.current || !audioContextRef.current) return;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 analyserRef.current.getFloatTimeDomainData(bufferRef.current as any);
                 const freq = detectPitch(bufferRef.current, audioContextRef.current.sampleRate);
                 

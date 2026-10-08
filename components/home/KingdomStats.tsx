@@ -63,7 +63,8 @@ function useCountingValue(targetValue: number, isVisible: boolean, durationMs = 
 
     useEffect(() => {
         if (!isVisible) {
-            setCount(0);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            requestAnimationFrame(() => setCount(0));
             return;
         }
 

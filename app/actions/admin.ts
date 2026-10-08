@@ -1,9 +1,40 @@
 'use server';
 
 import { adminDb } from '@/lib/supabaseAdmin';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
+async function verifyAdminAuthServer() {
+    try {
+        const cookieStore = await cookies();
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+            {
+                cookies: {
+                    get(name) {
+                        return cookieStore.get(name)?.value;
+                    }
+                }
+            }
+        );
+
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error || !user) return false;
+
+        const { isAdmin } = await checkIsAdmin(user.id, user.email);
+        return isAdmin;
+    } catch (e) {
+        return false;
+    }
+}
+
 import { revalidateApp } from './revalidate';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateSongAdmin(songId: string, payload: any) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -22,7 +53,10 @@ export async function updateSongAdmin(songId: string, payload: any) {
     return { success: true, data };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createSongAdmin(payload: any) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
 
@@ -43,6 +77,8 @@ export async function createSongAdmin(payload: any) {
 }
 
 export async function deleteSongAdmin(songId: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { error } = await adminDb
@@ -60,17 +96,21 @@ export async function deleteSongAdmin(songId: string) {
 }
 
 export async function checkConnection() {
+    if (!(await verifyAdminAuthServer())) return { ok: false, error: "Unauthorized" };
+
     if (!adminDb) return { ok: false, error: "Admin Key Missing" };
     try {
         const { count, error } = await adminDb.from('songs').select('count', { count: 'exact', head: true });
         if (error) throw error;
         return { ok: true, count };
-    } catch (error: any) {
-        return { ok: false, error: error.message };
+    } catch (error: unknown) {
+        return { ok: false, error: (error instanceof Error ? error.message : "Unknown error") };
     }
 }
 
 export async function syncUsersAdminV3() {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     try {
@@ -128,13 +168,15 @@ export async function syncUsersAdminV3() {
 
         return { success: true, message: msg };
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Sync Users Critical Error:", error);
-        return { success: false, error: error.message };
+        return { success: false, error: (error instanceof Error ? error.message : "Unknown error") };
     }
 }
 
 export async function updateUserRoleAdmin(userId: string, newRole: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { error } = await adminDb
@@ -189,6 +231,8 @@ export async function checkIsAdmin(userId: string, userEmail?: string): Promise<
 }
 
 export async function getContactMessagesAdmin() {
+    if (!(await verifyAdminAuthServer())) return { success: false, data: [], error: "Unauthorized" };
+
     if (!adminDb) return { success: false, data: [] };
     const { data, error } = await adminDb
         .from('contact_messages')
@@ -203,6 +247,8 @@ export async function getContactMessagesAdmin() {
 }
 
 export async function deleteContactMessageAdmin(id: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false };
     const { error } = await adminDb
         .from('contact_messages')
@@ -213,6 +259,8 @@ export async function deleteContactMessageAdmin(id: string) {
 }
 
 export async function getTestimoniesAdmin() {
+    if (!(await verifyAdminAuthServer())) return { success: false, data: [], error: "Unauthorized" };
+
     if (!adminDb) return { success: false, data: [] };
     const { data, error } = await adminDb
         .from('testimonies')
@@ -227,6 +275,8 @@ export async function getTestimoniesAdmin() {
 }
 
 export async function toggleApproveTestimonyAdmin(id: string, currentStatus: boolean) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false };
     const { error } = await adminDb
         .from('testimonies')
@@ -237,6 +287,8 @@ export async function toggleApproveTestimonyAdmin(id: string, currentStatus: boo
 }
 
 export async function deleteTestimonyAdmin(id: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false };
     const { error } = await adminDb
         .from('testimonies')
@@ -248,7 +300,10 @@ export async function deleteTestimonyAdmin(id: string) {
 
 // ─── EVENTS ACTIONS ──────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createEventAdmin(payload: any) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -266,7 +321,10 @@ export async function createEventAdmin(payload: any) {
     return { success: true, data };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateEventAdmin(eventId: string, payload: any) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -286,6 +344,8 @@ export async function updateEventAdmin(eventId: string, payload: any) {
 }
 
 export async function deleteEventAdmin(eventId: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { error } = await adminDb
@@ -304,7 +364,10 @@ export async function deleteEventAdmin(eventId: string) {
 
 // ─── ARTISTS ACTIONS ─────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createArtistAdmin(payload: any) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -322,7 +385,10 @@ export async function createArtistAdmin(payload: any) {
     return { success: true, data };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateArtistAdmin(artistId: string, payload: any) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -342,6 +408,8 @@ export async function updateArtistAdmin(artistId: string, payload: any) {
 }
 
 export async function deleteArtistAdmin(artistId: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { error } = await adminDb
@@ -360,7 +428,10 @@ export async function deleteArtistAdmin(artistId: string) {
 
 // ─── SITE SETTINGS ACTIONS (HOME, SERMONS, FOOTER/GLOBAL) ────────
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateSiteSettingAdmin(key: string, value: any, description?: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -385,6 +456,8 @@ export async function updateSiteSettingAdmin(key: string, value: any, descriptio
 // ─── DAILY CONTENT ACTIONS (VERSES & ANNOUNCEMENTS) ──────────────
 
 export async function saveDailyVerseAdmin(payload: { text: string; reference: string; image_url?: string }, dateStr?: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const date = dateStr || new Date().toISOString().split('T')[0];
@@ -410,6 +483,8 @@ export async function saveDailyVerseAdmin(payload: { text: string; reference: st
 }
 
 export async function createAnnouncementAdmin(message: string, title: string = 'Notice') {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { data, error } = await adminDb
@@ -428,6 +503,8 @@ export async function createAnnouncementAdmin(message: string, title: string = '
 }
 
 export async function toggleAnnouncementAdmin(id: string, currentStatus: boolean) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { error } = await adminDb
@@ -445,6 +522,8 @@ export async function toggleAnnouncementAdmin(id: string, currentStatus: boolean
 }
 
 export async function deleteAnnouncementAdmin(id: string) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const { error } = await adminDb

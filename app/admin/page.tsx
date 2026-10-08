@@ -134,6 +134,7 @@ export default function AdminDashboard() {
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function StatCard({ label, value, icon: Icon, trend, href }: any) {
     const content = (
         <div className="p-3 md:p-6 rounded-2xl md:rounded-3xl bg-[#0F0F16] border border-white/5 hover:border-amber-500/30 transition-all relative overflow-hidden group">

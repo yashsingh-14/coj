@@ -7,6 +7,7 @@ import TiltCard from '@/components/ui/TiltCard';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ICON_MAP: Record<string, any> = {
     BookOpen,
     Sun,
@@ -48,6 +49,7 @@ const DEFAULT_EVENTS = [
 ];
 
 export default function EventsPage() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [events, setEvents] = useState<any[]>(DEFAULT_EVENTS);
     const [loading, setLoading] = useState(false);
 

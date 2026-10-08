@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Radio, X } from 'lucide-react';
+import { Radio, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function NotificationPrompt() {

@@ -45,6 +45,18 @@ self.addEventListener('fetch', (event) => {
     // Skip non-GET requests
     if (event.request.method !== 'GET') return;
 
+    const url = new URL(event.request.url);
+
+    // Bypass caching for APIs, Supabase, and dynamic Next.js data
+    if (
+        url.pathname.startsWith('/api/') ||
+        url.hostname.includes('supabase.co') ||
+        url.hostname.includes('supabase.in') ||
+        url.pathname.startsWith('/_next/data/')
+    ) {
+        return; // Go straight to network, do not cache
+    }
+
     // For navigation requests (HTML pages) - NETWORK FIRST
     if (event.request.mode === 'navigate') {
         event.respondWith(

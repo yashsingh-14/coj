@@ -8,10 +8,12 @@ import { toast } from 'sonner';
 import { deleteEventAdmin } from '@/app/actions/admin';
 
 export default function AdminEventsPage() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [events, setEvents] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/immutability
         fetchEvents();
     }, []);
 

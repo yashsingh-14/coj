@@ -1,14 +1,13 @@
 import type { NextConfig } from "next";
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
+const withBA = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const nextConfig: any = {
+const nextConfig: NextConfig = {
   /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -31,4 +30,4 @@ const nextConfig: any = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default withBA(nextConfig);

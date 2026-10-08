@@ -65,7 +65,7 @@ export class PadSynth {
         
         if (!this.audioContext) {
             try {
-                const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+                const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
                 // 'interactive' gives a balanced buffer size to prevent mobile CPU underrun clicks
                 this.audioContext = new AudioContextClass({ latencyHint: 'interactive' });
                 

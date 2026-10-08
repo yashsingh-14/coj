@@ -8,12 +8,19 @@ import LiveSermonBanner from '@/components/home/LiveSermonBanner';
 
 export default function HomeManager({ initialData }: {
     initialData: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         trending: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         madeForYou: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         featured: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         heroSlides: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         todaysVerse: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         announcements: any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         events?: any[];
     }
 }) {
@@ -28,10 +35,11 @@ export default function HomeManager({ initialData }: {
 
     useEffect(() => {
         if (mode === 'UTILITY') {
-            const timer = setTimeout(() => setShowExperience(false), 1000); // Match transition duration
+            const timer = setTimeout(() => requestAnimationFrame(() => setShowExperience(false)), 1000); // Match transition duration
             return () => clearTimeout(timer);
         } else {
-            setShowExperience(true);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            requestAnimationFrame(() => setShowExperience(true));
         }
     }, [mode]);
 

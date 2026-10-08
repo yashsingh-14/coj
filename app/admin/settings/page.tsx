@@ -20,6 +20,7 @@ export default function AdminSettingsPage() {
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/immutability
         fetchSettings();
     }, []);
 

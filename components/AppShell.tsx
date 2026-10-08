@@ -17,6 +17,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         // Helper to get user data with role
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const getUserData = async (user: any) => {
             let role = 'user';
             // Hardcode Admin Access for Owner (Immediate Access)

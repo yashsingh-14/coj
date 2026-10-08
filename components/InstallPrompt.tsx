@@ -16,7 +16,8 @@ export default function InstallPrompt() {
     useEffect(() => {
         // Check if already installed (standalone mode)
         if (window.matchMedia('(display-mode: standalone)').matches) {
-            setIsInstalled(true);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            requestAnimationFrame(() => setIsInstalled(true));
             return;
         }
 

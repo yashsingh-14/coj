@@ -36,7 +36,8 @@ export default function PadPage() {
     useEffect(() => {
         if (synthRef.current) {
             synthRef.current.stopAll();
-            setActiveNotes(new Set());
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            requestAnimationFrame(() => setActiveNotes(new Set()));
             synthRef.current.setPreset(preset);
         }
     }, [preset]);

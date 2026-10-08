@@ -7,6 +7,7 @@ import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 import { getSongImage } from '@/lib/utils';
 import { generateSlug } from '@/lib/seoUtils';
+import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
 import { toast } from 'sonner';
 
@@ -23,11 +24,14 @@ export default function SongsListPage() {
                 .select('id, title, artist, category, img, is_featured')
                 .order('title', { ascending: true });
 
-            if (error) {
-                console.error('Error fetching songs:', error);
-                toast.error('Failed to load songs');
+            if (error || !data || data.length === 0) {
+                if (error) {
+                    console.error('Error fetching songs:', error);
+                    toast.error('Failed to load songs from DB, using fallback');
+                }
+                setSongs(ALL_SONGS as unknown as Song[]);
             } else {
-                setSongs((data || []) as unknown as Song[]);
+                setSongs(data as unknown as Song[]);
             }
             setIsLoading(false);
         };

@@ -92,7 +92,7 @@ export default function DevotionalPage() {
                         Daily <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-500 to-amber-200">Devotional</span>
                     </h1>
                     <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                        Today's verse brings encouragement and hope for your journey.
+                        Today&apos;s verse brings encouragement and hope for your journey.
                     </p>
                 </div>
 

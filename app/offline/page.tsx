@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 export default function OfflinePage() {
     return (
@@ -23,12 +24,12 @@ export default function OfflinePage() {
 
                 {/* Title */}
                 <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-2 sm:mb-4">
-                    You're Offline
+                    You&apos;re Offline
                 </h1>
 
                 {/* Description */}
                 <p className="text-sm sm:text-lg text-white/60 mb-6 sm:mb-8 max-w-md mx-auto">
-                    It looks like you've lost your internet connection. Please check your network and try again.
+                    It looks like you&apos;ve lost your internet connection. Please check your network and try again.
                 </p>
 
                 {/* Retry Button */}
@@ -42,9 +43,9 @@ export default function OfflinePage() {
                 {/* Tips */}
                 <div className="mt-12 text-sm text-white/40 max-w-md mx-auto">
                     <p className="mb-2">💡 Tip: Some pages may still be available offline</p>
-                    <a href="/" className="text-amber-500 hover:text-amber-400 underline">
+                    <Link href="/" className="text-amber-500 hover:text-amber-400 underline">
                         Go to Homepage
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>

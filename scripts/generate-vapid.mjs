@@ -1,7 +1,7 @@
-const webpush = require('web-push');
+import webpush from 'web-push';
 const vapidKeys = webpush.generateVAPIDKeys();
 
-const fs = require('fs');
+import fs from 'fs';
 fs.writeFileSync('vapid_keys.txt',
     `NEXT_PUBLIC_VAPID_PUBLIC_KEY=${vapidKeys.publicKey}
 VAPID_PRIVATE_KEY=${vapidKeys.privateKey}

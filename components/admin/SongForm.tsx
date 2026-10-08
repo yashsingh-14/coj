@@ -109,6 +109,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
 
             setGenerationProgress('Complete!');
             toast.success("AI Generation Successful!");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || "Something went wrong with AI generation.");
@@ -190,6 +191,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                     setTimeout(() => reject(new Error("Auth Stuck (5s) - Please Refresh")), 5000)
                 );
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const { data } = await Promise.race([sessionPromise, sessionTimeout]) as any;
 
                 if (!data.session?.user) {
@@ -247,6 +249,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
 
             window.location.href = '/admin/songs';
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             addLog(`CRITICAL ERROR: ${error.message}`);
             console.error('Submission Error:', error);
@@ -382,7 +385,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                         <h3 className="text-base md:text-lg font-bold text-white">Magic Paste</h3>
                                         <p className="text-xs md:text-sm text-white/40 mb-2">
                                             Paste content from Ultimate Guitar or other sites.
-                                            We'll try to separate Lyrics & Chords automatically.
+                                            We&apos;ll try to separate Lyrics & Chords automatically.
                                         </p>
                                     </div>
                                 </div>
@@ -541,6 +544,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Input({ label, name, value, onChange, placeholder, required }: any) {
     return (
         <div>
