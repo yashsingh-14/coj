@@ -54,7 +54,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             if (session?.user) {
                 const userData = await getUserData(session.user);
                 login(userData);
-            } else {
+            } else if (_event === 'SIGNED_OUT') {
                 logout();
             }
         });

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera } from 'lucide-react';
+import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera, Loader2 } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 
 import { useAppStore } from '@/store/useAppStore';
@@ -10,18 +10,52 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function ProfilePage() {
-    const { currentUser, isAuthenticated } = useAppStore();
+    const { currentUser, isAuthenticated, login } = useAppStore();
     const router = useRouter();
 
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [savedCount, setSavedCount] = useState(0);
     const [setsCount, setSetsCount] = useState(0);
 
-    // Redirect if not logged in
+    // Verify session
     useEffect(() => {
-        if (!isAuthenticated) {
-            router.push('/signin');
-        }
-    }, [isAuthenticated, router]);
+        let isMounted = true;
+        const checkAuth = async () => {
+            if (isAuthenticated && currentUser) {
+                if (isMounted) setIsCheckingAuth(false);
+                return;
+            }
+
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user) {
+                const u = session.user;
+                let role = 'user';
+                if (u.email === 'ys181544@gmail.com') role = 'admin';
+                else {
+                    try {
+                        const { data } = await supabase.from('profiles').select('role').eq('id', u.id).maybeSingle();
+                        if (data?.role) role = data.role;
+                    } catch (e) { }
+                }
+
+                login({
+                    id: u.id,
+                    name: u.user_metadata?.name || u.user_metadata?.full_name || u.email?.split('@')[0] || 'User',
+                    email: u.email || '',
+                    avatar: u.user_metadata?.avatar_url || u.user_metadata?.picture,
+                    role
+                });
+                if (isMounted) setIsCheckingAuth(false);
+            } else {
+                if (isMounted) {
+                    router.push('/signin?redirect=/profile');
+                }
+            }
+        };
+
+        checkAuth();
+        return () => { isMounted = false; };
+    }, [isAuthenticated, currentUser, login, router]);
 
     // Fetch real stats
     useEffect(() => {
@@ -47,7 +81,13 @@ export default function ProfilePage() {
         }
     }, [currentUser]);
 
-    if (!currentUser) return null; // or a loading spinner
+    if (isCheckingAuth || !currentUser) {
+        return (
+            <div className="min-h-screen bg-[#02000F] text-white flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+            </div>
+        );
+    }
 
     // Use real user data with fallbacks
     const user = {

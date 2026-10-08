@@ -25,36 +25,66 @@ export default function AuthCallback() {
                 return; // STOP EXECUTION
             }
 
-            // 2. Check for hash first (Implicit Flow)
-            const { error } = await supabase.auth.getSession();
-
-            if (error) {
-                console.error('Error getting session:', error);
-                router.push('/signin?error=SessionError');
-                return;
-            }
-
-            // Also handle hash manually if getSession misses it
-            const hash = window.location.hash;
-            if (hash && hash.includes('access_token')) {
-                const { data, error: hashError } = await supabase.auth.getSession();
-                if (!hashError && data.session?.user) {
+            // 2. Check for PKCE authorization code
+            const code = params.get('code');
+            if (code) {
+                const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+                if (exchangeError) {
+                    console.error('Error exchanging code for session:', exchangeError);
+                } else if (data?.session?.user) {
                     const { user } = data.session;
-                    // Manually update store to prevent race conditions
+                    let role = 'user';
+                    if (user.email === 'ys181544@gmail.com') role = 'admin';
+                    else {
+                        try {
+                            const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
+                            if (profile?.role) role = profile.role;
+                        } catch (e) { }
+                    }
+
                     useAppStore.getState().login({
                         id: user.id,
-                        name: user.user_metadata.name || user.user_metadata.full_name || user.email?.split('@')[0] || 'User',
+                        name: user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
                         email: user.email || '',
-                        avatar: user.user_metadata.avatar_url || user.user_metadata.picture
+                        avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+                        role
                     });
 
-                    router.push('/');
+                    const next = params.get('next') || '/';
+                    router.replace(next);
                     return;
                 }
             }
 
-            // If we are here, we might have a session or just need to redirect home
-            router.push('/');
+            // 3. Check for hash or active session (Implicit flow / fallback)
+            const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+            if (!sessionError && sessionData?.session?.user) {
+                const { user } = sessionData.session;
+                let role = 'user';
+                if (user.email === 'ys181544@gmail.com') role = 'admin';
+                else {
+                    try {
+                        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
+                        if (profile?.role) role = profile.role;
+                    } catch (e) { }
+                }
+
+                useAppStore.getState().login({
+                    id: user.id,
+                    name: user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                    email: user.email || '',
+                    avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+                    role
+                });
+
+                const next = params.get('next') || '/';
+                router.replace(next);
+                return;
+            }
+
+            // Fallback redirect
+            const next = params.get('next') || '/';
+            router.replace(next);
         };
 
         handleAuthCallback();

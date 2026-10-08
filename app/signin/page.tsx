@@ -58,7 +58,8 @@ export default function SignInPage() {
         }
 
         toast.success(`Welcome back!`);
-        router.push('/');
+        const redirectUrl = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('redirect') || '/') : '/';
+        router.push(redirectUrl);
         setIsLoading(false);
     };
 

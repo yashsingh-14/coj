@@ -27,7 +27,9 @@ export default function SocialAuthModal({ isOpen, onClose, provider, onSuccess }
         const { error } = await supabase.auth.signInWithOAuth({
             provider: provider.toLowerCase() as 'google' | 'apple',
             options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
+                redirectTo: typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('redirect')
+                    ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(new URLSearchParams(window.location.search).get('redirect')!)}`
+                    : `${window.location.origin}/auth/callback`,
                 queryParams: {
                     access_type: 'offline',
                     prompt: 'consent',
