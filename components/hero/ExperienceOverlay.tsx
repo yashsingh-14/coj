@@ -172,7 +172,7 @@ function SectionSeam({ variant = 'amber' }: { variant?: 'amber' | 'rose' | 'purp
 const HERO_VIDEOS = [
     {
         id: 'intro',
-        src: '/videos/coj intro video.mp4',
+        src: process.env.NEXT_PUBLIC_HERO_VIDEO_URL || 'https://bylvnplqvwgavaiygvoy.supabase.co/storage/v1/object/public/videos/coj-intro.mp4',
         title: 'Call of Jesus Ministries',
         tag: 'Worship Experience',
         label: '01'
@@ -287,7 +287,7 @@ function HeroSection() {
             <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
                 <video
                     ref={videoRef}
-                    src="/videos/coj%20intro%20video.mp4"
+                    src="https://bylvnplqvwgavaiygvoy.supabase.co/storage/v1/object/public/videos/coj-intro.mp4"
                     autoPlay
                     muted
                     loop
@@ -295,7 +295,8 @@ function HeroSection() {
                     preload="auto"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                 >
-                    <source src="/videos/coj%20intro%20video.mp4" type="video/mp4" />
+                    <source src="https://bylvnplqvwgavaiygvoy.supabase.co/storage/v1/object/public/videos/coj-intro.mp4" type="video/mp4" />
+                    <source src="/videos/coj-intro-compressed.mp4" type="video/mp4" />
                 </video>
                 {/* Subtle cinematic gradient overlay — keeps video vivid while ensuring high text readability */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/25 to-black/60 pointer-events-none" />
