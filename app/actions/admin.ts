@@ -12,19 +12,30 @@ async function verifyAdminAuthServer() {
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
             {
                 cookies: {
-                    get(name) {
-                        return cookieStore.get(name)?.value;
-                    }
-                }
+                    getAll() {
+                        return cookieStore.getAll();
+                    },
+                    setAll(cookiesToSet) {
+                        try {
+                            cookiesToSet.forEach(({ name, value, options }) =>
+                                cookieStore.set(name, value, options)
+                            );
+                        } catch {}
+                    },
+                },
             }
         );
 
         const { data: { user }, error } = await supabase.auth.getUser();
-        if (error || !user) return false;
+        if (error || !user) {
+            console.error("verifyAdminAuthServer: Failed to get user from cookies", error);
+            return false;
+        }
 
         const { isAdmin } = await checkIsAdmin(user.id, user.email);
         return isAdmin;
     } catch (e) {
+        console.error("verifyAdminAuthServer exception:", e);
         return false;
     }
 }
@@ -191,6 +202,17 @@ export async function updateUserRoleAdmin(userId: string, newRole: string) {
         return { success: false, error: error.message };
     }
 
+    // Also update auth user metadata if possible so session token has updated role
+    try {
+        await adminDb.auth.admin.updateUserById(userId, {
+            user_metadata: { role: newRole },
+            app_metadata: { role: newRole }
+        });
+    } catch (authErr) {
+        console.warn("Could not sync auth metadata:", authErr);
+    }
+
+    await revalidateApp();
     return { success: true };
 }
 

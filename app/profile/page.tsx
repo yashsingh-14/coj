@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera, Loader2 } from 'lucide-react';
+import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera, Loader2, ShieldCheck, ArrowRight } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton';
 import TiltCard from '@/components/ui/TiltCard';
 
@@ -41,7 +41,8 @@ export default function ProfilePage() {
 
             if (u) {
                 let role = 'user';
-                if (u.email === 'ys181544@gmail.com') role = 'admin';
+                const normalizedEmail = (u.email || '').toLowerCase().trim();
+                if (normalizedEmail === 'ys181544@gmail.com' || normalizedEmail === 'callofjesus2015@gmail.com') role = 'admin';
                 else {
                     try {
                         const { data } = await supabase.from('profiles').select('role').eq('id', u.id).maybeSingle();
@@ -149,7 +150,15 @@ export default function ProfilePage() {
 
                         {/* Info */}
                         <div className="flex-1 pb-4">
-                            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white mb-2">{user.name}</h1>
+                            <div className="flex items-center justify-center md:justify-start gap-2 mb-2 flex-wrap">
+                                <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">{user.name}</h1>
+                                {currentUser?.role === 'admin' && (
+                                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                                        Admin
+                                    </span>
+                                )}
+                            </div>
                             <p className="text-white/60 font-medium mb-4 sm:mb-6 text-xs sm:text-sm break-all">{user.email} • {user.joined}</p>
 
                             <div className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4">
@@ -168,6 +177,27 @@ export default function ProfilePage() {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* ADMIN PANEL ACCESS CARD */}
+                            {currentUser?.role === 'admin' && (
+                                <Link
+                                    href="/admin"
+                                    className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-purple-500/10 to-amber-500/20 border border-amber-500/40 hover:border-amber-400 flex items-center justify-between group transition-all shadow-lg shadow-amber-500/10"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+                                            <ShieldCheck className="w-5 h-5" />
+                                        </div>
+                                        <div className="text-left">
+                                            <h3 className="font-bold text-white text-sm group-hover:text-amber-400 transition-colors flex items-center gap-1.5">
+                                                Open Admin Panel (COJ Studio)
+                                            </h3>
+                                            <p className="text-white/50 text-xs">Manage songs, users, sermons & settings</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform shrink-0" />
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>

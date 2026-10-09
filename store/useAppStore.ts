@@ -54,9 +54,17 @@ export const useAppStore = create<AppState>()(
             },
             setPreferences: (prefs) => set((state) => ({ preferences: { ...state.preferences, ...prefs } })),
 
-            // Actions
             login: (user) => set((state) => {
-                if (state.isAuthenticated && state.currentUser?.id === user.id) return state;
+                if (
+                    state.isAuthenticated &&
+                    state.currentUser?.id === user.id &&
+                    state.currentUser?.role === user.role &&
+                    state.currentUser?.name === user.name &&
+                    state.currentUser?.avatar === user.avatar &&
+                    state.currentUser?.email === user.email
+                ) {
+                    return state;
+                }
                 return { currentUser: user, isAuthenticated: true };
             }),
             logout: () => {

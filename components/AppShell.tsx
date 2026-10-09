@@ -19,8 +19,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const getUserData = async (user: any) => {
             let role = 'user';
-            // Hardcode Admin Access for Owner (Immediate Access)
-            if (user.email === 'ys181544@gmail.com') role = 'admin';
+            const normalizedEmail = (user.email || '').toLowerCase().trim();
+            if (normalizedEmail === 'ys181544@gmail.com' || normalizedEmail === 'callofjesus2015@gmail.com') role = 'admin';
 
             // Try fetching role from DB (fails silently if missing)
             try {

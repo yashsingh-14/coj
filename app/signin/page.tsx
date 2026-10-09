@@ -41,7 +41,8 @@ export default function SignInPage() {
 
         if (data?.user) {
             let role = 'user';
-            if (data.user.email === 'ys181544@gmail.com') role = 'admin';
+            const normalizedEmail = (data.user.email || '').toLowerCase().trim();
+            if (normalizedEmail === 'ys181544@gmail.com' || normalizedEmail === 'callofjesus2015@gmail.com') role = 'admin';
             else {
                 try {
                     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle();

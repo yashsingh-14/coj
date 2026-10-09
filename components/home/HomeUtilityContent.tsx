@@ -64,9 +64,10 @@ export default function HomeUtilityContent({
                 };
                 const timeout = new Promise<null>((res) => setTimeout(() => res(null), 1500));
                 const u = await Promise.race([check(), timeout]);
-                if (u && (!currentUser || !isAuthenticated)) {
+                if (u) {
                     let role = 'user';
-                    if (u.email === 'ys181544@gmail.com') role = 'admin';
+                    const normalizedEmail = (u.email || '').toLowerCase().trim();
+                    if (normalizedEmail === 'ys181544@gmail.com' || normalizedEmail === 'callofjesus2015@gmail.com') role = 'admin';
                     else {
                         try {
                             const { data: prof } = await supabase.from('profiles').select('role').eq('id', u.id).maybeSingle();
@@ -86,7 +87,8 @@ export default function HomeUtilityContent({
             }
         };
         syncSession();
-    }, [currentUser, isAuthenticated]);
+    }, []);
+
 
     // Newsletter State
     const [email, setEmail] = useState('');

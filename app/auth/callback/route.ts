@@ -44,7 +44,28 @@ export async function GET(request: Request) {
             const userEmail = user.email || '';
             const userName = user.user_metadata?.name || user.user_metadata?.full_name || userEmail.split('@')[0] || 'User';
             const userAvatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
-            const userRole = userEmail === 'ys181544@gmail.com' ? 'admin' : 'user';
+            // Preserve existing role (e.g. admin) or set admin for owner
+            let finalRole = 'user';
+            const normalizedEmail = userEmail.toLowerCase().trim();
+            const isOwner = normalizedEmail === 'ys181544@gmail.com' || normalizedEmail === 'callofjesus2015@gmail.com';
+
+            if (isOwner) {
+                finalRole = 'admin';
+            } else {
+                try {
+                    const { data: existingProfile } = await supabase
+                        .from('profiles')
+                        .select('role')
+                        .eq('id', user.id)
+                        .maybeSingle();
+
+                    if (existingProfile?.role) {
+                        finalRole = existingProfile.role;
+                    }
+                } catch (e) {
+                    console.error('Failed to check existing role on callback:', e);
+                }
+            }
 
             try {
                 await supabase.from('profiles').upsert({
@@ -52,7 +73,7 @@ export async function GET(request: Request) {
                     email: userEmail,
                     name: userName,
                     avatar: userAvatar,
-                    role: userRole,
+                    role: finalRole,
                 }, { onConflict: 'id' });
             } catch (e) {
                 console.error('Failed to upsert profile on callback:', e);

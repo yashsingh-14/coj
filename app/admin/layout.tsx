@@ -26,6 +26,7 @@ import {
     Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -47,6 +48,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             setIsAdmin(true);
             setIsLoading(false);
             try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
+            useAppStore.getState().login({
+                id: user.id,
+                name: user.user_metadata?.name || user.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin',
+                email: userEmail,
+                avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+                role: 'admin'
+            });
             return true;
         }
 
@@ -56,6 +64,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             setIsAdmin(true);
             setIsLoading(false);
             try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
+            useAppStore.getState().login({
+                id: user.id,
+                name: user.user_metadata?.name || user.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin',
+                email: userEmail,
+                avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+                role: 'admin'
+            });
             return true;
         } else {
             setIsAdmin(false);
