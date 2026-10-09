@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Geist, Geist_Mono, Playfair_Display, Fraunces, Space_Grotesk } from "next/font/google";
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
@@ -78,6 +77,9 @@ export const metadata: Metadata = {
   verification: {
     google: "CYIkv8Ghl8ecRATjDtfb3ouWVTc5O2M87tRXaJ3kqA8",
   },
+  other: {
+    'google-adsense-account': 'ca-pub-5426715715614915',
+  },
 };
 
 import AppShell from "@/components/AppShell";
@@ -94,11 +96,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5426715715614915"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
       </head>
       <body
