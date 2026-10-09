@@ -25,16 +25,12 @@ export async function GET(request: Request) {
                         return cookieStore.getAll();
                     },
                     setAll(cookiesToSet) {
-                        try {
-                            cookiesToSet.forEach(({ name, value, options }) => {
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            try {
                                 cookieStore.set(name, value, options);
-                                response.cookies.set(name, value, options);
-                            });
-                        } catch {
-                            cookiesToSet.forEach(({ name, value, options }) => {
-                                response.cookies.set(name, value, options);
-                            });
-                        }
+                            } catch {}
+                            response.cookies.set(name, value, options);
+                        });
                     },
                 },
             }
@@ -61,6 +57,12 @@ export async function GET(request: Request) {
             } catch (e) {
                 console.error('Failed to upsert profile on callback:', e);
             }
+
+            try {
+                cookieStore.getAll().forEach((c) => {
+                    response.cookies.set(c.name, c.value);
+                });
+            } catch {}
 
             return response;
         } else {

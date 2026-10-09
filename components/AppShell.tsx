@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import BottomNav from '@/components/ui/BottomNav';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
@@ -40,35 +39,58 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         // 1. Check active session on mount
         const initSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                const userData = await getUserData(session.user);
-                login(userData);
-                try {
-                    const pendingRedirect = sessionStorage.getItem('auth_redirect');
-                    if (pendingRedirect) {
-                        sessionStorage.removeItem('auth_redirect');
-                        window.location.href = pendingRedirect;
-                        return;
+            try {
+                const sessionRes = await supabase.auth.getSession();
+                let activeUser = sessionRes.data.session?.user;
+
+                // Fallback to getUser() if getSession() is initially empty
+                if (!activeUser) {
+                    const userRes = await supabase.auth.getUser();
+                    if (userRes.data?.user) {
+                        activeUser = userRes.data.user;
                     }
-                } catch {}
+                }
+
+                if (activeUser) {
+                    const userData = await getUserData(activeUser);
+                    login(userData);
+                    try {
+                        const pendingRedirect = sessionStorage.getItem('auth_redirect');
+                        if (pendingRedirect) {
+                            sessionStorage.removeItem('auth_redirect');
+                            if (window.location.pathname !== pendingRedirect) {
+                                window.location.href = pendingRedirect;
+                                return;
+                            }
+                        }
+                    } catch {}
+                }
+            } catch (err) {
+                console.error('Session init error in AppShell:', err);
+            } finally {
+                setIsReady(true);
             }
-            setIsReady(true);
         };
         initSession();
 
         // 2. Listen for auth changes (Sign In, Sign Out, etc.)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (session?.user) {
                 const userData = await getUserData(session.user);
                 login(userData);
-            } else if (_event === 'SIGNED_OUT') {
+            } else if (event === 'SIGNED_IN') {
+                const { data } = await supabase.auth.getUser();
+                if (data?.user) {
+                    const userData = await getUserData(data.user);
+                    login(userData);
+                }
+            } else if (event === 'SIGNED_OUT') {
                 logout();
             }
         });
 
         return () => subscription.unsubscribe();
-    }, []); // Empty dependency array to run only once on mount
+    }, [login, logout]); // Clean dependencies
 
     // 3. Sync Theme with Body
     const theme = useAppStore(state => state.preferences.theme);

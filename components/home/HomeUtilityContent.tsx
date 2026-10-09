@@ -47,7 +47,44 @@ export default function HomeUtilityContent({
 
     // Hydration guard: prevent SSR/client mismatch for auth-dependent UI
     const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
+    const [authChecking, setAuthChecking] = useState(true);
+    useEffect(() => {
+        setMounted(true);
+        const syncSession = async () => {
+            try {
+                const sessionRes = await supabase.auth.getSession();
+                let u = sessionRes.data.session?.user;
+                if (!u) {
+                    const userRes = await supabase.auth.getUser();
+                    if (userRes.data?.user) {
+                        u = userRes.data.user;
+                    }
+                }
+                if (u && (!currentUser || !isAuthenticated)) {
+                    let role = 'user';
+                    if (u.email === 'ys181544@gmail.com') role = 'admin';
+                    else {
+                        try {
+                            const { data: prof } = await supabase.from('profiles').select('role').eq('id', u.id).maybeSingle();
+                            if (prof?.role) role = prof.role;
+                        } catch {}
+                    }
+                    useAppStore.getState().login({
+                        id: u.id,
+                        name: u.user_metadata?.name || u.user_metadata?.full_name || u.email?.split('@')[0] || 'User',
+                        email: u.email || '',
+                        avatar: u.user_metadata?.avatar_url || u.user_metadata?.picture,
+                        role
+                    });
+                }
+            } catch (e) {
+                console.error('Error syncing session in HomeUtilityContent:', e);
+            } finally {
+                setAuthChecking(false);
+            }
+        };
+        syncSession();
+    }, [currentUser, isAuthenticated]);
 
     // Newsletter State
     const [email, setEmail] = useState('');
@@ -127,7 +164,7 @@ export default function HomeUtilityContent({
                 </div>
 
                 <div className="animate-fade-in-down" style={{ animationDelay: '0.1s' }}>
-                    {!mounted ? (
+                    {!mounted || (authChecking && !currentUser) ? (
                         <div className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 animate-pulse" />
                     ) : isAuthenticated && currentUser ? (
                         <Link href="/profile" className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20 hover:scale-105 transition-transform" title="My Profile">
