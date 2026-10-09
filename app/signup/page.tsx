@@ -51,7 +51,8 @@ export default function SignUpPage() {
         // Usually, user is signed in automatically if "Enable Email Confirmation" is OFF.
 
         // We push to home. If session exists, AppShell updates state.
-        router.push('/');
+        const redirectUrl = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('redirect') || '/worship') : '/worship';
+        router.push(redirectUrl);
         setIsLoading(false);
     };
 
@@ -67,7 +68,8 @@ export default function SignUpPage() {
             email: userData.email,
             avatar: userData.avatar
         });
-        router.push('/');
+        const redirectUrl = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('redirect') || '/worship') : '/worship';
+        router.push(redirectUrl);
     };
 
     return (

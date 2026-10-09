@@ -5,7 +5,14 @@ import { cookies } from 'next/headers';
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get('code');
-    const next = searchParams.get('next') ?? '/';
+    const next = searchParams.get('next') ?? '/worship';
+
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const isLocalEnv = process.env.NODE_ENV === 'development';
+    const redirectBase = isLocalEnv ? origin : (forwardedHost ? `https://${forwardedHost}` : origin);
+    const redirectUrl = `${redirectBase}${next.startsWith('/') ? next : `/${next}`}`;
+
+    const response = NextResponse.redirect(redirectUrl);
 
     if (code) {
         const cookieStore = await cookies();
@@ -19,11 +26,14 @@ export async function GET(request: Request) {
                     },
                     setAll(cookiesToSet) {
                         try {
-                            cookiesToSet.forEach(({ name, value, options }) =>
-                                cookieStore.set(name, value, options)
-                            );
+                            cookiesToSet.forEach(({ name, value, options }) => {
+                                cookieStore.set(name, value, options);
+                                response.cookies.set(name, value, options);
+                            });
                         } catch {
-                            // Safe to ignore in Server Component contexts
+                            cookiesToSet.forEach(({ name, value, options }) => {
+                                response.cookies.set(name, value, options);
+                            });
                         }
                     },
                 },
@@ -52,19 +62,11 @@ export async function GET(request: Request) {
                 console.error('Failed to upsert profile on callback:', e);
             }
 
-            const forwardedHost = request.headers.get('x-forwarded-host');
-            const isLocalEnv = process.env.NODE_ENV === 'development';
-            if (isLocalEnv) {
-                return NextResponse.redirect(`${origin}${next}`);
-            } else if (forwardedHost) {
-                return NextResponse.redirect(`https://${forwardedHost}${next}`);
-            } else {
-                return NextResponse.redirect(`${origin}${next}`);
-            }
+            return response;
         } else {
             console.error('Auth callback exchangeCodeForSession error:', error);
         }
     }
 
-    return NextResponse.redirect(`${origin}/signin?error=auth-code-error`);
+    return NextResponse.redirect(`${redirectBase}/signin?error=auth-code-error`);
 }

@@ -58,7 +58,7 @@ export default function SignInPage() {
         }
 
         toast.success(`Welcome back!`);
-        const redirectUrl = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('redirect') || '/') : '/';
+        const redirectUrl = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('redirect') || '/worship') : '/worship';
         router.push(redirectUrl);
         setIsLoading(false);
     };
@@ -77,7 +77,8 @@ export default function SignInPage() {
         });
         // Toast is handled in the modal for social flow, or we can do it here. 
         // Modal handles it for specificity "Signed in with Google".
-        router.push('/');
+        const redirectUrl = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('redirect') || '/worship') : '/worship';
+        router.push(redirectUrl);
     };
 
     return (

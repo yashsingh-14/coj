@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Check, Loader2, User, Mail, ShieldCheck } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -12,8 +12,8 @@ interface SocialAuthModalProps {
     onSuccess: (userData: { name: string; email: string; avatar?: string }) => void;
 }
 
-export default function SocialAuthModal({ isOpen, onClose, provider, onSuccess }: SocialAuthModalProps) {
-    const [isRedirecting, setIsRedirecting] = useState(false);
+export default function SocialAuthModal({ isOpen, onClose, provider }: SocialAuthModalProps) {
+    const [, setIsRedirecting] = useState(false);
 
     useEffect(() => {
         if (isOpen && provider) {
@@ -24,14 +24,21 @@ export default function SocialAuthModal({ isOpen, onClose, provider, onSuccess }
 
     const handleRealOAuth = async () => {
         setIsRedirecting(true);
+        let nextPath = '/worship';
         try {
-            const redirectParam = new URLSearchParams(window.location.search).get('redirect');
-            if (redirectParam) sessionStorage.setItem('auth_redirect', redirectParam);
+            const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null;
+            if (redirectParam) {
+                nextPath = redirectParam;
+                sessionStorage.setItem('auth_redirect', redirectParam);
+            }
         } catch {}
+
+        const callbackUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+
         const { error } = await supabase.auth.signInWithOAuth({
             provider: provider.toLowerCase() as 'google' | 'apple',
             options: {
-                redirectTo: `${window.location.origin}/auth/callback`,
+                redirectTo: callbackUrl,
                 queryParams: {
                     access_type: 'offline',
                     prompt: 'consent',
@@ -43,7 +50,6 @@ export default function SocialAuthModal({ isOpen, onClose, provider, onSuccess }
             toast.error(error.message);
             onClose();
         }
-        // No need to set loading false, we are redirecting away.
     };
 
     if (!isOpen) return null;

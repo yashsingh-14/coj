@@ -26,9 +26,10 @@ export default function ProfilePage() {
                 return;
             }
 
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                const u = session.user;
+            const sessionRes = await supabase.auth.getSession();
+            const u = sessionRes.data.session?.user || (await supabase.auth.getUser()).data.user;
+
+            if (u) {
                 let role = 'user';
                 if (u.email === 'ys181544@gmail.com') role = 'admin';
                 else {

@@ -130,15 +130,15 @@ export default function HomeUtilityContent({
                     {!mounted ? (
                         <div className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 animate-pulse" />
                     ) : isAuthenticated && currentUser ? (
-                        <div className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20">
+                        <Link href="/profile" className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20 hover:scale-105 transition-transform" title="My Profile">
                             {currentUser.avatar ? (
                                 <Image src={currentUser.avatar} alt={currentUser.name} width={36} height={36} className="w-full h-full object-cover" unoptimized />
                             ) : (
                                 <span className="font-bold text-white text-xs">{currentUser.name.charAt(0)}</span>
                             )}
-                        </div>
+                        </Link>
                     ) : (
-                        <Link href="/signin" className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-[var(--card-border)]">
+                        <Link href="/signin?redirect=/worship" className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-[var(--card-border)]">
                             <User className="w-5 h-5 text-[var(--foreground)]/70 hover:text-white" />
                         </Link>
                     )}
