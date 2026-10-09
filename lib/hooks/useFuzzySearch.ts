@@ -1,39 +1,29 @@
 import { useState, useEffect, useMemo } from 'react';
 import Fuse from 'fuse.js';
-import { supabase } from '@/lib/supabaseClient';
+import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
 
 export function useFuzzySearch() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Song[]>([]);
     const [loading, setLoading] = useState(false);
-    const [allSongs, setAllSongs] = useState<Song[]>([]);
-    const [isIndexReady, setIsIndexReady] = useState(false);
+    // Initialize immediately with ALL_SONGS for instant 0ms search
+    const [allSongs, setAllSongs] = useState<Song[]>(ALL_SONGS);
 
-    // Fetch the search index (lightweight metadata) only once on mount
+    // Refresh with fresh DB songs in background via cached /api/songs
     useEffect(() => {
         let isMounted = true;
         const fetchSearchIndex = async () => {
             try {
-                // Fetch only necessary lightweight fields for search to avoid heavy payload
-                const { data, error } = await supabase
-                    .from('songs')
-                    .select('id, title, artist, category, img, is_featured')
-                    .order('title', { ascending: true });
-
-                if (error) {
-                    console.error("Failed to load search index from Supabase:", error);
-                }
-
-                if (isMounted && data) {
-                    setAllSongs(data as unknown as Song[]);
+                const res = await fetch('/api/songs');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (isMounted && data.songs && data.songs.length > 0) {
+                        setAllSongs(data.songs);
+                    }
                 }
             } catch (err) {
-                console.error("Failed to load search index:", err);
-            } finally {
-                if (isMounted) {
-                    setIsIndexReady(true);
-                }
+                console.warn("Using offline search index fallback:", err);
             }
         };
 
@@ -51,9 +41,10 @@ export function useFuzzySearch() {
                 { name: 'artist', weight: 0.5 },
                 { name: 'category', weight: 0.3 }
             ],
-            threshold: 0.4, // Allows typos (0.0 = exact, 1.0 = match anything)
+            threshold: 0.45, // Allows typos & spacing differences (e.g. "rooh e paak" vs "rooh-e-paak")
             distance: 100,
             includeScore: true,
+            ignoreLocation: true,
         });
     }, [allSongs]);
 
@@ -74,7 +65,7 @@ export function useFuzzySearch() {
                 const items = fuseResults.map(result => result.item);
                 setResults(items.slice(0, 50));
             } else if (allSongs.length > 0) {
-                // Substring fallback while/if Fuse isn't initialized
+                // Substring fallback
                 const q = trimmed.toLowerCase();
                 const matched = allSongs.filter(s =>
                     s.title?.toLowerCase().includes(q) ||
@@ -86,7 +77,7 @@ export function useFuzzySearch() {
                 setResults([]);
             }
             setLoading(false);
-        }, 120);
+        }, 80);
 
         return () => clearTimeout(timer);
     }, [query, fuse, allSongs]);
@@ -95,6 +86,6 @@ export function useFuzzySearch() {
         query,
         setQuery,
         results,
-        loading: loading || (!isIndexReady && query.trim().length > 0 && allSongs.length === 0)
+        loading: loading && results.length === 0
     };
 }

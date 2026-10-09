@@ -1,128 +1,117 @@
-'use client';
-
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Clock, Heart, Sparkles, Music2 } from 'lucide-react';
+import { Sparkles, Music2 } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton';
-import { useEffect, useState } from 'react';
 import TiltCard from '@/components/ui/TiltCard';
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseServer } from '@/lib/supabaseServer';
+import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
 import { generateSlug } from '@/lib/seoUtils';
-import { ALL_SONGS } from '@/data/songs';
+import { Metadata } from 'next';
 
-export default function CategoryDetailPage() {
-    const params = useParams();
-    const slug = typeof params?.slug === 'string' ? params.slug : '';
-    const categoryName = slug.charAt(0).toUpperCase() + slug.slice(1);
+export const revalidate = 60; // Cache for 60 seconds
 
-    const [songs, setSongs] = useState<Song[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Helper to detect Hindi songs (Robust Client-Side Logic)
-    // Helper to detect Hindi songs (Robust Client-Side Logic)
-    const isHindiSong = (song: Song) => {
-        // 1. Check DB field explicit override (if we had a language field, we'd use it here)
-        // If DB has explicit "Hindi" content, trust it.
-        if (song.hindi_lyrics && song.hindi_lyrics.length > 10) {
-            // Heuristic: If it has substantial content in hindi_lyrics, it's likely Hindi.
-            // But we need to ensure it's not just " [Translation] "
-        }
-
-        const titleLower = song.title.toLowerCase();
-
-        // 2. ABSOLUTE HINDI INDICATOR: Devanagari Script
-        const devanagariRegex = /[\u0900-\u097F]/;
-        if (devanagariRegex.test(song.title) || (song.hindi_lyrics && devanagariRegex.test(song.hindi_lyrics))) return true;
-
-        // 3. STRONG ENGLISH INDICATORS (Overrides ambiguous Hindi matches)
-        // If title contains these common English words, assume it's English unless Devanagari is present.
-        const englishRegex = /\b(the|lord|god|jesus|holy|spirit|love|grace|light|heart|soul|king|father|savior|worship|praise|glory|above|oceans|feet|fail|where|hills|song|your|my|our|you|me|i|am|who|what|when|how)\b/i;
-
-        if (titleLower.includes('oceans') || englishRegex.test(titleLower)) return false;
-
-        // 4. HINDI INDICATORS (Regex)
-        // Only match if NOT flagged as English above.
-        const hindiRegex = /\b(dhanyawad|yeshu|masih|tera|teri|khuda|aradhana|aaradhana|stuti|saath|pavitra|atma|gaye|krupa|prarthana|mahima|raja|prabhu|tu|mere|meri|hai|pyar|pyaar|zindagi|chahu|dil|mukti|data|sagar|vachan|naam|sarvashaktiman|el shaddai|yahowa|juda|masiha|khudawand|rehem|fazal|shanti|aanand|jivan|jeevan|marg|satya|vijay|lahu|krus|paap|maafi|uddhar|swarg|dharti|asman|rooh|pak|pavan|senaon|samarth|binti|sun|anugrah|bharosa)\b/i;
-
-        if (hindiRegex.test(titleLower)) return true;
-
-        return false;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const categoryName = (slug || '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return {
+        title: `${categoryName} Songs & Chords | COJ Worship`,
+        description: `Explore Christian ${categoryName} songs with lyrics, chords and tabs by Call of Jesus Ministries.`
     };
+}
 
-    useEffect(() => {
-        const fetchCategorySongs = async () => {
-            setIsLoading(true);
+// Helper to detect Hindi songs
+const isHindiSong = (song: Song) => {
+    const devanagariRegex = /[\u0900-\u097F]/;
+    if (devanagariRegex.test(song.title) || (song.hindi_lyrics && devanagariRegex.test(song.hindi_lyrics))) return true;
 
-            // 1. Fetch ALL songs (lightweight metadata)
-            const { data, error } = await supabase.from('songs').select('id, title, artist, category, img, is_featured, hindi_lyrics');
+    const titleLower = song.title.toLowerCase();
+    const englishRegex = /\b(the|lord|god|jesus|holy|spirit|love|grace|light|heart|soul|king|father|savior|worship|praise|glory|above|oceans|feet|fail|where|hills|song|your|my|our|you|me|i|am|who|what|when|how)\b/i;
 
-            let dbSongs = data;
-            if (error || !dbSongs || dbSongs.length === 0) {
-                if (error) console.error('Error fetching category songs from DB:', error);
-                dbSongs = ALL_SONGS as unknown as { id: string; title: string; artist: string; category: string; img: string; is_featured: boolean; hindi_lyrics: string | null; }[];
-            }
-            if (dbSongs) {
-                let filteredSongs = dbSongs;
+    if (titleLower.includes('oceans') || englishRegex.test(titleLower)) return false;
 
-                // Determine Target Category & Language
-                let languageFilter: 'hindi' | 'english' | null = null;
-                let targetCategory = slug;
+    const hindiRegex = /\b(dhanyawad|yeshu|masih|tera|teri|khuda|aradhana|aaradhana|stuti|saath|pavitra|atma|gaye|krupa|prarthana|mahima|raja|prabhu|tu|mere|meri|hai|pyar|pyaar|zindagi|chahu|dil|mukti|data|sagar|vachan|naam|sarvashaktiman|el shaddai|yahowa|juda|masiha|khudawand|rehem|fazal|shanti|aanand|jivan|jeevan|marg|satya|vijay|lahu|krus|paap|maafi|uddhar|swarg|dharti|asman|rooh|pak|pavan|senaon|samarth|binti|sun|anugrah|bharosa)\b/i;
 
-                if (slug && typeof slug === 'string' && (slug.includes('hindi-') || slug.includes('english-'))) {
-                    const [lang, ...catParts] = slug.toLowerCase().split('-');
-                    languageFilter = lang as 'hindi' | 'english';
-                    targetCategory = catParts.join('-');
-                }
+    if (hindiRegex.test(titleLower)) return true;
+    return false;
+};
 
-                console.log('Filtering:', { slug, targetCategory, languageFilter, total: dbSongs.length });
+// Helper to resolve song image with fallbacks
+const getSongImage = (song: Song) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const yId = song.youtube_id || (song as any).youtubeId;
+    if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
+        return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;
+    }
+    if (song.img && song.img.trim().length > 5 && song.img !== "null" && song.img !== "undefined") {
+        return song.img;
+    }
+    return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
+};
 
-                // 2. Filter by Category (Soft Match - Bidirectional & Grouped)
-                if (targetCategory !== 'all') {
-                    filteredSongs = filteredSongs.filter(song => {
-                        const songCat = song.category.toLowerCase();
+export default async function CategoryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const cleanSlug = typeof slug === 'string' ? slug.toLowerCase().trim() : '';
+    const categoryName = cleanSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-                        // Check direct match first
-                        if (songCat.includes(targetCategory) || targetCategory.includes(songCat)) return true;
+    // 1. Fetch songs from DB on server (fast, no client lock contention)
+    let dbSongs: Song[] = [];
+    try {
+        const { data, error } = await supabaseServer
+            .from('songs')
+            .select('id, title, artist, category, img, is_featured, hindi_lyrics, youtube_id')
+            .order('title', { ascending: true });
 
-                        // Check Groups (Worship/Praise overlap)
-                        const worshipKeywords = ['worship', 'praise', 'stuti', 'aradhana', 'adoration'];
-                        const isWorshipTarget = worshipKeywords.some(k => targetCategory.includes(k));
-                        const isWorshipSong = worshipKeywords.some(k => songCat.includes(k));
-
-                        if (isWorshipTarget && isWorshipSong) return true;
-
-                        return false;
-                    });
-                }
-
-                // 3. Filter by Language (Robust)
-                if (languageFilter === 'hindi') {
-                    filteredSongs = filteredSongs.filter(song => isHindiSong(song as unknown as Song));
-                } else if (languageFilter === 'english') {
-                    filteredSongs = filteredSongs.filter(song => !isHindiSong(song as unknown as Song));
-                }
-
-                console.log(`Filtered [${slug}]: ${filteredSongs.length} songs`);
-                setSongs(filteredSongs as unknown as Song[]);
-            }
-            setIsLoading(false);
-        };
-
-        if (slug) {
-            fetchCategorySongs();
+        if (!error && data && data.length > 0) {
+            dbSongs = data as unknown as Song[];
         }
-    }, [slug]);
+    } catch {
+        // Fallback silently
+    }
 
-    // Dynamic background based on category (mock logic)
+    const allSongs = dbSongs.length > 0 ? dbSongs : ALL_SONGS;
+
+    // 2. Determine Target Category & Language
+    let languageFilter: 'hindi' | 'english' | null = null;
+    let targetCategory = cleanSlug;
+
+    if (cleanSlug.includes('hindi-') || cleanSlug.includes('english-')) {
+        const [lang, ...catParts] = cleanSlug.split('-');
+        languageFilter = lang as 'hindi' | 'english';
+        targetCategory = catParts.join('-');
+    }
+
+    let filteredSongs = allSongs;
+
+    // 3. Filter by Category
+    if (targetCategory && targetCategory !== 'all') {
+        filteredSongs = filteredSongs.filter(song => {
+            const songCat = (song.category || '').toLowerCase();
+            if (songCat.includes(targetCategory) || targetCategory.includes(songCat)) return true;
+
+            const worshipKeywords = ['worship', 'praise', 'stuti', 'aradhana', 'adoration'];
+            const isWorshipTarget = worshipKeywords.some(k => targetCategory.includes(k));
+            const isWorshipSong = worshipKeywords.some(k => songCat.includes(k));
+            if (isWorshipTarget && isWorshipSong) return true;
+
+            return false;
+        });
+    }
+
+    // 4. Filter by Language
+    if (languageFilter === 'hindi') {
+        filteredSongs = filteredSongs.filter(song => isHindiSong(song));
+    } else if (languageFilter === 'english') {
+        filteredSongs = filteredSongs.filter(song => !isHindiSong(song));
+    }
+
+    // Dynamic background based on category
     const getGradient = () => {
-        // Handle specific slugs
-        if (slug.includes('english-praise')) return 'from-orange-400 via-red-500 to-red-600';
-        if (slug.includes('hindi-praise')) return 'from-yellow-400 via-orange-500 to-red-500';
-        if (slug.includes('english-worship')) return 'from-purple-600 via-indigo-600 to-blue-600';
-        if (slug.includes('hindi-worship')) return 'from-blue-500 via-cyan-500 to-teal-500';
+        if (cleanSlug.includes('english-praise')) return 'from-orange-400 via-red-500 to-red-600';
+        if (cleanSlug.includes('hindi-praise')) return 'from-yellow-400 via-orange-500 to-red-500';
+        if (cleanSlug.includes('english-worship')) return 'from-purple-600 via-indigo-600 to-blue-600';
+        if (cleanSlug.includes('hindi-worship')) return 'from-blue-500 via-cyan-500 to-teal-500';
 
-        switch (slug) {
+        switch (cleanSlug) {
             case 'praise': return 'from-yellow-400 via-orange-500 to-red-500';
             case 'worship': return 'from-purple-600 via-indigo-600 to-blue-600';
             case 'kids': return 'from-green-400 via-teal-500 to-cyan-500';
@@ -130,24 +119,6 @@ export default function CategoryDetailPage() {
             case 'hymns': return 'from-indigo-400 via-blue-500 to-cyan-500';
             default: return 'from-[var(--brand)] via-pink-600 to-purple-600';
         }
-    };
-
-    // Helper to resolve song image with fallbacks
-    const getSongImage = (song: Song) => {
-        // 1. YouTube Thumbnail Priority
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const yId = song.youtube_id || (song as any).youtubeId;
-        if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
-            return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;
-        }
-
-        // 2. Custom Image
-        if (song.img && song.img.trim().length > 5 && song.img !== "null" && song.img !== "undefined") {
-            return song.img;
-        }
-
-        // 3. Fallback
-        return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
     };
 
     return (
@@ -169,12 +140,8 @@ export default function CategoryDetailPage() {
                             {categoryName}
                         </h1>
                         <p className="text-white/60 font-medium max-w-lg text-sm sm:text-base md:text-lg">
-                            Dive into the presence of God with our hand-picked selection of {slug} songs.
+                            Dive into the presence of God with our hand-picked selection of {categoryName} songs.
                         </p>
-                    </div>
-
-                    <div className="flex gap-4">
-                        {/* Play All removed */}
                     </div>
                 </div>
             </div>
@@ -185,20 +152,16 @@ export default function CategoryDetailPage() {
                     <BackButton fallback="/categories" className="flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm font-medium group" iconClassName="w-4 h-4 group-hover:-translate-x-1 transition-transform">
                         <span>Back</span>
                     </BackButton>
-                    <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{songs.length} Tracks</span>
+                    <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{filteredSongs.length} Tracks</span>
                 </div>
             </div>
 
             {/* SONG GRID - CINEMATIC POSTERS */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
-                {isLoading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="w-12 h-12 border-4 border-white/10 border-t-[var(--brand)] rounded-full animate-spin"></div>
-                    </div>
-                ) : (
+                {filteredSongs.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-                        {songs.map((song, i) => (
-                            <TiltCard key={i} className="min-h-[300px] sm:min-h-[400px]" scale={1.05} max={15}>
+                        {filteredSongs.map((song) => (
+                            <TiltCard key={song.id} className="min-h-[300px] sm:min-h-[400px]" scale={1.05} max={15}>
                                 <div className="relative h-full group">
                                     <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[var(--brand)] to-purple-600 blur-[30px] opacity-20 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"></div>
 
@@ -217,7 +180,7 @@ export default function CategoryDetailPage() {
                                         <div className="relative z-10 transform-style-3d translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                                             <div className="flex items-center gap-2 mb-2 sm:mb-3">
                                                 <span className="text-[10px] font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/40 border border-white/20">
-                                                    {song.category.toUpperCase()}
+                                                    {(song.category || 'Worship').toUpperCase()}
                                                 </span>
                                             </div>
                                             <h3 className="font-black text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white leading-tight mb-1 sm:mb-2 drop-shadow-lg tracking-tight">{song.title}</h3>
@@ -232,6 +195,17 @@ export default function CategoryDetailPage() {
                                 </div>
                             </TiltCard>
                         ))}
+                    </div>
+                ) : (
+                    <div className="py-20 text-center space-y-4">
+                        <Music2 className="w-12 h-12 text-white/20 mx-auto" />
+                        <p className="text-xl font-bold text-white/40">No songs found in this category yet.</p>
+                        <Link
+                            href="/songs"
+                            className="inline-block px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm font-semibold transition-colors"
+                        >
+                            Explore All Songs
+                        </Link>
                     </div>
                 )}
             </div>
