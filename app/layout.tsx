@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono, Playfair_Display, Fraunces, Space_Grotesk } from "next/font/google";
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
@@ -92,6 +93,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5426715715614915"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${fraunces.variable} ${spaceGrotesk.variable} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}
       >
