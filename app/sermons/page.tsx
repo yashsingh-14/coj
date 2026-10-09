@@ -3,14 +3,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Share2, Youtube, Check, Calendar, Play, Radio } from 'lucide-react';
+import { ArrowLeft, Share2, Youtube, Check, Calendar, Play, Radio, RefreshCw } from 'lucide-react';
 import { fetchSermons, YouTubeVideo, LiveStream } from '@/lib/youtube';
 
 import { useAppStore } from '@/store/useAppStore';
 
 // Local storage cache key
 const CACHE_KEY = 'coj_sermons_cache';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 60 * 1000; // 1 minute fast cache
 
 function getCachedSermons(): YouTubeVideo[] | null {
     try {
@@ -35,24 +35,29 @@ function setCachedSermons(data: YouTubeVideo[]) {
 export default function SermonsPage() {
     const [sermons, setSermons] = useState<YouTubeVideo[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [liveStream, setLiveStream] = useState<LiveStream | null>(null);
     const { preferences } = useAppStore();
 
-    const loadSermons = useCallback(async (showLoader = true) => {
-        // Show cached data instantly
+    const loadSermons = useCallback(async (showLoader = true, forceRefresh = false) => {
+        // Show cached data instantly if initial mount
         const cached = getCachedSermons();
-        if (cached && cached.length > 0) {
+        if (cached && cached.length > 0 && sermons.length === 0) {
             setSermons(cached);
             setLoading(false);
-        } else if (showLoader) {
+        } else if (showLoader && sermons.length === 0) {
             setLoading(true);
+        }
+
+        if (forceRefresh) {
+            setIsRefreshing(true);
         }
 
         // Fetch fresh data in background
         try {
-            const response = await fetchSermons();
-            if (response.videos.length > 0) {
+            const response = await fetchSermons(forceRefresh);
+            if (response.videos && response.videos.length > 0) {
                 setSermons(response.videos);
                 setCachedSermons(response.videos);
             }
@@ -61,11 +66,19 @@ export default function SermonsPage() {
             console.error("Failed to load sermons:", error);
         } finally {
             setLoading(false);
+            setIsRefreshing(false);
         }
-    }, []);
+    }, [sermons.length]);
 
     useEffect(() => {
-        loadSermons();
+        loadSermons(true);
+
+        // Real-time polling: check every 25 seconds for live status & new activity
+        const interval = setInterval(() => {
+            loadSermons(false, false);
+        }, 25000);
+
+        return () => clearInterval(interval);
     }, [loadSermons]);
 
     const handleShare = async (video: YouTubeVideo) => {
@@ -97,10 +110,24 @@ export default function SermonsPage() {
             )}
 
             <div className="max-w-7xl mx-auto relative z-10">
-                <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-6 sm:mb-12 transition-all group text-xs sm:text-sm">
-                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
-                    <span className="font-bold tracking-widest uppercase">Back</span>
-                </Link>
+                <div className="flex items-center justify-between mb-6 sm:mb-12">
+                    <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md transition-all group text-xs sm:text-sm">
+                        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
+                        <span className="font-bold tracking-widest uppercase">Back</span>
+                    </Link>
+
+                    <button
+                        onClick={() => loadSermons(false, true)}
+                        disabled={isRefreshing}
+                        className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-red-500/50 backdrop-blur-md transition-all group text-xs sm:text-sm disabled:opacity-50"
+                        title="Check for live stream & latest videos"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/70 group-hover:text-red-500 transition-colors ${isRefreshing ? 'animate-spin text-red-500' : ''}`} />
+                        <span className="font-bold tracking-wider uppercase text-white/70 group-hover:text-white">
+                            {isRefreshing ? 'Checking...' : 'Live Sync'}
+                        </span>
+                    </button>
+                </div>
 
                 {/* LIVE SERMON BANNER */}
                 {liveStream && (

@@ -19,10 +19,11 @@ export interface SermonsResponse {
     isLive: boolean;
 }
 
-export async function fetchSermons(): Promise<SermonsResponse> {
+export async function fetchSermons(forceRefresh = false): Promise<SermonsResponse> {
     try {
-        const res = await fetch('/api/sermons', {
-            next: { revalidate: 60 },
+        const url = forceRefresh ? `/api/sermons?refresh=true&_t=${Date.now()}` : `/api/sermons?_t=${Date.now()}`;
+        const res = await fetch(url, {
+            cache: 'no-store',
         });
 
         if (!res.ok) {

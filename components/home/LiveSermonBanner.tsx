@@ -15,10 +15,10 @@ export default function LiveSermonBanner() {
     const [liveConfig, setLiveConfig] = useState<LiveConfig | null>(null);
 
     useEffect(() => {
-        // Fetch live config from the sermons API
+        // Fetch live status from the sermons API
         const checkLive = async () => {
             try {
-                const res = await fetch('/api/sermons');
+                const res = await fetch(`/api/sermons?_t=${Date.now()}`, { cache: 'no-store' });
                 const json = await res.json();
                 if (json.isLive && json.liveStream) {
                     setLiveConfig({
@@ -26,12 +26,18 @@ export default function LiveSermonBanner() {
                         liveVideoId: json.liveStream.videoId,
                         liveTitle: json.liveStream.title
                     });
+                } else {
+                    setLiveConfig(null);
                 }
             } catch {
                 // Silently fail — banner just won't show
             }
         };
+
         checkLive();
+        // Check every 30 seconds for real-time live detection
+        const interval = setInterval(checkLive, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     if (!liveConfig || !liveConfig.isLiveOverride) return null;
