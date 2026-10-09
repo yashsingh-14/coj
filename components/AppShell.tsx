@@ -40,16 +40,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         // 1. Check active session on mount
         const initSession = async () => {
             try {
-                const sessionRes = await supabase.auth.getSession();
-                let activeUser = sessionRes.data.session?.user;
+                const fetchUser = async () => {
+                    const sessionRes = await supabase.auth.getSession();
+                    let activeUser = sessionRes.data.session?.user;
 
-                // Fallback to getUser() if getSession() is initially empty
-                if (!activeUser) {
-                    const userRes = await supabase.auth.getUser();
-                    if (userRes.data?.user) {
-                        activeUser = userRes.data.user;
+                    // Fallback to getUser() if getSession() is initially empty
+                    if (!activeUser) {
+                        const userRes = await supabase.auth.getUser();
+                        if (userRes.data?.user) {
+                            activeUser = userRes.data.user;
+                        }
                     }
-                }
+                    return activeUser;
+                };
+
+                const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500));
+                const activeUser = await Promise.race([fetchUser(), timeout]);
 
                 if (activeUser) {
                     const userData = await getUserData(activeUser);

@@ -47,19 +47,23 @@ export default function HomeUtilityContent({
 
     // Hydration guard: prevent SSR/client mismatch for auth-dependent UI
     const [mounted, setMounted] = useState(false);
-    const [authChecking, setAuthChecking] = useState(true);
     useEffect(() => {
         setMounted(true);
         const syncSession = async () => {
             try {
-                const sessionRes = await supabase.auth.getSession();
-                let u = sessionRes.data.session?.user;
-                if (!u) {
-                    const userRes = await supabase.auth.getUser();
-                    if (userRes.data?.user) {
-                        u = userRes.data.user;
+                const check = async () => {
+                    const sessionRes = await supabase.auth.getSession();
+                    let u = sessionRes.data.session?.user;
+                    if (!u) {
+                        const userRes = await supabase.auth.getUser();
+                        if (userRes.data?.user) {
+                            u = userRes.data.user;
+                        }
                     }
-                }
+                    return u;
+                };
+                const timeout = new Promise<null>((res) => setTimeout(() => res(null), 1500));
+                const u = await Promise.race([check(), timeout]);
                 if (u && (!currentUser || !isAuthenticated)) {
                     let role = 'user';
                     if (u.email === 'ys181544@gmail.com') role = 'admin';
@@ -79,8 +83,6 @@ export default function HomeUtilityContent({
                 }
             } catch (e) {
                 console.error('Error syncing session in HomeUtilityContent:', e);
-            } finally {
-                setAuthChecking(false);
             }
         };
         syncSession();
@@ -164,7 +166,7 @@ export default function HomeUtilityContent({
                 </div>
 
                 <div className="animate-fade-in-down" style={{ animationDelay: '0.1s' }}>
-                    {!mounted || (authChecking && !currentUser) ? (
+                    {!mounted ? (
                         <div className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 animate-pulse" />
                     ) : isAuthenticated && currentUser ? (
                         <Link href="/profile" className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20 hover:scale-105 transition-transform" title="My Profile">

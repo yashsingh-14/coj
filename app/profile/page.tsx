@@ -26,8 +26,17 @@ export default function ProfilePage() {
                 return;
             }
 
-            const sessionRes = await supabase.auth.getSession();
-            const u = sessionRes.data.session?.user || (await supabase.auth.getUser()).data.user;
+            const fetchU = async () => {
+                const sessionRes = await supabase.auth.getSession();
+                let active = sessionRes.data.session?.user;
+                if (!active) {
+                    const userRes = await supabase.auth.getUser();
+                    if (userRes.data?.user) active = userRes.data.user;
+                }
+                return active;
+            };
+            const timeout = new Promise<null>((res) => setTimeout(() => res(null), 1500));
+            const u = await Promise.race([fetchU(), timeout]);
 
             if (u) {
                 let role = 'user';

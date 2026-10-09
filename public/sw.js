@@ -1,4 +1,4 @@
-const CACHE_NAME = 'coj-v3'; // Bumped for TWA fix
+const CACHE_NAME = 'coj-v4'; // Bumped for mobile PWA auth and lock fix
 const OFFLINE_URL = '/offline';
 
 // Files to cache for offline use

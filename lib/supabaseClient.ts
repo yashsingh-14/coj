@@ -10,5 +10,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createBrowserClient(
     supabaseUrl || '',
-    supabaseAnonKey || ''
+    supabaseAnonKey || '',
+    {
+        auth: {
+            // Bypass Web Locks to prevent hanging indefinitely in mobile browsers / PWAs
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            lock: async (_name: string, _acquireTimeout: number, fn: () => Promise<any>) => {
+                if (typeof fn === 'function') return await fn();
+            },
+        }
+    }
 )
