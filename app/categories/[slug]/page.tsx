@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Clock, Heart, Sparkles, Music2 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import { useEffect, useState } from 'react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
@@ -181,10 +182,9 @@ export default function CategoryDetailPage() {
             {/* NAVIGATION BAR */}
             <div className="sticky top-0 z-30 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm font-medium group">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        Back to Home
-                    </Link>
+                    <BackButton fallback="/categories" className="flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm font-medium group" iconClassName="w-4 h-4 group-hover:-translate-x-1 transition-transform">
+                        <span>Back</span>
+                    </BackButton>
                     <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{songs.length} Tracks</span>
                 </div>
             </div>

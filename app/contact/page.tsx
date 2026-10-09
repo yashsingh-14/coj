@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Mail, MapPin, Phone, Send, CheckCircle2, MessageCircle } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -48,10 +49,9 @@ export default function ContactPage() {
 
     return (
         <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-6 pb-32">
-            <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md mb-6 sm:mb-8 transition-colors text-xs sm:text-sm">
-                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <BackButton fallback="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md mb-6 sm:mb-8 transition-colors text-xs sm:text-sm text-white" iconClassName="w-4 h-4 sm:w-5 sm:h-5">
                 <span className="font-bold">Back</span>
-            </Link>
+            </BackButton>
 
             <div className="max-w-xl mx-auto">
                 <h1 className="text-2xl sm:text-4xl font-serif font-bold mb-2">Get in Touch</h1>

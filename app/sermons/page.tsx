@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton';
 import Image from 'next/image';
 import { ArrowLeft, Share2, Youtube, Check, Calendar, Play, Radio, RefreshCw } from 'lucide-react';
 import { fetchSermons, YouTubeVideo, LiveStream } from '@/lib/youtube';
@@ -111,10 +112,9 @@ export default function SermonsPage() {
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="flex items-center justify-between mb-6 sm:mb-12">
-                    <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md transition-all group text-xs sm:text-sm">
-                        <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
-                        <span className="font-bold tracking-widest uppercase">Back</span>
-                    </Link>
+                    <BackButton fallback="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md transition-all group text-xs sm:text-sm text-white/70 group-hover:text-amber-500" iconClassName="w-4 h-4 sm:w-5 sm:h-5">
+                        <span className="font-bold tracking-widest uppercase text-white/90">Back</span>
+                    </BackButton>
 
                     <button
                         onClick={() => loadSermons(false, true)}

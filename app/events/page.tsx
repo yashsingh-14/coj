@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Clock, MapPin, BookOpen, Sun, Wine, Sparkles, Loader2 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import TiltCard from '@/components/ui/TiltCard';
 
 import { useState, useEffect } from 'react';
@@ -91,10 +92,9 @@ export default function EventsPage() {
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">
-                <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-8 sm:mb-12 transition-all group">
-                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 group-hover:text-amber-500 transition-colors" />
-                    <span className="text-xs sm:text-sm font-bold tracking-widest uppercase">Back</span>
-                </Link>
+                <BackButton fallback="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 px-4 sm:px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-amber-500/50 backdrop-blur-md mb-8 sm:mb-12 transition-all group text-white/70 group-hover:text-amber-500" iconClassName="w-4 h-4 sm:w-5 sm:h-5">
+                    <span className="text-xs sm:text-sm font-bold tracking-widest uppercase text-white/90">Back</span>
+                </BackButton>
 
                 <div className="text-center mb-8 md:mb-16">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4 animate-fade-in-down">

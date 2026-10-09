@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowLeft, Clock, ChevronRight } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
 import { getSongImage } from '@/lib/utils';
@@ -21,9 +22,7 @@ export default async function NewArrivalsPage() {
         <div className="min-h-screen bg-[#02000F] text-white px-3 sm:px-4 md:px-6 py-4 pb-24 md:pb-32">
             {/* Header */}
             <div className="flex items-center gap-3 md:gap-4 mb-6 sm:mb-10 pt-1 md:pt-4">
-                <Link href="/" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors group border border-white/5">
-                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
-                </Link>
+                <BackButton fallback="/worship" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors group border border-white/5 text-white" iconClassName="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 <div>
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-amber-500 drop-shadow-lg">
                         New Arrivals

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton';
 import Image from 'next/image';
 import { ArrowLeft, Camera, Save, User, Mail, AtSign } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -60,9 +61,7 @@ export default function EditProfilePage() {
         <div className="min-h-screen bg-[#02000F] text-white pb-32">
             {/* Header */}
             <div className="px-4 py-4 sm:p-6 flex items-center gap-3 sm:gap-4 border-b border-white/5 bg-[#02000F]/80 backdrop-blur-xl sticky top-0 z-40">
-                <Link href="/profile" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group">
-                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
-                </Link>
+                <BackButton fallback="/profile" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors group text-white" iconClassName="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Edit Profile</h1>
             </div>
 

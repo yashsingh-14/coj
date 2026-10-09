@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ChevronUp, ChevronLeft, ChevronRight, Volume2, Settings2, X, Music4 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import {
     PadSynth,
     PAD_NOTES,
@@ -121,10 +122,9 @@ export default function PadPage() {
 
             {/* Top Simple Header */}
             <div className="px-4 sm:px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
-                <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all backdrop-blur-md">
-                    <ArrowLeft className="w-4 h-4 text-amber-500" />
+                <BackButton fallback="/worship" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all backdrop-blur-md" iconClassName="w-4 h-4 text-amber-500">
                     <span className="text-sm font-semibold tracking-wide text-white/80">Exit Pad</span>
-                </Link>
+                </BackButton>
                 <div className="flex items-center gap-2">
                     <Music4 className="w-5 h-5 text-amber-500/50" />
                     <span className="font-bold text-white/30 tracking-widest text-xs uppercase">COJ Infinity</span>

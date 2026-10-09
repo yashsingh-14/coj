@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera, Loader2 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import TiltCard from '@/components/ui/TiltCard';
 
 import { useAppStore } from '@/store/useAppStore';
@@ -117,9 +118,7 @@ export default function ProfilePage() {
 
             {/* Header / Nav */}
             <div className="px-4 py-4 sm:p-6 flex items-center justify-between">
-                <Link href="/" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all group border border-white/5">
-                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
-                </Link>
+                <BackButton fallback="/worship" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all group border border-white/5 text-white" iconClassName="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 <Link href="/settings" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all group border border-white/5">
                     <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:rotate-45 transition-transform" />
                 </Link>

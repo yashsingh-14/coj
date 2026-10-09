@@ -4,6 +4,7 @@ import { useState, Fragment, useEffect, useRef } from 'react';
 import { transposeChord } from '@/lib/music';
 import { ArrowLeft, Heart, Minus, Play, Plus, Loader2, X, Pause } from 'lucide-react';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
@@ -381,9 +382,9 @@ export default function SongViewer({ songId, title, author, originalKey, lyrics,
 
                 <div className="absolute bottom-0 left-0 w-full p-4 md:p-6 pt-16 md:pt-20">
                     <div className="max-w-7xl mx-auto">
-                        <Link href="/songs" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 text-xs font-bold uppercase tracking-widest transition-colors">
-                            <ArrowLeft className="w-4 h-4" /> Back to Library
-                        </Link>
+                        <BackButton fallback="/worship" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 text-xs font-bold uppercase tracking-widest transition-colors" iconClassName="w-4 h-4">
+                            Back
+                        </BackButton>
 
                         {/* DISTINCT H1 AS REQUESTED - Semantic SEO */}
                         <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black tracking-tight mb-2 md:mb-3 text-white drop-shadow-2xl">

@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { addSongToSetServer, removeSongFromSetServer } from '@/app/actions/sets';
 import { notFound, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton';
 import {
     ArrowLeft, Calendar, Clock, Music2, MoreVertical,
     PlayCircle, Trash2, Plus, GripVertical, Loader2
@@ -193,10 +194,9 @@ export default function SetDetailPage({ params }: { params: Promise<{ id: string
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start gap-4 sm:gap-8 mb-8 sm:mb-12">
                     <div className="w-full min-w-0">
-                        <Link href="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-4 sm:mb-6 transition-colors text-sm">
-                            <ArrowLeft className="w-4 h-4" />
-                            Back to Sets
-                        </Link>
+                        <BackButton fallback="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-4 sm:mb-6 transition-colors text-sm" iconClassName="w-4 h-4">
+                            <span>Back to Sets</span>
+                        </BackButton>
 
                         <div className="flex items-center gap-3 sm:gap-4 mb-2 flex-wrap">
                             <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] sm:text-xs font-bold rounded-full uppercase tracking-wider">

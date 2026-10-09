@@ -4,12 +4,25 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
-import { Save, Eye, EyeOff, Music, Mic2, GripHorizontal, ArrowLeft, Loader2, Sparkles, BrainCircuit, ClipboardPaste } from 'lucide-react';
-import Link from 'next/link';
+import {
+    Save,
+    Eye,
+    EyeOff,
+    Music,
+    Mic2,
+    GripHorizontal,
+    Loader2,
+    Sparkles,
+    BrainCircuit,
+    ClipboardPaste,
+    ChevronDown,
+    ChevronUp,
+    Wand2
+} from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import SongViewer from '@/components/songs/SongViewer';
 import { parseSongSheet } from '@/lib/songParser';
 import { Song } from '@/data/types';
-import { revalidateApp } from '@/app/actions/revalidate';
 import { updateSongAdmin, createSongAdmin } from '@/app/actions/admin';
 
 interface SongFormProps {
@@ -36,8 +49,8 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
         fetchAuth();
     }, []);
 
-    // AI & Tabs State
-    const [activeTab, setActiveTab] = useState<'manual' | 'ai'>('manual');
+    // Assistant Tools State (AI vs Magic Paste tabs)
+    const [activeTool, setActiveTool] = useState<'ai' | 'magic' | null>('ai');
     const [aiPrompt, setAiPrompt] = useState('');
     const [aiArtist, setAiArtist] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
@@ -183,9 +196,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
             addLog("Step 2: verifying user session...");
 
             if (!userId) {
-                // Last ditch attempt with timeout
                 console.warn("User ID not pre-fetched, trying one last time...");
-
                 const sessionPromise = supabase.auth.getSession();
                 const sessionTimeout = new Promise((_, reject) =>
                     setTimeout(() => reject(new Error("Auth Stuck (5s) - Please Refresh")), 5000)
@@ -240,12 +251,10 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
             }
 
             addLog("Action Complete. Success!");
-
-            addLog("Success! Redirecting...");
             toast.success("Song Saved Successfully!");
 
             // Wait for user to see log
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 800));
 
             window.location.href = '/admin/songs';
 
@@ -259,34 +268,47 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
     };
 
     return (
-        <div className="max-w-7xl mx-auto pb-20">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <Link href="/admin/songs" className="p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors">
-                        <ArrowLeft className="w-5 h-5" />
-                    </Link>
-                    <h1 className="text-3xl font-black text-white tracking-tight">
-                        {mode === 'create' ? "Add New Song" : "Edit Song"}
-                    </h1>
+        <div className="max-w-7xl mx-auto pb-24 md:pb-20 px-2 sm:px-4 md:px-6">
+            {/* TOP HEADER */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 md:mb-8 pt-1">
+                <div className="flex items-center gap-3">
+                    <BackButton
+                        fallback="/admin/songs"
+                        className="p-2 sm:p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-colors border border-white/5"
+                        iconClassName="w-5 h-5"
+                    />
+                    <div>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
+                            {mode === 'create' ? "Add New Song" : "Edit Song"}
+                        </h1>
+                        <p className="text-xs text-white/40 hidden sm:block">
+                            {mode === 'create' ? "Publish a new chord sheet to the song library" : "Update lyrics, chords and metadata"}
+                        </p>
+                    </div>
                 </div>
-                <div className="flex gap-2">
+
+                <div className="flex items-center gap-2 self-end sm:self-auto">
                     <button
                         type="button"
                         onClick={() => setShowPreview(!showPreview)}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${showPreview
-                            ? 'bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/20'
-                            : 'bg-white/10 text-white hover:bg-white/20'
-                            }`}
+                        className={`flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
+                            showPreview
+                                ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20 font-black'
+                                : 'bg-white/10 text-white hover:bg-white/20 border border-white/5'
+                        }`}
                     >
-                        {showPreview ? <><EyeOff className="w-4 h-4" /> Edit Mode</> : <><Eye className="w-4 h-4" /> Preview Mode</>}
+                        {showPreview ? (
+                            <><EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Edit Mode</>
+                        ) : (
+                            <><Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Preview</>
+                        )}
                     </button>
                 </div>
             </div>
 
             {/* DEBUG CONSOLE */}
             {logs.length > 0 && (
-                <div className="mb-8 bg-black border border-red-500/50 rounded-xl p-4 font-mono text-xs text-red-200 max-h-60 overflow-y-auto">
+                <div className="mb-6 bg-black border border-red-500/50 rounded-2xl p-4 font-mono text-xs text-red-200 max-h-48 overflow-y-auto">
                     <h3 className="text-red-500 font-bold mb-2 sticky top-0 bg-black">DEBUG LOGS:</h3>
                     {logs.map((log, i) => (
                         <div key={i} className="border-b border-red-900/30 py-1">{log}</div>
@@ -294,142 +316,191 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 </div>
             )}
 
-            {
-                showPreview ? (
-                    // PREVIEW MODE
-                    <div className="rounded-3xl overflow-hidden border border-white/10 bg-[#050505]">
-                        <div className="bg-amber-500/10 border-b border-amber-500/20 p-3 text-center text-amber-500 text-xs font-bold uppercase tracking-widest">
-                            Live Preview (Not Saved)
-                        </div>
-                        <SongViewer
-                            songId="preview-mode"
-                            title={formData.title || "Song Title"}
-                            author={formData.artist || "Artist Name"}
-                            originalKey={formData.key || "C"}
-                            tempo={formData.tempo}
-                            lyrics={formData.lyrics || "Lyrics will appear here..."}
-                            hindiLyrics={formData.hindi_lyrics}
-                            chords={formData.chords}
-                            youtubeId={formData.youtube_id}
-                            category={formData.category}
-                            coverImage={formData.img}
-                            relatedSongs={[]} // Empty for preview
-                        />
+            {showPreview ? (
+                /* PREVIEW MODE */
+                <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#050505]">
+                    <div className="bg-amber-500/10 border-b border-amber-500/20 p-2.5 sm:p-3 text-center text-amber-500 text-[11px] sm:text-xs font-bold uppercase tracking-widest">
+                        Live Preview (Not Saved)
                     </div>
-                ) : (
-                    <>
-                        {/* IMPORT TOOLS SECTION */}
-                        <div className="mb-8">
-                            <div className="bg-[#1A1A24] border border-white/5 rounded-3xl p-4 md:p-6 mb-6">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0">
-                                            <Sparkles className="w-5 h-5 text-white" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-base md:text-lg font-bold text-white">AI Generator</h3>
-                                            <p className="text-xs md:text-sm text-white/40">Auto-fill details from title</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col gap-2 w-full md:w-auto">
-                                        <div className="flex items-center gap-2">
-                                            <input
-                                                value={aiPrompt}
-                                                onChange={e => setAiPrompt(e.target.value)}
-                                                placeholder="Enter song title & artist..."
-                                                className="bg-black/50 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-sm text-white focus:outline-none focus:border-indigo-500 w-full md:w-80"
-                                                onKeyDown={e => e.key === 'Enter' && handleAiGenerate()}
-                                            />
-                                            <button
-                                                onClick={handleAiGenerate}
-                                                disabled={isGenerating}
-                                                className="bg-white text-black px-3 py-2 md:px-4 md:py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors disabled:opacity-50 shrink-0 flex items-center justify-center"
-                                            >
-                                                {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <BrainCircuit className="w-5 h-5" />}
-                                            </button>
-                                        </div>
-
-                                        {/* Progress Indicator */}
-                                        {generationProgress && (
-                                            <div className="flex items-center gap-2 text-xs text-indigo-400 animate-pulse">
-                                                <Loader2 className="w-3 h-3 animate-spin" />
-                                                <span>{generationProgress}</span>
-                                            </div>
-                                        )}
-
-                                        <label className="flex items-center gap-2 cursor-pointer group w-fit ml-auto">
-                                            <input
-                                                type="checkbox"
-                                                checked={useHighAccuracy}
-                                                onChange={(e) => setUseHighAccuracy(e.target.checked)}
-                                                className="w-4 h-4 rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500/50"
-                                            />
-                                            <span className={`text-xs font-bold uppercase tracking-wider ${useHighAccuracy ? 'text-indigo-400' : 'text-white/30 group-hover:text-white/50'} transition-colors`}>
-                                                High Accuracy (Nemotron Ultra 550B)
-                                            </span>
-                                        </label>
-                                    </div>
-                                </div>
+                    <SongViewer
+                        songId="preview-mode"
+                        title={formData.title || "Song Title"}
+                        author={formData.artist || "Artist Name"}
+                        originalKey={formData.key || "C"}
+                        tempo={formData.tempo}
+                        lyrics={formData.lyrics || "Lyrics will appear here..."}
+                        hindiLyrics={formData.hindi_lyrics}
+                        chords={formData.chords}
+                        youtubeId={formData.youtube_id}
+                        category={formData.category}
+                        coverImage={formData.img}
+                        relatedSongs={[]}
+                    />
+                </div>
+            ) : (
+                <>
+                    {/* ASSISTANT QUICK TOOLS (COMPACT & COLLAPSIBLE FOR MOBILE) */}
+                    <div className="mb-6 bg-[#0D0B14] border border-white/10 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5">
+                        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/5">
+                            <div className="flex items-center gap-2">
+                                <Wand2 className="w-4 h-4 text-amber-400" />
+                                <span className="text-xs font-bold uppercase tracking-wider text-white/80">Smart Tools</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTool(activeTool === 'ai' ? null : 'ai')}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                                        activeTool === 'ai'
+                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                                            : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                                    }`}
+                                >
+                                    <Sparkles className="w-3.5 h-3.5" />
+                                    <span>AI Generator</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTool(activeTool === 'magic' ? null : 'magic')}
+                                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                                        activeTool === 'magic'
+                                            ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                                            : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                                    }`}
+                                >
+                                    <ClipboardPaste className="w-3.5 h-3.5" />
+                                    <span>Magic Paste</span>
+                                </button>
+                                {activeTool && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveTool(null)}
+                                        className="p-1.5 rounded-lg text-white/40 hover:text-white transition-colors"
+                                        title="Collapse tool"
+                                    >
+                                        <ChevronUp className="w-4 h-4" />
+                                    </button>
+                                )}
                             </div>
                         </div>
 
-
-                        {/* MAGIC PASTE SECTION */}
-                        <div className="bg-[#1A1A24] border border-white/5 rounded-3xl p-4 md:p-6 mb-8">
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <div className="flex items-start gap-3 md:w-1/3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/20 shrink-0">
-                                        <ClipboardPaste className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-base md:text-lg font-bold text-white">Magic Paste</h3>
-                                        <p className="text-xs md:text-sm text-white/40 mb-2">
-                                            Paste content from Ultimate Guitar or other sites.
-                                            We&apos;ll try to separate Lyrics & Chords automatically.
-                                        </p>
-                                    </div>
+                        {/* AI Generator Panel */}
+                        {activeTool === 'ai' && (
+                            <div className="pt-3.5 space-y-3">
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                        value={aiPrompt}
+                                        onChange={e => setAiPrompt(e.target.value)}
+                                        placeholder="Enter song name & artist (e.g. Way Maker - Sinach)..."
+                                        className="flex-1 bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-indigo-500"
+                                        onKeyDown={e => e.key === 'Enter' && handleAiGenerate()}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleAiGenerate}
+                                        disabled={isGenerating || !aiPrompt.trim()}
+                                        className="bg-indigo-500 hover:bg-indigo-400 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2 shrink-0"
+                                    >
+                                        {isGenerating ? (
+                                            <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</>
+                                        ) : (
+                                            <><BrainCircuit className="w-4 h-4" /> Auto Generate</>
+                                        )}
+                                    </button>
                                 </div>
-                                <div className="flex-1 flex gap-2">
+
+                                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                                    {generationProgress ? (
+                                        <div className="flex items-center gap-2 text-xs text-indigo-400 animate-pulse">
+                                            <Loader2 className="w-3 h-3 animate-spin" />
+                                            <span>{generationProgress}</span>
+                                        </div>
+                                    ) : (
+                                        <span className="text-[11px] text-white/40">Fills title, artist, key, tempo, lyrics & chords automatically</span>
+                                    )}
+
+                                    <label className="flex items-center gap-2 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            checked={useHighAccuracy}
+                                            onChange={(e) => setUseHighAccuracy(e.target.checked)}
+                                            className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 text-indigo-500 focus:ring-indigo-500/50"
+                                        />
+                                        <span className={`text-[11px] font-semibold ${useHighAccuracy ? 'text-indigo-400' : 'text-white/40 group-hover:text-white/60'} transition-colors`}>
+                                            High Accuracy Model
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Magic Paste Panel */}
+                        {activeTool === 'magic' && (
+                            <div className="pt-3.5 space-y-3">
+                                <p className="text-[11px] text-white/40">
+                                    Paste chords from Ultimate Guitar, PraiseCharts, etc. We will auto-detect chords and lyrics format.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-2">
                                     <textarea
                                         value={magicText}
                                         onChange={e => setMagicText(e.target.value)}
-                                        placeholder={`Paste here like:\n[G] Amazing grace [C] how sweet...`}
-                                        className="flex-1 bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-emerald-500 min-h-[80px]"
+                                        placeholder={`[G] Amazing grace [C] how sweet the sound...`}
+                                        rows={3}
+                                        className="flex-1 bg-black/60 border border-white/10 rounded-xl p-3 text-xs font-mono text-white placeholder:text-white/20 focus:outline-none focus:border-emerald-500 resize-none"
                                     />
                                     <button
                                         type="button"
                                         onClick={handleMagicPaste}
                                         disabled={!magicText.trim()}
-                                        className="bg-emerald-600 text-white px-4 rounded-xl font-bold hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 flex flex-col items-center justify-center gap-1"
+                                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all disabled:opacity-50 flex sm:flex-col items-center justify-center gap-1 shrink-0"
                                     >
-                                        <Sparkles className="w-5 h-5" />
-                                        <span className="text-xs">Auto Fill</span>
+                                        <Sparkles className="w-4 h-4" />
+                                        <span>Parse & Fill</span>
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        )}
+                    </div>
 
-                        {/* FORM */}
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* LEFT: Metadata */}
+                    {/* MAIN FORM */}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                            {/* SECTION 1: METADATA & DETAILS (1 COLUMN ON DESKTOP) */}
                             <div className="lg:col-span-1 space-y-6">
-                                <section className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-4">
-                                    <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                        <Music className="w-4 h-4" />
+                                {/* Basic Info */}
+                                <section className="bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 space-y-4">
+                                    <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                                        <Music className="w-3.5 h-3.5 text-amber-500" />
                                         Basic Info
                                     </h2>
 
-                                    <Input label="Song Title" name="title" value={formData.title} onChange={handleChange} required placeholder="e.g. Way Maker" />
-                                    <Input label="Artist" name="artist" value={formData.artist} onChange={handleChange} placeholder="e.g. Sinach" />
+                                    <Input
+                                        label="Song Title"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="e.g. Way Maker"
+                                    />
+                                    <Input
+                                        label="Artist / Band"
+                                        name="artist"
+                                        value={formData.artist}
+                                        onChange={handleChange}
+                                        placeholder="e.g. Sinach"
+                                    />
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                         <div>
-                                            <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Category</label>
+                                            <label className="block text-[11px] font-bold text-white/40 uppercase tracking-wider mb-1.5">
+                                                Category
+                                            </label>
                                             <select
                                                 name="category"
                                                 value={formData.category}
                                                 onChange={handleChange}
-                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
+                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors"
                                             >
                                                 <option value="worship">Worship</option>
                                                 <option value="praise">Praise</option>
@@ -439,7 +510,9 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">Language</label>
+                                            <label className="block text-[11px] font-bold text-white/40 uppercase tracking-wider mb-1.5">
+                                                Language
+                                            </label>
                                             <select
                                                 name="language"
                                                 value={formData.hindi_lyrics ? 'hindi' : 'english'}
@@ -447,10 +520,10 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                                     const isHindi = e.target.value === 'hindi';
                                                     setFormData(prev => ({
                                                         ...prev,
-                                                        hindi_lyrics: isHindi ? (prev.hindi_lyrics || ' ') : '' // Set placeholder if Hindi, else empty
+                                                        hindi_lyrics: isHindi ? (prev.hindi_lyrics || ' ') : ''
                                                     }));
                                                 }}
-                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 transition-colors"
+                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors"
                                             >
                                                 <option value="english">English</option>
                                                 <option value="hindi">Hindi</option>
@@ -459,87 +532,163 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                     </div>
                                 </section>
 
-                                <section className="bg-white/5 rounded-3xl p-6 border border-white/5 space-y-4">
-                                    <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                        <GripHorizontal className="w-4 h-4" />
+                                {/* Musical & Media Details */}
+                                <section className="bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 space-y-4">
+                                    <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                                        <GripHorizontal className="w-3.5 h-3.5 text-amber-500" />
                                         Details
                                     </h2>
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input label="Key" name="key" value={formData.key} onChange={handleChange} placeholder="e.g. G" />
-                                        <Input label="Tempo" name="tempo" value={formData.tempo} onChange={handleChange} placeholder="e.g. 72 BPM" />
+                                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                                        <Input
+                                            label="Original Key"
+                                            name="key"
+                                            value={formData.key}
+                                            onChange={handleChange}
+                                            placeholder="e.g. G"
+                                        />
+                                        <Input
+                                            label="Tempo"
+                                            name="tempo"
+                                            value={formData.tempo}
+                                            onChange={handleChange}
+                                            placeholder="e.g. 72 BPM"
+                                        />
                                     </div>
-                                    <Input label="YouTube ID" name="youtube_id" value={formData.youtube_id} onChange={handleChange} placeholder="e.g. iJCV_2H9xD0" />
-                                    <Input label="Cover Image URL" name="img" value={formData.img} onChange={handleChange} placeholder="https://..." />
+                                    <Input
+                                        label="YouTube Video ID"
+                                        name="youtube_id"
+                                        value={formData.youtube_id}
+                                        onChange={handleChange}
+                                        placeholder="e.g. iJCV_2H9xD0"
+                                    />
+                                    <Input
+                                        label="Cover Image URL"
+                                        name="img"
+                                        value={formData.img}
+                                        onChange={handleChange}
+                                        placeholder="https://images.unsplash.com/..."
+                                    />
                                 </section>
 
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className={`w-full py-4 rounded-xl font-bold text-black text-lg transition-all shadow-lg ${isLoading ? 'bg-amber-500/50 cursor-not-allowed' : 'bg-amber-500 hover:bg-amber-400 hover:scale-[1.02]'
+                                {/* DESKTOP-ONLY SUBMIT BUTTON (in left column) */}
+                                <div className="hidden lg:block pt-2">
+                                    <button
+                                        type="submit"
+                                        disabled={isLoading}
+                                        className={`w-full py-3.5 rounded-xl font-bold text-black text-base transition-all shadow-lg ${
+                                            isLoading
+                                                ? 'bg-amber-500/50 cursor-not-allowed'
+                                                : 'bg-amber-500 hover:bg-amber-400 hover:scale-[1.01] active:scale-[0.99] shadow-amber-500/20'
                                         }`}
-                                >
-                                    {isLoading ? (
-                                        <span className="flex items-center justify-center gap-2"><Loader2 className="w-5 h-5 animate-spin" /> Saving...</span>
-                                    ) : (
-                                        <span className="flex items-center justify-center gap-2"><Save className="w-5 h-5" /> {mode === 'create' ? "Upload Song" : "Update Song"}</span>
-                                    )}
-                                </button>
+                                    >
+                                        {isLoading ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <Loader2 className="w-5 h-5 animate-spin" /> Saving Song...
+                                            </span>
+                                        ) : (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <Save className="w-5 h-5" /> {mode === 'create' ? "Publish Song" : "Update Song"}
+                                            </span>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
 
-                            {/* RIGHT: Editors */}
+                            {/* SECTION 2: CONTENT (LYRICS, CHORDS, HINDI) - 2 COLUMNS ON DESKTOP */}
                             <div className="lg:col-span-2 space-y-6">
-                                <section className="bg-white/5 rounded-3xl p-6 border border-white/5 h-full">
-                                    <h2 className="text-sm font-bold text-white/40 uppercase tracking-widest flex items-center gap-2 mb-4">
-                                        <Mic2 className="w-4 h-4" />
-                                        Content
-                                    </h2>
+                                <section className="bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">
+                                            <Mic2 className="w-3.5 h-3.5 text-emerald-400" />
+                                            Lyrics & Chords
+                                        </h2>
+                                        <span className="text-[11px] text-white/30 hidden sm:inline">Use ChordPro format (e.g. [G], [Am])</span>
+                                    </div>
 
-                                    <div className="space-y-6">
-
-                                        <div className="space-y-3 md:space-y-4">
-                                            <div>
-                                                <div className="flex items-center justify-between mb-1 md:mb-2">
-                                                    <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest">Lyrics</label>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPreview(!showPreview)}
-                                                        className="text-[10px] md:text-xs font-bold text-emerald-500 hover:text-emerald-400"
-                                                    >
-                                                        {showPreview ? 'Hide Preview' : 'Show Preview'}
-                                                    </button>
-                                                </div>
-                                                <textarea name="lyrics" value={formData.lyrics} onChange={handleChange} className="w-full h-40 md:h-64 bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white font-mono text-sm focus:outline-none focus:border-emerald-500 resize-none" placeholder="Paste lyrics here..." />
-                                            </div>
-
-                                            {/* Chords */}
-                                            <div>
-                                                <label className="block text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-widest mb-1 md:mb-2">Chords (ChordPro Format)</label>
-                                                <textarea name="chords" value={formData.chords} onChange={handleChange} className="w-full h-40 md:h-64 bg-white/5 border border-white/10 rounded-xl px-3 py-2 md:px-4 md:py-3 text-white font-mono text-sm focus:outline-none focus:border-emerald-500 resize-none" placeholder="[C] Amazing Grace..." />
-                                            </div>
-
+                                    {/* Lyrics */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider">
+                                                Plain Lyrics <span className="text-red-500">*</span>
+                                            </label>
+                                            <span className="text-[10px] text-white/30">Lines: {formData.lyrics ? formData.lyrics.split('\n').length : 0}</span>
                                         </div>
+                                        <textarea
+                                            name="lyrics"
+                                            value={formData.lyrics}
+                                            onChange={handleChange}
+                                            required
+                                            rows={8}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl p-3 sm:p-4 text-white font-mono text-xs sm:text-sm focus:outline-none focus:border-emerald-500 resize-y min-h-[140px] leading-relaxed placeholder:text-white/20"
+                                            placeholder="Paste plain lyrics here line by line..."
+                                        />
+                                    </div>
 
-                                        <div>
-                                            <div className="flex justify-between mb-2">
-                                                <label className="text-xs font-bold text-white/40 uppercase tracking-widest">Hindi Lyrics (Optional)</label>
-                                            </div>
-                                            <textarea
-                                                name="hindi_lyrics"
-                                                value={formData.hindi_lyrics}
-                                                onChange={handleChange}
-                                                rows={6}
-                                                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-4 text-white font-serif leading-relaxed focus:outline-none focus:border-amber-500/50 transition-colors resize-none placeholder:text-white/10"
-                                                placeholder={`तू यहाँ है...\nकार्य कर रहा है...`}
-                                            />
+                                    {/* Chords (ChordPro) */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider">
+                                                Chords (ChordPro Format)
+                                            </label>
+                                            <span className="text-[10px] text-emerald-400/70 font-mono">[C], [G], [D] inline</span>
                                         </div>
+                                        <textarea
+                                            name="chords"
+                                            value={formData.chords}
+                                            onChange={handleChange}
+                                            rows={8}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl p-3 sm:p-4 text-white font-mono text-xs sm:text-sm focus:outline-none focus:border-emerald-500 resize-y min-h-[140px] leading-relaxed placeholder:text-white/20"
+                                            placeholder="[G] You are here, [D] moving in our midst..."
+                                        />
+                                    </div>
+
+                                    {/* Hindi Lyrics */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-1.5">
+                                            <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider">
+                                                Hindi Lyrics (Optional)
+                                            </label>
+                                            <span className="text-[10px] text-white/30">Devanagari script</span>
+                                        </div>
+                                        <textarea
+                                            name="hindi_lyrics"
+                                            value={formData.hindi_lyrics}
+                                            onChange={handleChange}
+                                            rows={5}
+                                            className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl p-3 sm:p-4 text-white font-serif leading-relaxed text-xs sm:text-sm focus:outline-none focus:border-amber-500/50 resize-y min-h-[100px] placeholder:text-white/20"
+                                            placeholder="तू यहाँ है, कार्य कर रहा है..."
+                                        />
                                     </div>
                                 </section>
                             </div>
-                        </form>
-                    </>
-                )
-            }
+                        </div>
+
+                        {/* MOBILE SUBMIT BUTTON (PROPERLY AT BOTTOM OF ENTIRE FORM) */}
+                        <div className="lg:hidden pt-2">
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className={`w-full py-4 rounded-xl font-bold text-black text-base transition-all shadow-xl ${
+                                    isLoading
+                                        ? 'bg-amber-500/50 cursor-not-allowed'
+                                        : 'bg-amber-500 hover:bg-amber-400 active:scale-[0.98] shadow-amber-500/30'
+                                }`}
+                            >
+                                {isLoading ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <Loader2 className="w-5 h-5 animate-spin" /> Saving Song...
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <Save className="w-5 h-5" /> {mode === 'create' ? "Publish Song" : "Update Song"}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
+                    </form>
+                </>
+            )}
         </div>
     );
 }
@@ -548,7 +697,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
 function Input({ label, name, value, onChange, placeholder, required }: any) {
     return (
         <div>
-            <label className="block text-xs font-bold text-white/40 uppercase tracking-widest mb-2">
+            <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider mb-1.5">
                 {label} {required && <span className="text-red-500">*</span>}
             </label>
             <input
@@ -558,7 +707,7 @@ function Input({ label, name, value, onChange, placeholder, required }: any) {
                 onChange={onChange}
                 placeholder={placeholder}
                 required={required}
-                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-amber-500/50 transition-colors font-medium"
+                className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-amber-500/50 transition-colors font-medium"
             />
         </div>
     );

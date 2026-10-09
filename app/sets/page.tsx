@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Music2, Share2, Download, Clock, Loader2 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -69,10 +70,9 @@ export default function SetsPage() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-8 sm:mb-16 animate-fade-in-down">
                     <div>
-                        <Link href="/" className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-4 sm:mb-8 transition-all duration-300 group">
-                            <ArrowLeft className="w-4 h-4 text-white/70 group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-xs sm:text-sm font-medium text-white/90">Back to Dashboard</span>
-                        </Link>
+                        <BackButton fallback="/worship" className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-4 sm:mb-8 transition-all duration-300 group text-white/90" iconClassName="w-4 h-4 text-white/70 group-hover:-translate-x-1 transition-transform">
+                            <span className="text-xs sm:text-sm font-medium">Back</span>
+                        </BackButton>
                         <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-2 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
                             Worship Sets
                         </h1>

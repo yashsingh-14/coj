@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Search } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import { useState, useEffect } from 'react';
 import TiltCard from '@/components/ui/TiltCard';
 import { supabase } from '@/lib/supabaseClient';
@@ -58,9 +59,7 @@ export default function SongsListPage() {
             <div className="sticky top-0 z-40 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <Link href="/" className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors group">
-                            <ArrowLeft className="w-5 h-5 text-white/50 group-hover:text-white" />
-                        </Link>
+                        <BackButton fallback="/worship" className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors group text-white/50 hover:text-white" iconClassName="w-5 h-5" />
                         <h1 className="text-xl font-bold tracking-tight">All Songs <span className="text-white/30 text-sm ml-2 font-medium">{filteredSongs.length} Tracks</span></h1>
                     </div>
                 </div>

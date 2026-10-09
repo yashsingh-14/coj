@@ -135,11 +135,13 @@ export async function syncUsersAdminV3() {
         // 2. Upsert into Profiles
         // EXTREMELY MINIMAL PAYLOAD to debug schema issue
         for (const user of users) {
-            // Try to construct payload WITHOUT ignoring anything, just specific fields
+            const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Unknown';
+            const avatar = user.user_metadata?.avatar_url || user.user_metadata?.picture || null;
             const payload = {
                 id: user.id,
                 email: user.email,
-                name: user.user_metadata?.name || 'Unknown'
+                name,
+                avatar
             };
 
             console.log(`SERVER: Upserting payload for ${user.email}:`, JSON.stringify(payload));

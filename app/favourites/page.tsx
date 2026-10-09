@@ -2,6 +2,7 @@
 
 import { Heart, ArrowLeft, Loader2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton';
 import { supabase } from '@/lib/supabaseClient';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
@@ -131,10 +132,9 @@ export default function FavouritesPage() {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 pt-4 sm:pt-8 md:pt-12">
                     <div className="animate-fade-in-down">
-                        <Link href="/songs" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-4 sm:mb-6 text-xs font-bold uppercase tracking-[0.3em] transition-all group">
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            Back to Library
-                        </Link>
+                        <BackButton fallback="/worship" className="inline-flex items-center gap-2 text-white/40 hover:text-white mb-4 sm:mb-6 text-xs font-bold uppercase tracking-[0.3em] transition-all group" iconClassName="w-4 h-4 group-hover:-translate-x-1 transition-transform">
+                            <span>Back</span>
+                        </BackButton>
                         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-white/80 to-white/40 mb-2 sm:mb-4 drop-shadow-2xl">
                             FAVOURITES
                         </h1>

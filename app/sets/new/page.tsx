@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { ArrowLeft, Save, Calendar, Info, Loader2 } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function CreateSetPage() {
@@ -65,10 +66,9 @@ export default function CreateSetPage() {
     return (
         <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-6 sm:py-12 pb-32">
             <div className="max-w-2xl mx-auto">
-                <Link href="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-6 sm:mb-8 transition-colors text-sm">
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Sets
-                </Link>
+                <BackButton fallback="/sets" className="inline-flex items-center gap-2 text-white/50 hover:text-white mb-6 sm:mb-8 transition-colors text-sm" iconClassName="w-4 h-4">
+                    <span>Back to Sets</span>
+                </BackButton>
 
                 <div className="mb-6 sm:mb-10">
                     <h1 className="text-2xl sm:text-4xl font-black mb-2">Create New Set</h1>

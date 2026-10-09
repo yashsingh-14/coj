@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, FileText, Scale, Gavel, AlertCircle, CheckCircle } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 export default function TermsPage() {
     return (
@@ -15,10 +16,9 @@ export default function TermsPage() {
 
             <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12 md:py-20">
                 {/* Navigation */}
-                <Link href="/" className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-6 sm:mb-12 transition-all duration-300 group">
-                    <ArrowLeft className="w-4 h-4 text-white/70 group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-xs sm:text-sm font-medium text-white/90">Back to Home</span>
-                </Link>
+                <BackButton fallback="/" className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 backdrop-blur-md mb-6 sm:mb-12 transition-all duration-300 group text-white/90" iconClassName="w-4 h-4 text-white/70 group-hover:-translate-x-1 transition-transform">
+                    <span className="text-xs sm:text-sm font-medium">Back to Home</span>
+                </BackButton>
 
                 {/* Header */}
                 <div className="flex flex-col items-center text-center mb-8 sm:mb-16 animate-fade-in-down">

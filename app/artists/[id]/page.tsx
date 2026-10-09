@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BackButton from '@/components/ui/BackButton';
 import Image from 'next/image';
 import { ArrowLeft, PlayCircle, Star, Play, CheckCircle, Mic2, Users, Music } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
@@ -54,9 +55,7 @@ export default async function ArtistDetailPage({ params }: { params: Promise<{ i
                 <div className="absolute inset-0 bg-gradient-to-b from-[#02000F]/50 to-transparent" />
 
                 <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
-                    <Link href="/artists" className="p-2.5 sm:p-3 rounded-full bg-black/40 hover:bg-white/10 backdrop-blur-xl border border-white/5 transition-all group">
-                        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:-translate-x-1 transition-transform" />
-                    </Link>
+                    <BackButton fallback="/artists" className="p-2.5 sm:p-3 rounded-full bg-black/40 hover:bg-white/10 backdrop-blur-xl border border-white/5 transition-all group text-white" iconClassName="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 </div>
 
                 <div className="container mx-auto px-4 sm:px-6 pb-6 sm:pb-8 md:pb-12 relative z-10">

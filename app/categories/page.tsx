@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Star, Music, Heart, Mic2, BookOpen, Sun } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 export default function CategoriesPage() {
     const categories = [
@@ -16,9 +17,7 @@ export default function CategoriesPage() {
     return (
         <div className="min-h-screen bg-[#02000F] text-white">
             <div className="sticky top-0 z-20 px-4 py-4 sm:p-6 flex items-center gap-3 sm:gap-4 bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5">
-                <Link href="/" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all group">
-                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
-                </Link>
+                <BackButton fallback="/worship" className="p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all group text-white" iconClassName="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" />
                 <h1 className="text-xl sm:text-2xl font-bold">Browse Categories</h1>
             </div>
 

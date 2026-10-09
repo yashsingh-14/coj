@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import BackButton from '@/components/ui/BackButton';
 
 export default function PrivacyPage() {
     return (
         <div className="min-h-screen bg-[#02000F] text-white px-4 sm:px-6 py-6 pb-32">
             <div className="max-w-4xl mx-auto">
-                <Link href="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md mb-6 sm:mb-8 transition-colors text-xs sm:text-sm">
-                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                <BackButton fallback="/" className="inline-flex items-center gap-2 p-2.5 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md mb-6 sm:mb-8 transition-colors text-xs sm:text-sm text-white" iconClassName="w-4 h-4 sm:w-5 sm:h-5">
                     <span className="font-bold">Back to Home</span>
-                </Link>
+                </BackButton>
 
                 <h1 className="text-2xl sm:text-4xl font-bold mb-6 sm:mb-8">Privacy Policy</h1>
                 <div className="space-y-6 text-white/70 text-sm sm:text-base">
