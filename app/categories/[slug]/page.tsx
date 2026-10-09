@@ -6,6 +6,7 @@ import { supabaseServer } from '@/lib/supabaseServer';
 import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
 import { generateSlug } from '@/lib/seoUtils';
+import { getSongImage } from '@/lib/utils';
 import { Metadata } from 'next';
 
 export const revalidate = 60; // Cache for 60 seconds
@@ -35,18 +36,6 @@ const isHindiSong = (song: Song) => {
     return false;
 };
 
-// Helper to resolve song image with fallbacks
-const getSongImage = (song: Song) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const yId = song.youtube_id || (song as any).youtubeId;
-    if (yId && yId.trim().length > 5 && yId !== "null" && yId !== "undefined") {
-        return `https://img.youtube.com/vi/${yId}/hqdefault.jpg`;
-    }
-    if (song.img && song.img.trim().length > 5 && song.img !== "null" && song.img !== "undefined") {
-        return song.img;
-    }
-    return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80";
-};
 
 export default async function CategoryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;

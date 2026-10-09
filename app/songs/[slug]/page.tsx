@@ -4,6 +4,7 @@ import { SongViewerSkeleton } from '@/components/ui/SkeletonLoader';
 import { generateSlug, SITE_URL } from '@/lib/seoUtils';
 import { fetchSongBySlug } from '@/lib/fetchSong';
 import { supabaseServer } from '@/lib/supabaseServer';
+import { getSongImage } from '@/lib/utils';
 
 const SongViewer = dynamic(() => import('@/components/songs/SongViewer'), {
     loading: () => <SongViewerSkeleton />,
@@ -30,6 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         ? `${song.title} - Hindi Christian worship song lyrics with guitar chords. Artist: ${song.artist || 'Unknown'}. Key: ${song.key || 'N/A'}. Free chords for church worship and praise.`
         : `${song.title} worship song lyrics with guitar chords, key (${song.key || 'N/A'}), and song structure. Artist: ${song.artist || 'Unknown'}. Free for church worship leaders.`;
 
+    const songImageUrl = getSongImage(song);
+
     return {
         title,
         description,
@@ -54,12 +57,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             description,
             url: canonicalUrl,
             siteName: 'COJ Worship',
-            images: song.img ? [{ url: song.img, alt: `${song.title} - Worship Song` }] : [{ url: '/images/logo-main.png', alt: 'COJ Worship' }],
+            images: [{ url: songImageUrl, alt: `${song.title} - Worship Song` }],
         },
         twitter: {
             card: 'summary' as const,
             title: `${song.title} - Lyrics & Chords`,
             description,
+            images: [songImageUrl],
         },
     };
 }
@@ -130,6 +134,7 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
                 chords={song.chords}
                 youtubeId={song.youtube_id}
                 category={song.category}
+                coverImage={getSongImage(song)}
                 relatedSongs={relatedSongs}
             />
         </>

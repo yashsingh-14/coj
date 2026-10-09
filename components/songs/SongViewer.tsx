@@ -27,6 +27,7 @@ import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
 import { ShareButton } from './ShareButton';
 import { PrintButton } from './PrintButton';
+import { extractYoutubeId } from '@/lib/utils';
 
 interface SongViewerProps {
     songId: string;
@@ -505,11 +506,13 @@ export default function SongViewer({
                 <div
                     className="absolute inset-0 bg-cover bg-center opacity-25 grayscale scale-105"
                     style={{
-                        backgroundImage: coverImage
+                        backgroundImage: (coverImage && !coverImage.includes('images.unsplash.com'))
                             ? `url('${coverImage}')`
                             : youtubeId
-                                ? `url('https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg')`
-                                : "url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')"
+                                ? `url('https://img.youtube.com/vi/${extractYoutubeId(youtubeId)}/hqdefault.jpg')`
+                                : coverImage
+                                    ? `url('${coverImage}')`
+                                    : "url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop')"
                     }}
                 />
                 

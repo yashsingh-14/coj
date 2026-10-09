@@ -17,13 +17,16 @@ import {
     ClipboardPaste,
     ChevronDown,
     ChevronUp,
-    Wand2
+    Wand2,
+    Check
 } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton';
 import SongViewer from '@/components/songs/SongViewer';
 import { parseSongSheet } from '@/lib/songParser';
 import { Song } from '@/data/types';
 import { updateSongAdmin, createSongAdmin } from '@/app/actions/admin';
+import { extractYoutubeId } from '@/lib/utils';
+
 
 interface SongFormProps {
     initialData?: Song;
@@ -57,21 +60,42 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
     const [generationProgress, setGenerationProgress] = useState('');
     const [useHighAccuracy, setUseHighAccuracy] = useState(false);
 
+    const initialYt = extractYoutubeId(initialData?.youtubeId || initialData?.youtube_id || '');
+    // If initial image is empty or an unsplash placeholder and YouTube ID exists, auto-use YouTube thumbnail!
+    const initialImg = (initialData?.img && !initialData.img.includes('images.unsplash.com'))
+        ? initialData.img
+        : (initialYt ? `https://img.youtube.com/vi/${initialYt}/hqdefault.jpg` : (initialData?.img || ''));
+
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         artist: initialData?.artist || '',
         category: initialData?.category || 'worship',
         key: initialData?.key || '',
         tempo: initialData?.tempo || '',
-        youtube_id: initialData?.youtubeId || initialData?.youtube_id || '',
-        img: initialData?.img || '',
+        youtube_id: initialYt,
+        img: initialImg,
         lyrics: initialData?.lyrics || '',
         hindi_lyrics: initialData?.hindiLyrics || initialData?.hindi_lyrics || '',
         chords: initialData?.chords || ''
     });
 
+    const cleanYtId = extractYoutubeId(formData.youtube_id);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name === 'youtube_id') {
+            const cleanId = extractYoutubeId(value);
+            setFormData(prev => {
+                const next = { ...prev, youtube_id: cleanId };
+                // If img is currently empty OR was an unsplash image OR was a youtube thumbnail, auto-update img:
+                if (!prev.img || prev.img.includes('images.unsplash.com') || prev.img.includes('img.youtube.com')) {
+                    next.img = cleanId ? `https://img.youtube.com/vi/${cleanId}/hqdefault.jpg` : '';
+                }
+                return next;
+            });
+            return;
+        }
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleAiGenerate = async () => {
@@ -107,18 +131,21 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
             if (!res.ok) throw new Error(data.error || 'Failed to generate');
 
             setGenerationProgress('Applying data...');
-            setFormData(prev => ({
-                ...prev,
-                title: data.title || prev.title,
-                artist: data.artist || prev.artist,
-                key: data.key || prev.key,
-                tempo: data.tempo || prev.tempo,
-                lyrics: data.lyrics || "",
-                chords: data.chords || "",
-                hindi_lyrics: data.hindi_lyrics || "",
-                youtube_id: data.youtube_id || prev.youtube_id,
-                img: data.img || prev.img
-            }));
+            setFormData(prev => {
+                const cleanAiYt = extractYoutubeId(data.youtube_id || prev.youtube_id);
+                return {
+                    ...prev,
+                    title: data.title || prev.title,
+                    artist: data.artist || prev.artist,
+                    key: data.key || prev.key,
+                    tempo: data.tempo || prev.tempo,
+                    lyrics: data.lyrics || "",
+                    chords: data.chords || "",
+                    hindi_lyrics: data.hindi_lyrics || "",
+                    youtube_id: cleanAiYt,
+                    img: cleanAiYt ? `https://img.youtube.com/vi/${cleanAiYt}/hqdefault.jpg` : (data.img || prev.img)
+                };
+            });
 
             setGenerationProgress('Complete!');
             toast.success("AI Generation Successful!");
@@ -219,14 +246,26 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
 
             // STEP 3: Payload
             addLog("Step 3: Preparing Payload...");
+            const cleanYt = extractYoutubeId(formData.youtube_id);
+            let finalImg = formData.img?.trim() || '';
+
+            // Auto-fallback: If user didn't enter custom image, or if it's the old unsplash placeholder, use YouTube thumbnail!
+            if (!finalImg || finalImg.includes('images.unsplash.com')) {
+                if (cleanYt) {
+                    finalImg = `https://img.youtube.com/vi/${cleanYt}/hqdefault.jpg`;
+                } else if (!finalImg) {
+                    finalImg = 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80';
+                }
+            }
+
             const payload = {
                 title: formData.title,
                 artist: formData.artist,
                 category: formData.category,
                 key: formData.key,
                 tempo: formData.tempo,
-                youtube_id: formData.youtube_id,
-                img: formData.img || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80',
+                youtube_id: cleanYt,
+                img: finalImg,
                 lyrics: formData.lyrics,
                 hindi_lyrics: formData.hindi_lyrics || null,
                 chords: formData.chords || null,
@@ -555,20 +594,55 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                             placeholder="e.g. 72 BPM"
                                         />
                                     </div>
-                                    <Input
-                                        label="YouTube Video ID"
-                                        name="youtube_id"
-                                        value={formData.youtube_id}
-                                        onChange={handleChange}
-                                        placeholder="e.g. iJCV_2H9xD0"
-                                    />
-                                    <Input
-                                        label="Cover Image URL"
-                                        name="img"
-                                        value={formData.img}
-                                        onChange={handleChange}
-                                        placeholder="https://images.unsplash.com/..."
-                                    />
+                                    <div className="space-y-2">
+                                        <Input
+                                            label="YouTube Video ID"
+                                            name="youtube_id"
+                                            value={formData.youtube_id}
+                                            onChange={handleChange}
+                                            placeholder="e.g. ocgm5MCe8Cw (ya YouTube link)"
+                                        />
+
+                                        {/* LIVE YOUTUBE THUMBNAIL AUTO-DETECTION PREVIEW */}
+                                        {cleanYtId ? (
+                                            <div className="rounded-xl overflow-hidden border border-amber-500/30 bg-black/50 p-2.5 flex items-center gap-3 animate-fade-in-up">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img
+                                                    src={`https://img.youtube.com/vi/${cleanYtId}/hqdefault.jpg`}
+                                                    alt="YouTube Thumbnail"
+                                                    className="w-20 h-13 object-cover rounded-lg border border-white/10 shrink-0 shadow"
+                                                />
+                                                <div className="text-xs leading-tight flex-1">
+                                                    <div className="flex items-center gap-1.5 text-amber-400 font-bold mb-0.5">
+                                                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                                        <span>Thumbnail Auto-Applied</span>
+                                                    </div>
+                                                    <p className="text-white/40 text-[11px]">
+                                                        Cover image URL daalne ki jarurat nahi hai! Ye thumbnail sab jagah automatically use hoga.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ) : null}
+                                    </div>
+
+                                    <div>
+                                        <Input
+                                            label="Cover Image URL (Optional)"
+                                            name="img"
+                                            value={formData.img}
+                                            onChange={handleChange}
+                                            placeholder={cleanYtId ? "Auto-managed by YouTube Video ID" : "https://images.unsplash.com/..."}
+                                        />
+                                        <p className="text-[10px] text-white/40 mt-1">
+                                            {cleanYtId ? (
+                                                <span className="text-amber-400/90 font-medium">
+                                                    ✨ YouTube ID dali hai, isliye is URL ko khaali chhod sakte hain (automatic thumbnail use hoga).
+                                                </span>
+                                            ) : (
+                                                <span>Agar YouTube Video ID nahi hai, tabhi custom cover image URL dalein.</span>
+                                            )}
+                                        </p>
+                                    </div>
                                 </section>
 
                                 {/* DESKTOP-ONLY SUBMIT BUTTON (in left column) */}
