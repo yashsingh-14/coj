@@ -21,14 +21,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true); }, []);
 
-    // Lock body scroll when sidebar is open
+    // Lock body scroll and pause Lenis when sidebar is open
     useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lenis = typeof window !== 'undefined' ? (window as any).lenis : null;
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            if (lenis?.stop) lenis.stop();
         } else {
             document.body.style.overflow = '';
+            if (lenis?.start) lenis.start();
         }
-        return () => { document.body.style.overflow = ''; };
+        return () => {
+            document.body.style.overflow = '';
+            if (lenis?.start) lenis.start();
+        };
     }, [isOpen]);
 
     const menuItems = [
@@ -56,12 +63,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <>
             {/* Backdrop */}
             <div
+                data-lenis-prevent
                 className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={onClose}
             />
 
             {/* Floating Glass Dock */}
-            <div className={`fixed top-2 bottom-2 left-2 sm:top-4 sm:bottom-4 sm:left-4 w-[85vw] max-w-72 bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl z-50 transform transition-all duration-500 cubic-bezier(0.23, 1, 0.32, 1) flex flex-col overflow-hidden ${isOpen ? 'translate-x-0 opacity-100 scale-100' : '-translate-x-[120%] opacity-0 scale-95'}`}>
+            <div
+                data-lenis-prevent
+                onWheel={(e) => e.stopPropagation()}
+                className={`fixed top-2 bottom-2 left-2 sm:top-4 sm:bottom-4 sm:left-4 w-[85vw] max-w-72 bg-[#0A0A0A]/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl z-50 transform transition-all duration-500 cubic-bezier(0.23, 1, 0.32, 1) flex flex-col overflow-hidden overscroll-contain ${isOpen ? 'translate-x-0 opacity-100 scale-100' : '-translate-x-[120%] opacity-0 scale-95'}`}
+            >
 
                 <div className="p-5 sm:p-8 flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white tracking-tight">
@@ -73,7 +85,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </div>
 
                 {/* Menu Items */}
-                <div className="flex-1 px-4 overflow-y-auto no-scrollbar space-y-2">
+                <div
+                    data-lenis-prevent
+                    className="flex-1 px-4 overflow-y-auto no-scrollbar space-y-2 overscroll-contain"
+                >
                     <p className="px-4 text-xs font-bold text-white/30 uppercase tracking-widest mb-4 mt-2">Discover</p>
 
                     {menuItems.map((item, i) => {
