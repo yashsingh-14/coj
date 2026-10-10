@@ -287,12 +287,12 @@ function HeroSection() {
             <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
                 <video
                     ref={videoRef}
-                    src="https://bylvnplqvwgavaiygvoy.supabase.co/storage/v1/object/public/videos/coj-intro.mp4"
+                    poster="/images/hero-poster-mobile.webp"
                     autoPlay
                     muted
                     loop
                     playsInline
-                    preload="auto"
+                    preload="metadata"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                 >
                     <source src="https://bylvnplqvwgavaiygvoy.supabase.co/storage/v1/object/public/videos/coj-intro.mp4" type="video/mp4" />
@@ -305,7 +305,7 @@ function HeroSection() {
 
             {/* Hero Content */}
             <div ref={heroBoxRef} className="hero-content-box relative z-10 flex flex-col items-center px-4 sm:px-6 will-change-transform">
-                <div className="hero-fade-in flex flex-col items-center" style={{ animationDelay: '0.4s' }}>
+                <div className="hero-fade-in flex flex-col items-center">
                     <p className="text-[10px] sm:text-xs md:text-sm font-bold tracking-[0.25em] sm:tracking-[0.35em] text-amber-400/90 uppercase mb-2 md:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] text-center">
                         Call of Jesus Ministries
                     </p>
@@ -342,7 +342,7 @@ function HeroSection() {
                     </p>
                 </div>
 
-                <div className="hero-fade-in pt-4" style={{ animationDelay: '0.9s' }}>
+                <div className="hero-fade-in pt-4" style={{ animationDelay: '0.2s' }}>
                     <LiquidButton
                         href="https://maps.app.goo.gl/U6Unh6WEcAdbp89K6"
                         target="_blank"

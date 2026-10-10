@@ -2,7 +2,12 @@
 
 import { useAppStore } from '@/store/useAppStore';
 import { useState, useEffect } from 'react';
-import HomeUtilityContent from '@/components/home/HomeUtilityContent';
+import dynamic from 'next/dynamic';
+
+const HomeUtilityContent = dynamic(() => import('@/components/home/HomeUtilityContent'), {
+    ssr: false,
+    loading: () => <div className="min-h-screen bg-[#07060A]" />
+});
 import ExperienceOverlay from '@/components/hero/ExperienceOverlay';
 import LiveSermonBanner from '@/components/home/LiveSermonBanner';
 

@@ -50,7 +50,7 @@
 @keyframes heroFadeIn {
   0% {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(16px);
   }
 
   100% {
@@ -60,8 +60,7 @@
 }
 
 .hero-fade-in {
-  opacity: 0;
-  animation: heroFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* ═══════════ KINETIC TYPOGRAPHY MASKED WORD SWAP ═══════════ */

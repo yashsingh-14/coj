@@ -7,28 +7,33 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
 
 // Define the primary domain
@@ -82,6 +87,7 @@ export const metadata: Metadata = {
   },
 };
 
+import Script from "next/script";
 import AppShell from "@/components/AppShell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import InstallPrompt from "@/components/InstallPrompt";
@@ -96,15 +102,25 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5426715715614915"
-          crossOrigin="anonymous"
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-poster-mobile.webp"
+          type="image/webp"
+          fetchPriority="high"
         />
+        <link rel="preconnect" href="https://bylvnplqvwgavaiygvoy.supabase.co" />
+        <link rel="dns-prefetch" href="https://bylvnplqvwgavaiygvoy.supabase.co" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${fraunces.variable} ${spaceGrotesk.variable} antialiased bg-[var(--background)] text-[var(--foreground)] transition-colors duration-300`}
       >
+        <Script
+          id="google-adsense"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5426715715614915"
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <SmoothScrollProvider>
             <AppShell>
