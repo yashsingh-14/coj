@@ -8,7 +8,7 @@ export async function GET() {
     try {
         const { data, error } = await supabaseServer
             .from('songs')
-            .select('id, title, artist, category, img, is_featured, hindi_lyrics, chords, tempo, key, youtube_id')
+            .select('id, title, artist, category, img, is_featured, lyrics, hindi_lyrics, chords, tempo, key, youtube_id')
             .order('title', { ascending: true });
 
         if (error || !data || data.length === 0) {
