@@ -1,177 +1,276 @@
 /**
- * Detects if a line is a chord line.
- * Heuristic: Mostly A-G letters, spaces, standard chord symbols (maj, min, 7, #, b, /, sus, add, dim, aug)
+ * Intelligent Song Sheet Parser & Formatter for COJ Worship
+ * Automatically cleans, aligns, and standardizes raw chord sheets into professional ChordPro format.
  */
-function isChordLine(line: string): boolean {
-    const trimmed = line.trim();
-    if (trimmed.length === 0) return false;
 
-    // Filter out common section headers that might look short
-    const tokens = trimmed.split(/\s+/);
+const CHORD_REGEX = /^[A-G](?:[#b])?(?:m|min|maj|dim|aug|sus|add)?(?:[0-9]{1,2})?(?:[#b][0-9])?(?:\/[A-G](?:[#b])?)?$/;
+
+export function isChordToken(token: string): boolean {
+    const clean = token.replace(/[()\[\],.]/g, '').trim();
+    if (!clean) return false;
+    return CHORD_REGEX.test(clean);
+}
+
+export function isSectionHeader(line: string): boolean {
+    const trimmed = line.trim().replace(/[\[\]:]/g, '').trim();
+    return /^(intro|verse|chorus|bridge|pre-chorus|prechorus|outro|interlude|ending|instrumental)(\s*\d*)?$/i.test(trimmed);
+}
+
+export function formatSectionHeader(line: string): string {
+    const trimmed = line.trim().replace(/[\[\]:]/g, '').trim();
+    const match = trimmed.match(/^(intro|verse|chorus|bridge|pre-chorus|prechorus|outro|interlude|ending|instrumental)(.*)$/i);
+    if (!match) return `[${trimmed}]`;
+    const name = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+    const rest = match[2].trim();
+    return `[${name}${rest ? ' ' + rest : ''}]`;
+}
+
+export function isRhythmLine(line: string): boolean {
+    const trimmed = line.trim();
+    return /^[\s\/\-\|]+$/.test(trimmed) || /^\/{2,}/.test(trimmed);
+}
+
+export function isChordLine(line: string): boolean {
+    const trimmed = line.trim();
+    if (!trimmed) return false;
+    if (isSectionHeader(trimmed)) return false;
+    if (isRhythmLine(trimmed)) return false;
+
+    const tokens = trimmed.split(/\s+/).filter(Boolean);
     if (tokens.length === 0) return false;
 
-    const chordRegex = /^[A-G](?:[#b])?(?:m|min|maj|dim|aug|sus|add)?(?:[0-9]{1,2})?(?:[#b][0-9])?(?:\/[A-G](?:[#b])?)?$/;
+    let count = 0;
+    for (const t of tokens) {
+        if (isChordToken(t)) count++;
+    }
+    return (count / tokens.length) >= 0.5;
+}
 
-    // Header check (Intro, Verse, Chorus, Bridge, Interlude, Outro)
-    const headerRegex = /^(Intro|Verse|Chorus|Bridge|Pre-Chorus|Outro|Interlude|Ending)[\s\d]*:?$/i;
-    if (headerRegex.test(trimmed)) return false;
+export function hasBracketedChords(line: string): boolean {
+    return /\[[A-G](?:[#b])?(?:m|min|maj|dim|aug|sus|add)?(?:[0-9]{1,2})?(?:[#b][0-9])?(?:\/[A-G](?:[#b])?)?\]/g.test(line);
+}
 
-    let chordCount = 0;
-    for (const token of tokens) {
-        const cleanToken = token.replace(/[()]/g, '');
-        if (chordRegex.test(cleanToken)) {
-            chordCount++;
+/**
+ * Word-aligned chord merger: places chords directly at word boundaries in ChordPro format
+ * avoiding awkward mid-word breaks like "Dhany[C#m]awad".
+ */
+export function mergeChordsWithLyrics(chordLine: string, lyricLine: string): string {
+    const chords: { chord: string; index: number }[] = [];
+    const regex = /\S+/g;
+    let match;
+    while ((match = regex.exec(chordLine)) !== null) {
+        if (isChordToken(match[0])) {
+            chords.push({ chord: match[0].replace(/[\[\]]/g, ''), index: match.index });
         }
     }
 
-    // Threshold: If more than 50% of tokens are chords, or if it's purely chords
-    return (chordCount / tokens.length) > 0.49;
-}
+    if (chords.length === 0) return lyricLine;
 
-function hasBracketedChords(line: string): boolean {
-    // Looks for [C], [Gmaj7] etc.
-    const bracketChordRegex = /\[[A-G](?:[#b])?(?:m|min|maj|dim|aug|sus|add)?(?:[0-9]{1,2})?(?:[#b][0-9])?(?:\/[A-G](?:[#b])?)?\]/g;
-    return bracketChordRegex.test(line);
-}
-
-// ... mergeLines function (unchanged) ...
-function mergeLines(chordLine: string, lyricLine: string): string {
-
-    const chords: { chord: string, index: number }[] = [];
-
-    // Map starting positions of chords
-    let currentMatch;
-    const regex = /\S+/g;
-    while ((currentMatch = regex.exec(chordLine)) !== null) {
-        chords.push({
-            chord: currentMatch[0],
-            index: currentMatch.index
-        });
+    const words: { text: string; index: number }[] = [];
+    const wordRegex = /\S+/g;
+    let wm;
+    while ((wm = wordRegex.exec(lyricLine)) !== null) {
+        words.push({ text: wm[0], index: wm.index });
     }
 
-    let lyricPtr = 0;
-    chords.sort((a, b) => a.index - b.index);
+    if (words.length === 0) {
+        return chords.map(c => `[${c.chord}]`).join(' ');
+    }
 
-    let finalStr = "";
+    // Determine if chord line was shorthand spaced (e.g. only 4 spaces typed for 30 chars of lyrics)
+    const lastChord = chords[chords.length - 1];
+    const lastChordEnd = lastChord.index + lastChord.chord.length;
+    const shouldScale = chords.length > 1 && lyricLine.length > lastChordEnd * 1.5;
 
-    for (const ch of chords) {
-        const insertAt = ch.index;
+    const chordPositions: { chord: string; insertAt: number }[] = [];
+    let lastWordIndex = -1;
 
-        if (insertAt > lyricPtr) {
-            const chunk = lyricLine.slice(lyricPtr, insertAt);
-            finalStr += chunk;
-            lyricPtr += chunk.length;
+    for (let ci = 0; ci < chords.length; ci++) {
+        const ch = chords[ci];
+        let targetIndex = ch.index;
 
-            if (lyricPtr < insertAt) {
-                finalStr += " ".repeat(insertAt - lyricPtr);
-                lyricPtr = insertAt;
+        if (ci > 0 && shouldScale) {
+            const ratio = ci / chords.length;
+            targetIndex = Math.round(ratio * lyricLine.length);
+        }
+
+        let chosenWordIdx = -1;
+        let minDiff = Infinity;
+        for (let wi = lastWordIndex + 1; wi < words.length; wi++) {
+            const diff = Math.abs(words[wi].index - targetIndex);
+            if (diff < minDiff) {
+                minDiff = diff;
+                chosenWordIdx = wi;
             }
         }
-        finalStr += `[${ch.chord}]`;
+
+        if (chosenWordIdx === -1 || chosenWordIdx <= lastWordIndex) {
+            chosenWordIdx = Math.min(lastWordIndex + 1, words.length - 1);
+        }
+
+        lastWordIndex = chosenWordIdx;
+        chordPositions.push({ chord: ch.chord, insertAt: words[chosenWordIdx].index });
     }
 
-    if (lyricPtr < lyricLine.length) {
-        finalStr += lyricLine.slice(lyricPtr);
+    chordPositions.sort((a, b) => a.insertAt - b.insertAt);
+
+    let result = '';
+    let currIdx = 0;
+
+    for (const cp of chordPositions) {
+        if (cp.insertAt > currIdx) {
+            result += lyricLine.slice(currIdx, cp.insertAt);
+            currIdx = cp.insertAt;
+        }
+        result += `[${cp.chord}]`;
     }
 
-    return finalStr;
+    if (currIdx < lyricLine.length) {
+        result += lyricLine.slice(currIdx);
+    }
+
+    return result.replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Parses raw messy song sheets into standardized, beautiful ChordPro format.
+ */
 export function parseSongSheet(rawText: string) {
-    const lines = rawText.split('\n');
+    const rawLines = rawText.split('\n');
     const outputChords: string[] = [];
     const outputLyrics: string[] = [];
 
-    // Metadata extractors
-    let title = "";
-    let artist = "";
-    let key = "";
-    let tempo = "";
+    let title = '';
+    let artist = '';
+    let key = '';
+    let tempo = '';
 
-    // Helper to detect metadata lines
     const metaRegex = /^(Title|Artist|Author|Key|Tempo|BPM|CCLI)(\s*[:|-]\s*)(.*)$/i;
+
+    // Filter lines: ignore rhythm slashes and handle capo instructions
+    const lines: string[] = [];
+    for (const line of rawLines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+            lines.push('');
+            continue;
+        }
+
+        // Capo detection: "CAPO on 1st Fret", "Capo: 1", etc.
+        const capoMatch = trimmed.match(/^capo\s*(?:on|at)?\s*(\d+)?(?:\w+)?(?:\s+fret)?/i);
+        if (capoMatch) {
+            continue; // Do not let capo instructions become the song title
+        }
+
+        // Ignore strumming slashes / rhythm marks
+        if (isRhythmLine(trimmed)) {
+            continue;
+        }
+
+        lines.push(line);
+    }
+
+    let firstLyricText = '';
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmed = line.trim();
 
         if (!trimmed) {
-            // Preserve paragraph breaks (empty lines)
-            outputChords.push("");
-            outputLyrics.push("");
+            // Keep clean single empty line between sections
+            if (outputChords.length > 0 && outputChords[outputChords.length - 1] !== '') {
+                outputChords.push('');
+                outputLyrics.push('');
+            }
             continue;
         }
 
-        // Check Metadata
+        // Check explicit metadata (Key: A, Title: ...)
         const match = trimmed.match(metaRegex);
         if (match) {
             const label = match[1].toLowerCase();
             const value = match[3].trim();
-
             if (label === 'title') title = value;
             if (label === 'artist' || label === 'author') artist = value;
             if (label === 'key') key = value;
             if (label === 'tempo' || label === 'bpm') tempo = value;
-            continue; // Skip this line
-        }
-
-        // Implicit Title: First line detection (if not chord, not bracketed)
-        const isEmptySoFar = outputChords.every(l => l === "") && outputLyrics.every(l => l === "");
-
-        if (isEmptySoFar && !title && !isChordLine(line) && !hasBracketedChords(line) && !line.includes(':')) {
-            title = trimmed;
             continue;
         }
 
-        // Check if Chord Line (Chords-over-Lyrics)
-        if (isChordLine(line)) {
-            const nextLineIndex = i + 1;
-            if (nextLineIndex < lines.length) {
-                const nextLine = lines[nextLineIndex];
+        // Isolated single chord at the top before lyrics (e.g. "A")
+        if (!key && outputChords.length === 0 && isChordToken(trimmed) && trimmed.split(/\s+/).length === 1) {
+            key = trimmed;
+            continue;
+        }
 
-                // Ensure next line is not metadata
-                const nextMeta = nextLine.trim().match(metaRegex);
-                if (nextMeta) {
-                    // Orphan chord line
-                    const merged = line.replace(/(\S+)/g, "[$1]");
-                    outputChords.push(merged);
-                    continue;
-                }
-
-                if (!isChordLine(nextLine) && nextLine.trim().length > 0) {
-                    // Merge
-                    const merged = mergeLines(line, nextLine);
-                    outputChords.push(merged);
-                    outputLyrics.push(nextLine.trim());
-                    i++;
-                } else {
-                    // Orphan
-                    const merged = line.replace(/(\S+)/g, "[$1]");
-                    outputChords.push(merged);
-                }
-            } else {
-                const merged = line.replace(/(\S+)/g, "[$1]");
-                outputChords.push(merged);
+        // Section Headers: [Intro], [Chorus], Verse 1, etc.
+        if (isSectionHeader(trimmed)) {
+            const formatted = formatSectionHeader(trimmed);
+            if (outputChords.length > 0 && outputChords[outputChords.length - 1] !== '') {
+                outputChords.push('');
+                outputLyrics.push('');
             }
+            outputChords.push(formatted);
+            outputLyrics.push(formatted);
+            continue;
         }
-        // Check for Bracketed Chords (Embedded)
-        else if (hasBracketedChords(line)) {
-            outputChords.push(line.trim());
-            // Strip chords for pure lyrics
-            const cleanLyrics = line.replace(/\[.*?\]/g, "").replace(/\s+/g, " ").trim();
-            outputLyrics.push(cleanLyrics);
+
+        // Already Bracketed Chords (ChordPro)
+        if (hasBracketedChords(line)) {
+            outputChords.push(trimmed);
+            const cleanLyrics = trimmed.replace(/\[.*?\]/g, '').replace(/\s+/g, ' ').trim();
+            if (cleanLyrics) {
+                outputLyrics.push(cleanLyrics);
+                if (!firstLyricText) firstLyricText = cleanLyrics;
+            }
+            continue;
         }
-        else {
-            // It's a lyric line (or header)
-            outputChords.push(line.trim()); // Fallback: duplicate lyrics to chords pane so lines match
-            outputLyrics.push(line.trim());
+
+        // Chord Line (Chord over Lyric)
+        if (isChordLine(line)) {
+            // Look ahead for matching lyric line
+            let nextLyricIndex = -1;
+            for (let j = i + 1; j < lines.length; j++) {
+                const peek = lines[j].trim();
+                if (!peek) continue;
+                if (isSectionHeader(peek)) break;
+                if (isChordLine(peek)) break; // Another chord line (instrumental)
+                nextLyricIndex = j;
+                break;
+            }
+
+            if (nextLyricIndex !== -1) {
+                const nextLyric = lines[nextLyricIndex].trim();
+                const merged = mergeChordsWithLyrics(line, nextLyric);
+                outputChords.push(merged);
+                outputLyrics.push(nextLyric);
+                if (!firstLyricText) firstLyricText = nextLyric;
+                i = nextLyricIndex; // Jump past matched lyric line
+            } else {
+                // Instrumental / Intro chord line (e.g. Intro "A C#m D A")
+                const tokens = trimmed.split(/\s+/).filter(Boolean);
+                const bracketed = tokens.map(t => isChordToken(t) ? `[${t.replace(/[\[\]]/g, '')}]` : t).join(' ');
+                outputChords.push(bracketed);
+            }
+            continue;
         }
+
+        // Plain Lyric Line
+        outputChords.push(trimmed);
+        outputLyrics.push(trimmed);
+        if (!firstLyricText) firstLyricText = trimmed;
+    }
+
+    // Auto-detect Title if not specified
+    if (!title && firstLyricText) {
+        const words = firstLyricText.split(/\s+/).slice(0, 4);
+        title = words.map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
     }
 
     return {
         title,
         artist,
-        key,
+        key: key || 'A',
         tempo,
         chords: outputChords.join('\n').trim(),
         lyrics: outputLyrics.join('\n').trim()

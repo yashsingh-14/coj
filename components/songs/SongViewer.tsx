@@ -331,13 +331,13 @@ export default function SongViewer({
                 return <div key={index} className="h-2 sm:h-2.5" />;
             }
 
-            // Check if section header (e.g. [Verse 1], [Chorus])
-            const isHeader = /^\[.*\]$/.test(trimmed);
+            // Check if section header (e.g. [Verse 1], Chorus, [Chorus])
+            const isHeader = /^\[.*\]$/.test(trimmed) || /^(?:\[)?(Intro|Verse|Chorus|Bridge|Pre-Chorus|PreChorus|Outro|Interlude|Ending|Instrumental)(?:[\s\d:]*)?(?:\])?$/i.test(trimmed);
             if (isHeader) {
                 return (
-                    <div key={index} className="mt-3 mb-1 first:mt-0">
-                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2 py-0.5 rounded shadow-sm inline-block">
-                            {trimmed.replace(/[\[\]]/g, '')}
+                    <div key={index} className="mt-3.5 mb-1.5 first:mt-0">
+                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2.5 py-0.5 rounded shadow-sm inline-block">
+                            {trimmed.replace(/[\[\]:]/g, '').trim()}
                         </span>
                     </div>
                 );
@@ -365,12 +365,12 @@ export default function SongViewer({
             }
 
             // Check if section header
-            const isHeader = /^\[.*\]$/.test(trimmed);
+            const isHeader = /^\[.*\]$/.test(trimmed) || /^(?:\[)?(Intro|Verse|Chorus|Bridge|Pre-Chorus|PreChorus|Outro|Interlude|Ending|Instrumental)(?:[\s\d:]*)?(?:\])?$/i.test(trimmed);
             if (isHeader) {
                 return (
-                    <div key={index} className="mt-3 mb-1 first:mt-0 font-sans">
-                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2 py-0.5 rounded shadow-sm inline-block">
-                            {trimmed.replace(/[\[\]]/g, '')}
+                    <div key={index} className="mt-3.5 mb-1.5 first:mt-0 font-sans">
+                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2.5 py-0.5 rounded shadow-sm inline-block">
+                            {trimmed.replace(/[\[\]:]/g, '').trim()}
                         </span>
                     </div>
                 );
@@ -397,13 +397,13 @@ export default function SongViewer({
                 return <div key={lineIndex} className="h-2 sm:h-2.5" />;
             }
 
-            // Section headers: [Chorus], [Verse 1], etc.
-            const headerMatch = trimmed.match(/^\[(Chorus|Verse|Bridge|Pre-Chorus|Intro|Outro|Instrumental).*\]$/i);
+            // Section headers: [Chorus], Chorus, Verse 1, [Verse 1], etc.
+            const headerMatch = trimmed.match(/^(?:\[)?(Intro|Verse|Chorus|Bridge|Pre-Chorus|PreChorus|Outro|Interlude|Ending|Instrumental)(?:[\s\d:]*)?(?:\])?$/i) || trimmed.match(/^\[.*\]$/);
             if (headerMatch) {
                 return (
-                    <div key={lineIndex} className="mt-3.5 mb-1.5 first:mt-0">
-                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2 py-0.5 rounded shadow-sm inline-block">
-                            {headerMatch[0].replace(/[\[\]]/g, '')}
+                    <div key={lineIndex} className="mt-4 mb-2 first:mt-0">
+                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2.5 py-0.5 rounded shadow-sm inline-block">
+                            {trimmed.replace(/[\[\]:]/g, '').trim()}
                         </span>
                     </div>
                 );

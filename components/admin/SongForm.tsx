@@ -133,14 +133,23 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
             setGenerationProgress('Applying data...');
             setFormData(prev => {
                 const cleanAiYt = extractYoutubeId(data.youtube_id || prev.youtube_id);
+                // Ensure AI generated chords are formatted in clean ChordPro if AI returned chord-over-lyric
+                let finalChords = data.chords || "";
+                let finalLyrics = data.lyrics || "";
+                if (finalChords && !finalChords.includes('[')) {
+                    const parsed = parseSongSheet(finalChords);
+                    finalChords = parsed.chords || finalChords;
+                    finalLyrics = parsed.lyrics || finalLyrics;
+                }
+
                 return {
                     ...prev,
                     title: data.title || prev.title,
                     artist: data.artist || prev.artist,
                     key: data.key || prev.key,
                     tempo: data.tempo || prev.tempo,
-                    lyrics: data.lyrics || "",
-                    chords: data.chords || "",
+                    lyrics: finalLyrics,
+                    chords: finalChords,
                     hindi_lyrics: data.hindi_lyrics || "",
                     youtube_id: cleanAiYt,
                     img: cleanAiYt ? `https://img.youtube.com/vi/${cleanAiYt}/hqdefault.jpg` : (data.img || prev.img)
@@ -167,8 +176,8 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
 
             addLog(`Magic Paste: Title="${title.slice(0, 20)}...", Artist="${artist}"`);
 
-            // Safety: Ensure title isn't accidentally a whole paragraph
-            const safeTitle = (title && title.length > 100) ? "" : title;
+            // Safety: Ensure title isn't accidentally capo instruction or whole paragraph
+            const safeTitle = (title && title.length < 80 && !title.toLowerCase().includes('capo')) ? title : "";
 
             setFormData(prev => ({
                 ...prev,
@@ -180,9 +189,34 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 tempo: tempo || prev.tempo
             }));
 
-            toast.success("Magic applied! Chords and Lyrics parsed.");
+            toast.success("✨ Magic applied! Chords and Lyrics formatted perfectly.");
         } catch (error) {
             toast.error("Failed to parse. Is current format correct?");
+        }
+    };
+
+    const handleAutoFormatFields = () => {
+        const textToFormat = formData.chords || formData.lyrics;
+        if (!textToFormat.trim()) {
+            toast.error("Please enter some chords or lyrics first!");
+            return;
+        }
+
+        try {
+            const parsed = parseSongSheet(formData.chords ? `${formData.title ? 'Title: ' + formData.title + '\n' : ''}${formData.chords}` : formData.lyrics);
+
+            setFormData(prev => ({
+                ...prev,
+                title: (!prev.title || prev.title.toLowerCase().includes('capo')) ? (parsed.title || prev.title) : prev.title,
+                key: parsed.key || prev.key,
+                tempo: parsed.tempo || prev.tempo,
+                chords: parsed.chords || prev.chords,
+                lyrics: parsed.lyrics || prev.lyrics
+            }));
+
+            toast.success("✨ Formatted into Rooh-E-Paak ChordPro layout!");
+        } catch (e) {
+            toast.error("Failed to auto-format.");
         }
     };
 
@@ -701,11 +735,22 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
 
                                     {/* Chords (ChordPro) */}
                                     <div>
-                                        <div className="flex items-center justify-between mb-1.5">
+                                        <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                                             <label className="block text-[11px] font-bold text-white/50 uppercase tracking-wider">
                                                 Chords (ChordPro Format)
                                             </label>
-                                            <span className="text-[10px] text-emerald-400/70 font-mono">[C], [G], [D] inline</span>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={handleAutoFormatFields}
+                                                    className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/40 text-amber-300 hover:text-white hover:border-amber-400 text-[11px] font-bold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                                                    title="Auto-format chords into Rooh-e-paak ChordPro style"
+                                                >
+                                                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                                                    <span>✨ Auto-Format (Rooh-E-Paak Style)</span>
+                                                </button>
+                                                <span className="text-[10px] text-emerald-400/70 font-mono hidden sm:inline">[C], [G] inline</span>
+                                            </div>
                                         </div>
                                         <textarea
                                             name="chords"
