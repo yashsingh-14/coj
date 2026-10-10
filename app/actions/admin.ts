@@ -42,15 +42,59 @@ async function verifyAdminAuthServer() {
 
 import { revalidateApp } from './revalidate';
 
+export async function recordAdminActivity(
+    type: 'song' | 'set' | 'user' | 'event' | 'announcement',
+    title: string,
+    details: string,
+    link?: string
+) {
+    if (!adminDb) return;
+    try {
+        const { data: existing } = await adminDb
+            .from('site_settings')
+            .select('value')
+            .eq('key', 'admin_recent_activities')
+            .maybeSingle();
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const currentList: any[] = Array.isArray(existing?.value) ? existing.value : [];
+        const newEntry = {
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            type,
+            title,
+            details,
+            date: new Date().toISOString(),
+            link
+        };
+
+        const updated = [newEntry, ...currentList.filter(item => item.title !== title)].slice(0, 50);
+
+        await adminDb
+            .from('site_settings')
+            .upsert({
+                key: 'admin_recent_activities',
+                value: updated,
+                description: 'Real-time Admin Audit Log',
+                updated_at: new Date().toISOString()
+            });
+    } catch (e) {
+        console.error("Failed to record admin activity:", e);
+    }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateSongAdmin(songId: string, payload: any) {
     if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
 
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
+    const nowIso = new Date().toISOString();
     const { data, error } = await adminDb
         .from('songs')
-        .update(payload)
+        .update({
+            ...payload,
+            created_at: nowIso
+        })
         .eq('id', songId)
         .select()
         .single();
@@ -60,6 +104,7 @@ export async function updateSongAdmin(songId: string, payload: any) {
         return { success: false, error: error.message };
     }
 
+    await recordAdminActivity('song', payload.title || 'Song', 'Song Updated', `/admin/songs/${songId}`);
     await revalidateApp();
     return { success: true, data };
 }
@@ -70,11 +115,13 @@ export async function createSongAdmin(payload: any) {
 
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
-
-
+    const nowIso = new Date().toISOString();
     const { data, error } = await adminDb
         .from('songs')
-        .insert([payload])
+        .insert([{
+            ...payload,
+            created_at: nowIso
+        }])
         .select()
         .single();
 
@@ -83,6 +130,7 @@ export async function createSongAdmin(payload: any) {
         return { success: false, error: error.message };
     }
 
+    await recordAdminActivity('song', payload.title || 'Song', 'New Song Added', `/admin/songs/${data?.id}`);
     await revalidateApp();
     return { success: true, data };
 }
@@ -102,6 +150,7 @@ export async function deleteSongAdmin(songId: string) {
         return { success: false, error: error.message };
     }
 
+    await recordAdminActivity('song', `Song ID ${songId.slice(0, 8)}`, 'Song Deleted');
     await revalidateApp();
     return { success: true };
 }
