@@ -1,38 +1,34 @@
-const CACHE_NAME = 'coj-v6';
+const CACHE_NAME = 'coj-v8-turbo';
 const OFFLINE_URL = '/offline';
 
-// Essential pages and assets to pre-cache on install
+// Only lightweight essential static fallbacks (Zero heavy pages on startup)
 const CACHE_URLS = [
-    '/',
-    '/songs',
     '/offline',
-    '/tools/tuner',
-    '/tools/pad',
-    '/api/songs',
     '/images/logo-footer-final.png',
     '/manifest.json'
 ];
 
-// Install event - cache essential files
+// Install event - pre-cache only minimal offline essentials
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(CACHE_URLS).catch((err) => {
-                console.warn('Pre-cache partial warning:', err);
+                console.warn('Minimal pre-cache notice:', err);
             });
         })
     );
     self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - purge all old/stuck caches instantly
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
+                cacheNames.map((name) => {
+                    if (name !== CACHE_NAME) {
+                        console.log('Purging stale cache:', name);
+                        return caches.delete(name);
                     }
                 })
             );
@@ -41,88 +37,59 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch event - network-first for pages, cache-first for assets
+// Fetch event - Ultra lightweight, zero overhead
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
     const url = new URL(event.request.url);
 
-    // Skip development Webpack HMR, Supabase auth/management, and Ads
+    // CRITICAL: NEVER intercept Next.js chunks, APIs, video streams, or external services
     if (
-        url.pathname.startsWith('/_next/webpack-hmr') ||
+        url.hostname === 'localhost' ||
+        url.hostname === '127.0.0.1' ||
+        url.pathname.startsWith('/_next/') ||
+        url.pathname.startsWith('/api/') ||
+        url.pathname.startsWith('/videos/') ||
+        url.pathname.endsWith('.mp4') ||
+        event.request.headers.get('range') ||
         url.hostname.includes('supabase.co') ||
-        url.hostname.includes('google-analytics.com') ||
-        url.hostname.includes('googlesyndication.com') ||
-        url.hostname.includes('doubleclick.net')
+        url.hostname.includes('google') ||
+        url.hostname.includes('youtube') ||
+        url.hostname.includes('doubleclick')
     ) {
-        return;
+        return; // Go straight to network natively, zero delay!
     }
 
-    // Special handling for /api/songs: Stale-While-Revalidate
-    if (url.pathname === '/api/songs') {
+    // Navigation requests (HTML pages) - Network-first with fast offline fallback
+    if (event.request.mode === 'navigate') {
         event.respondWith(
-            caches.open(CACHE_NAME).then(async (cache) => {
-                const cachedResponse = await cache.match(event.request);
-                const fetchPromise = fetch(event.request)
-                    .then((networkResponse) => {
-                        if (networkResponse && networkResponse.status === 200) {
-                            cache.put(event.request, networkResponse.clone());
-                        }
-                        return networkResponse;
-                    })
-                    .catch(() => cachedResponse);
-
-                return cachedResponse || fetchPromise;
+            fetch(event.request).catch(async () => {
+                const cached = await caches.match(event.request);
+                if (cached) return cached;
+                const offline = await caches.match(OFFLINE_URL);
+                return offline || new Response('Offline', { status: 503 });
             })
         );
         return;
     }
 
-    // For Navigation Requests (HTML pages) - Network-First, fallback to Cache, fallback to /offline
-    if (event.request.mode === 'navigate') {
+    // Static local images/icons only
+    if (url.origin === self.location.origin && (url.pathname.startsWith('/images/') || url.pathname.startsWith('/icons/'))) {
         event.respondWith(
-            fetch(event.request)
-                .then((fetchResponse) => {
-                    if (fetchResponse && fetchResponse.status === 200) {
-                        const responseToCache = fetchResponse.clone();
-                        caches.open(CACHE_NAME).then((cache) => {
-                            cache.put(event.request, responseToCache);
-                        });
-                    }
-                    return fetchResponse;
-                })
-                .catch(async () => {
-                    const cachedResponse = await caches.match(event.request);
-                    if (cachedResponse) return cachedResponse;
-                    const offlinePage = await caches.match(OFFLINE_URL);
-                    return offlinePage || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } });
-                })
-        );
-        return;
-    }
-
-    // Static Assets (_next/static, images, fonts, css, js) - Cache-First, fallback to Network
-    event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) return cachedResponse;
-
-            return fetch(event.request)
-                .then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
-                        if (url.origin === self.location.origin) {
-                            const responseToCache = networkResponse.clone();
-                            caches.open(CACHE_NAME).then((cache) => {
-                                cache.put(event.request, responseToCache);
-                            });
+            caches.match(event.request).then((cached) => {
+                return (
+                    cached ||
+                    fetch(event.request).then((networkResponse) => {
+                        if (networkResponse && networkResponse.status === 200) {
+                            const clone = networkResponse.clone();
+                            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
                         }
-                    }
-                    return networkResponse;
-                })
-                .catch(() => {
-                    return new Response('', { status: 408, headers: { 'Content-Type': 'text/plain' } });
-                });
-        })
-    );
+                        return networkResponse;
+                    }).catch(() => new Response('', { status: 404 }))
+                );
+            })
+        );
+    }
 });
 
 // Push notification event
