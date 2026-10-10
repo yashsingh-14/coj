@@ -1,4 +1,4 @@
-const CACHE_NAME = 'coj-v4'; // Bumped for mobile PWA auth and lock fix
+const CACHE_NAME = 'coj-v5'; // Bumped to purge stale development assets
 const OFFLINE_URL = '/offline';
 
 // Files to cache for offline use
@@ -47,12 +47,14 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(event.request.url);
 
-    // Bypass caching for APIs, Supabase, and dynamic Next.js data
+    // Bypass caching for APIs, Supabase, development, and dynamic Next.js data
     if (
+        url.hostname === 'localhost' ||
+        url.hostname === '127.0.0.1' ||
+        url.pathname.startsWith('/_next/') ||
         url.pathname.startsWith('/api/') ||
         url.hostname.includes('supabase.co') ||
-        url.hostname.includes('supabase.in') ||
-        url.pathname.startsWith('/_next/data/')
+        url.hostname.includes('supabase.in')
     ) {
         return; // Go straight to network, do not cache
     }
