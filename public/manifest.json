@@ -1,0 +1,29 @@
+{
+  "name": "Call of Jesus Ministries",
+  "short_name": "COJ Worship",
+  "description": "Christian worship songs, lyrics, chords & sermons in Hindi and English.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#02000F",
+  "theme_color": "#02000F",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/images/logo-footer-final.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

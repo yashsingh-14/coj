@@ -1,34 +1,47 @@
-const CACHE_NAME = 'coj-v8-turbo';
+const CACHE_NAME = 'coj-v10-offline-rocksolid';
 const OFFLINE_URL = '/offline';
 
-// Only lightweight essential static fallbacks (Zero heavy pages on startup)
-const CACHE_URLS = [
+// Essential pages & assets to pre-cache on install
+const PRECACHE_URLS = [
     '/offline',
+    '/tools/tuner',
+    '/tools/pad',
     '/images/logo-footer-final.png',
+    '/images/icon-512.png',
     '/manifest.json'
 ];
 
-// Install event - pre-cache only minimal offline essentials
+// Install: pre-cache all essentials gracefully without all-or-nothing failure
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(CACHE_URLS).catch((err) => {
-                console.warn('Minimal pre-cache notice:', err);
-            });
+            return Promise.all(
+                PRECACHE_URLS.map((url) => {
+                    return fetch(url)
+                        .then((res) => {
+                            if (res && res.status === 200) {
+                                return cache.put(url, res);
+                            }
+                        })
+                        .catch((err) => {
+                            console.warn('Pre-cache skip:', url, err);
+                        });
+                })
+            );
         })
     );
     self.skipWaiting();
 });
 
-// Activate event - purge all old/stuck caches instantly
+// Activate: purge all old caches immediately
 self.addEventListener('activate', (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then((keys) => {
             return Promise.all(
-                cacheNames.map((name) => {
-                    if (name !== CACHE_NAME) {
-                        console.log('Purging stale cache:', name);
-                        return caches.delete(name);
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) {
+                        console.log('Purging stale cache:', key);
+                        return caches.delete(key);
                     }
                 })
             );
@@ -37,17 +50,16 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// Fetch event - Ultra lightweight, zero overhead
+// Fetch handler
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
     const url = new URL(event.request.url);
 
-    // CRITICAL: NEVER intercept Next.js chunks, APIs, video streams, or external services
+    // Completely bypass dev server, external services, heavy media, and APIs
     if (
         url.hostname === 'localhost' ||
         url.hostname === '127.0.0.1' ||
-        url.pathname.startsWith('/_next/') ||
         url.pathname.startsWith('/api/') ||
         url.pathname.startsWith('/videos/') ||
         url.pathname.endsWith('.mp4') ||
@@ -57,24 +69,32 @@ self.addEventListener('fetch', (event) => {
         url.hostname.includes('youtube') ||
         url.hostname.includes('doubleclick')
     ) {
-        return; // Go straight to network natively, zero delay!
+        return; // Go straight to network natively
     }
 
-    // Navigation requests (HTML pages) - Network-first with fast offline fallback
-    if (event.request.mode === 'navigate') {
+    // 1. Next.js Static Chunks & Assets (JS, CSS, fonts)
+    // Cache-first / Stale-while-revalidate so offline page has working JS and styling!
+    if (url.pathname.startsWith('/_next/static/')) {
         event.respondWith(
-            fetch(event.request).catch(async () => {
-                const cached = await caches.match(event.request);
+            caches.match(event.request).then((cached) => {
                 if (cached) return cached;
-                const offline = await caches.match(OFFLINE_URL);
-                return offline || new Response('Offline', { status: 503 });
+                return fetch(event.request).then((networkResponse) => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    }
+                    return networkResponse;
+                });
             })
         );
         return;
     }
 
-    // Static local images/icons only
-    if (url.origin === self.location.origin && (url.pathname.startsWith('/images/') || url.pathname.startsWith('/icons/'))) {
+    // 2. Images, icons, manifest
+    if (
+        url.origin === self.location.origin &&
+        (url.pathname.startsWith('/images/') || url.pathname.startsWith('/icons/') || url.pathname === '/manifest.json')
+    ) {
         event.respondWith(
             caches.match(event.request).then((cached) => {
                 return (
@@ -89,6 +109,42 @@ self.addEventListener('fetch', (event) => {
                 );
             })
         );
+        return;
+    }
+
+    // 3. Navigation requests (HTML pages)
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((networkResponse) => {
+                    // Cache successful visits to /offline, /tools/tuner, /tools/pad
+                    if (
+                        networkResponse &&
+                        networkResponse.status === 200 &&
+                        (url.pathname === '/offline' || url.pathname.startsWith('/tools/'))
+                    ) {
+                        const clone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+                    }
+                    return networkResponse;
+                })
+                .catch(async () => {
+                    // Network failed (Device is offline)
+                    // Check if the requested route itself is cached
+                    const cachedPage = await caches.match(event.request);
+                    if (cachedPage) return cachedPage;
+
+                    // Fallback to offline page
+                    const offlinePage = await caches.match(OFFLINE_URL);
+                    if (offlinePage) return offlinePage;
+
+                    return new Response('Offline - Call of Jesus', {
+                        status: 503,
+                        headers: { 'Content-Type': 'text/plain' }
+                    });
+                })
+        );
+        return;
     }
 });
 
