@@ -22,14 +22,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         return { title: 'Song Not Found | COJ Worship' };
     }
 
-    const isHindi = song.category === 'hindi';
+    const isHindi = song.category === 'hindi' || Boolean(song.hindi_lyrics) || /[\u0900-\u097F]/.test(song.lyrics || '');
     const songSlug = generateSlug(song.title);
     const canonicalUrl = `${SITE_URL}/songs/${songSlug}`;
 
-    const title = `${song.title} Lyrics & Chords${song.artist ? ` - ${song.artist}` : ''} | COJ Worship`;
-    const description = isHindi
-        ? `${song.title} - Hindi Christian worship song lyrics with guitar chords. Artist: ${song.artist || 'Unknown'}. Key: ${song.key || 'N/A'}. Free chords for church worship and praise.`
-        : `${song.title} worship song lyrics with guitar chords, key (${song.key || 'N/A'}), and song structure. Artist: ${song.artist || 'Unknown'}. Free for church worship leaders.`;
+    // Target Exact Search Intent: "[Song Name] Song Lyrics & Chords - [Artist]"
+    const artistPart = song.artist ? ` - ${song.artist}` : '';
+    const title = `${song.title} Song Lyrics & Chords${artistPart} | COJ Worship`;
+
+    // Extract first 2 clean lyric lines for maximum search snippet relevance
+    const lyricLines = (song.lyrics || '')
+        .split('\n')
+        .map((l: string) => l.trim())
+        .filter((l: string) => l.length > 0 && !l.startsWith('[') && !l.startsWith('('))
+        .slice(0, 2)
+        .join(', ');
+
+    const description = `Full "${song.title}" song lyrics and guitar chords${song.artist ? ` by ${song.artist}` : ''}.${lyricLines ? ` "${lyricLines}"...` : ''} Key: ${song.key || 'C'}. Includes English, Hindi lyrics, transpose tool & video on COJ Worship.`;
 
     const songImageUrl = getSongImage(song);
 
@@ -37,31 +46,34 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         title,
         description,
         keywords: [
-            song.title,
+            `${song.title} song lyrics`,
             `${song.title} lyrics`,
             `${song.title} chords`,
             `${song.title} guitar chords`,
-            song.artist,
-            "Christian worship",
-            isHindi ? "Hindi Christian Song" : "English Christian Song",
-            "worship lyrics and chords",
-            "church worship songs",
-            `${song.title} ${isHindi ? 'hindi' : 'english'} worship`
+            song.artist ? `${song.title} ${song.artist} lyrics` : '',
+            song.artist ? `${song.artist} ${song.title}` : '',
+            isHindi ? `${song.title} lyrics in hindi` : '',
+            isHindi ? `${song.title} hindi christian song` : '',
+            `${song.title} lyrics and chords`,
+            `${song.title} worship song`,
+            "Christian song lyrics",
+            "worship chords",
+            "COJ worship"
         ].filter(Boolean),
         alternates: {
             canonical: canonicalUrl,
         },
         openGraph: {
-            type: 'article' as const,
+            type: 'music.song' as any,
             title,
             description,
             url: canonicalUrl,
             siteName: 'COJ Worship',
-            images: [{ url: songImageUrl, alt: `${song.title} - Worship Song` }],
+            images: [{ url: songImageUrl, alt: `${song.title} - Worship Song Lyrics & Chords` }],
         },
         twitter: {
-            card: 'summary' as const,
-            title: `${song.title} - Lyrics & Chords`,
+            card: 'summary_large_image' as const,
+            title,
             description,
             images: [songImageUrl],
         },
@@ -77,6 +89,8 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
     if (!song) {
         notFound();
     }
+
+    const isHindi = song.category === 'hindi' || Boolean(song.hindi_lyrics) || /[\u0900-\u097F]/.test(song.lyrics || '');
 
     // Fetch Related Songs
     const { data: relatedSongsData } = await supabaseServer
@@ -95,34 +109,159 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
 
     const songCanonicalUrl = `${SITE_URL}/songs/${generateSlug(song.title)}`;
 
-    const jsonLd = {
+    // High-Authority Schema.org Knowledge Graph (Breadcrumbs, MusicComposition, MusicRecording, FAQPage)
+    const jsonLdGraph = {
         '@context': 'https://schema.org',
-        '@type': 'MusicComposition',
-        name: song.title,
-        url: songCanonicalUrl,
-        composer: {
-            '@type': 'Person',
-            name: song.artist || 'Unknown',
-        },
-        publisher: {
-            '@type': 'Organization',
-            name: 'COJ Worship - Call of Jesus Ministries',
-            url: SITE_URL,
-        },
-        inLanguage: song.category === 'hindi' ? 'hi' : 'en',
-        musicalKey: song.key,
-        genre: 'Christian Worship',
-        ...(song.tempo && { tempo: { '@type': 'QuantitativeValue', value: song.tempo, unitText: 'BPM' } }),
-        ...(song.lyrics && { lyrics: { '@type': 'CreativeWork', text: song.lyrics.substring(0, 500) + '...' } }),
+        '@graph': [
+            {
+                '@type': 'BreadcrumbList',
+                '@id': `${songCanonicalUrl}#breadcrumb`,
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: SITE_URL,
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Worship Songs',
+                        item: `${SITE_URL}/songs`,
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 3,
+                        name: `${song.title} Lyrics`,
+                        item: songCanonicalUrl,
+                    },
+                ],
+            },
+            {
+                '@type': 'MusicComposition',
+                '@id': `${songCanonicalUrl}#composition`,
+                name: song.title,
+                alternateName: [
+                    song.title,
+                    `${song.title} Song`,
+                    ...(song.hindi_lyrics ? [`${song.title} (Hindi Lyrics)`] : [])
+                ],
+                url: songCanonicalUrl,
+                composer: {
+                    '@type': 'MusicGroup',
+                    name: song.artist || 'Christian Artist',
+                },
+                lyricist: {
+                    '@type': 'MusicGroup',
+                    name: song.artist || 'Christian Artist',
+                },
+                musicalKey: song.key || 'C',
+                genre: ['Christian Worship', 'Gospel', 'Praise & Worship'],
+                inLanguage: isHindi ? ['hi', 'hi-Latn', 'en'] : ['en'],
+                ...(song.tempo && { tempo: { '@type': 'QuantitativeValue', value: song.tempo, unitText: 'BPM' } }),
+                ...(song.lyrics && {
+                    lyrics: {
+                        '@type': 'CreativeWork',
+                        text: song.lyrics,
+                        inLanguage: 'en-US',
+                    },
+                }),
+            },
+            {
+                '@type': 'MusicRecording',
+                '@id': `${songCanonicalUrl}#recording`,
+                name: song.title,
+                byArtist: {
+                    '@type': 'MusicGroup',
+                    name: song.artist || 'Christian Artist',
+                },
+                inAlbum: {
+                    '@type': 'MusicAlbum',
+                    name: 'COJ Worship Songs',
+                },
+                recordingOf: { '@id': `${songCanonicalUrl}#composition` },
+                url: songCanonicalUrl,
+                ...(song.youtube_id && {
+                    video: {
+                        '@type': 'VideoObject',
+                        name: `${song.title} Video - ${song.artist || 'Worship'}`,
+                        description: `Watch ${song.title} with chords and lyrics`,
+                        thumbnailUrl: `https://img.youtube.com/vi/${song.youtube_id}/hqdefault.jpg`,
+                        embedUrl: `https://www.youtube.com/embed/${song.youtube_id}`,
+                    },
+                }),
+            },
+            {
+                '@type': 'FAQPage',
+                '@id': `${songCanonicalUrl}#faq`,
+                mainEntity: [
+                    {
+                        '@type': 'Question',
+                        name: `What are the lyrics of ${song.title}?`,
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: `The full lyrics of "${song.title}"${song.artist ? ` by ${song.artist}` : ''} are available on Call of Jesus (COJ Worship) with both English and Hindi transliterations.`,
+                        },
+                    },
+                    {
+                        '@type': 'Question',
+                        name: `Who sings and composed ${song.title}?`,
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: `"${song.title}" is performed by ${song.artist || 'Christian Worship Artist'}.`,
+                        },
+                    },
+                    {
+                        '@type': 'Question',
+                        name: `What is the original key for ${song.title} chords?`,
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: `The original key of "${song.title}" is ${song.key || 'C'}${song.tempo ? ` at ${song.tempo} BPM` : ''}. You can transpose it to any key using the free chord transposition tool on COJ Worship.`,
+                        },
+                    },
+                ],
+            },
+        ],
     };
 
     return (
         <>
-            {/* Inline <script> for JSON-LD — rendered in initial HTML so Google can see it */}
+            {/* Inline <script> for JSON-LD — rendered in initial HTML for Google knowledge graph */}
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
             />
+
+            {/* Semantic Server-Side Rendered (SSR) Article for Googlebot & Search Crawlers */}
+            <article className="sr-only" aria-hidden="true">
+                <header>
+                    <h1>{song.title} Song Lyrics &amp; Chords - {song.artist || 'Christian Worship'}</h1>
+                    <p>Artist: {song.artist || 'Unknown'}</p>
+                    <p>Original Key: {song.key || 'C'}</p>
+                    {song.tempo && <p>Tempo: {song.tempo} BPM</p>}
+                    <p>Category: {song.category || 'Worship'}</p>
+                </header>
+
+                <section>
+                    <h2>{song.title} English &amp; Hinglish Lyrics</h2>
+                    <pre>{song.lyrics}</pre>
+                </section>
+
+                {song.hindi_lyrics && (
+                    <section>
+                        <h2>{song.title} Hindi Lyrics (हिन्दी में)</h2>
+                        <pre>{song.hindi_lyrics}</pre>
+                    </section>
+                )}
+
+                {song.chords && (
+                    <section>
+                        <h2>{song.title} Guitar Chords Sheet</h2>
+                        <pre>{song.chords}</pre>
+                    </section>
+                )}
+            </article>
+
             <SongViewer
                 songId={song.id}
                 title={song.title}
