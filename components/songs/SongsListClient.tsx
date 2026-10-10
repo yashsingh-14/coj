@@ -8,6 +8,7 @@ import TiltCard from '@/components/ui/TiltCard';
 import { getSongImage } from '@/lib/utils';
 import { generateSlug } from '@/lib/seoUtils';
 import { Song } from '@/data/types';
+import { matchesCategorySlug } from '@/lib/categoryUtils';
 
 interface SongsListClientProps {
     initialSongs: Song[];
@@ -23,8 +24,7 @@ export default function SongsListClient({ initialSongs, categoryFilter }: SongsL
         let list = initialSongs;
 
         if (categoryFilter && categoryFilter !== 'all') {
-            const cat = categoryFilter.toLowerCase();
-            list = list.filter(s => (s.category || '').toLowerCase().includes(cat));
+            list = list.filter(s => matchesCategorySlug(s, categoryFilter));
         }
 
         const q = query.trim().toLowerCase();

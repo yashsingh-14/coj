@@ -12,8 +12,18 @@ export const songSchema = z.object({
         .trim()
         .optional(),
 
-    category: z.enum(['worship', 'praise', 'hymns', 'kids', 'contemporary'])
-        .default('worship'),
+    category: z.enum([
+        'hindi-worship',
+        'hindi-praise',
+        'english-worship',
+        'english-praise',
+        'worship',
+        'praise',
+        'hymns',
+        'kids',
+        'contemporary',
+        'hindi'
+    ]).default('hindi-worship'),
 
     key: z.string()
         .max(10, 'Key too long')

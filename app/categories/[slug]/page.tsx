@@ -20,22 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
 }
 
-// Helper to detect Hindi songs
-const isHindiSong = (song: Song) => {
-    const devanagariRegex = /[\u0900-\u097F]/;
-    if (devanagariRegex.test(song.title) || (song.hindi_lyrics && devanagariRegex.test(song.hindi_lyrics))) return true;
-
-    const titleLower = song.title.toLowerCase();
-    const englishRegex = /\b(the|lord|god|jesus|holy|spirit|love|grace|light|heart|soul|king|father|savior|worship|praise|glory|above|oceans|feet|fail|where|hills|song|your|my|our|you|me|i|am|who|what|when|how)\b/i;
-
-    if (titleLower.includes('oceans') || englishRegex.test(titleLower)) return false;
-
-    const hindiRegex = /\b(dhanyawad|yeshu|masih|tera|teri|khuda|aradhana|aaradhana|stuti|saath|pavitra|atma|gaye|krupa|prarthana|mahima|raja|prabhu|tu|mere|meri|hai|pyar|pyaar|zindagi|chahu|dil|mukti|data|sagar|vachan|naam|sarvashaktiman|el shaddai|yahowa|juda|masiha|khudawand|rehem|fazal|shanti|aanand|jivan|jeevan|marg|satya|vijay|lahu|krus|paap|maafi|uddhar|swarg|dharti|asman|rooh|pak|pavan|senaon|samarth|binti|sun|anugrah|bharosa)\b/i;
-
-    if (hindiRegex.test(titleLower)) return true;
-    return false;
-};
-
+import { matchesCategorySlug } from '@/lib/categoryUtils';
 
 export default async function CategoryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -59,39 +44,8 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
 
     const allSongs = dbSongs.length > 0 ? dbSongs : ALL_SONGS;
 
-    // 2. Determine Target Category & Language
-    let languageFilter: 'hindi' | 'english' | null = null;
-    let targetCategory = cleanSlug;
-
-    if (cleanSlug.includes('hindi-') || cleanSlug.includes('english-')) {
-        const [lang, ...catParts] = cleanSlug.split('-');
-        languageFilter = lang as 'hindi' | 'english';
-        targetCategory = catParts.join('-');
-    }
-
-    let filteredSongs = allSongs;
-
-    // 3. Filter by Category
-    if (targetCategory && targetCategory !== 'all') {
-        filteredSongs = filteredSongs.filter(song => {
-            const songCat = (song.category || '').toLowerCase();
-            if (songCat.includes(targetCategory) || targetCategory.includes(songCat)) return true;
-
-            const worshipKeywords = ['worship', 'praise', 'stuti', 'aradhana', 'adoration'];
-            const isWorshipTarget = worshipKeywords.some(k => targetCategory.includes(k));
-            const isWorshipSong = worshipKeywords.some(k => songCat.includes(k));
-            if (isWorshipTarget && isWorshipSong) return true;
-
-            return false;
-        });
-    }
-
-    // 4. Filter by Language
-    if (languageFilter === 'hindi') {
-        filteredSongs = filteredSongs.filter(song => isHindiSong(song));
-    } else if (languageFilter === 'english') {
-        filteredSongs = filteredSongs.filter(song => !isHindiSong(song));
-    }
+    // 2. Strict, bulletproof category filtering
+    const filteredSongs = allSongs.filter(song => matchesCategorySlug(song, cleanSlug));
 
     // Dynamic background based on category
     const getGradient = () => {

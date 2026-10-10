@@ -26,6 +26,7 @@ import { parseSongSheet } from '@/lib/songParser';
 import { Song } from '@/data/types';
 import { updateSongAdmin, createSongAdmin } from '@/app/actions/admin';
 import { extractYoutubeId } from '@/lib/utils';
+import { isSongHindi } from '@/lib/categoryUtils';
 
 
 interface SongFormProps {
@@ -66,10 +67,20 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
         ? initialData.img
         : (initialYt ? `https://img.youtube.com/vi/${initialYt}/hqdefault.jpg` : (initialData?.img || ''));
 
+    const getInitialCategory = () => {
+        if (!initialData?.category) return 'hindi-worship';
+        const c = initialData.category.toLowerCase().trim();
+        const isHindi = isSongHindi(initialData);
+        if (c === 'worship') return isHindi ? 'hindi-worship' : 'english-worship';
+        if (c === 'praise') return isHindi ? 'hindi-praise' : 'english-praise';
+        if (c === 'hindi') return 'hindi-worship';
+        return initialData.category;
+    };
+
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         artist: initialData?.artist || '',
-        category: initialData?.category || 'worship',
+        category: getInitialCategory(),
         key: initialData?.key || '',
         tempo: initialData?.tempo || '',
         youtube_id: initialYt,
@@ -572,13 +583,27 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                             <select
                                                 name="category"
                                                 value={formData.category}
-                                                onChange={handleChange}
+                                                onChange={(e) => {
+                                                    const val = e.target.value;
+                                                    setFormData(prev => {
+                                                        const isHindi = val.startsWith('hindi');
+                                                        const isEnglish = val.startsWith('english');
+                                                        return {
+                                                            ...prev,
+                                                            category: val,
+                                                            ...(isHindi && !prev.hindi_lyrics ? { hindi_lyrics: ' ' } : {}),
+                                                            ...(isEnglish && prev.hindi_lyrics === ' ' ? { hindi_lyrics: '' } : {})
+                                                        };
+                                                    });
+                                                }}
                                                 className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors"
                                             >
-                                                <option value="worship">Worship</option>
-                                                <option value="praise">Praise</option>
-                                                <option value="hymns">Hymns</option>
-                                                <option value="kids">Kids</option>
+                                                <option value="hindi-worship">Hindi Worship (हिन्दी आराधना)</option>
+                                                <option value="hindi-praise">Hindi Praise (हिन्दी स्तुति)</option>
+                                                <option value="english-worship">English Worship</option>
+                                                <option value="english-praise">English Praise</option>
+                                                <option value="hymns">Hymns (पारंपरिक भजन)</option>
+                                                <option value="kids">Kids (बच्चों के गीत)</option>
                                                 <option value="contemporary">Contemporary</option>
                                             </select>
                                         </div>
@@ -588,18 +613,29 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                                             </label>
                                             <select
                                                 name="language"
-                                                value={formData.hindi_lyrics ? 'hindi' : 'english'}
+                                                value={formData.category.startsWith('hindi') || formData.hindi_lyrics ? 'hindi' : 'english'}
                                                 onChange={(e) => {
                                                     const isHindi = e.target.value === 'hindi';
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        hindi_lyrics: isHindi ? (prev.hindi_lyrics || ' ') : ''
-                                                    }));
+                                                    setFormData(prev => {
+                                                        let newCat = prev.category;
+                                                        if (isHindi) {
+                                                            if (newCat === 'english-worship') newCat = 'hindi-worship';
+                                                            if (newCat === 'english-praise') newCat = 'hindi-praise';
+                                                        } else {
+                                                            if (newCat === 'hindi-worship') newCat = 'english-worship';
+                                                            if (newCat === 'hindi-praise') newCat = 'english-praise';
+                                                        }
+                                                        return {
+                                                            ...prev,
+                                                            category: newCat,
+                                                            hindi_lyrics: isHindi ? (prev.hindi_lyrics || ' ') : ''
+                                                        };
+                                                    });
                                                 }}
                                                 className="w-full bg-[#0A0A0A] border border-white/10 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors"
                                             >
-                                                <option value="english">English</option>
                                                 <option value="hindi">Hindi</option>
+                                                <option value="english">English</option>
                                             </select>
                                         </div>
                                     </div>
