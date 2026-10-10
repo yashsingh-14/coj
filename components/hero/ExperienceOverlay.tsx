@@ -287,12 +287,11 @@ function HeroSection() {
             <div className="hero-bg-img absolute inset-0 z-0 overflow-hidden bg-[#07060A]">
                 <video
                     ref={videoRef}
-                    poster="/images/hero-poster-mobile.webp"
                     autoPlay
                     muted
                     loop
                     playsInline
-                    preload="metadata"
+                    preload="auto"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                 >
                     <source src="https://bylvnplqvwgavaiygvoy.supabase.co/storage/v1/object/public/videos/coj-intro.mp4" type="video/mp4" />

@@ -102,13 +102,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link
-          rel="preload"
-          as="image"
-          href="/images/hero-poster-mobile.webp"
-          type="image/webp"
-          fetchPriority="high"
-        />
         <link rel="preconnect" href="https://bylvnplqvwgavaiygvoy.supabase.co" />
         <link rel="dns-prefetch" href="https://bylvnplqvwgavaiygvoy.supabase.co" />
       </head>
