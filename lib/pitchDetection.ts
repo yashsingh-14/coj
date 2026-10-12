@@ -1,7 +1,10 @@
 /**
- * Pitch Detection Engine for Guitar Tuner (GuitarTuna Grade)
- * Uses high-clarity Autocorrelation with RMS Noise Gate and parabolic sub-sample interpolation.
- * Filters out room noise, microphone hiss, and ambient chatter so the needle never twitches randomly.
+ * Pitch Detection Engine for Guitar Tuner (Yousician GuitarTuna Grade)
+ * Uses McLeod Pitch Method (MPM) with Normalized Square Difference Function (NSDF)
+ * and sub-sample parabolic interpolation.
+ * 
+ * Accurately detects fundamental guitar pitch (E2 82.4Hz to E4 329.6Hz) without octave jumping.
+ * Noise-gated to ignore room noise, mic hiss, and fan hum.
  */
 
 // All 12 musical note names
@@ -11,7 +14,7 @@ export const DEFAULT_A4_FREQUENCY = 440;
 const A4_MIDI_NUMBER = 69;
 
 export interface PitchResult {
-    frequency: number;      // Detected frequency in Hz
+    frequency: number;      // Detected frequency in Hz (exact guitar pitch)
     note: string;           // Note name (e.g., "E", "A", "D")
     octave: number;         // Octave number (e.g., 2, 3, 4)
     cents: number;          // How many cents off from nearest 12-TET note (-50 to +50)
@@ -26,6 +29,8 @@ export interface GuitarString {
     frequency: number;
     label: string;
     stringNumber: number; // 1 to 6 (1 = high E, 6 = low E)
+    gauge: 'thick-wound' | 'medium-wound' | 'light-wound' | 'plain-wound' | 'plain-steel' | 'thin-steel';
+    color: string;
 }
 
 export type TuningPreset = 
@@ -48,7 +53,7 @@ export interface TuningPresetInfo {
 }
 
 export const TUNING_PRESETS_INFO: TuningPresetInfo[] = [
-    { id: 'standard', name: 'Standard (E A D G B E)', category: 'Guitar', notesDisplay: 'E A D G B E', description: 'Standard universal tuning for acoustic & electric guitar' },
+    { id: 'standard', name: 'Standard (E A D G B E)', category: 'Guitar', notesDisplay: 'E A D G B E', description: 'Universal standard guitar tuning for praise, worship & rock' },
     { id: 'drop_d', name: 'Drop D (D A D G B E)', category: 'Guitar', notesDisplay: 'D A D G B E', description: 'Deep 6th string dropped to D for powerful worship chords' },
     { id: 'half_step_down', name: 'Half Step Down (Eb Ab Db Gb Bb Eb)', category: 'Guitar', notesDisplay: 'Eb Ab Db Gb Bb Eb', description: 'Warm acoustic singing key, easier on vocal chords' },
     { id: 'full_step_down', name: 'Full Step Down (D G C F A D)', category: 'Guitar', notesDisplay: 'D G C F A D', description: 'Deep, resonant acoustic guitar tone' },
@@ -59,74 +64,74 @@ export const TUNING_PRESETS_INFO: TuningPresetInfo[] = [
     { id: 'ukulele', name: 'Ukulele (G C E A)', category: 'Ukulele', notesDisplay: 'G C E A', description: 'Standard soprano, concert, and tenor ukulele' },
 ];
 
-// Reference strings for each preset
+// Reference strings for each preset with authentic string gauges
 export const GUITAR_PRESET_STRINGS: Record<TuningPreset, GuitarString[]> = {
     standard: [
-        { note: 'E', octave: 2, frequency: 82.41, label: '6th (E)', stringNumber: 6 },
-        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5 },
-        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4 },
-        { note: 'G', octave: 3, frequency: 196.00, label: '3rd (G)', stringNumber: 3 },
-        { note: 'B', octave: 3, frequency: 246.94, label: '2nd (B)', stringNumber: 2 },
-        { note: 'E', octave: 4, frequency: 329.63, label: '1st (E)', stringNumber: 1 },
+        { note: 'E', octave: 2, frequency: 82.41, label: '6th (E)', stringNumber: 6, gauge: 'thick-wound', color: '#c49758' },
+        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5, gauge: 'medium-wound', color: '#c49758' },
+        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4, gauge: 'light-wound', color: '#c49758' },
+        { note: 'G', octave: 3, frequency: 196.00, label: '3rd (G)', stringNumber: 3, gauge: 'plain-wound', color: '#d9ba82' },
+        { note: 'B', octave: 3, frequency: 246.94, label: '2nd (B)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'E', octave: 4, frequency: 329.63, label: '1st (E)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ],
     drop_d: [
-        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6 },
-        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5 },
-        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4 },
-        { note: 'G', octave: 3, frequency: 196.00, label: '3rd (G)', stringNumber: 3 },
-        { note: 'B', octave: 3, frequency: 246.94, label: '2nd (B)', stringNumber: 2 },
-        { note: 'E', octave: 4, frequency: 329.63, label: '1st (E)', stringNumber: 1 },
+        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6, gauge: 'thick-wound', color: '#c49758' },
+        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5, gauge: 'medium-wound', color: '#c49758' },
+        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4, gauge: 'light-wound', color: '#c49758' },
+        { note: 'G', octave: 3, frequency: 196.00, label: '3rd (G)', stringNumber: 3, gauge: 'plain-wound', color: '#d9ba82' },
+        { note: 'B', octave: 3, frequency: 246.94, label: '2nd (B)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'E', octave: 4, frequency: 329.63, label: '1st (E)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ],
     half_step_down: [
-        { note: 'D#', octave: 2, frequency: 77.78, label: '6th (Eb)', stringNumber: 6 },
-        { note: 'G#', octave: 2, frequency: 103.83, label: '5th (Ab)', stringNumber: 5 },
-        { note: 'C#', octave: 3, frequency: 138.59, label: '4th (Db)', stringNumber: 4 },
-        { note: 'F#', octave: 3, frequency: 185.00, label: '3rd (Gb)', stringNumber: 3 },
-        { note: 'A#', octave: 3, frequency: 233.08, label: '2nd (Bb)', stringNumber: 2 },
-        { note: 'D#', octave: 4, frequency: 311.13, label: '1st (Eb)', stringNumber: 1 },
+        { note: 'D#', octave: 2, frequency: 77.78, label: '6th (Eb)', stringNumber: 6, gauge: 'thick-wound', color: '#c49758' },
+        { note: 'G#', octave: 2, frequency: 103.83, label: '5th (Ab)', stringNumber: 5, gauge: 'medium-wound', color: '#c49758' },
+        { note: 'C#', octave: 3, frequency: 138.59, label: '4th (Db)', stringNumber: 4, gauge: 'light-wound', color: '#c49758' },
+        { note: 'F#', octave: 3, frequency: 185.00, label: '3rd (Gb)', stringNumber: 3, gauge: 'plain-wound', color: '#d9ba82' },
+        { note: 'A#', octave: 3, frequency: 233.08, label: '2nd (Bb)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'D#', octave: 4, frequency: 311.13, label: '1st (Eb)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ],
     full_step_down: [
-        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6 },
-        { note: 'G', octave: 2, frequency: 98.00, label: '5th (G)', stringNumber: 5 },
-        { note: 'C', octave: 3, frequency: 130.81, label: '4th (C)', stringNumber: 4 },
-        { note: 'F', octave: 3, frequency: 174.61, label: '3rd (F)', stringNumber: 3 },
-        { note: 'A', octave: 3, frequency: 220.00, label: '2nd (A)', stringNumber: 2 },
-        { note: 'D', octave: 4, frequency: 293.66, label: '1st (D)', stringNumber: 1 },
+        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6, gauge: 'thick-wound', color: '#c49758' },
+        { note: 'G', octave: 2, frequency: 98.00, label: '5th (G)', stringNumber: 5, gauge: 'medium-wound', color: '#c49758' },
+        { note: 'C', octave: 3, frequency: 130.81, label: '4th (C)', stringNumber: 4, gauge: 'light-wound', color: '#c49758' },
+        { note: 'F', octave: 3, frequency: 174.61, label: '3rd (F)', stringNumber: 3, gauge: 'plain-wound', color: '#d9ba82' },
+        { note: 'A', octave: 3, frequency: 220.00, label: '2nd (A)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'D', octave: 4, frequency: 293.66, label: '1st (D)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ],
     open_d: [
-        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6 },
-        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5 },
-        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4 },
-        { note: 'F#', octave: 3, frequency: 185.00, label: '3rd (F#)', stringNumber: 3 },
-        { note: 'A', octave: 3, frequency: 220.00, label: '2nd (A)', stringNumber: 2 },
-        { note: 'D', octave: 4, frequency: 293.66, label: '1st (D)', stringNumber: 1 },
+        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6, gauge: 'thick-wound', color: '#c49758' },
+        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5, gauge: 'medium-wound', color: '#c49758' },
+        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4, gauge: 'light-wound', color: '#c49758' },
+        { note: 'F#', octave: 3, frequency: 185.00, label: '3rd (F#)', stringNumber: 3, gauge: 'plain-wound', color: '#d9ba82' },
+        { note: 'A', octave: 3, frequency: 220.00, label: '2nd (A)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'D', octave: 4, frequency: 293.66, label: '1st (D)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ],
     dadgad: [
-        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6 },
-        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5 },
-        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4 },
-        { note: 'G', octave: 3, frequency: 196.00, label: '3rd (G)', stringNumber: 3 },
-        { note: 'A', octave: 3, frequency: 220.00, label: '2nd (A)', stringNumber: 2 },
-        { note: 'D', octave: 4, frequency: 293.66, label: '1st (D)', stringNumber: 1 },
+        { note: 'D', octave: 2, frequency: 73.42, label: '6th (D)', stringNumber: 6, gauge: 'thick-wound', color: '#c49758' },
+        { note: 'A', octave: 2, frequency: 110.00, label: '5th (A)', stringNumber: 5, gauge: 'medium-wound', color: '#c49758' },
+        { note: 'D', octave: 3, frequency: 146.83, label: '4th (D)', stringNumber: 4, gauge: 'light-wound', color: '#c49758' },
+        { note: 'G', octave: 3, frequency: 196.00, label: '3rd (G)', stringNumber: 3, gauge: 'plain-wound', color: '#d9ba82' },
+        { note: 'A', octave: 3, frequency: 220.00, label: '2nd (A)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'D', octave: 4, frequency: 293.66, label: '1st (D)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ],
     bass4: [
-        { note: 'E', octave: 1, frequency: 41.20, label: '4th (E)', stringNumber: 4 },
-        { note: 'A', octave: 1, frequency: 55.00, label: '3rd (A)', stringNumber: 3 },
-        { note: 'D', octave: 2, frequency: 73.42, label: '2nd (D)', stringNumber: 2 },
-        { note: 'G', octave: 2, frequency: 98.00, label: '1st (G)', stringNumber: 1 },
+        { note: 'E', octave: 1, frequency: 41.20, label: '4th (E)', stringNumber: 4, gauge: 'thick-wound', color: '#94a3b8' },
+        { note: 'A', octave: 1, frequency: 55.00, label: '3rd (A)', stringNumber: 3, gauge: 'medium-wound', color: '#94a3b8' },
+        { note: 'D', octave: 2, frequency: 73.42, label: '2nd (D)', stringNumber: 2, gauge: 'light-wound', color: '#94a3b8' },
+        { note: 'G', octave: 2, frequency: 98.00, label: '1st (G)', stringNumber: 1, gauge: 'plain-wound', color: '#cbd5e1' },
     ],
     bass5: [
-        { note: 'B', octave: 0, frequency: 30.87, label: '5th (B)', stringNumber: 5 },
-        { note: 'E', octave: 1, frequency: 41.20, label: '4th (E)', stringNumber: 4 },
-        { note: 'A', octave: 1, frequency: 55.00, label: '3rd (A)', stringNumber: 3 },
-        { note: 'D', octave: 2, frequency: 73.42, label: '2nd (D)', stringNumber: 2 },
-        { note: 'G', octave: 2, frequency: 98.00, label: '1st (G)', stringNumber: 1 },
+        { note: 'B', octave: 0, frequency: 30.87, label: '5th (B)', stringNumber: 5, gauge: 'thick-wound', color: '#94a3b8' },
+        { note: 'E', octave: 1, frequency: 41.20, label: '4th (E)', stringNumber: 4, gauge: 'thick-wound', color: '#94a3b8' },
+        { note: 'A', octave: 1, frequency: 55.00, label: '3rd (A)', stringNumber: 3, gauge: 'medium-wound', color: '#94a3b8' },
+        { note: 'D', octave: 2, frequency: 73.42, label: '2nd (D)', stringNumber: 2, gauge: 'light-wound', color: '#94a3b8' },
+        { note: 'G', octave: 2, frequency: 98.00, label: '1st (G)', stringNumber: 1, gauge: 'plain-wound', color: '#cbd5e1' },
     ],
     ukulele: [
-        { note: 'G', octave: 4, frequency: 392.00, label: '4th (G)', stringNumber: 4 },
-        { note: 'C', octave: 4, frequency: 261.63, label: '3rd (C)', stringNumber: 3 },
-        { note: 'E', octave: 4, frequency: 329.63, label: '2nd (E)', stringNumber: 2 },
-        { note: 'A', octave: 4, frequency: 440.00, label: '1st (A)', stringNumber: 1 },
+        { note: 'G', octave: 4, frequency: 392.00, label: '4th (G)', stringNumber: 4, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'C', octave: 4, frequency: 261.63, label: '3rd (C)', stringNumber: 3, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'E', octave: 4, frequency: 329.63, label: '2nd (E)', stringNumber: 2, gauge: 'plain-steel', color: '#e2e8f0' },
+        { note: 'A', octave: 4, frequency: 440.00, label: '1st (A)', stringNumber: 1, gauge: 'thin-steel', color: '#f8fafc' },
     ]
 };
 
@@ -141,15 +146,15 @@ export const GUITAR_TUNINGS: Record<GuitarType, GuitarString[]> = {
 
 /**
  * Calculate cents deviation between detected frequency and a target frequency
- * Returns value in range -100 to +100 (or beyond)
+ * Returns exact signed offset in cents (e.g. -12 means 12 cents flat, +8 means 8 cents sharp)
  */
 export function calculateCentsBetween(detectedFreq: number, targetFreq: number): number {
-    if (!detectedFreq || !targetFreq) return 0;
+    if (!detectedFreq || !targetFreq || detectedFreq <= 0 || targetFreq <= 0) return 0;
     return Math.round(1200 * Math.log2(detectedFreq / targetFreq));
 }
 
 /**
- * Finds which string in the active preset is closest to the detected frequency (in musical semitones)
+ * Finds which string in the active preset is closest to the detected frequency
  */
 export function findClosestPresetString(
     detectedFreq: number, 
@@ -171,7 +176,7 @@ export function findClosestPresetString(
     const bestString = presetStrings[bestIndex];
     const centsOffset = calculateCentsBetween(detectedFreq, bestString.frequency);
 
-    // Only match if within 250 cents (2.5 semitones) of that target string
+    // Lock if within 250 cents (2.5 semitones) of that target string
     if (minAbsCents <= 250) {
         return {
             stringIndex: bestIndex,
@@ -213,90 +218,100 @@ export function frequencyToNote(
 }
 
 /**
- * High-clarity Autocorrelation with Noise Gate and Parabolic Interpolation
- * Returns null if room noise, mic hiss, or non-harmonic sound is present.
+ * McLeod Pitch Method (MPM) with Normalized Square Difference Function (NSDF)
+ * Gold-standard pitch detection used in professional guitar tuners.
+ * Resolves fundamental frequencies accurately without octave jumps or room noise triggering.
  */
-export function detectPitch(buffer: Float32Array, sampleRate: number): { frequency: number; clarity: number; rms: number } | null {
+export function detectPitch(
+    buffer: Float32Array, 
+    sampleRate: number
+): { frequency: number; clarity: number; rms: number } | null {
     const SIZE = buffer.length;
 
-    // 1. RMS Signal Energy (Noise Gate)
-    // Ambient room noise, laptop fans & mic hiss typically have RMS < 0.025
+    // 1. RMS Energy Noise Gate
+    // Requires physical pluck energy (rejects ambient fan/AC hum and microphone hiss)
     let rms = 0;
     for (let i = 0; i < SIZE; i++) {
         rms += buffer[i] * buffer[i];
     }
     rms = Math.sqrt(rms / SIZE);
 
-    // Strict Noise Gate: If energy is too low, it's silence/background noise -> return null immediately!
-    if (rms < 0.028) {
+    if (rms < 0.026) {
+        return null; // Silence or background room noise
+    }
+
+    // 2. Normalized Square Difference Function (NSDF)
+    // nsdf(tau) = 2 * sum(x(t)*x(t+tau)) / (sum(x(t)^2) + sum(x(t+tau)^2))
+    // Limits tau to guitar range: 35 Hz (~1370 lags at 48kHz) to 1000 Hz (~48 lags)
+    const minTau = Math.max(Math.floor(sampleRate / 1050), 2);
+    const maxTau = Math.min(Math.floor(sampleRate / 35), SIZE - 2);
+
+    const nsdf = new Float32Array(maxTau + 2);
+
+    for (let tau = 0; tau <= maxTau; tau++) {
+        let num = 0;
+        let den1 = 0;
+        let den2 = 0;
+        const len = SIZE - tau;
+        for (let j = 0; j < len; j++) {
+            const x = buffer[j];
+            const y = buffer[j + tau];
+            num += x * y;
+            den1 += x * x;
+            den2 += y * y;
+        }
+        const den = den1 + den2;
+        nsdf[tau] = den > 0.0001 ? (2 * num) / den : 0;
+    }
+
+    // 3. Find all positive local maxima (peaks)
+    const peaks: { tau: number; val: number }[] = [];
+    let maxVal = 0;
+    let inPositive = false;
+
+    for (let tau = minTau; tau <= maxTau; tau++) {
+        if (nsdf[tau] > 0) inPositive = true;
+        if (inPositive && nsdf[tau] <= 0) inPositive = false;
+
+        // Peak detection (higher than both adjacent neighbors)
+        if (inPositive && nsdf[tau] > nsdf[tau - 1] && nsdf[tau] >= nsdf[tau + 1]) {
+            peaks.push({ tau, val: nsdf[tau] });
+            if (nsdf[tau] > maxVal) {
+                maxVal = nsdf[tau];
+            }
+        }
+    }
+
+    // Strict Periodicity Threshold:
+    // Real plucked strings have NSDF peaks > 0.68. Noise peaks are < 0.35.
+    if (peaks.length === 0 || maxVal < 0.65) {
         return null;
     }
 
-    // 2. Zero-lag energy (r0)
-    let r0 = 0;
-    for (let i = 0; i < SIZE; i++) {
-        r0 += buffer[i] * buffer[i];
-    }
-    if (r0 <= 0.0001) return null;
+    // 4. MPM Rule: Pick FIRST peak exceeding cutoff to avoid octave-halving
+    const cutoff = maxVal * 0.88;
+    const bestPeak = peaks.find(p => p.val >= cutoff) || peaks[0];
 
-    // 3. Autocorrelation search within musical guitar range (30 Hz to 1100 Hz)
-    const minLag = Math.floor(sampleRate / 1100); // Max ~1100 Hz
-    const maxLag = Math.min(Math.floor(sampleRate / 30), SIZE - 2);  // Min ~30 Hz (Low B / Low E)
+    // 5. Parabolic Interpolation for sub-sample accuracy
+    const tau = bestPeak.tau;
+    const s0 = nsdf[tau - 1];
+    const s1 = nsdf[tau];
+    const s2 = nsdf[tau + 1];
 
-    let bestLag = -1;
-    let bestCorr = -1;
-    let foundDip = false;
+    const denom = 2 * (s0 - 2 * s1 + s2);
+    const delta = Math.abs(denom) > 1e-6 ? (s0 - s2) / denom : 0;
+    const exactTau = tau + (isFinite(delta) ? delta : 0);
 
-    // We store correlation values for parabolic interpolation
-    const correlations = new Float32Array(maxLag + 2);
+    const frequency = sampleRate / exactTau;
 
-    for (let lag = minLag; lag <= maxLag; lag++) {
-        let sum = 0;
-        // Efficient overlap correlation
-        const limit = SIZE - lag;
-        for (let i = 0; i < limit; i++) {
-            sum += buffer[i] * buffer[i + lag];
-        }
-        correlations[lag] = sum;
-
-        // Check for initial dip to avoid lag=0 self-correlation
-        if (!foundDip && sum < r0 * 0.5) {
-            foundDip = true;
-        }
-
-        // After initial dip, find the primary harmonic peak
-        if (foundDip && sum > bestCorr) {
-            bestCorr = sum;
-            bestLag = lag;
-        }
-    }
-
-    // 4. Harmonicity / Periodicity Check (Normalized Correlation Clarity)
-    // Real plucked instrument strings have clarity > 0.70. Random noise is < 0.35.
-    const clarity = bestCorr / r0;
-    if (bestLag === -1 || clarity < 0.68) {
-        return null; // Not a periodic musical note
-    }
-
-    // 5. Parabolic Interpolation on peak for sub-sample fractional accuracy
-    const prev = correlations[bestLag - 1] || 0;
-    const curr = correlations[bestLag];
-    const next = correlations[bestLag + 1] || 0;
-
-    const denominator = 2 * (prev - 2 * curr + next);
-    const shift = Math.abs(denominator) > 1e-6 ? (prev - next) / denominator : 0;
-    const refinedLag = bestLag + (isFinite(shift) ? shift : 0);
-
-    const frequency = sampleRate / refinedLag;
-
-    // Sanity range check (30 Hz to 1100 Hz)
-    if (frequency < 28 || frequency > 1150) {
+    // Guitar musical range check (35 Hz to 1050 Hz)
+    if (frequency < 32 || frequency > 1100) {
         return null;
     }
 
     return {
         frequency,
-        clarity,
+        clarity: bestPeak.val,
         rms
     };
 }
@@ -314,7 +329,7 @@ export function getTuningStatus(cents: number): {
     
     if (absCents <= 3) {
         return { 
-            label: 'PERFECT', 
+            label: 'PERFECT!', 
             subLabel: 'In Tune ✓', 
             color: '#10b981', 
             quality: 'perfect' 
