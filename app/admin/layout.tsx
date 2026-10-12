@@ -23,7 +23,8 @@ import {
     Mail,
     ArrowRight,
     Sparkles,
-    Loader2
+    Loader2,
+    Radio
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
@@ -325,6 +326,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                     <p className="px-4 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 mt-6">Content</p>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/songs" icon={Music} label="Songs Library" /></div>
+                    <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/background-music" icon={Radio} label="Background Music" /></div>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/artists" icon={Mic2} label="Artists" /></div>
                     <div onClick={() => setIsSidebarOpen(false)}><AdminNavLink href="/admin/events" icon={Calendar} label="Events" /></div>
 

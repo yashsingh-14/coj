@@ -3,6 +3,7 @@
 import { adminDb } from '@/lib/supabaseAdmin';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { DEFAULT_WORSHIP_STREAMS, WorshipStreamItem } from '@/lib/worshipStreams';
 
 async function verifyAdminAuthServer() {
     try {
@@ -524,6 +525,35 @@ export async function updateSiteSettingAdmin(key: string, value: any, descriptio
 
     await revalidateApp();
     return { success: true, data };
+}
+
+export async function getWorshipBackgroundMusicSetting(): Promise<WorshipStreamItem[]> {
+    try {
+        if (adminDb) {
+            const { data } = await adminDb
+                .from('site_settings')
+                .select('value')
+                .eq('key', 'worship_background_music')
+                .maybeSingle();
+            if (data?.value && Array.isArray(data.value) && data.value.length > 0) {
+                return data.value;
+            }
+        }
+    } catch (e) {
+        console.error("Failed to fetch worship background music setting:", e);
+    }
+    return DEFAULT_WORSHIP_STREAMS;
+}
+
+export async function saveWorshipBackgroundMusicSetting(streams: WorshipStreamItem[]) {
+    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+    if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
+
+    const res = await updateSiteSettingAdmin('worship_background_music', streams, 'Worship Pad & Sermon Background Streams');
+    if (res.success) {
+        await recordAdminActivity('set', 'Background Music Updated', `${streams.length} worship tracks configured`, '/tools/pad');
+    }
+    return res;
 }
 
 // ─── DAILY CONTENT ACTIONS (VERSES & ANNOUNCEMENTS) ──────────────

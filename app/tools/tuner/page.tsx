@@ -2,7 +2,18 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ChevronUp, Mic, Vibrate } from 'lucide-react';
+import {
+    ArrowLeft,
+    ChevronUp,
+    Mic,
+    Volume2,
+    RotateCcw,
+    Sparkles,
+    CheckCircle2,
+    Sliders,
+    Disc,
+    Radio
+} from 'lucide-react';
 import BackButton from '@/components/ui/BackButton';
 import {
     detectPitch,
@@ -14,10 +25,10 @@ import {
 } from '@/lib/pitchDetection';
 
 const GUITAR_TYPE_LABELS: Record<GuitarType, { name: string; sub: string }> = {
-    acoustic: { name: 'Guitar 6-string', sub: 'Standard' },
-    electric: { name: 'Electric 6-string', sub: 'Standard' },
-    bass4: { name: 'Bass 4-string', sub: 'Standard' },
-    bass5: { name: 'Bass 5-string', sub: 'Standard' },
+    acoustic: { name: 'Acoustic 6-String', sub: 'Standard (E A D G B E)' },
+    electric: { name: 'Electric 6-String', sub: 'Standard (E A D G B E)' },
+    bass4: { name: 'Bass 4-String', sub: 'Standard (E A D G)' },
+    bass5: { name: 'Bass 5-String', sub: 'Standard (B E A D G)' },
 };
 
 const GUITAR_TYPES: GuitarType[] = ['acoustic', 'electric', 'bass4', 'bass5'];
@@ -30,12 +41,17 @@ export default function TunerPage() {
     const [pitch, setPitch] = useState<PitchResult | null>(null);
     const [activeStringIndex, setActiveStringIndex] = useState<number | null>(null);
     const [showGuitarPicker, setShowGuitarPicker] = useState(false);
+    const [micError, setMicError] = useState<string | null>(null);
 
     const audioContextRef = useRef<AudioContext | null>(null);
     const analyserRef = useRef<AnalyserNode | null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
     const rafRef = useRef<number | null>(null);
     const bufferRef = useRef<Float32Array | null>(null);
+
+    // Reference tone oscillator
+    const refOscRef = useRef<OscillatorNode | null>(null);
+    const refGainRef = useRef<GainNode | null>(null);
 
     const strings = GUITAR_TUNINGS[guitarType];
 
@@ -47,7 +63,9 @@ export default function TunerPage() {
     const stopListening = useCallback(() => {
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
         if (mediaStreamRef.current) mediaStreamRef.current.getTracks().forEach(t => t.stop());
-        if (audioContextRef.current && audioContextRef.current.state !== 'closed') audioContextRef.current.close();
+        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+            try { audioContextRef.current.close(); } catch { }
+        }
         rafRef.current = null;
         mediaStreamRef.current = null;
         audioContextRef.current = null;
@@ -58,13 +76,18 @@ export default function TunerPage() {
     }, []);
 
     const startListening = useCallback(async () => {
+        setMicError(null);
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
             });
             mediaStreamRef.current = stream;
-            const ctx = new AudioContext();
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+            const ctx = new AudioCtx();
             audioContextRef.current = ctx;
+
             const src = ctx.createMediaStreamSource(stream);
             const analyser = ctx.createAnalyser();
             analyser.fftSize = 4096;
@@ -78,7 +101,7 @@ export default function TunerPage() {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 analyserRef.current.getFloatTimeDomainData(bufferRef.current as any);
                 const freq = detectPitch(bufferRef.current, audioContextRef.current.sampleRate);
-                
+
                 if (freq && freq > 25 && freq < 1200) {
                     const result = frequencyToNote(freq);
                     setPitch(result);
@@ -96,8 +119,38 @@ export default function TunerPage() {
                 rafRef.current = requestAnimationFrame(detect);
             };
             detect();
-        } catch { /* Mic denied */ }
+        } catch (err: unknown) {
+            console.error('Mic access error:', err);
+            setMicError('Microphone permission required to detect instrument pitch.');
+            setIsListening(false);
+        }
     }, [autoMode, strings]);
+
+    // Play acoustic reference tone when tapping peg
+    const playReferenceTone = useCallback((frequency: number) => {
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+            const ctx = new AudioCtx();
+            const now = ctx.currentTime;
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(frequency, now);
+
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 1.7);
+        } catch { }
+    }, []);
 
     // Clean up on unmount
     useEffect(() => {
@@ -111,147 +164,204 @@ export default function TunerPage() {
 
     // UI State Helpers
     const isTuned = pitch ? Math.abs(pitch.cents) <= 4 : false;
+    const targetString = activeStringIndex !== null ? strings[activeStringIndex] : null;
+
     const isActiveString = (str: GuitarString) => {
         const originalIdx = strings.findIndex(s => s.label === str.label);
         return originalIdx === activeStringIndex;
     };
 
     // Calculate needle rotation based on cents (-50 to +50 -> -45deg to +45deg)
-    const needleRotation = pitch ? Math.max(-45, Math.min(45, (pitch.cents / 50) * 45)) : 0;
+    const needleRotation = pitch ? Math.max(-48, Math.min(48, (pitch.cents / 50) * 45)) : 0;
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white select-none overflow-hidden flex flex-col relative font-sans">
-            
+        <div className="min-h-screen bg-[#02000F] text-white select-none overflow-x-hidden flex flex-col relative font-sans">
             {/* Dynamic Background Aura */}
-            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-50 transition-colors duration-500"
+            <div
+                className="absolute inset-0 z-0 pointer-events-none overflow-hidden transition-all duration-700"
                 style={{
-                    background: pitch 
-                        ? isTuned 
-                            ? 'radial-gradient(circle at center, rgba(34,197,94,0.15) 0%, transparent 60%)' 
-                            : 'radial-gradient(circle at center, rgba(245,158,11,0.1) 0%, transparent 60%)'
-                        : 'radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 60%)'
+                    background: pitch
+                        ? isTuned
+                            ? 'radial-gradient(ellipse at center, rgba(34,197,94,0.18) 0%, transparent 65%)'
+                            : 'radial-gradient(ellipse at center, rgba(245,158,11,0.12) 0%, transparent 65%)'
+                        : 'radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 65%)'
                 }}
             />
 
-            {/* Top Simple Header */}
-            <div className="px-4 sm:px-6 py-4 flex items-center justify-between z-40 shrink-0 relative">
-                <BackButton fallback="/worship" className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all backdrop-blur-md" iconClassName="w-4 h-4 text-amber-500">
-                    <span className="text-sm font-semibold tracking-wide text-white/80">Exit Tuner</span>
+            {/* Top Navigation Bar */}
+            <header className="px-4 sm:px-6 py-3.5 flex items-center justify-between z-40 shrink-0 relative bg-[#02000F]/80 backdrop-blur-xl border-b border-white/5">
+                <BackButton
+                    fallback="/worship"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-xs font-bold text-white/80 active:scale-95"
+                >
+                    <span>Exit Tuner</span>
                 </BackButton>
+
                 <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-amber-500 animate-pulse' : 'bg-red-500'}`} />
-                    <span className="font-bold text-white/30 tracking-widest text-xs uppercase">
-                        {isListening ? 'Listening' : 'Mic Off'}
+                    <span className="font-black text-xs sm:text-sm tracking-wider uppercase text-white">
+                        COJ Strobe Tuner
+                    </span>
+                    <span className="text-[10px] font-mono text-white/40 bg-white/5 px-2 py-0.5 rounded-full border border-white/5 hidden sm:inline">
+                        A4 = 440 Hz
                     </span>
                 </div>
-            </div>
 
-            {/* Main Tuner Area */}
-            <div className="flex-1 flex flex-col items-center justify-center relative z-10 w-full max-w-lg mx-auto pb-32">
-                
-                {/* Central Glass Radial Dial */}
-                <div className="relative w-48 h-48 sm:w-72 sm:h-72 flex items-center justify-center z-20">
-                    {/* Outer Glow Ring */}
-                    <div className={`absolute inset-0 rounded-full border-2 transition-all duration-500 ${pitch ? (isTuned ? 'border-green-500/50 shadow-[0_0_50px_rgba(34,197,94,0.3)]' : 'border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.15)]') : 'border-white/10'}`} />
-                    
-                    {/* Inner Frosted Glass */}
-                    <div className="absolute inset-4 rounded-full bg-[#12121A]/60 backdrop-blur-xl border border-white/5 shadow-inner flex flex-col items-center justify-center overflow-hidden">
-                        
+                <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-emerald-400 animate-pulse' : 'bg-red-500'}`} />
+                    <span className="font-bold text-white/40 tracking-wider text-xs uppercase">
+                        {isListening ? 'Active' : 'Mic Off'}
+                    </span>
+                </div>
+            </header>
+
+            {/* In-page Mic Notice */}
+            {micError && (
+                <div className="relative z-20 max-w-md mx-auto px-4 pt-3">
+                    <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs font-medium text-center">
+                        {micError}
+                    </div>
+                </div>
+            )}
+
+            {/* Main Tuner Stage */}
+            <main className="flex-1 flex flex-col items-center justify-center relative z-10 w-full max-w-xl mx-auto px-4 py-4 pb-36">
+                {/* Central Strobe Dial Station */}
+                <div className="relative w-56 h-56 sm:w-72 sm:h-72 flex items-center justify-center z-20 my-auto">
+                    {/* Outer Glow Halo */}
+                    <div
+                        className={`absolute inset-0 rounded-full border-2 transition-all duration-500 ${
+                            pitch
+                                ? isTuned
+                                    ? 'border-emerald-500/60 shadow-[0_0_60px_rgba(34,197,94,0.35)] ring-4 ring-emerald-500/20'
+                                    : 'border-amber-500/40 shadow-[0_0_40px_rgba(245,158,11,0.2)]'
+                                : 'border-white/10'
+                        }`}
+                    />
+
+                    {/* Inner Frosted Acrylic Glass */}
+                    <div className="absolute inset-3 rounded-full bg-[#0D0B16]/85 backdrop-blur-2xl border border-white/10 shadow-inner flex flex-col items-center justify-center overflow-hidden">
                         {!hasStarted ? (
-                            <button 
+                            <button
                                 onClick={handleStart}
-                                className="z-20 flex flex-col items-center justify-center gap-4 w-full h-full hover:bg-white/5 transition-colors group"
+                                className="z-20 flex flex-col items-center justify-center gap-3 w-full h-full hover:bg-white/5 transition-all group active:scale-95"
                             >
-                                <div className="p-4 rounded-full bg-amber-500/20 text-amber-500 group-hover:scale-110 transition-transform">
+                                <div className="p-4 rounded-2xl bg-amber-500/20 text-amber-400 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/10">
                                     <Mic className="w-8 h-8" />
                                 </div>
-                                <span className="font-bold tracking-widest uppercase text-sm text-amber-500">Tap to Start</span>
+                                <span className="font-black tracking-widest uppercase text-xs sm:text-sm text-amber-400">
+                                    Tap to Start Tuner
+                                </span>
                             </button>
                         ) : (
                             <>
-                                {/* Dial Markings */}
-                        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-1 h-3 bg-amber-500 rounded-full" />
-                        <div className="absolute top-8 left-8 w-0.5 h-2 bg-white/20 -rotate-45" />
-                        <div className="absolute top-8 right-8 w-0.5 h-2 bg-white/20 rotate-45" />
+                                {/* Dial Calibration Marks */}
+                                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-1.5 h-4 bg-emerald-400 rounded-full shadow-[0_0_8px_#34d399]" />
+                                <div className="absolute top-7 left-7 w-0.5 h-2.5 bg-white/20 -rotate-45" />
+                                <div className="absolute top-7 right-7 w-0.5 h-2.5 bg-white/20 rotate-45" />
 
-                        {/* Needle */}
-                        <div className="absolute top-[10%] bottom-1/2 left-1/2 w-0.5 origin-bottom transition-transform duration-100 ease-out"
-                            style={{ transform: `translateX(-50%) rotate(${needleRotation}deg)` }}>
-                            <div className={`w-1 h-full rounded-t-full transition-colors ${isTuned ? 'bg-green-500 shadow-[0_0_10px_#22c55e]' : 'bg-amber-500 shadow-[0_0_10px_#f59e0b]'}`} />
-                        </div>
-
-                        {/* Note Display */}
-                        <div className="z-10 mt-12 flex flex-col items-center justify-center">
-                            {pitch ? (
-                                <>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className={`text-5xl sm:text-6xl font-black tracking-tighter ${isTuned ? 'text-green-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]' : 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]'}`}>
-                                            {pitch.note.replace(/[0-9]/g, '')}
-                                        </span>
-                                        <span className="text-xl sm:text-2xl font-bold text-white/40">{pitch.octave}</span>
-                                    </div>
-                                    <span className={`text-sm font-bold tracking-widest uppercase mt-2 ${isTuned ? 'text-green-500' : 'text-amber-500'}`}>
-                                        {isTuned ? 'In Tune' : pitch.cents > 0 ? 'Too Sharp' : 'Too Flat'}
-                                    </span>
-                                </>
-                            ) : (
-                                <div className="flex flex-col items-center opacity-30 animate-pulse">
-                                    <Mic className="w-12 h-12 mb-2" />
-                                    <span className="text-sm font-bold tracking-widest uppercase">Perform note</span>
+                                {/* Strobe Needle */}
+                                <div
+                                    className="absolute top-[12%] bottom-1/2 left-1/2 w-0.5 origin-bottom transition-transform duration-100 ease-out"
+                                    style={{ transform: `translateX(-50%) rotate(${needleRotation}deg)` }}
+                                >
+                                    <div
+                                        className={`w-1 h-full rounded-t-full transition-colors ${
+                                            isTuned
+                                                ? 'bg-emerald-400 shadow-[0_0_12px_#34d399]'
+                                                : 'bg-amber-400 shadow-[0_0_10px_#f59e0b]'
+                                        }`}
+                                    />
                                 </div>
-                            )}
-                        </div>
+
+                                {/* Center Pitch Note Display */}
+                                <div className="z-10 mt-10 flex flex-col items-center justify-center">
+                                    {pitch ? (
+                                        <>
+                                            <div className="flex items-baseline gap-1">
+                                                <span
+                                                    className={`text-5xl sm:text-6xl font-black tracking-tighter ${
+                                                        isTuned
+                                                            ? 'text-emerald-400 drop-shadow-[0_0_20px_rgba(34,197,94,0.6)]'
+                                                            : 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]'
+                                                    }`}
+                                                >
+                                                    {pitch.note.replace(/[0-9]/g, '')}
+                                                </span>
+                                                <span className="text-xl sm:text-2xl font-bold text-white/40">
+                                                    {pitch.octave}
+                                                </span>
+                                            </div>
+
+                                            <span
+                                                className={`text-xs font-black tracking-widest uppercase mt-2 px-2.5 py-0.5 rounded-full border ${
+                                                    isTuned
+                                                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                                                        : 'bg-amber-500/15 text-amber-400 border-amber-500/25'
+                                                }`}
+                                            >
+                                                {isTuned ? '✓ IN TUNE' : pitch.cents > 0 ? `+${pitch.cents} CENTS (SHARP)` : `${pitch.cents} CENTS (FLAT)`}
+                                            </span>
+
+                                            {/* Exact Hz readout */}
+                                            <span className="text-[11px] font-mono text-white/40 mt-1">
+                                                {pitch.frequency.toFixed(1)} Hz
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <div className="flex flex-col items-center opacity-40 animate-pulse">
+                                            <Mic className="w-9 h-9 mb-2 text-amber-400" />
+                                            <span className="text-xs font-bold tracking-widest uppercase text-white/80">
+                                                Pluck a String
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </>
                         )}
                     </div>
                 </div>
 
-                {/* Headstock & Strings Layout */}
-                <div className="absolute top-0 bottom-0 left-0 right-0 flex justify-between px-4 sm:px-12 pointer-events-none">
-                    
-                    {/* Dark Premium Headstock & Neck Structure */}
-                    <div className="absolute top-[2vh] sm:top-[5vh] bottom-[-200px] left-1/2 -translate-x-1/2 flex flex-col items-center w-52 sm:w-64 z-0 opacity-60 pointer-events-none">
-                        {/* Guitar Headstock Shape */}
-                        <div 
-                            className="w-full h-80 bg-[#1A1A24]/40 backdrop-blur-md border border-white/5 relative flex-1 flex-shrink-0"
-                            style={{ 
-                                clipPath: 'polygon(15% 0%, 85% 0%, 100% 20%, 90% 100%, 10% 100%, 0% 20%)',
-                                borderRadius: '40px 40px 0 0'
-                            }}
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
-                            {/* Subtle Carbon Fiber / Mesh Texture overlay */}
-                            <div className="absolute inset-0 opacity-10 mix-blend-overlay" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 2px)', backgroundSize: '8px 8px' }} />
-                        </div>
-                        
-                        {/* Guitar Neck Shape (goes down to infinity) */}
-                        <div className="w-24 flex-[2] bg-gradient-to-b from-[#1A1A24]/60 to-transparent backdrop-blur-md border-l border-r border-[#1e1e2d] relative flex justify-evenly pointer-events-none">
-                            {/* The Nut */}
-                            <div className="absolute top-0 left-0 right-0 h-2 bg-[#2a2a35] shadow-[0_5px_10px_rgba(0,0,0,0.5)] z-10" />
-                            {/* Frets */}
-                            <div className="absolute top-20 left-0 right-0 h-[2px] bg-white/10 shadow-[0_2px_5px_rgba(0,0,0,0.5)]" />
-                            <div className="absolute top-44 left-0 right-0 h-[2px] bg-white/10 shadow-[0_2px_5px_rgba(0,0,0,0.5)]" />
-                            <div className="absolute top-72 left-0 right-0 h-[2px] bg-white/10 shadow-[0_2px_5px_rgba(0,0,0,0.5)]" />
-                            {/* Visual Strings running down the neck */}
-                            <div className="w-px h-full bg-white/10 mt-2" />
-                            <div className="w-px h-full bg-white/10 mt-2" />
-                            <div className="w-px h-full bg-white/10 mt-2" />
-                            <div className="w-px h-full bg-white/10 mt-2" />
-                        </div>
+                {/* Target String Frequency Display */}
+                {targetString && (
+                    <div className="mt-4 px-4 py-2 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center gap-3 text-xs font-mono">
+                        <span className="text-white/40 font-bold uppercase">Target:</span>
+                        <span className="text-amber-400 font-black">{targetString.label}</span>
+                        <span className="text-white/60">({targetString.frequency.toFixed(2)} Hz)</span>
                     </div>
+                )}
 
+                {/* Interactive Peg Layout */}
+                <div className="w-full flex justify-between items-center px-2 sm:px-6 mt-6 max-w-md">
                     {/* Left Pegs */}
-                    <div className="flex flex-col justify-center gap-4 sm:gap-10 w-11 sm:w-20 pointer-events-auto z-30">
+                    <div className="flex flex-col gap-3 sm:gap-4">
                         {leftStrings.map(str => {
                             const active = isActiveString(str);
                             return (
-                                <button key={str.label} onClick={() => { setActiveStringIndex(strings.findIndex(s => s.label === str.label)); setAutoMode(false); }}
-                                    className="relative flex items-center justify-center group min-w-[44px] min-h-[44px]">
-                                    {/* Neon String connecting to dial */}
-                                    <div className={`absolute left-full top-1/2 h-[1px] w-20 sm:w-32 -z-10 transition-all duration-300 origin-left ${active ? 'bg-gradient-to-r from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
-                                    {/* Tuning Peg */}
-                                    <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
-                                        <span className={`text-base sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
+                                <button
+                                    key={str.label}
+                                    onClick={() => {
+                                        const idx = strings.findIndex(s => s.label === str.label);
+                                        setActiveStringIndex(idx);
+                                        setAutoMode(false);
+                                        playReferenceTone(str.frequency);
+                                    }}
+                                    className={`flex items-center gap-2.5 p-2 rounded-2xl transition-all active:scale-95 group ${
+                                        active
+                                            ? 'bg-amber-500/15 border border-amber-500/50 shadow-lg shadow-amber-500/10'
+                                            : 'bg-white/[0.03] border border-white/5 hover:border-white/20'
+                                    }`}
+                                    title={`Tap to tune ${str.label} or hear reference note`}
+                                >
+                                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-black text-sm sm:text-base border transition-colors ${
+                                        active
+                                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
+                                            : 'bg-white/5 border-white/10 text-white/70 group-hover:text-white'
+                                    }`}>
+                                        {str.note}
+                                    </div>
+                                    <div className="text-left hidden xs:block">
+                                        <div className="text-[11px] font-bold text-white/80">{str.label}</div>
+                                        <div className="text-[9px] font-mono text-white/40">{str.frequency.toFixed(1)} Hz</div>
                                     </div>
                                 </button>
                             );
@@ -259,81 +369,104 @@ export default function TunerPage() {
                     </div>
 
                     {/* Right Pegs */}
-                    <div className="flex flex-col justify-center gap-4 sm:gap-10 w-11 sm:w-20 pointer-events-auto z-30">
+                    <div className="flex flex-col gap-3 sm:gap-4">
                         {rightStrings.map(str => {
                             const active = isActiveString(str);
                             return (
-                                <button key={str.label} onClick={() => { setActiveStringIndex(strings.findIndex(s => s.label === str.label)); setAutoMode(false); }}
-                                    className="relative flex items-center justify-center group min-w-[44px] min-h-[44px]">
-                                    {/* Neon String connecting to dial */}
-                                    <div className={`absolute right-full top-1/2 h-[1px] w-20 sm:w-32 -z-10 transition-all duration-300 origin-right ${active ? 'bg-gradient-to-l from-amber-500 to-transparent shadow-[0_0_10px_#f59e0b]' : 'bg-white/10'}`} />
-                                    {/* Tuning Peg */}
-                                    <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center backdrop-blur-xl border transition-all duration-300 shadow-xl ${active ? 'bg-[#1A1A24] border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.2)] scale-110' : 'bg-[#12121A]/80 border-white/5 hover:border-white/20'}`}>
-                                        <span className={`text-base sm:text-xl font-black ${active ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'text-white/40 group-hover:text-white/80'}`}>{str.note}</span>
+                                <button
+                                    key={str.label}
+                                    onClick={() => {
+                                        const idx = strings.findIndex(s => s.label === str.label);
+                                        setActiveStringIndex(idx);
+                                        setAutoMode(false);
+                                        playReferenceTone(str.frequency);
+                                    }}
+                                    className={`flex items-center gap-2.5 p-2 rounded-2xl transition-all active:scale-95 group ${
+                                        active
+                                            ? 'bg-amber-500/15 border border-amber-500/50 shadow-lg shadow-amber-500/10'
+                                            : 'bg-white/[0.03] border border-white/5 hover:border-white/20'
+                                    }`}
+                                    title={`Tap to tune ${str.label} or hear reference note`}
+                                >
+                                    <div className="text-right hidden xs:block">
+                                        <div className="text-[11px] font-bold text-white/80">{str.label}</div>
+                                        <div className="text-[9px] font-mono text-white/40">{str.frequency.toFixed(1)} Hz</div>
+                                    </div>
+                                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-black text-sm sm:text-base border transition-colors ${
+                                        active
+                                            ? 'bg-amber-500 text-black border-amber-500 shadow-md'
+                                            : 'bg-white/5 border-white/10 text-white/70 group-hover:text-white'
+                                    }`}>
+                                        {str.note}
                                     </div>
                                 </button>
                             );
                         })}
                     </div>
                 </div>
+            </main>
 
-            </div>
-
-            {/* Floating Bottom Dock */}
-            <div className="absolute bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md">
-                
-                {/* Presets Menu Popup */}
+            {/* Floating Bottom Instrument Dock */}
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md">
+                {/* Presets Popup */}
                 {showGuitarPicker && (
-                    <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-full bg-[#12121A]/95 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-in slide-in-from-bottom-4">
-                        <div className="px-5 py-3 border-b border-white/5 bg-white/5">
-                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Select Instrument</span>
+                    <div className="absolute bottom-16 left-1/2 -translate-x-1/2 w-full bg-[#12101E]/95 backdrop-blur-2xl border border-white/15 rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-bottom-3">
+                        <div className="px-5 py-3 border-b border-white/10 bg-white/5 flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
+                                Select Instrument Tuning
+                            </span>
+                            <span className="text-[10px] text-white/40 font-mono">Standard Tuning</span>
                         </div>
                         <div className="p-2 flex flex-col gap-1">
                             {GUITAR_TYPES.map(type => (
                                 <button
                                     key={type}
-                                    onClick={() => { setGuitarType(type); setShowGuitarPicker(false); setActiveStringIndex(null); }}
+                                    onClick={() => {
+                                        setGuitarType(type);
+                                        setShowGuitarPicker(false);
+                                        setActiveStringIndex(null);
+                                    }}
                                     className={`w-full px-4 py-3 rounded-2xl text-left transition-all flex items-center justify-between ${
-                                        guitarType === type ? 'bg-amber-500/20 text-amber-400' : 'text-white/60 hover:bg-white/5 hover:text-white'
+                                        guitarType === type
+                                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                            : 'text-white/70 hover:bg-white/5 hover:text-white'
                                     }`}
                                 >
-                                    <span className="font-semibold text-sm">{GUITAR_TYPE_LABELS[type].name}</span>
-                                    <span className="text-xs opacity-50">{GUITAR_TYPE_LABELS[type].sub}</span>
+                                    <span className="font-bold text-xs sm:text-sm">{GUITAR_TYPE_LABELS[type].name}</span>
+                                    <span className="text-[11px] text-white/40 font-mono">{GUITAR_TYPE_LABELS[type].sub}</span>
                                 </button>
                             ))}
                         </div>
                     </div>
                 )}
 
-                {/* Main Dock Bar */}
-                <div className="grid grid-cols-[minmax(0,1fr)_1px_auto] items-center gap-0 bg-[#1A1A24]/90 backdrop-blur-2xl border border-white/10 p-1.5 rounded-[2rem] shadow-[0_20px_40px_rgba(0,0,0,0.6)] w-full overflow-hidden">
-                    
+                {/* Main Dock Pill */}
+                <div className="flex items-center justify-between bg-[#141220]/95 backdrop-blur-2xl border border-white/15 px-3 py-2 rounded-full shadow-2xl">
                     {/* Guitar Selector */}
-                    <button 
+                    <button
                         onClick={() => setShowGuitarPicker(!showGuitarPicker)}
-                        className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-full hover:bg-white/5 transition-colors group min-w-0 overflow-hidden"
+                        className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-white/5 transition-colors group min-w-0"
                     >
-                        <span className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                        <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate">
                             {GUITAR_TYPE_LABELS[guitarType].name}
                         </span>
                         <ChevronUp className={`w-4 h-4 text-white/40 transition-transform shrink-0 ${showGuitarPicker ? 'rotate-180' : ''}`} />
                     </button>
 
-                    <div className="w-px h-8 bg-white/10" />
-
-                    {/* Auto Toggle */}
-                    <button 
+                    {/* Auto Detect Switch */}
+                    <button
                         onClick={() => setAutoMode(!autoMode)}
-                        className={`flex items-center gap-2 px-3 py-2.5 rounded-full transition-colors shrink-0 ${autoMode ? 'bg-amber-500/10 text-amber-400' : 'hover:bg-white/5 text-white/40'}`}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                            autoMode
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                : 'bg-white/5 text-white/50 border border-white/5 hover:text-white'
+                        }`}
+                        title={autoMode ? 'Auto-detect active string' : 'Manual string lock'}
                     >
-                        <div className={`w-10 h-5 rounded-full transition-colors relative flex items-center shadow-inner ${autoMode ? 'bg-amber-500/40' : 'bg-black/40 border border-white/10'}`}>
-                            <div className={`w-4 h-4 rounded-full bg-white shadow-md absolute transition-transform ${autoMode ? 'translate-x-5' : 'translate-x-1'}`} />
-                        </div>
+                        <span>{autoMode ? 'Auto: ON' : 'Auto: OFF'}</span>
                     </button>
-                    
                 </div>
             </div>
-
         </div>
     );
 }
