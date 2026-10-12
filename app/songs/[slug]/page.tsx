@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { SongViewerSkeleton } from '@/components/ui/SkeletonLoader';
 import { generateSlug, SITE_URL } from '@/lib/seoUtils';
-import { fetchSongBySlug } from '@/lib/fetchSong';
+import { fetchSongBySlug, getRelatedSongs } from '@/lib/fetchSong';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { getSongImage } from '@/lib/utils';
 
@@ -92,13 +92,8 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
 
     const isHindi = song.category === 'hindi' || Boolean(song.hindi_lyrics) || /[\u0900-\u097F]/.test(song.lyrics || '');
 
-    // Fetch Related Songs
-    const { data: relatedSongsData } = await supabaseServer
-        .from('songs')
-        .select('id, title, artist, category')
-        .eq('category', song.category)
-        .neq('id', song.id)
-        .limit(3);
+    // Fetch Related Songs from fast in-memory index
+    const relatedSongsData = await getRelatedSongs(song.category, song.id, 3);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const relatedSongs = (relatedSongsData || []).map((s: any) => ({
