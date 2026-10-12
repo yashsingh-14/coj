@@ -21,14 +21,16 @@ export default function SearchPage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#02000F] text-white selection:bg-[var(--brand)] selection:text-white pb-36 md:pb-32 relative">
+        <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#02000F] text-white selection:bg-[var(--brand)] selection:text-white pb-36 md:pb-32 relative">
 
-            {/* Ambient Background Glow */}
-            <div className="absolute top-[-20%] left-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-purple-900/40 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse-slow"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[var(--brand)]/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+            {/* Ambient Background Glow (contained in overflow-hidden to prevent mobile horizontal canvas bleeding) */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-20%] left-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-purple-900/40 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[var(--brand)]/20 rounded-full blur-[120px] mix-blend-screen"></div>
+            </div>
 
             {/* Main Container */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 md:py-12 relative z-10 flex flex-col pb-28 md:pb-32">
+            <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 md:py-12 relative z-10 flex flex-col pb-28 md:pb-32">
 
                 {/* Header / Close */}
                 <div className="flex justify-end mb-4 md:mb-8">

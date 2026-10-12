@@ -92,14 +92,20 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
 
     const isHindi = song.category === 'hindi' || Boolean(song.hindi_lyrics) || /[\u0900-\u097F]/.test(song.lyrics || '');
 
-    // Fetch Related Songs from fast in-memory index
-    const relatedSongsData = await getRelatedSongs(song.category, song.id, 3);
+    // Fetch Related Songs from fast in-memory index (rich metadata for aesthetic cards)
+    const relatedSongsData = await getRelatedSongs(song.category, song.id, 4);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const relatedSongs = (relatedSongsData || []).map((s: any) => ({
+        id: s.id,
         title: s.title,
         slug: generateSlug(s.title),
         artist: s.artist,
+        category: s.category || song.category || 'Worship',
+        originalKey: s.key || 'C',
+        tempo: s.tempo,
+        coverImage: getSongImage(s),
+        youtubeId: s.youtube_id || s.youtubeId,
     }));
 
     const songCanonicalUrl = `${SITE_URL}/songs/${generateSlug(song.title)}`;

@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { Sparkles, Music2 } from 'lucide-react';
+import { Sparkles, Music2, Play, ArrowUpRight } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton';
-import TiltCard from '@/components/ui/TiltCard';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
@@ -67,23 +66,23 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
     return (
         <div className="min-h-screen bg-[#02000F] text-white font-sans pb-32 overflow-x-hidden selection:bg-[var(--brand)] selection:text-white">
 
-            {/* HERO HEADER */}
-            <div className="relative min-h-[28vh] sm:min-h-[35vh] w-full overflow-hidden flex items-end">
+            {/* COMPACT HERO HEADER */}
+            <div className="relative min-h-[16vh] sm:min-h-[22vh] w-full overflow-hidden flex items-end">
                 <div className={`absolute inset-0 bg-gradient-to-br ${getGradient()} opacity-20`} />
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80')] bg-cover bg-center opacity-30 mix-blend-overlay" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/60 to-transparent" />
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80')] bg-cover bg-center opacity-25 mix-blend-overlay" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#02000F] via-[#02000F]/70 to-transparent" />
 
-                <div className="relative z-10 p-4 sm:p-6 w-full max-w-7xl mx-auto flex flex-col md:flex-row gap-4 sm:gap-6 md:items-end justify-between animate-fade-in-up">
+                <div className="relative z-10 p-4 sm:p-6 w-full max-w-7xl mx-auto flex flex-col md:flex-row gap-2 sm:gap-4 md:items-end justify-between animate-fade-in-up">
                     <div className="flex-1">
-                        <div className="flex items-center gap-2 text-[var(--brand)] font-bold tracking-widest uppercase text-xs mb-1 sm:mb-2">
-                            <Sparkles className="w-4 h-4 animate-pulse" />
+                        <div className="flex items-center gap-2 text-[#FFB37A] font-bold tracking-widest uppercase text-[10px] sm:text-xs mb-1">
+                            <Sparkles className="w-3.5 h-3.5 text-[#FF5A2E]" />
                             <span>Curated Collection</span>
                         </div>
-                        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-2 text-white shadow-xl drop-shadow-lg uppercase">
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white shadow-xl drop-shadow-md uppercase">
                             {categoryName}
                         </h1>
-                        <p className="text-white/60 font-medium max-w-lg text-sm sm:text-base md:text-lg">
-                            Dive into the presence of God with our hand-picked selection of {categoryName} songs.
+                        <p className="text-white/60 font-medium max-w-lg text-xs sm:text-sm mt-1">
+                            Dive into the presence of God with hand-picked {categoryName} worship songs.
                         </p>
                     </div>
                 </div>
@@ -99,44 +98,50 @@ export default async function CategoryDetailPage({ params }: { params: Promise<{
                 </div>
             </div>
 
-            {/* SONG GRID - CINEMATIC POSTERS */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
+            {/* COMPACT GLASSMORPHIC SONG CARDS */}
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
                 {filteredSongs.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+                    <div className="space-y-2.5 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-3.5">
                         {filteredSongs.map((song) => (
-                            <TiltCard key={song.id} className="min-h-[300px] sm:min-h-[400px]" scale={1.05} max={15}>
-                                <div className="relative h-full group">
-                                    <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-[var(--brand)] to-purple-600 blur-[30px] opacity-20 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110"></div>
+                            <Link
+                                key={song.id}
+                                href={`/songs/${generateSlug(song.title)}`}
+                                className="group relative flex items-center gap-3 sm:gap-3.5 p-2.5 sm:p-3 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] backdrop-blur-xl border border-white/10 hover:border-[#FF5A2E]/40 shadow-[0_4px_24px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_32px_rgba(255,90,46,0.18)] transition-all duration-200 hover:scale-[1.01]"
+                            >
+                                {/* Compact Square Album Artwork */}
+                                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden relative shrink-0 bg-black/60 border border-white/10 shadow-md">
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                        style={{ backgroundImage: `url('${getSongImage(song)}')` }}
+                                    />
+                                    <div className="absolute inset-0 bg-black/25 group-hover:bg-black/0 transition-colors" />
 
-                                    <Link
-                                        href={`/songs/${generateSlug(song.title)}`}
-                                        className="relative flex flex-col justify-end p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-[2rem] bg-[#0A0A0A] border border-white/10 overflow-hidden h-full group-hover:bg-[#111] transition-colors aspect-[3/4]"
-                                    >
-                                        {/* Album Art Background (Full Coverage) */}
-                                        <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: `url('${getSongImage(song)}')` }}></div>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-80 transition-opacity" />
-
-                                        {/* Glass Shine */}
-                                        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                        {/* Content Info */}
-                                        <div className="relative z-10 transform-style-3d translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                            <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                                                <span className="text-[10px] font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand)]/40 border border-white/20">
-                                                    {(song.category || 'Worship').toUpperCase()}
-                                                </span>
-                                            </div>
-                                            <h3 className="font-black text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white leading-tight mb-1 sm:mb-2 drop-shadow-lg tracking-tight">{song.title}</h3>
-                                            <p className="text-xs sm:text-sm text-white/70 font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em]">{song.artist}</p>
-
-                                            {/* Fake Equalizer Line */}
-                                            <div className="w-full h-1.5 bg-white/20 rounded-full mt-4 sm:mt-6 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity delay-100">
-                                                <div className="h-full bg-[var(--brand)] w-full animate-loader shadow-[0_0_10px_var(--brand)]"></div>
-                                            </div>
-                                        </div>
-                                    </Link>
+                                    {/* Hover Play Indicator */}
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[1px]">
+                                        <Play className="w-4 h-4 fill-white text-white translate-x-0.5 drop-shadow" />
+                                    </div>
                                 </div>
-                            </TiltCard>
+
+                                {/* Title & Artist & Category Tag */}
+                                <div className="flex-1 min-w-0 pr-1">
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <span className="text-[9.5px] uppercase font-black tracking-wider text-amber-300 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded">
+                                            {(song.category || categoryName).toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-bold text-sm sm:text-base text-white group-hover:text-[#FFB37A] transition-colors truncate">
+                                        {song.title}
+                                    </h3>
+                                    <p className="text-xs text-white/50 group-hover:text-white/70 transition-colors truncate mt-0.5">
+                                        {song.artist}
+                                    </p>
+                                </div>
+
+                                {/* Sleek Diagonal Arrow Indicator */}
+                                <div className="p-1.5 shrink-0 text-white/30 group-hover:text-white transition-colors">
+                                    <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 ) : (

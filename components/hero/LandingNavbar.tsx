@@ -456,17 +456,27 @@ export default function LandingNavbar() {
                                                 </div>
                                             </Link>
                                         ))}
-                                        {/* Service timings as 4th card in Grow column */}
-                                        <div className="rounded-xl bg-white/[0.02] border border-white/[0.05] p-2 sm:p-2.5 flex flex-col justify-between gap-1">
-                                            <div className="flex items-center gap-1.5 text-[#FFB37A]">
-                                                <Clock className="w-3 h-3 text-[#FF5A2E]" />
-                                                <span className="text-[10px] font-bold uppercase tracking-wider">Services</span>
+                                        {/* Service timings as 4th card in Grow column - styled identically to all other cards */}
+                                        <Link
+                                            href="/our-branches"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="group/item relative overflow-hidden rounded-xl bg-white/[0.03] hover:bg-white/[0.08] active:bg-white/[0.12] border border-white/[0.06] hover:border-[#FF5A2E]/40 p-2 sm:p-2.5 flex flex-col justify-between gap-1.5 transition-all duration-200 active:scale-[0.98]"
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-[#FFB37A] group-hover/item:scale-105 transition-transform shrink-0">
+                                                    <Clock className="w-3.5 h-3.5" />
+                                                </div>
+                                                <ChevronRight className="w-3 h-3 text-white/20 group-hover/item:text-amber-400 group-hover/item:translate-x-0.5 transition-all" />
                                             </div>
-                                            <div>
-                                                <div className="text-[11px] font-semibold text-[#F4EDE2]">Sun 10:30 AM</div>
-                                                <div className="text-[9.5px] text-white/45">Fri 7:00 PM Prayer</div>
+                                            <div className="min-w-0">
+                                                <div className="text-[12px] font-semibold text-[#F4EDE2] group-hover/item:text-white truncate">
+                                                    Services
+                                                </div>
+                                                <div className="text-[9.5px] text-white/45 group-hover/item:text-white/65 truncate">
+                                                    Sun 10:30 AM · Fri 7 PM
+                                                </div>
                                             </div>
-                                        </div>
+                                        </Link>
                                     </div>
 
                                     {/* Right Column: Church & Ministry */}

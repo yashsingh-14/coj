@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Fuse from 'fuse.js';
 import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
+import { filterAndRankSongs } from '@/lib/searchUtils';
 
 export function useFuzzySearch() {
     const [query, setQuery] = useState('');
@@ -31,24 +32,28 @@ export function useFuzzySearch() {
         return () => { isMounted = false; };
     }, []);
 
-    // Initialize Fuse instance with memoization
+    // Initialize Fuse instance with memoization & expanded forgiving keys
     const fuse = useMemo(() => {
         if (!allSongs || allSongs.length === 0) return null;
 
         return new Fuse(allSongs, {
             keys: [
-                { name: 'title', weight: 0.7 },
-                { name: 'artist', weight: 0.5 },
-                { name: 'category', weight: 0.3 }
+                { name: 'title', weight: 0.8 },
+                { name: 'artist', weight: 0.4 },
+                { name: 'category', weight: 0.3 },
+                { name: 'lyrics', weight: 0.2 },
+                { name: 'hindiLyrics', weight: 0.2 },
+                { name: 'hindi_lyrics', weight: 0.2 },
             ],
-            threshold: 0.45, // Allows typos & spacing differences (e.g. "rooh e paak" vs "rooh-e-paak")
-            distance: 100,
+            threshold: 0.55, // Highly forgiving of typos & spacing differences
+            distance: 200,
             includeScore: true,
             ignoreLocation: true,
+            minMatchCharLength: 2,
         });
     }, [allSongs]);
 
-    // Perform Search
+    // Perform Search with hybrid forgiving algorithm
     useEffect(() => {
         const trimmed = query.trim();
         if (!trimmed) {
@@ -60,24 +65,37 @@ export function useFuzzySearch() {
         setLoading(true);
 
         const timer = setTimeout(() => {
+            // 1. Run our forgiving token & phonetic & lyrics ranker
+            const rankedByScore = filterAndRankSongs(allSongs, trimmed);
+
+            // 2. Run Fuse for additional typo tolerance
+            let fuseItems: Song[] = [];
             if (fuse) {
                 const fuseResults = fuse.search(trimmed);
-                const items = fuseResults.map(result => result.item);
-                setResults(items.slice(0, 50));
-            } else if (allSongs.length > 0) {
-                // Substring fallback
-                const q = trimmed.toLowerCase();
-                const matched = allSongs.filter(s =>
-                    s.title?.toLowerCase().includes(q) ||
-                    s.artist?.toLowerCase().includes(q) ||
-                    s.category?.toLowerCase().includes(q)
-                );
-                setResults(matched.slice(0, 50));
-            } else {
-                setResults([]);
+                fuseItems = fuseResults.map(r => r.item);
             }
+
+            // 3. Merge both with rankedByScore having top priority, deduplicating by ID
+            const seen = new Set<string>();
+            const combined: Song[] = [];
+
+            for (const s of rankedByScore) {
+                if (!seen.has(s.id)) {
+                    seen.add(s.id);
+                    combined.push(s);
+                }
+            }
+
+            for (const s of fuseItems) {
+                if (!seen.has(s.id)) {
+                    seen.add(s.id);
+                    combined.push(s);
+                }
+            }
+
+            setResults(combined.slice(0, 50));
             setLoading(false);
-        }, 80);
+        }, 60);
 
         return () => clearTimeout(timer);
     }, [query, fuse, allSongs]);
