@@ -10,7 +10,7 @@ import {
     Disc3,
     ArrowLeft,
     RefreshCw,
-    ChevronRight,
+    ChevronDown,
     Minus,
     Plus,
     RotateCcw,
@@ -21,7 +21,7 @@ import {
     FileText,
     Languages,
     Layers,
-    CheckCircle2
+    Maximize2
 } from 'lucide-react';
 import { ALL_SONGS } from '@/data/songs';
 import { Song } from '@/data/types';
@@ -38,21 +38,27 @@ const isValidChord = (str: string) => {
 export default function OfflinePage() {
     const [offlineSongs, setOfflineSongs] = useState<Song[]>(ALL_SONGS);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
+    const [fullscreenSong, setFullscreenSong] = useState<Song | null>(null);
     const [isOnline, setIsOnline] = useState(false);
     const [isCheckingNetwork, setIsCheckingNetwork] = useState(false);
     const [retryMessage, setRetryMessage] = useState<string | null>(null);
 
-    // Song viewer local controls
-    const [transpose, setTranspose] = useState(0);
+    // Global transpositions per song: { [songId]: transposeSemis }
+    const [songTranspositions, setSongTranspositions] = useState<Record<string, number>>({});
+    // Active tab per song: { [songId]: 'chords' | 'lyrics' | 'hindi' | 'all' }
+    const [songTabs, setSongTabs] = useState<Record<string, 'chords' | 'lyrics' | 'hindi' | 'all'>>({});
+    // Font size per song
     const [fontSize, setFontSize] = useState(15);
-    const [activeTab, setActiveTab] = useState<'chords' | 'lyrics' | 'hindi' | 'all'>('chords');
+    // Copy feedback
+    const [copiedId, setCopiedId] = useState<string | null>(null);
+
+    // Fullscreen auto-scroll
     const [isAutoScrolling, setIsAutoScrolling] = useState(false);
     const [scrollSpeed, setScrollSpeed] = useState<1 | 2 | 3>(1);
-    const [copied, setCopied] = useState(false);
     const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Monitor online/offline status
+    // Online/offline detection
     useEffect(() => {
         setIsOnline(typeof navigator !== 'undefined' ? navigator.onLine : false);
 
@@ -62,7 +68,7 @@ export default function OfflinePage() {
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
-        // Load synced offline songs from localStorage if user previously synced
+        // Load synced offline songs from localStorage if available
         try {
             const cached = localStorage.getItem('coj_offline_songs_cache');
             if (cached) {
@@ -71,9 +77,7 @@ export default function OfflinePage() {
                     setOfflineSongs(parsed);
                 }
             }
-        } catch {
-            // Fallback to ALL_SONGS
-        }
+        } catch { }
 
         return () => {
             window.removeEventListener('online', handleOnline);
@@ -81,22 +85,7 @@ export default function OfflinePage() {
         };
     }, []);
 
-    // Reset song viewer states when switching songs
-    useEffect(() => {
-        if (selectedSong) {
-            setTranspose(0);
-            setIsAutoScrolling(false);
-            if (selectedSong.chords && selectedSong.chords.trim().length > 0) {
-                setActiveTab('chords');
-            } else if (selectedSong.lyrics && selectedSong.lyrics.trim().length > 0) {
-                setActiveTab('lyrics');
-            } else {
-                setActiveTab('all');
-            }
-        }
-    }, [selectedSong]);
-
-    // Auto-scroll loop
+    // Auto-scroll loop for fullscreen mode
     useEffect(() => {
         if (isAutoScrolling) {
             const speedMap = { 1: 1, 2: 2, 3: 3 };
@@ -118,19 +107,31 @@ export default function OfflinePage() {
         };
     }, [isAutoScrolling, scrollSpeed]);
 
-    // Search filter
+    // Categories available
+    const categories = useMemo(() => {
+        const cats = Array.from(new Set(offlineSongs.map(s => s.category).filter(Boolean)));
+        return ['all', ...cats];
+    }, [offlineSongs]);
+
+    // Filtered songs
     const filteredSongs = useMemo(() => {
+        let list = offlineSongs;
+        if (selectedCategory !== 'all') {
+            list = list.filter(s => s.category === selectedCategory);
+        }
+
         const q = searchQuery.toLowerCase().trim();
-        if (!q) return offlineSongs;
-        return offlineSongs.filter(s =>
+        if (!q) return list;
+
+        return list.filter(s =>
             (s.title || '').toLowerCase().includes(q) ||
             (s.artist || '').toLowerCase().includes(q) ||
             (s.lyrics || '').toLowerCase().includes(q) ||
             (s.hindi_lyrics || '').toLowerCase().includes(q)
         );
-    }, [offlineSongs, searchQuery]);
+    }, [offlineSongs, selectedCategory, searchQuery]);
 
-    // Safe Retry Handler (probes connectivity before reloading, preventing crash)
+    // Safe Retry Handler
     const handleSafeRetry = async () => {
         setIsCheckingNetwork(true);
         setRetryMessage(null);
@@ -138,8 +139,6 @@ export default function OfflinePage() {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-            // Fetch a tiny static manifest file without caching
             const res = await fetch('/manifest.json?_t=' + Date.now(), {
                 cache: 'no-store',
                 signal: controller.signal
@@ -147,67 +146,78 @@ export default function OfflinePage() {
             clearTimeout(timeoutId);
 
             if (res.ok) {
-                // Network restored! Seamlessly go to online home page
                 window.location.href = '/';
                 return;
             }
-        } catch {
-            // Still offline
-        }
+        } catch { }
 
         setIsCheckingNetwork(false);
         setRetryMessage('Abhi bhi internet connect nahi hua hai. Data/Wi-Fi check karein.');
         setTimeout(() => setRetryMessage(null), 4000);
     };
 
-    // Calculate current transposed key
-    const originalKey = selectedSong?.key || 'C';
-    const currentKey = transposeChord(originalKey, transpose, false);
+    // Transpose helper
+    const getTranspose = (songId: string) => songTranspositions[songId] || 0;
+    const setTranspose = (songId: string, val: number) => {
+        setSongTranspositions(prev => ({ ...prev, [songId]: val }));
+    };
 
-    // Exportable plain text for clipboard
-    const handleCopySong = async () => {
-        if (!selectedSong) return;
-        let textToCopy = `${selectedSong.title} - ${selectedSong.artist || 'Worship'}\nKey: ${currentKey}\n\n`;
+    // Tab helper
+    const getActiveTab = (song: Song) => {
+        if (songTabs[song.id]) return songTabs[song.id];
+        if (song.chords && song.chords.trim().length > 0) return 'chords';
+        if (song.lyrics && song.lyrics.trim().length > 0) return 'lyrics';
+        return 'all';
+    };
 
-        if (activeTab === 'chords' && selectedSong.chords) {
-            let trChords = selectedSong.chords;
-            if (transpose !== 0) {
-                trChords = selectedSong.chords.replace(/\[([A-G][#b]?[^\]]*)\]/g, (match, chord) => {
+    const setActiveTab = (songId: string, tab: 'chords' | 'lyrics' | 'hindi' | 'all') => {
+        setSongTabs(prev => ({ ...prev, [songId]: tab }));
+    };
+
+    // Copy to clipboard
+    const handleCopy = async (song: Song) => {
+        const trans = getTranspose(song.id);
+        const origKey = song.key || 'C';
+        const curKey = transposeChord(origKey, trans, false);
+        const currentTab = getActiveTab(song);
+
+        let text = `${song.title} - ${song.artist || 'Worship'}\nKey: ${curKey}\n\n`;
+
+        if (currentTab === 'chords' && song.chords) {
+            let trChords = song.chords;
+            if (trans !== 0) {
+                trChords = song.chords.replace(/\[([A-G][#b]?[^\]]*)\]/g, (match, chord) => {
                     const isChord = isValidChord(chord);
-                    return isChord ? `[${transposeChord(chord, transpose, false)}]` : match;
+                    return isChord ? `[${transposeChord(chord, trans, false)}]` : match;
                 });
             }
-            textToCopy += trChords;
-        } else if (activeTab === 'hindi' && selectedSong.hindi_lyrics) {
-            textToCopy += selectedSong.hindi_lyrics;
+            text += trChords;
+        } else if (currentTab === 'hindi' && song.hindi_lyrics) {
+            text += song.hindi_lyrics;
         } else {
-            textToCopy += selectedSong.lyrics || '';
+            text += song.lyrics || '';
         }
 
         try {
-            await navigator.clipboard.writeText(textToCopy);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        } catch {
-            // Clipboard fallback
-        }
+            await navigator.clipboard.writeText(text);
+            setCopiedId(song.id);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch { }
     };
 
     // Render Chords (ChordPro)
-    const renderChords = (chordsText?: string) => {
-        if (!chordsText) return <p className="text-white/40 text-sm italic">No chords available for this track.</p>;
+    const renderChords = (chordsText?: string, transposeAmount = 0) => {
+        if (!chordsText) return <p className="text-white/40 text-xs italic">No chords available for this song.</p>;
 
         return chordsText.split('\n').map((line, lineIndex) => {
             const trimmed = line.trim();
-            if (!trimmed) {
-                return <div key={lineIndex} className="h-2.5" />;
-            }
+            if (!trimmed) return <div key={lineIndex} className="h-2" />;
 
             const headerMatch = trimmed.match(/^(?:\[)?(Intro|Verse|Chorus|Bridge|Pre-Chorus|PreChorus|Outro|Interlude|Ending|Instrumental)(?:[\s\d:]*)?(?:\])?$/i) || trimmed.match(/^\[.*\]$/);
             if (headerMatch) {
                 return (
-                    <div key={lineIndex} className="mt-4 mb-2 first:mt-0">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2.5 py-0.5 rounded shadow-sm inline-block">
+                    <div key={lineIndex} className="mt-3.5 mb-1.5 first:mt-0">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2 py-0.5 rounded shadow-sm inline-block">
                             {trimmed.replace(/[\[\]:]/g, '').trim()}
                         </span>
                     </div>
@@ -231,10 +241,10 @@ export default function OfflinePage() {
             }
 
             return (
-                <div key={lineIndex} className="flex flex-wrap items-end mb-2.5 w-full">
+                <div key={lineIndex} className="flex flex-wrap items-end mb-2 w-full">
                     {segments.map((seg, idx) => {
                         const isChord = seg.chord ? isValidChord(seg.chord) : false;
-                        const transposed = (seg.chord && isChord) ? transposeChord(seg.chord, transpose, false) : null;
+                        const transposed = (seg.chord && isChord) ? transposeChord(seg.chord, transposeAmount, false) : null;
 
                         let displayText = seg.text || '';
                         if (!isChord && seg.chord) {
@@ -270,7 +280,7 @@ export default function OfflinePage() {
                                     <div className="flex items-end">
                                         {tokens.map((token, tIdx) => {
                                             const isTokenChord = isValidChord(token.trim());
-                                            const tokenTransposed = isTokenChord ? transposeChord(token.trim(), transpose, false) : null;
+                                            const tokenTransposed = isTokenChord ? transposeChord(token.trim(), transposeAmount, false) : null;
 
                                             if (isTokenChord && tokenTransposed) {
                                                 return (
@@ -304,17 +314,17 @@ export default function OfflinePage() {
 
     // Render Lyrics
     const renderLyrics = (lyricsText?: string, isDevanagari = false) => {
-        if (!lyricsText) return <p className="text-white/40 text-sm italic">No lyrics available.</p>;
+        if (!lyricsText) return <p className="text-white/40 text-xs italic">No lyrics available.</p>;
 
         return lyricsText.split('\n').map((line, index) => {
             const trimmed = line.trim();
-            if (!trimmed) return <div key={index} className="h-2.5" />;
+            if (!trimmed) return <div key={index} className="h-2" />;
 
             const isHeader = /^\[.*\]$/.test(trimmed) || /^(?:\[)?(Intro|Verse|Chorus|Bridge|Pre-Chorus|PreChorus|Outro|Interlude|Ending|Instrumental)(?:[\s\d:]*)?(?:\])?$/i.test(trimmed);
             if (isHeader) {
                 return (
                     <div key={index} className="mt-3.5 mb-1.5 first:mt-0">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2.5 py-0.5 rounded shadow-sm inline-block">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/25 px-2 py-0.5 rounded shadow-sm inline-block">
                             {trimmed.replace(/[\[\]:]/g, '').trim()}
                         </span>
                     </div>
@@ -324,7 +334,7 @@ export default function OfflinePage() {
             return (
                 <p
                     key={index}
-                    className={`mb-1.5 leading-relaxed text-white/90 whitespace-pre-wrap ${isDevanagari ? 'font-serif' : 'font-medium'} break-words`}
+                    className={`mb-1 leading-relaxed text-white/90 whitespace-pre-wrap ${isDevanagari ? 'font-serif' : 'font-medium'} break-words`}
                     style={{ fontSize: `${isDevanagari ? fontSize + 1 : fontSize}px` }}
                 >
                     {line}
@@ -333,225 +343,139 @@ export default function OfflinePage() {
         });
     };
 
-    // VIEW: Individual Song Chords & Lyrics Screen (100% Offline)
-    if (selectedSong) {
+    // FULLSCREEN STAGE VIEW
+    if (fullscreenSong) {
+        const currentTrans = getTranspose(fullscreenSong.id);
+        const origKey = fullscreenSong.key || 'C';
+        const curKey = transposeChord(origKey, currentTrans, false);
+        const activeTab = getActiveTab(fullscreenSong);
+
         return (
             <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-amber-500 selection:text-black pb-28">
-                {/* Header Bar */}
-                <div className="sticky top-0 z-40 bg-[#080808]/95 backdrop-blur-xl border-b border-white/10 px-3 sm:px-6 py-3 flex items-center justify-between shadow-2xl">
+                {/* Header */}
+                <div className="sticky top-0 z-40 bg-[#080808]/95 backdrop-blur-xl border-b border-white/10 px-4 sm:px-6 py-3 flex items-center justify-between shadow-2xl">
                     <button
                         type="button"
-                        onClick={() => setSelectedSong(null)}
-                        className="flex items-center gap-2 text-xs sm:text-sm font-bold text-white/80 hover:text-white transition-colors py-1 px-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 active:scale-95"
+                        onClick={() => setFullscreenSong(null)}
+                        className="flex items-center gap-2 text-xs sm:text-sm font-bold text-white/80 hover:text-white py-1 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5"
                     >
                         <ArrowLeft className="w-4 h-4 text-amber-400" />
-                        <span>Songbook</span>
+                        <span>Back to Songbook</span>
                     </button>
 
                     <div className="flex items-center gap-2">
                         <span className="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
-                            Key: {currentKey}
+                            Key: {curKey}
                         </span>
-                        <div className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <div className="flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             <span>Offline</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Song Meta Header */}
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-5 pb-3 border-b border-white/5">
-                    <div className="flex items-start justify-between gap-4">
-                        <div>
-                            <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white drop-shadow-sm">
-                                {selectedSong.title}
-                            </h1>
-                            <p className="text-sm text-white/60 font-medium mt-0.5">
-                                {selectedSong.artist || 'Worship'}
-                            </p>
-                        </div>
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+                    <h1 className="text-2xl sm:text-3xl font-black text-white">{fullscreenSong.title}</h1>
+                    <p className="text-xs sm:text-sm text-white/50">{fullscreenSong.artist || 'Worship'}</p>
 
-                        {selectedSong.category && (
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/5 text-white/60 border border-white/10 shrink-0">
-                                {selectedSong.category.replace('-', ' ')}
-                            </span>
-                        )}
-                    </div>
-                </div>
-
-                {/* Sticky Transpose & Controls Toolbar */}
-                <div className="sticky top-[53px] z-30 bg-[#0C0C0C]/95 backdrop-blur-md border-b border-white/10 py-2 px-4 sm:px-6 shadow-xl">
-                    <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 flex-wrap">
-                        {/* Transposer */}
-                        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/10 rounded-xl p-1">
+                    {/* Toolbar */}
+                    <div className="flex items-center justify-between gap-2 mt-4 pb-3 border-b border-white/10 flex-wrap">
+                        {/* Transpose */}
+                        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/10 rounded-xl p-0.5">
                             <button
-                                type="button"
-                                onClick={() => setTranspose(t => t - 1)}
-                                className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/80 active:scale-90 transition-all"
-                                title="Transpose -1"
+                                onClick={() => setTranspose(fullscreenSong.id, currentTrans - 1)}
+                                className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/80"
                             >
                                 <Minus className="w-3.5 h-3.5" />
                             </button>
-
                             <button
-                                type="button"
-                                onClick={() => setTranspose(0)}
-                                className="px-2.5 py-0.5 flex flex-col items-center justify-center hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
-                                title="Click to reset key"
+                                onClick={() => setTranspose(fullscreenSong.id, 0)}
+                                className="px-2 py-0.5 text-xs font-bold text-amber-400 font-mono"
                             >
-                                <span className="text-[9px] uppercase font-bold text-white/40 tracking-wider flex items-center gap-0.5 leading-none">
-                                    Key {transpose !== 0 && <RotateCcw className="w-2.5 h-2.5 text-amber-400" />}
-                                </span>
-                                <span className="text-xs sm:text-sm font-black text-amber-400 font-mono tracking-wide leading-tight">
-                                    {currentKey}
-                                    {transpose !== 0 && (
-                                        <span className="text-[10px] font-normal text-amber-300 ml-0.5">
-                                            ({transpose > 0 ? `+${transpose}` : transpose})
-                                        </span>
-                                    )}
-                                </span>
+                                {curKey} {currentTrans !== 0 && `(${currentTrans > 0 ? `+${currentTrans}` : currentTrans})`}
                             </button>
-
                             <button
-                                type="button"
-                                onClick={() => setTranspose(t => t + 1)}
-                                className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/80 active:scale-90 transition-all"
-                                title="Transpose +1"
+                                onClick={() => setTranspose(fullscreenSong.id, currentTrans + 1)}
+                                className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/80"
                             >
                                 <Plus className="w-3.5 h-3.5" />
                             </button>
                         </div>
 
-                        {/* Font size + Copy */}
+                        {/* Font size & Copy */}
                         <div className="flex items-center gap-1.5">
-                            {/* Font size */}
                             <div className="flex items-center bg-white/5 rounded-xl p-0.5 border border-white/5 text-xs">
-                                <button
-                                    type="button"
-                                    onClick={() => setFontSize(s => Math.max(12, s - 1))}
-                                    className="w-6 h-6 rounded flex items-center justify-center text-white/70 hover:text-white font-bold"
-                                >
-                                    A-
-                                </button>
-                                <span className="text-[11px] font-mono text-amber-400 font-bold px-1">{fontSize}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => setFontSize(s => Math.min(24, s + 1))}
-                                    className="w-6 h-6 rounded flex items-center justify-center text-white/70 hover:text-white font-bold"
-                                >
-                                    A+
-                                </button>
+                                <button onClick={() => setFontSize(s => Math.max(12, s - 1))} className="w-6 h-6 font-bold text-white/70">A-</button>
+                                <span className="text-[11px] font-mono text-amber-400 px-1">{fontSize}</span>
+                                <button onClick={() => setFontSize(s => Math.min(24, s + 1))} className="w-6 h-6 font-bold text-white/70">A+</button>
                             </div>
 
-                            {/* Copy button */}
                             <button
-                                type="button"
-                                onClick={handleCopySong}
-                                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all border ${
-                                    copied
-                                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
-                                        : 'bg-white/5 border-white/10 text-white/80 hover:text-white'
-                                }`}
+                                onClick={() => handleCopy(fullscreenSong)}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/10"
                             >
-                                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-amber-400" />}
-                                <span>{copied ? 'Copied' : 'Copy'}</span>
+                                {copiedId === fullscreenSong.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-amber-400" />}
+                                <span>{copiedId === fullscreenSong.id ? 'Copied' : 'Copy'}</span>
                             </button>
                         </div>
                     </div>
-                </div>
 
-                {/* Content Box */}
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-                    {/* View Switcher Tabs */}
-                    <div className="flex items-center gap-1.5 border-b border-white/10 pb-3 mb-4">
-                        {selectedSong.chords && (
+                    {/* Tabs */}
+                    <div className="flex items-center gap-1.5 my-3">
+                        {fullscreenSong.chords && (
                             <button
-                                type="button"
-                                onClick={() => setActiveTab('chords')}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                    activeTab === 'chords'
-                                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                                        : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
-                                }`}
+                                onClick={() => setActiveTab(fullscreenSong.id, 'chords')}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold ${activeTab === 'chords' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/60'}`}
                             >
-                                <Music className="w-3.5 h-3.5" />
-                                <span>Chords</span>
+                                Chords
                             </button>
                         )}
-
-                        {selectedSong.lyrics && (
+                        {fullscreenSong.lyrics && (
                             <button
-                                type="button"
-                                onClick={() => setActiveTab('lyrics')}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                    activeTab === 'lyrics'
-                                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                                        : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
-                                }`}
+                                onClick={() => setActiveTab(fullscreenSong.id, 'lyrics')}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold ${activeTab === 'lyrics' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/60'}`}
                             >
-                                <FileText className="w-3.5 h-3.5" />
-                                <span>Hinglish</span>
+                                Hinglish
                             </button>
                         )}
-
-                        {selectedSong.hindi_lyrics && (
+                        {fullscreenSong.hindi_lyrics && (
                             <button
-                                type="button"
-                                onClick={() => setActiveTab('hindi')}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                    activeTab === 'hindi'
-                                        ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                                        : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
-                                }`}
+                                onClick={() => setActiveTab(fullscreenSong.id, 'hindi')}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold ${activeTab === 'hindi' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/60'}`}
                             >
-                                <Languages className="w-3.5 h-3.5" />
-                                <span>हिन्दी</span>
+                                हिन्दी
                             </button>
                         )}
-
                         <button
-                            type="button"
-                            onClick={() => setActiveTab('all')}
-                            className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                                activeTab === 'all'
-                                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                                    : 'bg-white/5 text-white/50 hover:text-white hover:bg-white/10'
-                            }`}
+                            onClick={() => setActiveTab(fullscreenSong.id, 'all')}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold ${activeTab === 'all' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40'}`}
                         >
-                            <Layers className="w-3.5 h-3.5" />
-                            <span>All</span>
+                            All
                         </button>
                     </div>
 
-                    {/* Tab Content */}
+                    {/* Content */}
                     <div className="bg-[#0C0C0C]/80 border border-white/5 rounded-2xl p-4 sm:p-6 shadow-2xl overflow-x-auto">
-                        {activeTab === 'chords' && renderChords(selectedSong.chords)}
-                        {activeTab === 'lyrics' && renderLyrics(selectedSong.lyrics, false)}
-                        {activeTab === 'hindi' && renderLyrics(selectedSong.hindi_lyrics, true)}
+                        {activeTab === 'chords' && renderChords(fullscreenSong.chords, currentTrans)}
+                        {activeTab === 'lyrics' && renderLyrics(fullscreenSong.lyrics, false)}
+                        {activeTab === 'hindi' && renderLyrics(fullscreenSong.hindi_lyrics, true)}
                         {activeTab === 'all' && (
                             <div className="space-y-6">
-                                {selectedSong.chords && (
+                                {fullscreenSong.chords && (
                                     <section>
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-2 border-b border-white/10 pb-1">
-                                            Chords & Lyrics
-                                        </h3>
-                                        {renderChords(selectedSong.chords)}
+                                        <h3 className="text-xs font-bold uppercase text-amber-500 mb-2 border-b border-white/10 pb-1">Chords & Lyrics</h3>
+                                        {renderChords(fullscreenSong.chords, currentTrans)}
                                     </section>
                                 )}
-                                {selectedSong.lyrics && (
+                                {fullscreenSong.lyrics && (
                                     <section>
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-2 border-b border-white/10 pb-1">
-                                            Hinglish Lyrics
-                                        </h3>
-                                        {renderLyrics(selectedSong.lyrics, false)}
+                                        <h3 className="text-xs font-bold uppercase text-amber-500 mb-2 border-b border-white/10 pb-1">Hinglish Lyrics</h3>
+                                        {renderLyrics(fullscreenSong.lyrics, false)}
                                     </section>
                                 )}
-                                {selectedSong.hindi_lyrics && (
+                                {fullscreenSong.hindi_lyrics && (
                                     <section>
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-2 border-b border-white/10 pb-1">
-                                            हिन्दी Lyrics (देवनागरी)
-                                        </h3>
-                                        {renderLyrics(selectedSong.hindi_lyrics, true)}
+                                        <h3 className="text-xs font-bold uppercase text-amber-500 mb-2 border-b border-white/10 pb-1">हिन्दी Lyrics</h3>
+                                        {renderLyrics(fullscreenSong.hindi_lyrics, true)}
                                     </section>
                                 )}
                             </div>
@@ -559,35 +483,24 @@ export default function OfflinePage() {
                     </div>
                 </div>
 
-                {/* Floating Auto-Scroll Button */}
+                {/* Floating Auto Scroll */}
                 <div className="fixed bottom-6 right-5 z-50 flex items-center gap-2">
                     {isAutoScrolling && (
-                        <div className="flex items-center gap-1 bg-[#1A1A1A] border border-white/10 rounded-full p-1 shadow-2xl animate-fade-in">
+                        <div className="flex items-center gap-1 bg-[#1A1A1A] border border-white/10 rounded-full p-1 shadow-2xl">
                             {([1, 2, 3] as const).map((spd) => (
                                 <button
                                     key={spd}
-                                    type="button"
                                     onClick={() => setScrollSpeed(spd)}
-                                    className={`w-7 h-7 rounded-full text-xs font-bold transition-all ${
-                                        scrollSpeed === spd
-                                            ? 'bg-amber-500 text-black font-black'
-                                            : 'text-white/60 hover:text-white'
-                                    }`}
+                                    className={`w-7 h-7 rounded-full text-xs font-bold ${scrollSpeed === spd ? 'bg-amber-500 text-black font-black' : 'text-white/60'}`}
                                 >
                                     {spd}x
                                 </button>
                             ))}
                         </div>
                     )}
-
                     <button
-                        type="button"
                         onClick={() => setIsAutoScrolling(!isAutoScrolling)}
-                        className={`w-12 h-12 rounded-full shadow-2xl flex items-center justify-center transition-all ${
-                            isAutoScrolling
-                                ? 'bg-amber-500 text-black shadow-amber-500/40 ring-4 ring-amber-500/20'
-                                : 'bg-[#181818] text-white/80 hover:bg-[#252525] border border-white/10'
-                        }`}
+                        className={`w-12 h-12 rounded-full shadow-2xl flex items-center justify-center ${isAutoScrolling ? 'bg-amber-500 text-black' : 'bg-[#181818] text-white/80 border border-white/10'}`}
                         title={isAutoScrolling ? 'Stop Auto-Scroll' : 'Start Auto-Scroll'}
                     >
                         {isAutoScrolling ? <Pause className="w-5 h-5 fill-black" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
@@ -597,7 +510,7 @@ export default function OfflinePage() {
         );
     }
 
-    // MAIN VIEW: Offline Songbook Library List
+    // MAIN OFFLINE SONGBOOK LIST VIEW
     return (
         <div className="min-h-screen bg-[#02000F] text-white font-sans pb-24 selection:bg-amber-500 selection:text-black">
             {/* Top Status Bar */}
@@ -610,13 +523,13 @@ export default function OfflinePage() {
                         <h1 className="text-base sm:text-lg font-black tracking-tight flex items-center gap-2">
                             <span>COJ Offline Songbook</span>
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                                {offlineSongs.length} Songs Loaded
+                                {offlineSongs.length} Songs Ready
                             </span>
                         </h1>
                         <p className="text-xs text-white/50 font-medium">
                             {isOnline
-                                ? 'Internet restored! You can go online.'
-                                : 'No internet detected. Everything below works 100% offline.'}
+                                ? 'Internet restored! Tap Go Online to resume.'
+                                : '100% Offline Mode. Tap any song to view lyrics & chords.'}
                         </p>
                     </div>
                 </div>
@@ -645,20 +558,20 @@ export default function OfflinePage() {
 
             {/* In-page friendly retry notice if still offline */}
             {retryMessage && (
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4">
-                    <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium flex items-center gap-2.5 animate-fade-in">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-3">
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-medium flex items-center gap-2.5">
                         <WifiOff className="w-4 h-4 shrink-0 text-amber-400" />
                         <span>{retryMessage}</span>
                     </div>
                 </div>
             )}
 
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-5 space-y-5">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-4">
                 {/* Worship Quick Tools */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 gap-3">
                     <Link
                         href="/tools/tuner"
-                        className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-amber-500/30 transition-all flex items-center gap-3 group active:scale-98"
+                        className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-amber-500/30 transition-all flex items-center gap-3 group active:scale-98"
                     >
                         <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 group-hover:scale-110 transition-transform">
                             <Guitar className="w-5 h-5" />
@@ -671,14 +584,14 @@ export default function OfflinePage() {
 
                     <Link
                         href="/tools/pad"
-                        className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-blue-500/30 transition-all flex items-center gap-3 group active:scale-98"
+                        className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-blue-500/30 transition-all flex items-center gap-3 group active:scale-98"
                     >
                         <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
                             <Disc3 className="w-5 h-5" />
                         </div>
                         <div>
                             <div className="text-sm font-bold text-white">Infinity Pad</div>
-                            <div className="text-[11px] text-white/40">Ambient pad generator</div>
+                            <div className="text-[11px] text-white/40">Ambient pad & rhythm</div>
                         </div>
                     </Link>
                 </div>
@@ -691,14 +604,32 @@ export default function OfflinePage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search songs, artist, lyrics offline..."
-                        className="w-full bg-[#0A0A0A] border border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber-500/50 transition-colors"
+                        className="w-full bg-[#0A0A0A] border border-white/10 rounded-2xl pl-12 pr-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber-500/50"
                     />
                 </div>
 
-                {/* Song List */}
-                <div className="space-y-2">
+                {/* Category Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                    {categories.map((cat) => (
+                        <button
+                            key={cat}
+                            type="button"
+                            onClick={() => setSelectedCategory(cat)}
+                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shrink-0 transition-all ${
+                                selectedCategory === cat
+                                    ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
+                                    : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10 border border-white/5'
+                            }`}
+                        >
+                            {cat === 'all' ? `All Songs (${offlineSongs.length})` : cat.replace('-', ' ')}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Native Touchable Accordion Song Cards */}
+                <div className="space-y-3">
                     <div className="text-xs font-bold text-white/40 uppercase tracking-wider px-1">
-                        Offline Available Tracks ({filteredSongs.length})
+                        Available Offline Tracks ({filteredSongs.length})
                     </div>
 
                     {filteredSongs.length === 0 ? (
@@ -706,41 +637,173 @@ export default function OfflinePage() {
                             No matching songs found in offline library.
                         </div>
                     ) : (
-                        filteredSongs.map((song) => (
-                            <button
-                                key={song.id}
-                                type="button"
-                                onClick={() => setSelectedSong(song)}
-                                className="w-full text-left p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/10 active:border-amber-500/40 transition-all flex items-center justify-between group active:scale-[0.99] cursor-pointer"
-                            >
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-black transition-colors shrink-0">
-                                        <Music className="w-4 h-4" />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <div className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors truncate">
-                                            {song.title}
+                        filteredSongs.map((song) => {
+                            const trans = getTranspose(song.id);
+                            const origKey = song.key || 'C';
+                            const curKey = transposeChord(origKey, trans, false);
+                            const activeTab = getActiveTab(song);
+
+                            return (
+                                <details
+                                    key={song.id}
+                                    className="group rounded-2xl bg-white/[0.03] border border-white/5 open:border-amber-500/40 open:bg-white/[0.05] transition-all overflow-hidden"
+                                >
+                                    {/* Native Touchable Header Summary */}
+                                    <summary className="list-none cursor-pointer p-4 flex items-center justify-between select-none">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 group-open:bg-amber-500 group-open:text-black transition-colors shrink-0">
+                                                <Music className="w-4 h-4" />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                    {song.title}
+                                                </div>
+                                                <div className="text-xs text-white/40 flex items-center gap-2 truncate">
+                                                    <span>{song.artist || 'Worship'}</span>
+                                                    {song.key && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="text-amber-400/80 font-bold font-mono">Key: {curKey}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-white/40 flex items-center gap-2 truncate">
-                                            <span>{song.artist || 'Worship'}</span>
-                                            {song.key && (
-                                                <>
-                                                    <span>•</span>
-                                                    <span className="text-amber-400/80 font-bold font-mono">Key: {song.key}</span>
-                                                </>
+
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 text-white/50 border border-white/5 group-open:bg-amber-500/20 group-open:text-amber-300">
+                                                Tap to View
+                                            </span>
+                                            <ChevronDown className="w-4 h-4 text-white/30 group-open:rotate-180 transition-transform" />
+                                        </div>
+                                    </summary>
+
+                                    {/* Expanded Lyrics and Chords Drawer */}
+                                    <div className="px-4 pb-4 pt-1 border-t border-white/5 space-y-3">
+                                        {/* In-Card Toolbar */}
+                                        <div className="flex items-center justify-between gap-2 flex-wrap pt-2">
+                                            {/* Transpose Controls */}
+                                            <div className="flex items-center gap-1 bg-white/[0.04] border border-white/10 rounded-xl p-0.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setTranspose(song.id, trans - 1); }}
+                                                    className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/80 active:scale-90"
+                                                    title="Transpose -1"
+                                                >
+                                                    <Minus className="w-3.5 h-3.5" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setTranspose(song.id, 0); }}
+                                                    className="px-2 py-0.5 text-xs font-bold text-amber-400 font-mono"
+                                                    title="Reset Key"
+                                                >
+                                                    {curKey} {trans !== 0 && `(${trans > 0 ? `+${trans}` : trans})`}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setTranspose(song.id, trans + 1); }}
+                                                    className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/80 active:scale-90"
+                                                    title="Transpose +1"
+                                                >
+                                                    <Plus className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex items-center gap-1.5">
+                                                {/* Copy */}
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); handleCopy(song); }}
+                                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 border border-white/10"
+                                                >
+                                                    {copiedId === song.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-amber-400" />}
+                                                    <span>{copiedId === song.id ? 'Copied' : 'Copy'}</span>
+                                                </button>
+
+                                                {/* Fullscreen Stage Mode */}
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setFullscreenSong(song); }}
+                                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-black hover:bg-amber-400 shadow-md shadow-amber-500/20"
+                                                >
+                                                    <Maximize2 className="w-3.5 h-3.5" />
+                                                    <span>Stage View</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Tabs */}
+                                        <div className="flex items-center gap-1.5 pt-1">
+                                            {song.chords && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setActiveTab(song.id, 'chords'); }}
+                                                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${activeTab === 'chords' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/60 hover:text-white'}`}
+                                                >
+                                                    Chords
+                                                </button>
+                                            )}
+                                            {song.lyrics && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setActiveTab(song.id, 'lyrics'); }}
+                                                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${activeTab === 'lyrics' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/60 hover:text-white'}`}
+                                                >
+                                                    Hinglish
+                                                </button>
+                                            )}
+                                            {song.hindi_lyrics && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.preventDefault(); setActiveTab(song.id, 'hindi'); }}
+                                                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${activeTab === 'hindi' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/60 hover:text-white'}`}
+                                                >
+                                                    हिन्दी
+                                                </button>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.preventDefault(); setActiveTab(song.id, 'all'); }}
+                                                className={`px-2 py-1 rounded-lg text-xs font-bold transition-all ${activeTab === 'all' ? 'bg-amber-500 text-black' : 'bg-white/5 text-white/40 hover:text-white'}`}
+                                            >
+                                                All
+                                            </button>
+                                        </div>
+
+                                        {/* Chords & Lyrics Display Body */}
+                                        <div className="bg-[#080808] border border-white/5 rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm overflow-x-auto leading-relaxed">
+                                            {activeTab === 'chords' && renderChords(song.chords, trans)}
+                                            {activeTab === 'lyrics' && renderLyrics(song.lyrics, false)}
+                                            {activeTab === 'hindi' && renderLyrics(song.hindi_lyrics, true)}
+                                            {activeTab === 'all' && (
+                                                <div className="space-y-4">
+                                                    {song.chords && (
+                                                        <div>
+                                                            <div className="text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-1.5 border-b border-white/5 pb-1">Chords & Lyrics</div>
+                                                            {renderChords(song.chords, trans)}
+                                                        </div>
+                                                    )}
+                                                    {song.lyrics && (
+                                                        <div>
+                                                            <div className="text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-1.5 border-b border-white/5 pb-1">Hinglish Lyrics</div>
+                                                            {renderLyrics(song.lyrics, false)}
+                                                        </div>
+                                                    )}
+                                                    {song.hindi_lyrics && (
+                                                        <div>
+                                                            <div className="text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-1.5 border-b border-white/5 pb-1">हिन्दी Lyrics</div>
+                                                            {renderLyrics(song.hindi_lyrics, true)}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="flex items-center gap-2 shrink-0">
-                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 text-white/50 border border-white/5 hidden sm:inline-block">
-                                        Chords & Lyrics
-                                    </span>
-                                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-amber-400 transition-colors" />
-                                </div>
-                            </button>
-                        ))
+                                </details>
+                            );
+                        })
                     )}
                 </div>
             </div>

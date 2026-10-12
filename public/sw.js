@@ -1,34 +1,55 @@
-const CACHE_NAME = 'coj-v10-offline-rocksolid';
+const CACHE_NAME = 'coj-v12-rocksolid-offline';
 const OFFLINE_URL = '/offline';
 
-// Essential pages & assets to pre-cache on install
-const PRECACHE_URLS = [
-    '/offline',
-    '/tools/tuner',
-    '/tools/pad',
+const PRECACHE_PAGES = ['/offline', '/tools/tuner', '/tools/pad'];
+const PRECACHE_ASSETS = [
     '/images/logo-footer-final.png',
     '/images/icon-512.png',
     '/manifest.json'
 ];
 
-// Install: pre-cache all essentials gracefully without all-or-nothing failure
+// Install: pre-cache pages and crawl all their Next.js JS/CSS chunks so offline mode is 100% interactive!
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return Promise.all(
-                PRECACHE_URLS.map((url) => {
-                    return fetch(url)
+        (async () => {
+            const cache = await caches.open(CACHE_NAME);
+
+            // 1. Pre-cache static image/manifest assets
+            await Promise.all(
+                PRECACHE_ASSETS.map((url) =>
+                    fetch(url)
                         .then((res) => {
-                            if (res && res.status === 200) {
-                                return cache.put(url, res);
-                            }
+                            if (res && res.status === 200) return cache.put(url, res);
                         })
-                        .catch((err) => {
-                            console.warn('Pre-cache skip:', url, err);
-                        });
-                })
+                        .catch(() => {})
+                )
             );
-        })
+
+            // 2. Pre-cache offline pages AND extract their static JS/CSS chunks
+            for (const pageUrl of PRECACHE_PAGES) {
+                try {
+                    const res = await fetch(pageUrl);
+                    if (res && res.status === 200) {
+                        const html = await res.clone().text();
+                        await cache.put(pageUrl, res);
+
+                        // Find all Next.js static JS and CSS files embedded in the HTML
+                        const chunkMatches = [...html.matchAll(/(?:src|href)="(\/_next\/static\/[^"]+)"/g)].map(m => m[1]);
+                        await Promise.all(
+                            chunkMatches.map((chunk) =>
+                                fetch(chunk)
+                                    .then((chunkRes) => {
+                                        if (chunkRes && chunkRes.status === 200) return cache.put(chunk, chunkRes);
+                                    })
+                                    .catch(() => {})
+                            )
+                        );
+                    }
+                } catch (e) {
+                    console.warn('Pre-cache page notice:', pageUrl, e);
+                }
+            }
+        })()
     );
     self.skipWaiting();
 });
