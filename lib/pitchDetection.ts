@@ -233,7 +233,7 @@ export function detectPitch(
     const rms = Math.sqrt(sumSquares / SIZE);
 
     // Responsive noise gate: quiet room background is ignored while soft plucks are captured
-    if (rms < 0.0018) {
+    if (rms < 0.0025) {
         return null;
     }
 
@@ -310,7 +310,7 @@ export function detectPitch(
     }
 
     // Require good harmonic clarity for stable tuning
-    if (clarity < 0.65) {
+    if (clarity < 0.70) {
         return null;
     }
 

@@ -306,23 +306,25 @@ export default function GuitarTunerPage() {
                                     // If we are on the active string, apply exponential smoothing
                                     if (match.stringIndex === activeStringIndexRef.current) {
                                         validReadingFound = true;
-                                        const rawTarget = match.centsOffset;
+                                        const actualDev = Math.max(-99, Math.min(99, Math.round(match.rawCents)));
+                                        const trackCents = Math.max(-50, Math.min(50, match.rawCents));
+                                        
                                         // Exponential filter on target cents eliminates needle jitter
-                                        targetCentsRef.current = targetCentsRef.current * 0.65 + rawTarget * 0.35;
+                                        targetCentsRef.current = targetCentsRef.current * 0.65 + trackCents * 0.35;
                                         lastStableCentsRef.current = targetCentsRef.current;
                                         lastStableFreqRef.current = medianFreq;
-                                        holdUntilTimestampRef.current = nowMs + 3500; // Hold steady for 3.5s
+                                        holdUntilTimestampRef.current = nowMs + 2500; // Hold steady for 2.5s
 
                                         setIsSignalActive(true);
                                         if (nowMs - lastUiUpdateRef.current > 40) {
                                             lastUiUpdateRef.current = nowMs;
-                                            setDisplayCents(Math.round(targetCentsRef.current));
+                                            setDisplayCents(actualDev);
                                             setDetectedFreq(medianFreq);
                                             setSignalClarity(pitch.clarity);
                                         }
 
                                         // In-Tune Lock-in: +/- 3 cents
-                                        if (Math.abs(targetCentsRef.current) <= 3) {
+                                        if (Math.abs(actualDev) <= 3) {
                                             inTuneCounterRef.current++;
                                             if (inTuneCounterRef.current >= 3) {
                                                 setIsLockedInTune(true);
@@ -345,21 +347,22 @@ export default function GuitarTunerPage() {
 
                                 if (Math.abs(cents) <= 280) {
                                     validReadingFound = true;
-                                    const rawTarget = Math.max(-50, Math.min(50, cents));
-                                    targetCentsRef.current = targetCentsRef.current * 0.65 + rawTarget * 0.35;
+                                    const actualDev = Math.max(-99, Math.min(99, Math.round(cents)));
+                                    const trackCents = Math.max(-50, Math.min(50, cents));
+                                    targetCentsRef.current = targetCentsRef.current * 0.65 + trackCents * 0.35;
                                     lastStableCentsRef.current = targetCentsRef.current;
                                     lastStableFreqRef.current = medianFreq;
-                                    holdUntilTimestampRef.current = nowMs + 3500;
+                                    holdUntilTimestampRef.current = nowMs + 2500;
 
                                     setIsSignalActive(true);
                                     if (nowMs - lastUiUpdateRef.current > 40) {
                                         lastUiUpdateRef.current = nowMs;
-                                        setDisplayCents(Math.round(targetCentsRef.current));
+                                        setDisplayCents(actualDev);
                                         setDetectedFreq(medianFreq);
                                         setSignalClarity(pitch.clarity);
                                     }
 
-                                    if (Math.abs(targetCentsRef.current) <= 3) {
+                                    if (Math.abs(actualDev) <= 3) {
                                         inTuneCounterRef.current++;
                                         if (inTuneCounterRef.current >= 3) {
                                             setIsLockedInTune(true);
@@ -389,6 +392,8 @@ export default function GuitarTunerPage() {
                             hasChimedRef.current = false;
                             inTuneCounterRef.current = 0;
                             targetCentsRef.current = 0;
+                            setDisplayCents(0);
+                            setDetectedFreq(0);
                             recentFreqsRef.current = [];
                         }
                     }
@@ -511,7 +516,7 @@ export default function GuitarTunerPage() {
             {/* ------------------------------------------------------------- */}
             {/* CONTAINER (Auto fluid scale, NO SCROLLBAR)                     */}
             {/* ------------------------------------------------------------- */}
-            <div className="text-[3.2vw] min-[420px]:text-[13px] sm:text-[14.5px] md:text-base w-full max-w-4xl mx-auto h-full flex flex-col justify-between relative overflow-hidden no-scrollbar">
+            <div className="w-full max-w-md sm:max-w-xl mx-auto h-full flex flex-col justify-between relative overflow-hidden no-scrollbar px-2 sm:px-4">
                 
                 {/* ------------------------------------------------------------- */}
                 {/* 1. TOP HEADER: CojTuner Branding & Controls                   */}
@@ -710,11 +715,10 @@ export default function GuitarTunerPage() {
                         {/* ------------------------------------------------------------- */}
                         {/* 3. HEADSTOCK DISPLAY: ELECTRIC (6 LEFT) vs ACOUSTIC (3+3)     */}
                         {/* ------------------------------------------------------------- */}
-                        <div className="flex-1 w-full flex items-center justify-center min-h-0 my-auto py-0.5">
+                        <div className="flex-1 w-full flex items-center justify-center min-h-0 my-auto py-1">
                             {guitarType === 'electric' ? (
                                 /* ELECTRIC GUITAR: 6 Notes on LEFT HAND SIDE in a Single Vertical Line */
-                                <div className="grid box-border items-center justify-center gap-x-[1.2em] sm:gap-x-[1.8em] gap-y-[0.25em] sm:gap-y-[0.4em] grid-rows-[repeat(6,2.7em)] sm:grid-rows-[repeat(6,3.3em)] grid-cols-[2.7em_12em] sm:grid-cols-[3.3em_16em]">
-                                    
+                                <div className="h-full max-h-[46vh] sm:max-h-[52vh] w-full max-w-[300px] sm:max-w-sm grid grid-cols-[3.2rem_1fr] sm:grid-cols-[3.8rem_1fr] grid-rows-6 items-center justify-items-center gap-x-3 sm:gap-x-5 my-auto">
                                     {/* 6 STRING BUTTONS IN A SINGLE LINE ON THE LEFT */}
                                     {electricStrings.map((item, rowIdx) => {
                                         const isSelected = activeStringIndex === item.idx;
@@ -723,46 +727,47 @@ export default function GuitarTunerPage() {
                                             <button
                                                 key={`${item.label}-${item.num}`}
                                                 type="button"
-                                                aria-label={`String ${item.label}${item.oct}`}
+                                                aria-label={`String ${item.num} ${item.label}`}
                                                 onClick={() => handleSelectString(item.idx)}
                                                 style={{ gridArea: `${rowIdx + 1} / 1` }}
-                                                className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                                className={`w-11 h-11 sm:w-13 sm:h-13 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                                     isTuned
-                                                        ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button scale-110 z-20 shadow-[0_0_20px_#FF5A2E]'
+                                                        ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                         : isSelected
-                                                        ? 'bg-amber-400 text-black border-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.7)] scale-105 z-10'
+                                                        ? 'bg-amber-400 text-black border-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.7)] scale-105'
                                                         : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                                 }`}
                                             >
-                                                <span className="font-black text-xs sm:text-base">{item.label}</span>
-                                                <span className="text-[7.5px] sm:text-[9px] font-mono opacity-80 leading-none mt-0.5">{item.num}</span>
+                                                <span className="font-black text-base sm:text-lg">{item.label}</span>
+                                                <span className="text-[9px] font-mono opacity-80 mt-0.5">{item.num}</span>
                                             </button>
                                         );
                                     })}
 
-                                    {/* ELECTRIC GUITAR HEADSTOCK IMAGE (Properly Scaled Beside Buttons - NO OVERLAP) */}
+                                    {/* ELECTRIC HEADSTOCK IMAGE (Spans rows 1 to 6) */}
                                     <div
-                                        className="h-full w-full flex items-center justify-center pointer-events-none select-none"
+                                        className="h-full w-full flex items-center justify-start pointer-events-none select-none pl-1"
                                         style={{ gridArea: '1 / 2 / span 6 / 2' }}
                                     >
                                         <img
                                             src="/images/tuner/electric_headstock.png"
-                                            alt="electric guitar headstock"
-                                            className="h-full w-auto max-h-[17.5em] sm:max-h-[21.5em] object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.8)]"
+                                            alt="electric guitar headstock 6-in-line"
+                                            className="h-full w-auto max-h-[46vh] sm:max-h-[52vh] object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.85)]"
                                             loading="eager"
                                         />
                                     </div>
                                 </div>
                             ) : (
-                                /* ACOUSTIC GUITAR: 3 on Left, 3 on Right */
-                                <div className="grid box-border items-center justify-center gap-x-[1.1em] gap-y-[0.25em] sm:gap-y-[0.4em] grid-rows-[repeat(6,2.7em)] sm:grid-rows-[repeat(6,3.3em)] grid-cols-[2.7em_10.5em_2.7em] sm:grid-cols-[3.3em_14em_3.3em]">
-                                    {/* String 4 (D3) -> row 1, col 1 */}
+                                /* ACOUSTIC GUITAR: 3+3 (Left: D, A, E at rows 1, 3, 5; Right: G, B, E at rows 1, 3, 5) */
+                                <div className="h-full max-h-[46vh] sm:max-h-[52vh] w-full max-w-[340px] sm:max-w-md grid grid-cols-[3.2rem_1fr_3.2rem] sm:grid-cols-[3.8rem_1fr_3.8rem] grid-rows-6 items-center justify-items-center gap-x-2 sm:gap-x-4 my-auto">
+                                    {/* LEFT SIDE TUNING BUTTONS (Rows 1, 3, 5 match Top, Middle, Bottom Pegs) */}
+                                    {/* String 4 (D3) -> Top Left Peg (row 1) */}
                                     <button
                                         type="button"
                                         aria-label="String D3"
                                         onClick={() => handleSelectString(3)}
                                         style={{ gridArea: '1 / 1' }}
-                                        className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                        className={`w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                             activeStringIndex === 3 && isLockedInTune
                                                 ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                 : activeStringIndex === 3
@@ -770,16 +775,17 @@ export default function GuitarTunerPage() {
                                                 : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                         }`}
                                     >
-                                        <span>D</span>
+                                        <span className="font-black text-base sm:text-lg">D</span>
+                                        <span className="text-[9px] font-mono opacity-80 mt-0.5">4</span>
                                     </button>
 
-                                    {/* String 5 (A2) -> row 2, col 1 */}
+                                    {/* String 5 (A2) -> Middle Left Peg (row 3) */}
                                     <button
                                         type="button"
                                         aria-label="String A2"
                                         onClick={() => handleSelectString(4)}
-                                        style={{ gridArea: '2 / 1' }}
-                                        className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                        style={{ gridArea: '3 / 1' }}
+                                        className={`w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                             activeStringIndex === 4 && isLockedInTune
                                                 ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                 : activeStringIndex === 4
@@ -787,16 +793,17 @@ export default function GuitarTunerPage() {
                                                 : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                         }`}
                                     >
-                                        <span>A</span>
+                                        <span className="font-black text-base sm:text-lg">A</span>
+                                        <span className="text-[9px] font-mono opacity-80 mt-0.5">5</span>
                                     </button>
 
-                                    {/* String 6 (E2) -> row 3, col 1 */}
+                                    {/* String 6 (E2) -> Bottom Left Peg (row 5) */}
                                     <button
                                         type="button"
                                         aria-label="String E2"
                                         onClick={() => handleSelectString(5)}
-                                        style={{ gridArea: '3 / 1' }}
-                                        className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                        style={{ gridArea: '5 / 1' }}
+                                        className={`w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                             activeStringIndex === 5 && isLockedInTune
                                                 ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                 : activeStringIndex === 5
@@ -804,16 +811,18 @@ export default function GuitarTunerPage() {
                                                 : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                         }`}
                                     >
-                                        <span>E</span>
+                                        <span className="font-black text-base sm:text-lg">E</span>
+                                        <span className="text-[9px] font-mono opacity-80 mt-0.5">6</span>
                                     </button>
 
-                                    {/* Right Tuning Buttons (Strings 3G, 2B, 1E) */}
+                                    {/* RIGHT SIDE TUNING BUTTONS (Rows 1, 3, 5 match Top, Middle, Bottom Pegs) */}
+                                    {/* String 3 (G3) -> Top Right Peg (row 1) */}
                                     <button
                                         type="button"
                                         aria-label="String G3"
                                         onClick={() => handleSelectString(2)}
                                         style={{ gridArea: '1 / 3' }}
-                                        className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                        className={`w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                             activeStringIndex === 2 && isLockedInTune
                                                 ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                 : activeStringIndex === 2
@@ -821,15 +830,17 @@ export default function GuitarTunerPage() {
                                                 : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                         }`}
                                     >
-                                        <span>G</span>
+                                        <span className="font-black text-base sm:text-lg">G</span>
+                                        <span className="text-[9px] font-mono opacity-80 mt-0.5">3</span>
                                     </button>
 
+                                    {/* String 2 (B3) -> Middle Right Peg (row 3) */}
                                     <button
                                         type="button"
                                         aria-label="String B3"
                                         onClick={() => handleSelectString(1)}
-                                        style={{ gridArea: '2 / 3' }}
-                                        className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                        style={{ gridArea: '3 / 3' }}
+                                        className={`w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                             activeStringIndex === 1 && isLockedInTune
                                                 ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                 : activeStringIndex === 1
@@ -837,15 +848,17 @@ export default function GuitarTunerPage() {
                                                 : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                         }`}
                                     >
-                                        <span>B</span>
+                                        <span className="font-black text-base sm:text-lg">B</span>
+                                        <span className="text-[9px] font-mono opacity-80 mt-0.5">2</span>
                                     </button>
 
+                                    {/* String 1 (E4) -> Bottom Right Peg (row 5) */}
                                     <button
                                         type="button"
                                         aria-label="String E4"
                                         onClick={() => handleSelectString(0)}
-                                        style={{ gridArea: '3 / 3' }}
-                                        className={`w-full h-full cursor-pointer rounded-full text-[1.2em] font-bold leading-none text-center align-middle transition-all duration-150 p-0 m-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
+                                        style={{ gridArea: '5 / 3' }}
+                                        className={`w-12 h-12 sm:w-14 sm:h-14 cursor-pointer rounded-full leading-none text-center align-middle transition-all duration-150 p-0 border shadow-md flex flex-col items-center justify-center active:scale-95 ${
                                             activeStringIndex === 0 && isLockedInTune
                                                 ? 'bg-gradient-to-r from-[#FF6D00] to-[#FF3D00] text-white border-white in-tune-button shadow-[0_0_15px_#FF5A2E]'
                                                 : activeStringIndex === 0
@@ -853,10 +866,11 @@ export default function GuitarTunerPage() {
                                                 : 'bg-[#2b2d33] text-white border-white/10 hover:bg-[#383a42]'
                                         }`}
                                     >
-                                        <span>E</span>
+                                        <span className="font-black text-base sm:text-lg">E</span>
+                                        <span className="text-[9px] font-mono opacity-80 mt-0.5">1</span>
                                     </button>
 
-                                    {/* Center Acoustic Headstock Image */}
+                                    {/* CENTER ACOUSTIC HEADSTOCK IMAGE (Spans rows 1 to 6) */}
                                     <div
                                         className="h-full w-full flex items-center justify-center pointer-events-none select-none"
                                         style={{ gridArea: '1 / 2 / span 6 / 2' }}
@@ -864,7 +878,7 @@ export default function GuitarTunerPage() {
                                         <img
                                             src="/images/tuner/acoustic_headstock.png"
                                             alt="acoustic guitar headstock with tuning pegs"
-                                            className="h-full w-auto max-h-[17.5em] sm:max-h-[21.5em] object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.8)]"
+                                            className="h-full w-auto max-h-[46vh] sm:max-h-[52vh] object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.85)]"
                                             loading="eager"
                                         />
                                     </div>
