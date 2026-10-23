@@ -127,7 +127,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         pathname === '/about' || pathname?.startsWith('/about/') ||
         pathname?.startsWith('/our-');
 
-    const showNav = isReady && !isLandingOrPublic && (isUtilityRoute || (pathname === '/' && mode === 'UTILITY'));
+    const isTuner = pathname === '/tools/tuner' || pathname?.startsWith('/tools/tuner');
+
+    const showNav = isReady && !isLandingOrPublic && !isTuner && (isUtilityRoute || (pathname === '/' && mode === 'UTILITY'));
 
     return (
         <>
