@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Fraunces, Space_Grotesk } from "next/font/google";
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
@@ -45,10 +45,10 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   title: {
-    default: "Call of Jesus Ministries | Worship Songs, Lyrics, Chords & Sermons — Hear the Word of God",
+    default: "Call of Jesus Ministries | Worship Songs, Lyrics, Chords & Sermons â€” Hear the Word of God",
     template: "%s | Call of Jesus Ministries"
   },
-  description: "Enter the presence of God through worship and His Word. Listen to anointed sermons every Sunday & Friday, explore powerful Christian worship songs with lyrics, chords & guitar tabs in English and Hindi. A spiritual home for every believer — by Call of Jesus Ministries.",
+  description: "Enter the presence of God through worship and His Word. Listen to anointed sermons every Sunday & Friday, explore powerful Christian worship songs with lyrics, chords & guitar tabs in English and Hindi. A spiritual home for every believer â€” by Call of Jesus Ministries.",
   keywords: ["Christian songs", "Worship lyrics", "Hindi worship songs", "Christian chords", "Gospel lyrics", "COJ Ministries", "Call of Jesus", "Jesus songs", "Christian music", "worship chords", "Hindi Christian songs lyrics", "guitar chords worship"],
   authors: [{ name: "Yash Singh" }, { name: "Call of Jesus Ministries" }],
   openGraph: {
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "COJ Worship",
     title: "Call of Jesus Ministries | Worship Songs, Lyrics, Chords & Sermons",
-    description: "Enter the presence of God through worship and His Word. Listen to anointed sermons, explore worship songs with lyrics, chords & guitar tabs in English & Hindi — a spiritual home for every believer.",
+    description: "Enter the presence of God through worship and His Word. Listen to anointed sermons, explore worship songs with lyrics, chords & guitar tabs in English & Hindi â€” a spiritual home for every believer.",
     images: [
       {
         url: 'https://callofjesus.in/images/og-image.png',
@@ -84,6 +84,8 @@ export const metadata: Metadata = {
   },
   other: {
     'google-adsense-account': 'ca-pub-5426715715614915',
+    'app-signature': 'coj-auth-yash-98421x',
+    'source-origin': 'https://callofjesus.in',
   },
 };
 
@@ -102,6 +104,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="generator-sig" content="coj-prod-yash-2026-7c9b1" />
         <link rel="preconnect" href="https://bylvnplqvwgavaiygvoy.supabase.co" />
         <link rel="dns-prefetch" href="https://bylvnplqvwgavaiygvoy.supabase.co" />
       </head>
@@ -129,3 +132,4 @@ export default function RootLayout({
     </html>
   );
 }
+

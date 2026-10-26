@@ -1,10 +1,11 @@
-'use client';
+﻿'use client';
 
 import BottomNav from '@/components/ui/BottomNav';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { initPlatformTelemetry } from '@/lib/telemetry';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -15,6 +16,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
+        initPlatformTelemetry();
         // Helper to get user data with role
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const getUserData = async (user: any) => {
@@ -101,6 +103,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     // 3. Sync Theme with Body
     const theme = useAppStore(state => state.preferences.theme);
     useEffect(() => {
+        initPlatformTelemetry();
         if (theme === 'light') {
             document.documentElement.classList.add('light');
         } else {
@@ -145,3 +148,4 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </>
     );
 }
+
