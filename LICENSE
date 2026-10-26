@@ -1,0 +1,64 @@
+﻿CALL OF JESUS MINISTRIES - PROPRIETARY SOURCE-AVAILABLE LICENSE
+===============================================================
+
+Copyright (c) 2026 Call of Jesus Ministries (COJ). All Rights Reserved.
+Original Author: Yash Singh & Call of Jesus Ministries.
+
+IMPORTANT NOTICE: PLEASE READ CAREFULLY.
+This repository contains proprietary source code, copyrighted media assets, audio digital
+signal processing (DSP) algorithms, and customized liturgical/worship databases belonging
+exclusively to Call of Jesus Ministries.
+
+1. PERMITTED RIGHTS (SOURCE-AVAILABLE / AUDIT)
+---------------------------------------------
+You are granted a limited, revocable, non-exclusive, non-transferable license to:
+  a. View and inspect the source code via public GitHub web interfaces or git clone for personal
+     educational, academic research, security audit, and evaluation purposes.
+  b. Fork the repository strictly within the GitHub platform pursuant to GitHub's standard Terms
+     of Service, solely for personal evaluation or submitting upstream Pull Requests to this
+     repository.
+
+2. STRICT PROHIBITIONS & RESTRICTIONS
+-------------------------------------
+Without express prior written consent from Call of Jesus Ministries, YOU SHALL NOT:
+  a. Host, deploy, publish, run, mirror, or operate any live instance of this software, or any
+     derivative work thereof, on any public or private server, cloud host (including but not
+     limited to Vercel, Netlify, AWS, Cloudflare, Azure, GCP), intranet, or digital platform.
+  b. Commercialize, sell, sub-license, rent, lease, monetize, or charge any fee for access to this
+     software, its user interfaces, or its features.
+  c. Extract, scrape, redistribute, or reuse the worship chord database, song lyrics, liturgical
+     materials, audio tuner frequency DSP assets, media videos, or photographic assets in any other
+     application, website, book, or software product.
+  d. Remove, alter, obscure, or disguise any proprietary notices, author attributions, watermarks,
+     or copyright markings found in this codebase or within its user interface.
+  e. Rebrand or disguise this software under another name, logo, or organization.
+
+3. INTELLECTUAL PROPERTY & TRADEMARKS
+-------------------------------------
+All rights, title, and interest in and to the software—including source code, UI/UX designs,
+illustrations, logos, audio DSP logic, and trademarks ("Call of Jesus", "COJ", "COJ Tuner")—are
+and will remain the exclusive intellectual property of Call of Jesus Ministries and Yash Singh.
+
+4. INFRINGEMENT & DMCA ENFORCEMENT
+----------------------------------
+Any unauthorized re-hosting, scraping, redistribution, or commercial use of this repository or its
+assets constitutes willful copyright infringement and breach of license under:
+  - The Indian Copyright Act, 1957 (as amended)
+  - The United States Digital Millennium Copyright Act (17 U.S.C. § 512, "DMCA")
+  - The Berne Convention for the Protection of Literary and Artistic Works
+  - Applicable international intellectual property treaties.
+
+The copyright owner actively monitors the web and vigorously enforces intellectual property rights.
+Infringing instances are subject to immediate DMCA takedown notices, domain suspensions, hosting
+account terminations, and legal claims for statutory and actual damages.
+
+5. DISCLAIMER OF WARRANTY
+-------------------------
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For licensing inquiries, permissions, or ministry partnerships, contact:
+Call of Jesus Ministries (Official Contact via repository owner).

@@ -1,11 +1,11 @@
-# 🕊️ Call of Jesus Ministries (COJ) — AI Master Handover & Architecture Guide
+﻿# ðŸ•Šï¸ Call of Jesus Ministries (COJ) â€” AI Master Handover & Architecture Guide
 
 > **Important Note for Any AI / Developer Reading This Document:**
 > This document is the single source of truth for the **Call of Jesus Ministries (COJ)** web platform. Read this entire document before writing any code. It details the architecture, design philosophy, file hierarchy, database models, work completed, known issues, and the exact next tasks to execute.
 
 ---
 
-## 📌 1. Project Overview & Dual-Purpose Concept
+## ðŸ“Œ 1. Project Overview & Dual-Purpose Concept
 
 **Project Name:** Call of Jesus Ministries Web Platform (`coj`)  
 **Repository:** `yashsingh-14/coj`  
@@ -18,7 +18,7 @@ The platform is designed with a **Dual-Purpose Architecture**:
 
 ---
 
-## 🛠️ 2. Technology Stack & Key Libraries
+## ðŸ› ï¸ 2. Technology Stack & Key Libraries
 
 | Layer | Technology | Purpose / Notes |
 |---|---|---|
@@ -35,7 +35,7 @@ The platform is designed with a **Dual-Purpose Architecture**:
 
 ---
 
-## 🎨 3. Design System & Aesthetics (STRICT RULES)
+## ðŸŽ¨ 3. Design System & Aesthetics (STRICT RULES)
 
 The website uses a **Golden Sanctuary & Holy Fire** aesthetic:
 - **Base Backgrounds**: Deep midnight sanctuary tones (`#02000F`, `#070514`, `#0A071E`, `#000000`).
@@ -51,7 +51,7 @@ The website uses a **Golden Sanctuary & Holy Fire** aesthetic:
 
 ---
 
-## 📂 4. Route Map & Component Architecture
+## ðŸ“‚ 4. Route Map & Component Architecture
 
 ### App Directory (`app/`)
 - **`app/page.tsx`**: Root server route. Fetches initial data (trending songs, hero slides, today's verse, events, announcements) from Supabase and directly renders `<ExperienceOverlay initialData={...} />`.
@@ -79,7 +79,7 @@ The website uses a **Golden Sanctuary & Holy Fire** aesthetic:
 1. **`components/hero/ExperienceOverlay.tsx`**:
    - The master Church Landing component (~1,800 lines).
    - Contains all sections of `/`:
-     1. `#hero`: Cinematic dual-video slider (`coj video for hero annivercery.mp4` & `coj video.mp4`), kinetic headline, liquid CTA buttons.
+     1. `#hero`: Cinematic dual-video slider (`coj-intro-compressed.mp4` & `coj video for hero annivercery.mp4`), kinetic headline, liquid CTA buttons.
      2. `#verse`: Verse of the Day glassmorphic card with audio recitation, sharing, and devotional links.
      3. `#gatherings`: Offline weekly services (Friday Bible Study, Sunday Worship, Communion) with Google Maps directions button.
      4. `#vision`: Two golden sanctuary pillar cards (*Set the Captives Free* & *Reign and Equip*).
@@ -124,7 +124,7 @@ The website uses a **Golden Sanctuary & Holy Fire** aesthetic:
 
 ---
 
-## 🗄️ 5. Supabase Database Schema
+## ðŸ—„ï¸ 5. Supabase Database Schema
 
 The app queries the following Supabase PostgreSQL tables:
 - **`songs`**:
@@ -173,10 +173,10 @@ The app queries the following Supabase PostgreSQL tables:
 
 ---
 
-## 🔄 6. Summary of Work Completed Recently (Sessions Recap)
+## ðŸ”„ 6. Summary of Work Completed Recently (Sessions Recap)
 
 1. **Hero Section Redesign**:
-   - Replaced static background with dual-video auto-rotating background (`coj video for hero annivercery.mp4` & `coj video.mp4`).
+   - Replaced static background with dual-video auto-rotating background (`coj-intro-compressed.mp4` & `coj video for hero annivercery.mp4`).
    - Removed static image flashing on browser refresh.
    - Built liquid wave button fill effect on "Get Directions".
    - Added kinetic typography rotating tagline ("CALL OF JESUS MINISTRIES - Where Heaven Transforms Lives / Unshackles Destinies / Unleashes Purpose").
@@ -202,7 +202,7 @@ The app queries the following Supabase PostgreSQL tables:
 
 ---
 
-## 📱 7. CURRENT PENDING WORK: Mobile Responsiveness
+## ðŸ“± 7. CURRENT PENDING WORK: Mobile Responsiveness
 
 The user stated:
 > **"bhai pura ka pura landing page mobile compatible nahi hai yaar"**  
@@ -211,7 +211,7 @@ The user stated:
 ### Key Areas Requiring Mobile Optimization:
 1. **Hero Section (`#hero`)**:
    - **Kinetic Headline Scaling**: Ensure the main title (`CALL OF JESUS MINISTRIES - Where Heaven...`) scales down gracefully on small screens (`320px` to `390px`) without clipping or extreme line breaks. Use `clamp()` or responsive font sizes (`text-2xl sm:text-4xl md:text-6xl`).
-   - **CTA Button Layout**: Ensure the "Get Directions" liquid button and "Explore Worship Songs →" link stack cleanly with touch-friendly paddings.
+   - **CTA Button Layout**: Ensure the "Get Directions" liquid button and "Explore Worship Songs â†’" link stack cleanly with touch-friendly paddings.
    - **Video Background on Mobile**: Ensure `playsInline`, `muted`, `autoPlay` are present so mobile browsers don't block playback or pop open native video players.
 2. **Landing Navbar (`LandingNavbar.tsx`)**:
    - Inspect mobile burger menu.
@@ -233,7 +233,7 @@ The user stated:
 
 ---
 
-## ⚡ 8. Development & Troubleshooting Tips
+## âš¡ 8. Development & Troubleshooting Tips
 
 - **Starting Local Dev Server**:
   ```bash
