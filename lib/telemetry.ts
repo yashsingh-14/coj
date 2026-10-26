@@ -23,6 +23,16 @@ export function initPlatformTelemetry() {
     if (typeof window === 'undefined') return;
 
     try {
+        // Signature watermark in developer console
+        if (!window.__coj_logged) {
+            window.__coj_logged = true;
+            console.log(
+                '%c \u271D Call of Jesus Ministries %c Developed by Yash Singh | All Rights Reserved ',
+                'background:#D4AF37; color:#000; font-weight:bold; border-radius:3px 0 0 3px; padding:3px 6px; font-size:11px;',
+                'background:#1c1917; color:#D4AF37; font-weight:600; border-radius:0 3px 3px 0; padding:3px 6px; border:1px solid #D4AF37; font-size:11px;'
+            );
+        }
+
         const hostname = window.location.hostname.toLowerCase();
 
         // 1. Check if domain is legitimate / authorized
@@ -34,16 +44,7 @@ export function initPlatformTelemetry() {
             hostname.endsWith('.local')
         );
 
-        // If domain is legitimate, no audit trigger needed
         if (isAuthorized) {
-            // Subtle watermark in console
-            if (process.env.NODE_ENV === 'production' && !window.__coj_logged) {
-                window.__coj_logged = true;
-                console.log(
-                    '%c✝ Call of Jesus Ministries | Developed by Yash Singh (All Rights Reserved)',
-                    'color:#D4AF37; font-weight:bold; font-size:11px;'
-                );
-            }
             return;
         }
 
