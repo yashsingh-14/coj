@@ -27,6 +27,7 @@ import { Song } from '@/data/types';
 import { updateSongAdmin, createSongAdmin } from '@/app/actions/admin';
 import { extractYoutubeId } from '@/lib/utils';
 import { isSongHindi } from '@/lib/categoryUtils';
+import { useAppStore } from '@/store/useAppStore';
 
 
 interface SongFormProps {
@@ -245,14 +246,18 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
         try {
             // STEP 0: Connectivity Check via SERVER
             addLog("Step 0: Checking Server Connection...");
-            const { checkConnection } = await import('@/app/actions/admin');
-            const serverStatus = await checkConnection();
-
-            if (!serverStatus.ok) {
-                addLog(`SERVER ERROR: ${serverStatus.error}`);
-                throw new Error(`Server cannot reach DB: ${serverStatus.error}`);
+            try {
+                const { checkConnection } = await import('@/app/actions/admin');
+                const serverStatus = await checkConnection();
+                if (!serverStatus.ok) {
+                    console.warn("checkConnection warning:", serverStatus.error);
+                    addLog(`Server Warning: ${serverStatus.error} (proceeding to save)`);
+                } else {
+                    addLog("Server Connection: OK");
+                }
+            } catch (connErr) {
+                console.warn("Pre-check connection skipped:", connErr);
             }
-            addLog("Server Connection: OK");
 
             // STEP 1: Validation
             addLog("Step 1: Validating form data...");
@@ -264,30 +269,30 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
             }
             addLog("Validation passed.");
 
-            // STEP 2: Auth Check (Using Pre-fetched ID)
-            addLog("Step 2: verifying user session...");
+            // STEP 2: Resolve User ID (Multi-tier: State -> Store -> LocalStorage -> Supabase)
+            addLog("Step 2: Resolving user context...");
+            let resolvedUserId = userId || useAppStore.getState().currentUser?.id;
 
-            if (!userId) {
-                console.warn("User ID not pre-fetched, trying one last time...");
-                const sessionPromise = supabase.auth.getSession();
-                const sessionTimeout = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("Auth Stuck (5s) - Please Refresh")), 5000)
-                );
-
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const { data } = await Promise.race([sessionPromise, sessionTimeout]) as any;
-
-                if (!data.session?.user) {
-                    addLog("Error: Not logged in.");
-                    toast.error("You are not logged in. Please Login.");
-                    setIsLoading(false);
-                    return;
-                }
-                setUserId(data.session.user.id);
+            if (!resolvedUserId && typeof window !== 'undefined') {
+                resolvedUserId = localStorage.getItem('coj_admin_user_id') || undefined;
             }
 
-            const finalUserId = userId || (await supabase.auth.getUser()).data.user?.id;
-            addLog(`User Verified: ${finalUserId?.slice(0, 5)}...`);
+            if (!resolvedUserId) {
+                try {
+                    const sessionPromise = supabase.auth.getSession();
+                    const quickTimeout = new Promise(r => setTimeout(r, 1500));
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const result = await Promise.race([sessionPromise, quickTimeout]) as any;
+                    if (result?.data?.session?.user?.id) {
+                        resolvedUserId = result.data.session.user.id;
+                        setUserId(resolvedUserId || null);
+                    }
+                } catch {
+                    // Non-blocking: Server action will authenticate via cookies anyway
+                }
+            }
+
+            addLog(`User Context: ${resolvedUserId ? resolvedUserId.slice(0, 5) + '...' : 'Verified by Server'}`);
 
             // STEP 3: Payload
             addLog("Step 3: Preparing Payload...");
@@ -314,7 +319,7 @@ export default function SongForm({ initialData, mode }: SongFormProps) {
                 lyrics: formData.lyrics,
                 hindi_lyrics: formData.hindi_lyrics || null,
                 chords: formData.chords || null,
-                ...(mode === 'create' ? { created_by: userId } : {})
+                ...(mode === 'create' && resolvedUserId ? { created_by: resolvedUserId } : {})
             };
 
             // STEP 4: Server Action Execution

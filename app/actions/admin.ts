@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { DEFAULT_WORSHIP_STREAMS, WorshipStreamItem } from '@/lib/worshipStreams';
 
-async function verifyAdminAuthServer() {
+async function verifyAdminAuthServer(): Promise<any | false> {
     try {
         const cookieStore = await cookies();
         const supabase = createServerClient(
@@ -34,7 +34,7 @@ async function verifyAdminAuthServer() {
         }
 
         const { isAdmin } = await checkIsAdmin(user.id, user.email);
-        return isAdmin;
+        return isAdmin ? user : false;
     } catch (e) {
         console.error("verifyAdminAuthServer exception:", e);
         return false;
@@ -112,15 +112,19 @@ export async function updateSongAdmin(songId: string, payload: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function createSongAdmin(payload: any) {
-    if (!(await verifyAdminAuthServer())) return { success: false, error: "Unauthorized" };
+    const authUser = await verifyAdminAuthServer();
+    if (!authUser) return { success: false, error: "Unauthorized" };
 
     if (!adminDb) return { success: false, error: "Admin Key Context Missing" };
 
     const nowIso = new Date().toISOString();
+    const createdBy = payload.created_by || authUser?.id || null;
+
     const { data, error } = await adminDb
         .from('songs')
         .insert([{
             ...payload,
+            created_by: createdBy,
             created_at: nowIso
         }])
         .select()
@@ -300,6 +304,18 @@ export async function checkIsAdmin(userId: string, userEmail?: string): Promise<
             return { isAdmin: true };
         }
     }
+
+    // Also check auth user metadata directly in case profiles table had a sync delay
+    try {
+        const { data: authUser } = await adminDb.auth.admin.getUserById(userId);
+        if (authUser?.user) {
+            const role = authUser.user.app_metadata?.role || authUser.user.user_metadata?.role;
+            if (role === 'admin') return { isAdmin: true };
+            if (authUser.user.email && ADMIN_EMAILS.includes(authUser.user.email.toLowerCase().trim())) {
+                return { isAdmin: true };
+            }
+        }
+    } catch {}
 
     return { isAdmin: false };
 }

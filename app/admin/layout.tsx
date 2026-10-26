@@ -48,7 +48,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         if (userEmail && ADMIN_EMAILS.includes(userEmail)) {
             setIsAdmin(true);
             setIsLoading(false);
-            try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
+            try { 
+                localStorage.setItem('coj_admin_auth', 'true');
+                localStorage.setItem('coj_admin_user_id', user.id);
+                sessionStorage.setItem('coj_admin_auth', 'true'); 
+            } catch {}
             useAppStore.getState().login({
                 id: user.id,
                 name: user.user_metadata?.name || user.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin',
@@ -59,25 +63,61 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             return true;
         }
 
-        // Verify with server action
-        const result = await checkIsAdmin(user.id, userEmail);
-        if (result.isAdmin) {
-            setIsAdmin(true);
-            setIsLoading(false);
-            try { sessionStorage.setItem('coj_admin_auth', 'true'); } catch {}
-            useAppStore.getState().login({
-                id: user.id,
-                name: user.user_metadata?.name || user.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin',
-                email: userEmail,
-                avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-                role: 'admin'
-            });
-            return true;
-        } else {
+        try {
+            // Verify with server action
+            const result = await checkIsAdmin(user.id, userEmail);
+            if (result.isAdmin) {
+                setIsAdmin(true);
+                setIsLoading(false);
+                try { 
+                    localStorage.setItem('coj_admin_auth', 'true');
+                    localStorage.setItem('coj_admin_user_id', user.id);
+                    sessionStorage.setItem('coj_admin_auth', 'true'); 
+                } catch {}
+                useAppStore.getState().login({
+                    id: user.id,
+                    name: user.user_metadata?.name || user.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin',
+                    email: userEmail,
+                    avatar: user.user_metadata?.avatar_url || user.user_metadata?.picture,
+                    role: 'admin'
+                });
+                return true;
+            } else {
+                // If this user was previously verified in this browser, don't kick them out on a single background tab network glitch!
+                const wasVerified = typeof window !== 'undefined' && (
+                    localStorage.getItem('coj_admin_auth') === 'true' ||
+                    useAppStore.getState().currentUser?.role === 'admin'
+                );
+                if (wasVerified && result.error) {
+                    console.warn('[Admin] checkIsAdmin returned error but user was previously verified:', result.error);
+                    setIsAdmin(true);
+                    setIsLoading(false);
+                    return true;
+                }
+
+                setIsAdmin(false);
+                setIsLoading(false);
+                try { 
+                    sessionStorage.removeItem('coj_admin_auth');
+                    localStorage.removeItem('coj_admin_auth');
+                    localStorage.removeItem('coj_admin_user_id');
+                } catch {}
+                toast.error("Access Denied: Your account is not an Admin");
+                return false;
+            }
+        } catch (serverErr) {
+            console.error('[Admin] checkIsAdmin exception:', serverErr);
+            const wasVerified = typeof window !== 'undefined' && (
+                localStorage.getItem('coj_admin_auth') === 'true' ||
+                useAppStore.getState().currentUser?.role === 'admin'
+            );
+            if (wasVerified) {
+                setIsAdmin(true);
+                setIsLoading(false);
+                return true;
+            }
             setIsAdmin(false);
             setIsLoading(false);
-            try { sessionStorage.removeItem('coj_admin_auth'); } catch {}
-            toast.error("Access Denied: Your account is not an Admin");
             return false;
         }
     };
@@ -96,14 +136,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             const { data: { session } } = await supabase.auth.getSession();
 
             if (!session?.user) {
-                // If this tab was already verified, give a grace period before revoking
-                if (typeof window !== 'undefined' && sessionStorage.getItem('coj_admin_auth') === 'true') {
-                    await new Promise(r => setTimeout(r, 400));
-                    const { data: { session: retrySession } } = await supabase.auth.getSession();
-                    if (retrySession?.user) {
-                        return await verifyAdminUser(retrySession.user);
-                    }
-                    sessionStorage.removeItem('coj_admin_auth');
+                // If user was already verified as admin, don't kick them out just because getSession() is slow or null on background tab resume!
+                const wasVerified = typeof window !== 'undefined' && (
+                    localStorage.getItem('coj_admin_auth') === 'true' ||
+                    sessionStorage.getItem('coj_admin_auth') === 'true' ||
+                    useAppStore.getState().currentUser?.role === 'admin'
+                );
+                if (wasVerified) {
+                    setIsAdmin(true);
+                    setIsLoading(false);
+                    return;
                 }
                 setIsLoading(false);
                 setIsAdmin(false);
@@ -113,7 +155,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             await verifyAdminUser(session.user);
         } catch (err) {
             console.error('[Admin] Verify error:', err);
-            if (typeof window !== 'undefined' && sessionStorage.getItem('coj_admin_auth') === 'true') {
+            const wasVerified = typeof window !== 'undefined' && (
+                localStorage.getItem('coj_admin_auth') === 'true' ||
+                sessionStorage.getItem('coj_admin_auth') === 'true' ||
+                useAppStore.getState().currentUser?.role === 'admin'
+            );
+            if (wasVerified) {
                 setIsAdmin(true);
             } else {
                 setIsAdmin(false);
@@ -124,8 +171,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
 
     useEffect(() => {
-        // Fast local check for zero-flicker UI on subroute navigation
-        if (typeof window !== 'undefined' && sessionStorage.getItem('coj_admin_auth') === 'true') {
+        // Fast local check for zero-flicker UI on subroute navigation & tab switching
+        const isLocallyAdmin = typeof window !== 'undefined' && (
+            localStorage.getItem('coj_admin_auth') === 'true' ||
+            sessionStorage.getItem('coj_admin_auth') === 'true' ||
+            useAppStore.getState().currentUser?.role === 'admin'
+        );
+
+        if (isLocallyAdmin) {
             setIsAdmin(true);
             setIsLoading(false);
         }
@@ -133,13 +186,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         // Safety timeout so it NEVER hangs
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 3000);
+        }, 2000);
 
         verifyAdmin();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === 'SIGNED_OUT') {
-                try { sessionStorage.removeItem('coj_admin_auth'); } catch {}
+                try { 
+                    sessionStorage.removeItem('coj_admin_auth');
+                    localStorage.removeItem('coj_admin_auth');
+                    localStorage.removeItem('coj_admin_user_id');
+                } catch {}
                 setIsAdmin(false);
                 setIsLoading(false);
                 return;
@@ -194,7 +251,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const handleSignOut = async () => {
         try {
-            try { sessionStorage.removeItem('coj_admin_auth'); } catch {}
+            try { 
+                sessionStorage.removeItem('coj_admin_auth');
+                localStorage.removeItem('coj_admin_auth');
+                localStorage.removeItem('coj_admin_user_id');
+            } catch {}
+            useAppStore.getState().logout();
             await supabase.auth.signOut();
             setIsAdmin(false);
             toast.success("Signed out successfully");
