@@ -155,21 +155,36 @@ export function findClosestPresetString(
     let bestIndex = -1;
     let minAbsDistance = Infinity;
     let bestRawCents = 0;
+    let bestEffFreq = detectedFreq;
 
     presetStrings.forEach((s, idx) => {
         const target = s.frequency;
-        const cents = calculateCentsBetween(detectedFreq, target);
+        let cents = calculateCentsBetween(detectedFreq, target);
+        let effFreq = detectedFreq;
+
+        // On electric guitars, Low E and A (< 150 Hz) often produce dominant 2nd harmonics (2x f0).
+        // Check if detected pitch is the 2nd harmonic of this string:
+        if (target < 150) {
+            const halfFreq = detectedFreq / 2.0;
+            const halfCents = calculateCentsBetween(halfFreq, target);
+            if (Math.abs(halfCents) < Math.abs(cents)) {
+                cents = halfCents;
+                effFreq = halfFreq;
+            }
+        }
+
         const dist = Math.abs(cents);
 
-        // Hysteresis: 50-cents sticky bias towards currently selected string to prevent jumping
+        // Hysteresis: 40-cents sticky bias towards currently selected string to prevent jumping
         const effDist = (currentLockedIndex !== undefined && currentLockedIndex === idx)
-            ? Math.max(0, dist - 50)
+            ? Math.max(0, dist - 40)
             : dist;
 
         if (effDist < minAbsDistance) {
             minAbsDistance = effDist;
             bestIndex = idx;
             bestRawCents = cents;
+            bestEffFreq = effFreq;
         }
     });
 
@@ -179,7 +194,6 @@ export function findClosestPresetString(
     }
 
     const bestString = presetStrings[bestIndex];
-    // Clamp displayed cents offset strictly to [-50, +50] for gauge meter
     const clampedCents = Math.max(-50, Math.min(50, bestRawCents));
 
     return {
@@ -187,7 +201,7 @@ export function findClosestPresetString(
         stringItem: bestString,
         centsOffset: clampedCents,
         rawCents: bestRawCents,
-        fundamentalFreq: detectedFreq
+        fundamentalFreq: bestEffFreq
     };
 }
 
@@ -233,7 +247,7 @@ export function detectPitch(
     const rms = Math.sqrt(sumSquares / SIZE);
 
     // Responsive noise gate: quiet room background is ignored while soft plucks are captured
-    if (rms < 0.0025) {
+    if (rms < 0.0010) {
         return null;
     }
 
@@ -310,7 +324,7 @@ export function detectPitch(
     }
 
     // Require good harmonic clarity for stable tuning
-    if (clarity < 0.70) {
+    if (clarity < 0.55) {
         return null;
     }
 

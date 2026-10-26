@@ -270,15 +270,15 @@ export default function GuitarTunerPage() {
 
                     let validReadingFound = false;
 
-                    if (pitch && pitch.clarity >= 0.65 && pitch.frequency >= 55 && pitch.frequency <= 950) {
+                    if (pitch && pitch.clarity >= 0.55 && pitch.frequency >= 55 && pitch.frequency <= 950) {
                         const history = recentFreqsRef.current;
                         history.push(pitch.frequency);
-                        if (history.length > 5) history.shift();
+                        if (history.length > 3) history.shift();
 
                         const sorted = [...history].sort((a, b) => a - b);
                         const medianFreq = sorted[Math.floor(sorted.length / 2)];
 
-                        const isStable = Math.abs(pitch.frequency - medianFreq) / medianFreq < 0.08;
+                        const isStable = Math.abs(pitch.frequency - medianFreq) / medianFreq < 0.10;
 
                         if (isStable) {
                             if (liveAuto) {
@@ -288,7 +288,7 @@ export default function GuitarTunerPage() {
                                     if (match.stringIndex !== liveActiveIdx) {
                                         if (candidateStringIdxRef.current === match.stringIndex) {
                                             candidateStringCountRef.current++;
-                                            if (candidateStringCountRef.current >= 4) {
+                                            if (candidateStringCountRef.current >= 2) {
                                                 setActiveStringIndex(match.stringIndex);
                                                 activeStringIndexRef.current = match.stringIndex;
                                                 candidateStringCountRef.current = 0;
@@ -312,14 +312,14 @@ export default function GuitarTunerPage() {
                                         // Exponential filter on target cents eliminates needle jitter
                                         targetCentsRef.current = targetCentsRef.current * 0.65 + trackCents * 0.35;
                                         lastStableCentsRef.current = targetCentsRef.current;
-                                        lastStableFreqRef.current = medianFreq;
+                                        lastStableFreqRef.current = match.fundamentalFreq;
                                         holdUntilTimestampRef.current = nowMs + 2500; // Hold steady for 2.5s
 
                                         setIsSignalActive(true);
                                         if (nowMs - lastUiUpdateRef.current > 40) {
                                             lastUiUpdateRef.current = nowMs;
                                             setDisplayCents(actualDev);
-                                            setDetectedFreq(medianFreq);
+                                            setDetectedFreq(match.fundamentalFreq);
                                             setSignalClarity(pitch.clarity);
                                         }
 
@@ -343,7 +343,18 @@ export default function GuitarTunerPage() {
                             } else {
                                 // Manual Mode: dedicated tuning on selected string
                                 const calTarget = targetStr.frequency * (liveA4 / 440.0);
-                                const cents = calculateCentsBetween(medianFreq, calTarget);
+                                let cents = calculateCentsBetween(medianFreq, calTarget);
+                                let effFreq = medianFreq;
+
+                                // For Low E, A, or D (< 150 Hz), handle electric guitar 2nd harmonic
+                                if (calTarget < 150) {
+                                    const halfFreq = medianFreq / 2.0;
+                                    const halfCents = calculateCentsBetween(halfFreq, calTarget);
+                                    if (Math.abs(halfCents) < Math.abs(cents)) {
+                                        cents = halfCents;
+                                        effFreq = halfFreq;
+                                    }
+                                }
 
                                 if (Math.abs(cents) <= 280) {
                                     validReadingFound = true;
@@ -351,14 +362,14 @@ export default function GuitarTunerPage() {
                                     const trackCents = Math.max(-50, Math.min(50, cents));
                                     targetCentsRef.current = targetCentsRef.current * 0.65 + trackCents * 0.35;
                                     lastStableCentsRef.current = targetCentsRef.current;
-                                    lastStableFreqRef.current = medianFreq;
+                                    lastStableFreqRef.current = effFreq;
                                     holdUntilTimestampRef.current = nowMs + 2500;
 
                                     setIsSignalActive(true);
                                     if (nowMs - lastUiUpdateRef.current > 40) {
                                         lastUiUpdateRef.current = nowMs;
                                         setDisplayCents(actualDev);
-                                        setDetectedFreq(medianFreq);
+                                        setDetectedFreq(effFreq);
                                         setSignalClarity(pitch.clarity);
                                     }
 
@@ -718,8 +729,8 @@ export default function GuitarTunerPage() {
                         <div className="flex-1 w-full flex items-center justify-center min-h-0 my-auto py-1">
                             {guitarType === 'electric' ? (
                                 /* ELECTRIC GUITAR: 6 Notes on LEFT HAND SIDE in a Single Vertical Line */
-                                <div className="h-full max-h-[46vh] sm:max-h-[52vh] w-full max-w-[300px] sm:max-w-sm grid grid-cols-[3.2rem_1fr] sm:grid-cols-[3.8rem_1fr] grid-rows-6 items-center justify-items-center gap-x-3 sm:gap-x-5 my-auto">
-                                    {/* 6 STRING BUTTONS IN A SINGLE LINE ON THE LEFT */}
+                                <div className="h-full max-h-[46vh] sm:max-h-[52vh] w-full max-w-[300px] sm:max-w-sm grid grid-cols-[3.2rem_1fr] sm:grid-cols-[3.8rem_1fr] grid-rows-[repeat(6,1fr)_1.2fr] items-center justify-items-center gap-x-3 sm:gap-x-5 my-auto">
+                                    {/* 6 STRING BUTTONS ALIGNED WITH THE 6 CHROME PEGS */}
                                     {electricStrings.map((item, rowIdx) => {
                                         const isSelected = activeStringIndex === item.idx;
                                         const isTuned = isSelected && isLockedInTune;
@@ -744,10 +755,10 @@ export default function GuitarTunerPage() {
                                         );
                                     })}
 
-                                    {/* ELECTRIC HEADSTOCK IMAGE (Spans rows 1 to 6) */}
+                                    {/* ELECTRIC HEADSTOCK IMAGE (Spans rows 1 to 7 including neck) */}
                                     <div
                                         className="h-full w-full flex items-center justify-start pointer-events-none select-none pl-1"
-                                        style={{ gridArea: '1 / 2 / span 6 / 2' }}
+                                        style={{ gridArea: '1 / 2 / span 7 / 2' }}
                                     >
                                         <img
                                             src="/images/tuner/electric_headstock.png"
