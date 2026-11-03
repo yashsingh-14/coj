@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import BlackRemoverImage from '@/components/ui/BlackRemoverImage';
+import UserAvatar from '@/components/ui/UserAvatar';
 import LandingFooter from '@/components/hero/LandingFooter';
 import { generateSlug } from '@/lib/seoUtils';
 import React, { useState, useEffect, TouchEvent } from 'react';
@@ -172,11 +173,7 @@ export default function HomeUtilityContent({
                         <div className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 animate-pulse" />
                     ) : isAuthenticated && currentUser ? (
                         <Link href="/profile" className="w-9 h-9 rounded-full bg-[var(--brand)] flex items-center justify-center overflow-hidden border border-white/20 hover:scale-105 transition-transform" title="My Profile">
-                            {currentUser.avatar ? (
-                                <Image src={currentUser.avatar} alt={currentUser.name} width={36} height={36} className="w-full h-full object-cover" unoptimized />
-                            ) : (
-                                <span className="font-bold text-white text-xs">{currentUser.name.charAt(0)}</span>
-                            )}
+                            <UserAvatar src={currentUser.avatar} name={currentUser.name} size={36} />
                         </Link>
                     ) : (
                         <Link href="/signin?redirect=/worship" className="w-9 h-9 rounded-full bg-[var(--foreground)]/10 hover:bg-[var(--brand)] flex items-center justify-center transition-colors border border-[var(--card-border)]">

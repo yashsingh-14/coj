@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Fraunces, Space_Grotesk } from "next/font/google";
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
@@ -74,9 +74,12 @@ export const metadata: Metadata = {
     images: ['https://callofjesus.in/images/og-image.png'],
   },
   icons: {
-    icon: '/images/logo-footer-final.png',
-    shortcut: '/images/logo-footer-final.png',
-    apple: '/images/logo-footer-final.png',
+    icon: [
+      { url: '/favicon.svg?v=2', type: 'image/svg+xml' },
+      { url: '/icon.png?v=2', sizes: '192x192', type: 'image/png' },
+    ],
+    shortcut: '/favicon.svg?v=2',
+    apple: '/apple-icon.png?v=2',
   },
   manifest: '/manifest.json',
   verification: {

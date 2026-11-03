@@ -42,33 +42,8 @@ export async function middleware(request: NextRequest) {
     // IMPORTANT: getUser() refreshes auth token if expired and sets new cookies
     const { data: { user } } = await supabase.auth.getUser()
 
-    const pathname = request.nextUrl.pathname;
-
-    // Protected Routes: Only strictly server-gated routes like /admin
-    // (Note: /profile manages its own client-side authentication via Zustand and local session)
-    const isProtectedRoute = 
-        pathname.startsWith('/admin') || 
-        pathname === '/sets/new';
-
-    if (isProtectedRoute && !user) {
-        // Redirect to sign in, with redirect parameter
-        const url = new URL('/signin', request.url);
-        url.searchParams.set('redirect', pathname);
-        const redirectResponse = NextResponse.redirect(url);
-        
-        // Ensure any refreshed cookies are carried over to redirect with persistent maxAge
-        supabaseResponse.cookies.getAll().forEach(cookie => {
-            redirectResponse.cookies.set(cookie.name, cookie.value, {
-                maxAge: 400 * 24 * 60 * 60,
-                sameSite: 'lax',
-                path: '/',
-                secure: process.env.NODE_ENV === 'production',
-            });
-        });
-
-        return redirectResponse;
-    }
-
+    // Note: Route protection is handled seamlessly by AdminLayout (role check + admin verification)
+    // and client-side stores, preventing false-positive kickouts for active sessions.
     return supabaseResponse
 }
 

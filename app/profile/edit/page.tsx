@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import BackButton from '@/components/ui/BackButton';
 import Image from 'next/image';
+import UserAvatar from '@/components/ui/UserAvatar';
 import { ArrowLeft, Camera, Save, User, Mail, AtSign } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
@@ -70,14 +71,8 @@ export default function EditProfilePage() {
                 {/* Avatar Uploader */}
                 <div className="flex flex-col items-center mb-12">
                     <div className="relative group cursor-pointer" onClick={() => toast.info("Avatar upload is simulated for now")}>
-                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 group-hover:border-[var(--brand)] transition-colors">
-                            {currentUser.avatar ? (
-                                <Image src={currentUser.avatar} alt="Profile" width={128} height={128} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" unoptimized />
-                            ) : (
-                                <div className="w-full h-full bg-[var(--brand)] flex items-center justify-center text-4xl font-bold">
-                                    {currentUser.name.charAt(0)}
-                                </div>
-                            )}
+                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 group-hover:border-[var(--brand)] transition-colors bg-[var(--brand)] flex items-center justify-center">
+                            <UserAvatar src={currentUser.avatar} name={currentUser.name} size={128} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" textClassName="text-4xl font-bold text-white" />
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
                             <Camera className="w-8 h-8 text-white" />

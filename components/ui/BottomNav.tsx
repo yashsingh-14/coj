@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Home, Heart, Search, ListMusic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
+import UserAvatar from '@/components/ui/UserAvatar';
 
 import { memo } from 'react';
 
@@ -47,13 +48,7 @@ function BottomNavComponent() {
                                     "w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border-2 transition-all shadow-sm",
                                     isActive ? "border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.4)]" : "border-white/60"
                                 )}>
-                                    {currentUser?.avatar ? (
-                                        <Image src={currentUser.avatar} alt="Me" width={28} height={28} className="w-full h-full object-cover" unoptimized />
-                                    ) : (
-                                        <div className="w-full h-full bg-white/20 flex items-center justify-center text-[10px] sm:text-xs font-bold text-white">
-                                            {currentUser?.name?.[0] || 'U'}
-                                        </div>
-                                    )}
+                                    <UserAvatar src={currentUser?.avatar} name={currentUser?.name} size={28} textClassName="text-[10px] sm:text-xs font-bold text-white" />
                                 </div>
                                 <span className="text-[10px] sm:text-[11px] uppercase tracking-wider font-bold text-white leading-none">{item.name}</span>
                                 <span className={cn("w-1 h-1 rounded-full bg-white transition-all duration-300", isActive ? "opacity-100 scale-100" : "opacity-0 scale-0")} />

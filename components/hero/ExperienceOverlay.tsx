@@ -1197,8 +1197,8 @@ export default function ExperienceOverlay({ initialData }: {
                         {/* Brand Column */}
                         <div className="lg:col-span-4 space-y-3.5 sm:space-y-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#0D0B12] border border-white/15 p-1.5 flex items-center justify-center shadow-[0_0_25px_rgba(255,90,46,0.22)]">
-                                    <BlackRemoverImage src="/images/logo-footer-final.png" alt="COJ Logo" threshold={80} className="w-full h-full object-contain" />
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center flex-shrink-0">
+                                    <img src="/logo.svg" alt="COJ Logo" className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,90,46,0.35)]" />
                                 </div>
                                 <div>
                                     <h4 className="text-sm sm:text-base font-black tracking-wider text-white uppercase font-sans">CALL OF JESUS</h4>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft, User, Settings, Heart, Music, ListMusic, Edit2, Camera, Loader2, ShieldCheck, ArrowRight } from 'lucide-react';
 import BackButton from '@/components/ui/BackButton';
 import TiltCard from '@/components/ui/TiltCard';
+import UserAvatar from '@/components/ui/UserAvatar';
 
 import { useAppStore } from '@/store/useAppStore';
 import { useRouter } from 'next/navigation';
@@ -135,8 +136,8 @@ export default function ProfilePage() {
                         {/* Avatar */}
                         <div className="relative group">
                             <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full p-1 bg-gradient-to-br from-amber-500 via-purple-500 to-blue-500">
-                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-[#02000F] relative">
-                                    <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${user.image}')` }} />
+                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-[#02000F] relative bg-[#1A1825] flex items-center justify-center">
+                                    <UserAvatar src={user.image} name={user.name} size={160} className="w-full h-full object-cover" textClassName="font-black text-white text-4xl sm:text-5xl" />
                                     {/* Hover Overlay */}
                                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                         <Camera className="w-8 h-8 text-white" />
