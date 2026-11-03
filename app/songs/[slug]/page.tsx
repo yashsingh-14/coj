@@ -110,6 +110,14 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
 
     const songCanonicalUrl = `${SITE_URL}/songs/${generateSlug(song.title)}`;
 
+    // Resolve actual YouTube upload date if provided in song data.
+    // Note: Database record timestamps (such as created_at) must not be used as video upload dates
+    // to avoid generating misleading structured data.
+    const rawUploadDate = song.upload_date || song.uploadDate || song.published_at || song.youtube_upload_date;
+    const videoUploadDate = rawUploadDate && !isNaN(new Date(rawUploadDate).getTime())
+        ? new Date(rawUploadDate).toISOString()
+        : undefined;
+
     // High-Authority Schema.org Knowledge Graph (Breadcrumbs, MusicComposition, MusicRecording, FAQPage)
     const jsonLdGraph = {
         '@context': 'https://schema.org',
@@ -189,6 +197,7 @@ export default async function SongPage({ params }: { params: Promise<{ slug: str
                         description: `Watch ${song.title} with chords and lyrics`,
                         thumbnailUrl: `https://img.youtube.com/vi/${song.youtube_id}/hqdefault.jpg`,
                         embedUrl: `https://www.youtube.com/embed/${song.youtube_id}`,
+                        ...(videoUploadDate && { uploadDate: videoUploadDate }),
                     },
                 }),
             },

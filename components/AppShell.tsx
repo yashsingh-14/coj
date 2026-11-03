@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import BottomNav from '@/components/ui/BottomNav';
 import { usePathname } from 'next/navigation';
@@ -41,6 +41,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         // 1. Check active session on mount
         const initSession = async () => {
+            if (useAppStore.getState().currentUser) {
+                setIsReady(true);
+            }
             try {
                 const fetchUser = async () => {
                     const sessionRes = await supabase.auth.getSession();
@@ -56,8 +59,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     return activeUser;
                 };
 
-                const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500));
-                const activeUser = await Promise.race([fetchUser(), timeout]);
+
+                const activeUser = await fetchUser();
 
                 if (activeUser) {
                     const userData = await getUserData(activeUser);

@@ -20,16 +20,29 @@ export async function GET(request: Request) {
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
             {
+                cookieOptions: {
+                    maxAge: 400 * 24 * 60 * 60,
+                    sameSite: 'lax',
+                    path: '/',
+                    secure: process.env.NODE_ENV === 'production',
+                },
                 cookies: {
                     getAll() {
                         return cookieStore.getAll();
                     },
                     setAll(cookiesToSet) {
                         cookiesToSet.forEach(({ name, value, options }) => {
+                            const persistentOpts = {
+                                ...options,
+                                maxAge: 400 * 24 * 60 * 60,
+                                sameSite: 'lax' as const,
+                                path: '/',
+                                secure: process.env.NODE_ENV === 'production',
+                            };
                             try {
-                                cookieStore.set(name, value, options);
+                                cookieStore.set(name, value, persistentOpts);
                             } catch {}
-                            response.cookies.set(name, value, options);
+                            response.cookies.set(name, value, persistentOpts);
                         });
                     },
                 },
@@ -78,12 +91,6 @@ export async function GET(request: Request) {
             } catch (e) {
                 console.error('Failed to upsert profile on callback:', e);
             }
-
-            try {
-                cookieStore.getAll().forEach((c) => {
-                    response.cookies.set(c.name, c.value);
-                });
-            } catch {}
 
             return response;
         } else {

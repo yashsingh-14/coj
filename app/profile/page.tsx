@@ -14,7 +14,7 @@ export default function ProfilePage() {
     const { currentUser, isAuthenticated, login } = useAppStore();
     const router = useRouter();
 
-    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(!currentUser);
     const [savedCount, setSavedCount] = useState(0);
     const [setsCount, setSetsCount] = useState(0);
 
@@ -36,8 +36,8 @@ export default function ProfilePage() {
                 }
                 return active;
             };
-            const timeout = new Promise<null>((res) => setTimeout(() => res(null), 1500));
-            const u = await Promise.race([fetchU(), timeout]);
+
+            const u = await fetchU();
 
             if (u) {
                 let role = 'user';

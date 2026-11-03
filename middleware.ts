@@ -10,6 +10,12 @@ export async function middleware(request: NextRequest) {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
+            cookieOptions: {
+                maxAge: 400 * 24 * 60 * 60,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            },
             cookies: {
                 getAll() {
                     return request.cookies.getAll()
@@ -20,7 +26,13 @@ export async function middleware(request: NextRequest) {
                         request,
                     })
                     cookiesToSet.forEach(({ name, value, options }) =>
-                        supabaseResponse.cookies.set(name, value, options)
+                        supabaseResponse.cookies.set(name, value, {
+                            ...options,
+                            maxAge: 400 * 24 * 60 * 60,
+                            sameSite: 'lax',
+                            path: '/',
+                            secure: process.env.NODE_ENV === 'production',
+                        })
                     )
                 },
             },
@@ -32,9 +44,9 @@ export async function middleware(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname;
 
-    // Protected Routes
+    // Protected Routes: Only strictly server-gated routes like /admin
+    // (Note: /profile manages its own client-side authentication via Zustand and local session)
     const isProtectedRoute = 
-        pathname.startsWith('/profile') || 
         pathname.startsWith('/admin') || 
         pathname === '/sets/new';
 
@@ -44,9 +56,14 @@ export async function middleware(request: NextRequest) {
         url.searchParams.set('redirect', pathname);
         const redirectResponse = NextResponse.redirect(url);
         
-        // Ensure any refreshed cookies are carried over to redirect
+        // Ensure any refreshed cookies are carried over to redirect with persistent maxAge
         supabaseResponse.cookies.getAll().forEach(cookie => {
-            redirectResponse.cookies.set(cookie.name, cookie.value);
+            redirectResponse.cookies.set(cookie.name, cookie.value, {
+                maxAge: 400 * 24 * 60 * 60,
+                sameSite: 'lax',
+                path: '/',
+                secure: process.env.NODE_ENV === 'production',
+            });
         });
 
         return redirectResponse;
