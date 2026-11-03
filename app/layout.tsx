@@ -75,13 +75,16 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.svg?v=2', type: 'image/svg+xml' },
-      { url: '/icon.png?v=2', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.ico?v=3', sizes: 'any' },
+      { url: '/favicon-48x48.png?v=3', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-96x96.png?v=3', sizes: '96x96', type: 'image/png' },
+      { url: '/icon.png?v=3', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.svg?v=3', type: 'image/svg+xml' },
     ],
-    shortcut: '/favicon.svg?v=2',
-    apple: '/apple-icon.png?v=2',
+    shortcut: '/favicon.ico?v=3',
+    apple: '/apple-icon.png?v=3',
   },
-  manifest: '/manifest.json?v=2',
+  manifest: '/manifest.json?v=3',
   verification: {
     google: "CYIkv8Ghl8ecRATjDtfb3ouWVTc5O2M87tRXaJ3kqA8",
   },
