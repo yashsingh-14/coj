@@ -75,7 +75,7 @@ export default function NotificationPrompt() {
                 if ('Notification' in window && Notification.permission === 'granted') {
                     new Notification('Call of Jesus Ministries 🔔', {
                         body: 'Notifications enabled! You will be alerted the second we go Live.',
-                        icon: '/images/logo-footer-final.png'
+                        icon: '/favicon.svg?v=2'
                     });
                 }
             } else {

@@ -85,9 +85,9 @@ export default function InstallPrompt() {
                     {/* App Icon */}
                     <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-600/20 border border-amber-500/30 flex items-center justify-center shadow-lg">
                         <img 
-                            src="/images/logo-footer-final.png" 
+                            src="/logo.svg" 
                             alt="COJ" 
-                            className="w-10 h-10 rounded-xl object-contain"
+                            className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,90,46,0.35)]"
                         />
                     </div>
 
